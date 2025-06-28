@@ -26,8 +26,7 @@ public class DualTriggerController : UdonSharpBehaviour
     {
         if (!Networking.LocalPlayer.IsUserInVR()) return;
 
-        // Udon does not support collider.CompareTag, so use name or tag property directly
-        if (collision.collider != null && collision.collider.tag == "ExperimentTool")
+        if (collision.collider != null && collision.collider.gameObject.name == "ExperimentTool")
         {
             string tag = null;
             if (Networking.LocalPlayer != null)

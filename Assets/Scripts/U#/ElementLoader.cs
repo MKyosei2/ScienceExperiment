@@ -3,33 +3,15 @@ using UnityEngine;
 
 public class ElementLoader : UdonSharpBehaviour
 {
-    public ElementData[] elements;
     public string[] symbols;
     public int elementCount;
 
-    void Start()
+    public string GetSymbol(int index)
     {
-        int len = elements.Length;
-        symbols = new string[len];
-        for (int i = 0; i < len; i++)
+        if (index >= 0 && index < symbols.Length)
         {
-            symbols[i] = "";
-            ElementData e = elements[i];
-            if (e != null)
-            {
-                symbols[i] = e.cachedSymbol; // cachedSymbol を使うことで UdonSharp の制限を回避
-            }
+            return symbols[index];
         }
-
-        elementCount = len;
-    }
-
-    public ElementData GetElement(int index)
-    {
-        if (index >= 0 && index < elements.Length)
-        {
-            return elements[index];
-        }
-        return null;
+        return "";
     }
 }

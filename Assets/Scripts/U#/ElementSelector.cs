@@ -8,6 +8,7 @@ public class ElementSelector : UdonSharpBehaviour
     public ElementLoader loader;
     public Text selectedText;
     public Button[] elementButtons;
+
     private int selectedIndex = -1;
 
     void Start()
@@ -24,18 +25,22 @@ public class ElementSelector : UdonSharpBehaviour
         {
             elementButtons[i].gameObject.SetActive(enable);
         }
-        if (selectedText != null) selectedText.gameObject.SetActive(enable);
+
+        if (selectedText != null)
+        {
+            selectedText.gameObject.SetActive(enable);
+        }
 
         int count = loader.elementCount;
         for (int i = 0; i < elementButtons.Length && i < count; i++)
         {
-            int ix = i;
             Text buttonText = elementButtons[i].GetComponentInChildren<Text>();
             if (buttonText != null)
             {
                 buttonText.text = loader.symbols[i];
             }
-            elementButtons[i].onClick.AddListener(() => Select(ix));
+
+            // 各ボタンに対応するメソッドをエディタで割り当ててください
         }
     }
 
@@ -52,4 +57,11 @@ public class ElementSelector : UdonSharpBehaviour
     {
         return selectedIndex >= 0 ? loader.symbols[selectedIndex] : "";
     }
+
+    // 以下のようにインスペクターから呼べるメソッドを用意
+    public void OnClickButton0() => Select(0);
+    public void OnClickButton1() => Select(1);
+    public void OnClickButton2() => Select(2);
+    public void OnClickButton3() => Select(3);
+    // 必要に応じて追加
 }

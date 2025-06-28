@@ -13,6 +13,9 @@ public class ObserverRoomControlPanelUI : UdonSharpBehaviour
 
     public MonitorSwitchRouter monitorSwitcher;
 
+    // UdonSharp では Dropdown.options[index] が使えないため、別途文字列配列を用意
+    public string[] roomNames;
+
     void Start()
     {
         UpdateUIInteractable();
@@ -32,7 +35,9 @@ public class ObserverRoomControlPanelUI : UdonSharpBehaviour
 
         authorityManager.maxObservers = Mathf.RoundToInt(observerLimitSlider.value);
         if (observerLimitText != null)
-            observerLimitText.text = $"最大人数: {authorityManager.maxObservers}";
+        {
+            observerLimitText.text = "最大人数: " + authorityManager.maxObservers;
+        }
     }
 
     public void OnLockToggleChanged()
@@ -45,10 +50,14 @@ public class ObserverRoomControlPanelUI : UdonSharpBehaviour
     {
         if (!authorityManager.IsLocalPlayerOwner()) return;
 
-        string selectedRoom = experimentTargetDropdown.options[experimentTargetDropdown.value].text;
-        if (monitorSwitcher != null)
+        int index = experimentTargetDropdown.value;
+        if (index >= 0 && index < roomNames.Length)
         {
-            monitorSwitcher.SwitchMonitorToRoom(selectedRoom);
+            string selectedRoom = roomNames[index];
+            if (monitorSwitcher != null)
+            {
+                monitorSwitcher.SwitchMonitorToRoom(selectedRoom);
+            }
         }
     }
 }
