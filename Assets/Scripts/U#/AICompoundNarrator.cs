@@ -2,7 +2,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using VRC.SDKBase;
-using System.Collections;
 
 public class AICompoundNarrator : UdonSharpBehaviour
 {
@@ -13,24 +12,39 @@ public class AICompoundNarrator : UdonSharpBehaviour
     public AudioClip[] preGeneratedTTSClips;
     public string[] clipKeys;
 
-    private Coroutine subtitleCoroutine;
+    private float subtitleTimer = 0f;
+    private bool isSubtitleActive = false;
 
-    public void PlayNarration(string compoundKey, string funFact)
+    void Update()
     {
-        // Udon does not support StopCoroutine with a handle, so we just start a new coroutine
-        subtitleCoroutine = StartCoroutine(ShowSubtitle(funFact));
-
-        if (TryFindClip(compoundKey, out AudioClip clip))
+        if (isSubtitleActive)
         {
-            audioSource?.PlayOneShot(clip);
+            subtitleTimer -= Time.deltaTime;
+            if (subtitleTimer <= 0f)
+            {
+                subtitleText.text = "";
+                isSubtitleActive = false;
+            }
         }
     }
 
-    private IEnumerator ShowSubtitle(string text)
+    public void PlayNarration(string compoundKey, string funFact)
     {
-        subtitleText.text = text;
-        yield return new WaitForSeconds(subtitleDuration);
-        subtitleText.text = "";
+        if (subtitleText != null)
+        {
+            subtitleText.text = funFact;
+            subtitleTimer = subtitleDuration;
+            isSubtitleActive = true;
+        }
+
+        AudioClip clip;
+        if (TryFindClip(compoundKey, out clip))
+        {
+            if (audioSource != null && clip != null)
+            {
+                audioSource.PlayOneShot(clip);
+            }
+        }
     }
 
     private bool TryFindClip(string key, out AudioClip clip)

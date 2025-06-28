@@ -2,11 +2,11 @@
 using UnityEngine;
 using VRC.SDKBase;
 
+public enum GravityMode { Normal, ZeroG }
+public enum Hemisphere { Equator, North, South }
+
 public class EnvironmentController : UdonSharpBehaviour
 {
-    public enum GravityMode { Normal, ZeroG }
-    public enum Hemisphere { Equator, North, South }
-
     public GravityMode currentGravity = GravityMode.Normal;
     public Hemisphere currentHemisphere = Hemisphere.Equator;
 
@@ -18,13 +18,18 @@ public class EnvironmentController : UdonSharpBehaviour
     {
         currentGravity = (GravityMode)mode;
 
-        foreach (var rb in floatingObjects)
+        for (int i = 0; i < floatingObjects.Length; i++)
         {
-            if (rb != null) rb.useGravity = (mode == 0);
+            if (floatingObjects[i] != null)
+            {
+                floatingObjects[i].useGravity = (mode == 0);
+            }
         }
 
         if (environmentAudio != null)
+        {
             environmentAudio.pitch = (mode == 1) ? 0.6f : 1.0f;
+        }
     }
 
     public void SetHemisphere(int mode)
@@ -32,11 +37,13 @@ public class EnvironmentController : UdonSharpBehaviour
         currentHemisphere = (Hemisphere)mode;
 
         if (equatorOverlay != null)
+        {
             equatorOverlay.SetActive(mode == 0);
+        }
     }
 
     public string GetConditionString()
     {
-        return $"{currentGravity},{currentHemisphere}";
+        return currentGravity.ToString() + "," + currentHemisphere.ToString();
     }
 }

@@ -74,4 +74,14 @@ public class ElementData : ScriptableObject
     {
         return category == ElementCategory.NobleGas;
     }
+
+    [Header("ƒLƒƒƒbƒVƒ…")]
+    public string cachedSymbol;
+
+#if UNITY_EDITOR
+void OnValidate()
+{
+    cachedSymbol = symbol;
+}
+#endif
 }

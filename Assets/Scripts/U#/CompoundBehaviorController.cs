@@ -16,28 +16,30 @@ public class CompoundBehaviorController : UdonSharpBehaviour
     {
         if (targetBody == null || environmentController == null) return;
 
-        var gravity = environmentController.currentGravity;
-        var region = environmentController.currentHemisphere;
+        GravityMode gravity = environmentController.currentGravity;
+        Hemisphere region = environmentController.currentHemisphere;
 
-        switch (gravity)
+        if (gravity == GravityMode.Normal)
         {
-            case EnvironmentController.GravityMode.Normal:
-                targetBody.useGravity = true;
-                break;
-
-            case EnvironmentController.GravityMode.ZeroG:
-                targetBody.useGravity = false;
-                targetBody.AddForce(Vector3.up * 0.5f, ForceMode.Impulse);
-                break;
+            targetBody.useGravity = true;
+        }
+        else if (gravity == GravityMode.ZeroG)
+        {
+            targetBody.useGravity = false;
+            targetBody.AddForce(Vector3.up * 0.5f, ForceMode.Impulse);
         }
 
-        if (region == EnvironmentController.Hemisphere.South)
+        if (region == Hemisphere.South)
         {
             visualObject.transform.Rotate(Vector3.up * 180);
         }
-        else if (region == EnvironmentController.Hemisphere.Equator)
+        else if (region == Hemisphere.Equator)
         {
-            visualObject.GetComponent<Renderer>().material.color = Color.yellow;
+            Renderer renderer = visualObject.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                renderer.material.color = Color.yellow;
+            }
         }
     }
 }

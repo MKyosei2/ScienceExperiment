@@ -6,9 +6,8 @@ using VRC.Udon;
 
 public class DiscordWebhookSender : UdonSharpBehaviour
 {
-    public VRCUrl relayUrl;   // 例: https://relay.example.com/send
+    public VRCUrl relayUrl;
 
-    // 簡易的なURLエンコード関数
     private string SimpleUrlEncode(string str)
     {
         return str.Replace(" ", "%20").Replace("!", "%21").Replace("#", "%23")
@@ -20,15 +19,14 @@ public class DiscordWebhookSender : UdonSharpBehaviour
                   .Replace("]", "%5D");
     }
 
-    public void SendLog(string content, string type = "log")
+    public void SendLog(string content, string type)
     {
         if (string.IsNullOrWhiteSpace(content)) return;
-
         string encoded = SimpleUrlEncode(content);
-        string url = $"{relayUrl.Get()}?type={type}&content={encoded}";
+        string urlString = relayUrl.Get() + "?type=" + type + "&content=" + encoded;
 
-        // UdonBehaviour を取得して渡す
-        var udon = (UdonBehaviour)GetComponent(typeof(UdonBehaviour));
-        VRCStringDownloader.LoadUrl(new VRCUrl(url), udon);
+        VRCUrl finalUrl = relayUrl; // Relay先のURLをあらかじめ定義しておく想定
+        UdonBehaviour udon = (UdonBehaviour)GetComponent(typeof(UdonBehaviour));
+        VRCStringDownloader.LoadUrl(finalUrl, udon);
     }
 }

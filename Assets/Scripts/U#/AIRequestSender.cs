@@ -10,28 +10,30 @@ public class AIRequestSender : UdonSharpBehaviour
     public CompoundQueryBuilder builder;
     public AICompoundResponseParser parser;
     public Text statusDisplay;
-    public VRCUrl apiBase;        // 例: https://ai.example.com/chem
+    public VRCUrl apiBase;
 
     public void SendToAI(string[] elements, string conditionKey)
     {
         if (builder == null) return;
 
         string query = builder.BuildQuery(elements, conditionKey);
-        string fullUrl = apiBase.Get() + "?" + query;
-
         statusDisplay.text = "AIに送信中…";
-        // Udon does not support new VRCUrl(string), so only use apiBase
+
+        if (statusDisplay != null) statusDisplay.text = "AIに送信中…";
         VRCStringDownloader.LoadUrl(apiBase, (IUdonEventReceiver)this);
     }
 
     public override void OnStringLoadSuccess(IVRCStringDownload result)
     {
-        parser?.ParseResponse(result.Result);
-        statusDisplay.text = "完了";
+        if (parser != null)
+        {
+            parser.ParseResponse(result.Result);
+        }
+        if (statusDisplay != null) statusDisplay.text = "完了";
     }
 
     public override void OnStringLoadError(IVRCStringDownload result)
     {
-        statusDisplay.text = "AI応答エラー";
+        if (statusDisplay != null) statusDisplay.text = "AI応答エラー";
     }
 }
