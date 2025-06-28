@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: DualTriggerController
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 0}
+  serializedUdonProgramAsset: {fileID: 11400000, guid: b306be058420d0e4fb5617592bb15967,
+    type: 2}
   udonAssembly: 
   assemblyError: 
   sourceCsScript: {fileID: 11500000, guid: 4e38f51af3107fd43bbf6ccd53605845, type: 3}
-  scriptVersion: 0
+  scriptVersion: 2
   compiledVersion: 0
   behaviourSyncMode: 0
   hasInteractEvent: 0

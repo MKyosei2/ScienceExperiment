@@ -3,7 +3,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "ElementData", menuName = "ChemLab/Element")]
 public class ElementData : ScriptableObject
 {
-    [Header("基本情報")]
+    [Header(@"基本\情報")]
     public string elementName;
     public string symbol;
     public int atomicNumber;
@@ -11,7 +11,7 @@ public class ElementData : ScriptableObject
     public int period;
     public ElementCategory category;
 
-    [Header("構造・状態情報")]
+    [Header(@"構造・状態情報")]
     public string electronConfiguration;
     public string phase;
     public float atomicMass;
@@ -20,23 +20,23 @@ public class ElementData : ScriptableObject
     public float meltingPoint;
     public float boilingPoint;
 
-    [Header("化学的特性")]
+    [Header(@"化学的特性")]
     public float electronegativity;
     public int valenceElectrons;
     public float ionizationEnergy;
     public float electronAffinity;
     public bool isRadioactive;
 
-    [Header("用途・発見")]
+    [Header(@"用途・発見")]
     public string commonUses;
     public string discoveredBy;
     public int discoveryYear;
 
-    [Header("生体・安全性")]
+    [Header(@"生体・安全性")]
     public bool isEssentialToLife;
     public string toxicityInfo;
 
-    [Header("見た目")]
+    [Header(@"見た目")]
     public Color displayColor = Color.white;
     public GameObject displayPrefab;
 

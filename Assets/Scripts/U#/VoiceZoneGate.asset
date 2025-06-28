@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: VoiceZoneGate
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 0}
+  serializedUdonProgramAsset: {fileID: 11400000, guid: 25205311d92be474fa7510d8ed758db0,
+    type: 2}
   udonAssembly: 
   assemblyError: 
   sourceCsScript: {fileID: 11500000, guid: e556ef1e0f1731846a1b7b7548a2e100, type: 3}
-  scriptVersion: 0
+  scriptVersion: 2
   compiledVersion: 0
   behaviourSyncMode: 0
   hasInteractEvent: 0

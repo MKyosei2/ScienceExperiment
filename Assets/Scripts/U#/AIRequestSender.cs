@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using VRC.SDK3.StringLoading;
 using VRC.SDKBase;
+using VRC.Udon.Common.Interfaces;
 
 public class AIRequestSender : UdonSharpBehaviour
 {
@@ -19,16 +20,16 @@ public class AIRequestSender : UdonSharpBehaviour
         string fullUrl = $"{apiBase.Get()}?{query}";
 
         statusDisplay.text = "AIに送信中…";
-        VRCStringDownloader.LoadUrl(new VRCUrl(fullUrl), this);
+        VRCStringDownloader.LoadUrl(new VRCUrl(fullUrl), (IUdonEventReceiver)this);
     }
 
-    public void OnVRCStringDownloadComplete(VRCStringDownloader d, string response)
+    public override void OnStringLoadSuccess(IVRCStringDownload result)
     {
-        parser?.ParseResponse(response);
+        parser?.ParseResponse(result.Result);
         statusDisplay.text = "完了";
     }
 
-    public void OnVRCStringDownloadError(VRCStringDownloader d, string err)
+    public override void OnStringLoadError(IVRCStringDownload result)
     {
         statusDisplay.text = "AI応答エラー";
     }

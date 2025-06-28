@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: MonitorControlUI
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 0}
+  serializedUdonProgramAsset: {fileID: 11400000, guid: e12b8de75baea6f49b16d3968bc53f68,
+    type: 2}
   udonAssembly: 
   assemblyError: 
   sourceCsScript: {fileID: 11500000, guid: d1e558d95cccfed4dbb5cb17eb2c3de6, type: 3}
-  scriptVersion: 0
+  scriptVersion: 2
   compiledVersion: 0
   behaviourSyncMode: 0
   hasInteractEvent: 0

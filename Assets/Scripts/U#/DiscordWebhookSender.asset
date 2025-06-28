@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: DiscordWebhookSender
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 0}
+  serializedUdonProgramAsset: {fileID: 11400000, guid: 557669c7a9fd7aa47a1d30821d6922d8,
+    type: 2}
   udonAssembly: 
   assemblyError: 
   sourceCsScript: {fileID: 11500000, guid: 63bb8e02981d8d64498e35b6f9c4e451, type: 3}
-  scriptVersion: 0
+  scriptVersion: 2
   compiledVersion: 0
   behaviourSyncMode: 0
   hasInteractEvent: 0

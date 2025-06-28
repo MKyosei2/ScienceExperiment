@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class AICompoundResponseParser : UdonSharpBehaviour
 {
     public ResultDisplayManager displayManager;
-    public CompoundPrefabAssembler assembler;
+    public CompoundPrefabAssembler assembler; 
     public AICompoundNarrator narrator;
 
     public void ParseResponse(string json)

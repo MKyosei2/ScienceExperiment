@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
-  m_Name: RoomAccessLimiter
+  m_Name: CompoundPrefabAssembler
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: c394a0030fd894f4d9f0069cadad80be,
+  serializedUdonProgramAsset: {fileID: 11400000, guid: 68ce499959160d44f8e03dc2f5ee35d2,
     type: 2}
   udonAssembly: 
   assemblyError: 
-  sourceCsScript: {fileID: 11500000, guid: b23d534a21b45ab45a2a31be51be205e, type: 3}
+  sourceCsScript: {fileID: 11500000, guid: bd5c386fce1aa354db0ac0703382b265, type: 3}
   scriptVersion: 2
   compiledVersion: 0
   behaviourSyncMode: 0
