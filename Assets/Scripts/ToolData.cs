@@ -21,4 +21,8 @@ public class ToolData : ScriptableObject
     {
         return $"{toolName} ({toolID})\n{description}";
     }
+    public string GetToolName()
+    {
+        return toolName;
+    }
 }
