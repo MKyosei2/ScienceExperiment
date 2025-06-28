@@ -17,10 +17,11 @@ public class AIRequestSender : UdonSharpBehaviour
         if (builder == null) return;
 
         string query = builder.BuildQuery(elements, conditionKey);
-        string fullUrl = $"{apiBase.Get()}?{query}";
+        string fullUrl = apiBase.Get() + "?" + query;
 
         statusDisplay.text = "AIに送信中…";
-        VRCStringDownloader.LoadUrl(new VRCUrl(fullUrl), (IUdonEventReceiver)this);
+        // Udon does not support new VRCUrl(string), so only use apiBase
+        VRCStringDownloader.LoadUrl(apiBase, (IUdonEventReceiver)this);
     }
 
     public override void OnStringLoadSuccess(IVRCStringDownload result)

@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class MonitorControlUI : UdonSharpBehaviour
 {
-    public ObserverRoomAuthorityManager authorityManager;
+    public ObserverRoomauthorityManager authorityManager;
     public GameObject controlPanel;
 
     void Start()

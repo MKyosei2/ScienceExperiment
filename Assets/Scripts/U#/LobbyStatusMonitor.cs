@@ -8,7 +8,7 @@ public class LobbyStatusMonitor : UdonSharpBehaviour
     public Text[] observerRoomTexts;
 
     public RoomAccessLimiter[] experimentRooms;
-    public ObserverRoomAuthorityManager[] observerRooms;
+    public ObserverRoomauthorityManager[] observerRooms;
 
     public float refreshInterval = 3f;
     private float timer = 0f;

@@ -8,10 +8,17 @@ public class DualTriggerController : UdonSharpBehaviour
 
     public override void Interact()
     {
-        string tag = Networking.LocalPlayer?.GetPlayerTag("CurrentRoom");
+        string tag = null;
+        if (Networking.LocalPlayer != null)
+        {
+            tag = Networking.LocalPlayer.GetPlayerTag("CurrentRoom");
+        }
         if (tag == "ExperimentRoom")
         {
-            controller?.RunExperiment();
+            if (controller != null)
+            {
+                controller.RunExperiment();
+            }
         }
     }
 
@@ -19,10 +26,18 @@ public class DualTriggerController : UdonSharpBehaviour
     {
         if (!Networking.LocalPlayer.IsUserInVR()) return;
 
-        if (collision.collider.CompareTag("ExperimentTool"))
+        // Udon does not support collider.CompareTag, so use name or tag property directly
+        if (collision.collider != null && collision.collider.tag == "ExperimentTool")
         {
-            string tag = Networking.LocalPlayer?.GetPlayerTag("CurrentRoom");
-            if (tag == "ExperimentRoom") controller?.RunExperiment();
+            string tag = null;
+            if (Networking.LocalPlayer != null)
+            {
+                tag = Networking.LocalPlayer.GetPlayerTag("CurrentRoom");
+            }
+            if (tag == "ExperimentRoom" && controller != null)
+            {
+                controller.RunExperiment();
+            }
         }
     }
 }

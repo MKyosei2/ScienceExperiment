@@ -12,7 +12,10 @@ public class AICompoundResponseParser : UdonSharpBehaviour
     {
         if (string.IsNullOrWhiteSpace(json))
         {
-            displayManager?.ShowResult("AI応答が無効です");
+            if (displayManager != null)
+            {
+                displayManager.ShowResult("AI応答が無効です");
+            }
             return;
         }
 
@@ -23,9 +26,18 @@ public class AICompoundResponseParser : UdonSharpBehaviour
         int style = 0;
         int.TryParse(styleStr, out style);
 
-        displayManager?.ShowResult($"{reaction} が生成されました！");
-        assembler?.GenerateCompound(reaction, style);
-        narrator?.PlayNarration(reaction, funFact);
+        if (displayManager != null)
+        {
+            displayManager.ShowResult($"{reaction} が生成されました！");
+        }
+        if (assembler != null)
+        {
+            assembler.GenerateCompound(reaction, style);
+        }
+        if (narrator != null)
+        {
+            narrator.PlayNarration(reaction, funFact);
+        }
     }
 
     private string Extract(string json, string key)

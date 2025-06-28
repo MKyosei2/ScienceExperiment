@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using VRC.SDKBase;
 using System;
 
-public class PersonalLabNotebook : UdonSharpBehaviour
+public class PersonallLabNotebook : UdonSharpBehaviour
 {
     private const int MaxEntries = 12;
     private string[] notebookEntries = new string[MaxEntries];
@@ -14,7 +14,11 @@ public class PersonalLabNotebook : UdonSharpBehaviour
 
     public void LogExperiment(string reactionName, string conditionKey)
     {
-        string user = Networking.LocalPlayer?.displayName ?? "Unknown";
+        string user = "Unknown";
+        if (Networking.LocalPlayer != null)
+        {
+            user = Networking.LocalPlayer.displayName;
+        }
         string entry = $"[{DateTime.Now:HH:mm}] {reactionName} @ {conditionKey}";
         notebookEntries[entryIndex] = entry;
         entryIndex = (entryIndex + 1) % MaxEntries;

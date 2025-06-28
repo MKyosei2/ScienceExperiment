@@ -7,7 +7,19 @@ public class ReactionDictionary : UdonSharpBehaviour
 
     public string GenerateReactionKey(string[] elements, string env)
     {
-        System.Array.Sort(elements);
+        // Udon does not support System.Array.Sort, so use a simple bubble sort
+        for (int i = 0; i < elements.Length - 1; i++)
+        {
+            for (int j = 0; j < elements.Length - i - 1; j++)
+            {
+                if (string.Compare(elements[j], elements[j + 1]) > 0)
+                {
+                    string temp = elements[j];
+                    elements[j] = elements[j + 1];
+                    elements[j + 1] = temp;
+                }
+            }
+        }
         return string.Join(",", elements) + "|" + env;
     }
 

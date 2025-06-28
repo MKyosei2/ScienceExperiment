@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class ObserverRoomControlPanelUI : UdonSharpBehaviour
 {
-    public ObserverRoomAuthorityManager authorityManager;
+    public ObserverRoomauthorityManager authorityManager;
 
     public Slider observerLimitSlider;
     public Text observerLimitText;
@@ -46,6 +46,9 @@ public class ObserverRoomControlPanelUI : UdonSharpBehaviour
         if (!authorityManager.IsLocalPlayerOwner()) return;
 
         string selectedRoom = experimentTargetDropdown.options[experimentTargetDropdown.value].text;
-        monitorSwitcher?.SwitchMonitorToRoom(selectedRoom);
+        if (monitorSwitcher != null)
+        {
+            monitorSwitcher.SwitchMonitorToRoom(selectedRoom);
+        }
     }
 }

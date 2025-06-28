@@ -18,15 +18,31 @@ public class ResultDisplayManager : UdonSharpBehaviour
         foreach (Text t in observerPanels)
             if (t != null) t.text = message;
 
-        sharedMonitor?.UpdateAllMonitors(message);
+        if (sharedMonitor != null)
+        {
+            sharedMonitor.UpdateAllMonitors(message);
+        }
 
         // SE
         if (message.Contains("生成"))
-            audioSource?.PlayOneShot(successClip);
+        {
+            if (audioSource != null)
+            {
+                audioSource.PlayOneShot(successClip);
+            }
+        }
         else
-            audioSource?.PlayOneShot(failClip);
+        {
+            if (audioSource != null)
+            {
+                audioSource.PlayOneShot(failClip);
+            }
+        }
 
         // Discord（匿名ログ）
-        webhookSender?.SendLog(message, "log");
+        if (webhookSender != null)
+        {
+            webhookSender.SendLog(message, "log");
+        }
     }
 }

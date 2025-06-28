@@ -17,7 +17,7 @@ public class AICompoundNarrator : UdonSharpBehaviour
 
     public void PlayNarration(string compoundKey, string funFact)
     {
-        if (subtitleCoroutine != null) StopCoroutine(subtitleCoroutine);
+        // Udon does not support StopCoroutine with a handle, so we just start a new coroutine
         subtitleCoroutine = StartCoroutine(ShowSubtitle(funFact));
 
         if (TryFindClip(compoundKey, out AudioClip clip))

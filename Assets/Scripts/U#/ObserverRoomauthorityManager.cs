@@ -2,7 +2,7 @@
 using UnityEngine;
 using VRC.SDKBase;
 
-public class ObserverRoomAuthorityManager : UdonSharpBehaviour
+public class ObserverRoomauthorityManager : UdonSharpBehaviour
 {
     public string observerRoomTag = "ObserverRoomA";
     public int maxObservers = 4;

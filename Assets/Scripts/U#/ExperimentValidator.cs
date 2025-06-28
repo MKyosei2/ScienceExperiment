@@ -15,12 +15,21 @@ public class ExperimentValidator : UdonSharpBehaviour
             string reactionName = reactionDictionary.GetReactionName(key);
             int style = reactionDictionary.GetVisualStyle(key);
 
-            resultDisplay?.ShowResult($"{reactionName} が生成されました！");
-            prefabAssembler?.GenerateCompound(reactionName, style);
+            if (resultDisplay != null)
+            {
+                resultDisplay.ShowResult($"{reactionName} が生成されました！");
+            }
+            if (prefabAssembler != null)
+            {
+                prefabAssembler.GenerateCompound(reactionName, style);
+            }
         }
         else
         {
-            resultDisplay?.ShowResult("反応に失敗しました。条件を見直してください。");
+            if (resultDisplay != null)
+            {
+                resultDisplay.ShowResult("反応に失敗しました。条件を見直してください。");
+            }
         }
     }
 }
