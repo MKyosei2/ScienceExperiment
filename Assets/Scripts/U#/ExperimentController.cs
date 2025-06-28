@@ -6,6 +6,7 @@ public class ExperimentController : UdonSharpBehaviour
 {
     [Header("依存コンポーネント")]
     public ElementSelector elementSelector;
+    public ToolSelector toolSelector; // 🆕 実験器具選択
     public EnvironmentController environmentController;
     public AIRequestSender aiSender;
     public ExperimentValidator localValidator;
@@ -15,7 +16,7 @@ public class ExperimentController : UdonSharpBehaviour
 
     public void RunExperiment()
     {
-        // 元素選択チェック
+        // 元素チェック
         string symbol = elementSelector != null ? elementSelector.GetSelectedSymbol() : "";
         if (string.IsNullOrWhiteSpace(symbol))
         {
@@ -23,21 +24,23 @@ public class ExperimentController : UdonSharpBehaviour
             return;
         }
 
-        // 実験条件を組み立て
-        string[] elements = new string[] { symbol };
-        string envKey = environmentController != null
-                              ? environmentController.GetConditionString()
-                              : "Unknown";
+        // 実験器具チェック
+        string toolID = toolSelector != null ? toolSelector.GetSelectedToolID() : "None";
 
+        // 実験条件の構築
+        string[] elements = new string[] { symbol };
+        string conditionKey = (environmentController != null
+                               ? environmentController.GetConditionString()
+                               : "Unknown") + "," + toolID;
+
+        // ローカル or AI モード処理
         if (useLocalDictionary && localValidator != null)
         {
-            // オフライン（AI を呼ばず辞書だけ）モード
-            localValidator.Validate(elements, envKey);
+            localValidator.Validate(elements, conditionKey);
         }
         else if (aiSender != null)
         {
-            // AI サーバーへ送信
-            aiSender.SendToAI(elements, envKey);
+            aiSender.SendToAI(elements, conditionKey);
         }
     }
 }
