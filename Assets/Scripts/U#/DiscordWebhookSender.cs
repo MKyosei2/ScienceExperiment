@@ -5,14 +5,14 @@ using VRC.SDKBase;
 
 public class DiscordWebhookSender : UdonSharpBehaviour
 {
-    public VRCUrl relayUrl; // 例: https://relay.yourdomain.com/send
+    public VRCUrl relayUrl;   // 例: https://relay.example.com/send
 
-    public void SendReactionLog(string logText)
+    public void SendLog(string content, string type = "log")
     {
-        if (string.IsNullOrWhiteSpace(logText)) return;
+        if (string.IsNullOrWhiteSpace(content)) return;
 
-        string encoded = VRC.SDKBase.Utilities.UrlEncode(logText);
-        string url = $"{relayUrl.Get()}?type=log&content={encoded}";
+        string encoded = Utilities.UrlEncode(content);
+        string url = $"{relayUrl.Get()}?type={type}&content={encoded}";
 
         VRCStringDownloader.LoadUrl(new VRCUrl(url), this);
     }

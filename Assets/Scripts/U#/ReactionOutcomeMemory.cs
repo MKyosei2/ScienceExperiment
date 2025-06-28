@@ -10,10 +10,9 @@ public class ReactionOutcomeMemory : UdonSharpBehaviour
 
     public Text logListDisplay;
 
-    public void RecordNewReaction(string reactionTitle, string byPlayerName, string condition)
+    public void RecordNewReaction(string reactionTitle, string condition)
     {
-        string log = $"[{Time.realtimeSinceStartup:F0}s] {byPlayerName} - {reactionTitle} ({condition})";
-
+        string log = $"[{Time.realtimeSinceStartup:F0}s] {reactionTitle} ({condition})";
         reactionLogs[logIndex] = log;
         logIndex = (logIndex + 1) % reactionLogs.Length;
 
@@ -21,21 +20,15 @@ public class ReactionOutcomeMemory : UdonSharpBehaviour
         UpdateDisplay();
     }
 
-    public override void OnDeserialization()
-    {
-        UpdateDisplay();
-    }
+    public override void OnDeserialization() => UpdateDisplay();
 
-    public void UpdateDisplay()
+    private void UpdateDisplay()
     {
         if (logListDisplay == null) return;
 
         string full = "";
-        foreach (var entry in reactionLogs)
-        {
-            if (!string.IsNullOrWhiteSpace(entry))
-                full += entry + "\n";
-        }
+        foreach (string entry in reactionLogs)
+            if (!string.IsNullOrWhiteSpace(entry)) full += entry + "\n";
 
         logListDisplay.text = full;
     }
