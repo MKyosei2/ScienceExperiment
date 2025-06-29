@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
+  m_Name: Beryllium
+  m_EditorClassIdentifier: 
+  elementName: Beryllium
+  symbol: Be
+  atomicNumber: 4
+  group: 2
+  period: 2
+  category: 6
+  electronConfiguration: '[He] 2s2'
+  phase: Solid
+  atomicMass: 9.012183
+  atomicRadius: 112
+  density: 1.85
+  meltingPoint: 1560
+  boilingPoint: 2742
+  electronegativity: 1.57
+  valenceElectrons: 2
+  ionizationEnergy: 899.5
+  electronAffinity: 0
+  isRadioactive: 0
+  commonUses: Aerospace, X-ray windows
+  discoveredBy: Louis-Nicolas Vauquelin
+  discoveryYear: 1798
+  isEssentialToLife: 0
+  toxicityInfo: Toxic if inhaled
+  displayColor: {r: 0.7607843, g: 1, b: 0, a: 1}
+  displayPrefab: {fileID: 0}
+  cachedSymbol: Be
