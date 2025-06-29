@@ -50,6 +50,7 @@ public class ElementData : ScriptableObject
         AlkaliMetal,
         AlkalineEarth,
         TransitionMetal,
+        PostTransitionMetal,
         Lanthanide,
         Actinide,
         Unknown
