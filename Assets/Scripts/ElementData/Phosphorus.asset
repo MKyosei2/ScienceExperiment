@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
+  m_Name: Phosphorus
+  m_EditorClassIdentifier: 
+  elementName: Phosphorus
+  symbol: P
+  atomicNumber: 15
+  group: 15
+  period: 3
+  category: 0
+  electronConfiguration: '[Ne] 3s2 3p3'
+  phase: Solid
+  atomicMass: 30.973763
+  atomicRadius: 98
+  density: 1.823
+  meltingPoint: 317.3
+  boilingPoint: 553.7
+  electronegativity: 2.19
+  valenceElectrons: 5
+  ionizationEnergy: 1011.8
+  electronAffinity: 72
+  isRadioactive: 0
+  commonUses: Fertilizers, matches
+  discoveredBy: Hennig Brand
+  discoveryYear: 1669
+  isEssentialToLife: 1
+  toxicityInfo: White P is highly toxic
+  displayColor: {r: 1, g: 0.5019608, b: 0, a: 1}
+  displayPrefab: {fileID: 0}
+  cachedSymbol: P

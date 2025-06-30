@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
+  m_Name: Sodium
+  m_EditorClassIdentifier: 
+  elementName: Sodium
+  symbol: Na
+  atomicNumber: 11
+  group: 1
+  period: 3
+  category: 5
+  electronConfiguration: '[Ne] 3s1'
+  phase: Solid
+  atomicMass: 22.989769
+  atomicRadius: 190
+  density: 0.971
+  meltingPoint: 370.87
+  boilingPoint: 1156.1
+  electronegativity: 0.93
+  valenceElectrons: 1
+  ionizationEnergy: 495.8
+  electronAffinity: 52.8
+  isRadioactive: 0
+  commonUses: Salt, street lamps, heat exchangers
+  discoveredBy: Humphry Davy
+  discoveryYear: 1807
+  isEssentialToLife: 1
+  toxicityInfo: Reactive in water
+  displayColor: {r: 0.67058825, g: 0.36078432, b: 0.9490196, a: 1}
+  displayPrefab: {fileID: 0}
+  cachedSymbol: Na

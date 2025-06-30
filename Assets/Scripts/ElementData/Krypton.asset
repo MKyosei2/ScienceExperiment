@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
+  m_Name: Krypton
+  m_EditorClassIdentifier: 
+  elementName: Krypton
+  symbol: Kr
+  atomicNumber: 36
+  group: 18
+  period: 4
+  category: 3
+  electronConfiguration: '[Ar] 3d10 4s2 4p6'
+  phase: Gas
+  atomicMass: 83.798
+  atomicRadius: 88
+  density: 0.003733
+  meltingPoint: 115.8
+  boilingPoint: 119.9
+  electronegativity: 3
+  valenceElectrons: 8
+  ionizationEnergy: 1350.8
+  electronAffinity: -96
+  isRadioactive: 0
+  commonUses: Lighting, photography
+  discoveredBy: Ramsay & Travers
+  discoveryYear: 1898
+  isEssentialToLife: 0
+  toxicityInfo: Inert, asphyxiant in high conc.
+  displayColor: {r: 0.49019608, g: 0.9764706, b: 1, a: 1}
+  displayPrefab: {fileID: 0}
+  cachedSymbol: Kr

@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
+  m_Name: Chromium
+  m_EditorClassIdentifier: 
+  elementName: Chromium
+  symbol: Cr
+  atomicNumber: 24
+  group: 6
+  period: 4
+  category: 7
+  electronConfiguration: '[Ar] 3d5 4s1'
+  phase: Solid
+  atomicMass: 51.9961
+  atomicRadius: 166
+  density: 7.19
+  meltingPoint: 2180
+  boilingPoint: 2944
+  electronegativity: 1.66
+  valenceElectrons: 6
+  ionizationEnergy: 652.9
+  electronAffinity: 65.2
+  isRadioactive: 0
+  commonUses: Stainless steel, chrome plating
+  discoveredBy: Louis Nicolas Vauquelin
+  discoveryYear: 1797
+  isEssentialToLife: 1
+  toxicityInfo: Hexavalent form is toxic
+  displayColor: {r: 0.5411765, g: 0.6, b: 0.78039217, a: 1}
+  displayPrefab: {fileID: 0}
+  cachedSymbol: Cr

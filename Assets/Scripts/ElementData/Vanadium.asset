@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
+  m_Name: Vanadium
+  m_EditorClassIdentifier: 
+  elementName: Vanadium
+  symbol: V
+  atomicNumber: 23
+  group: 5
+  period: 4
+  category: 7
+  electronConfiguration: '[Ar] 3d3 4s2'
+  phase: Solid
+  atomicMass: 50.9415
+  atomicRadius: 171
+  density: 6.11
+  meltingPoint: 2183
+  boilingPoint: 3680
+  electronegativity: 1.63
+  valenceElectrons: 5
+  ionizationEnergy: 650.9
+  electronAffinity: 50.6
+  isRadioactive: 0
+  commonUses: Tools, steel alloys
+  discoveredBy: "Andr\xE9s Manuel del R\xEDo"
+  discoveryYear: 1801
+  isEssentialToLife: 1
+  toxicityInfo: Toxic in high amounts
+  displayColor: {r: 0.6509804, g: 0.6509804, b: 0.67058825, a: 1}
+  displayPrefab: {fileID: 0}
+  cachedSymbol: V
