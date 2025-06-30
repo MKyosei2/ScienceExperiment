@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
+  m_Name: Boron
+  m_EditorClassIdentifier: 
+  elementName: Boron
+  symbol: B
+  atomicNumber: 5
+  group: 13
+  period: 2
+  category: 2
+  electronConfiguration: '[He] 2s2 2p1'
+  phase: Solid
+  atomicMass: 10.81
+  atomicRadius: 87
+  density: 2.34
+  meltingPoint: 2349
+  boilingPoint: 4200
+  electronegativity: 2.04
+  valenceElectrons: 3
+  ionizationEnergy: 800.6
+  electronAffinity: 26.7
+  isRadioactive: 0
+  commonUses: Glass, Detergents
+  discoveredBy: Joseph Gay-Lussac
+  discoveryYear: 1808
+  isEssentialToLife: 1
+  toxicityInfo: Low toxicity
+  displayColor: {r: 1, g: 0.70980394, b: 0.70980394, a: 1}
+  displayPrefab: {fileID: 0}
+  cachedSymbol: B

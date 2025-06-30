@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
+  m_Name: Oxygen
+  m_EditorClassIdentifier: 
+  elementName: Oxygen
+  symbol: O
+  atomicNumber: 8
+  group: 16
+  period: 2
+  category: 0
+  electronConfiguration: '[He] 2s2 2p4'
+  phase: Gas
+  atomicMass: 15.999
+  atomicRadius: 48
+  density: 0.001429
+  meltingPoint: 54.36
+  boilingPoint: 90.2
+  electronegativity: 3.44
+  valenceElectrons: 6
+  ionizationEnergy: 1313.9
+  electronAffinity: 140
+  isRadioactive: 0
+  commonUses: Breathing, Combustion
+  discoveredBy: Carl Wilhelm Scheele
+  discoveryYear: 1774
+  isEssentialToLife: 1
+  toxicityInfo: Too much is toxic
+  displayColor: {r: 1, g: 0.050980393, b: 0.050980393, a: 1}
+  displayPrefab: {fileID: 0}
+  cachedSymbol: O
