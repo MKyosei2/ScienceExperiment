@@ -10,31 +10,31 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
-  m_Name: Silver
+  m_Name: Gold
   m_EditorClassIdentifier: 
-  elementName: Silver
-  symbol: Ag
-  atomicNumber: 47
+  elementName: Gold
+  symbol: Au
+  atomicNumber: 79
   group: 11
-  period: 5
+  period: 6
   category: 7
-  electronConfiguration: '[Kr] 4d10 5s1'
+  electronConfiguration: '[Xe] 4f14 5d10 6s1'
   phase: Solid
-  atomicMass: 107.8682
-  atomicRadius: 144
-  density: 10.49
-  meltingPoint: 1234.93
-  boilingPoint: 2435
-  electronegativity: 1.93
+  atomicMass: 196.96657
+  atomicRadius: 135
+  density: 19.32
+  meltingPoint: 1337.33
+  boilingPoint: 3129
+  electronegativity: 2.54
   valenceElectrons: 1
-  ionizationEnergy: 731
-  electronAffinity: 125.6
+  ionizationEnergy: 890.1
+  electronAffinity: 222.8
   isRadioactive: 0
-  commonUses: Jewelry, electronics, coins
+  commonUses: "\tJewelry, currency, electronics"
   discoveredBy: Known since antiquity
   discoveryYear: 0
   isEssentialToLife: 0
-  toxicityInfo: Argyria (skin graying) in excess
-  displayColor: {r: 0.7529412, g: 0.7529412, b: 0.7529412, a: 1}
+  toxicityInfo: Low
+  displayColor: {r: 1, g: 0.84313726, b: 0, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: Ag
+  cachedSymbol: Au

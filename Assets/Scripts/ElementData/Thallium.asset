@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
+  m_Name: Thallium
+  m_EditorClassIdentifier: 
+  elementName: Thallium
+  symbol: Tl
+  atomicNumber: 81
+  group: 13
+  period: 6
+  category: 8
+  electronConfiguration: "\t[Xe] 4f14 5d10 6s2 6p1"
+  phase: Solid
+  atomicMass: 204.38
+  atomicRadius: 170
+  density: 11.85
+  meltingPoint: 303.85
+  boilingPoint: 1473
+  electronegativity: 1.62
+  valenceElectrons: 3
+  ionizationEnergy: 589.4
+  electronAffinity: 36.4
+  isRadioactive: 0
+  commonUses: Electronics, glass production
+  discoveredBy: William Crookes
+  discoveryYear: 1861
+  isEssentialToLife: 0
+  toxicityInfo: Highly toxic (neurotoxin)
+  displayColor: {r: 0.6509804, g: 0.32941177, b: 0.3019608, a: 1}
+  displayPrefab: {fileID: 0}
+  cachedSymbol: Tl

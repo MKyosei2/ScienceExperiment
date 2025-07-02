@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
+  m_Name: Tungsten
+  m_EditorClassIdentifier: 
+  elementName: Tungsten
+  symbol: W
+  atomicNumber: 74
+  group: 6
+  period: 6
+  category: 7
+  electronConfiguration: "\t[Xe] 4f14 5d4 6s2"
+  phase: Solid
+  atomicMass: 183.84
+  atomicRadius: 135
+  density: 19.25
+  meltingPoint: 3695
+  boilingPoint: 6203
+  electronegativity: 2.36
+  valenceElectrons: 6
+  ionizationEnergy: 770
+  electronAffinity: 78.6
+  isRadioactive: 0
+  commonUses: "\tLight bulb filaments, tools"
+  discoveredBy: "\tJuan Jos\xE9 Elhuyar, Fausto Elhuyar"
+  discoveryYear: 1783
+  isEssentialToLife: 1
+  toxicityInfo: Low
+  displayColor: {r: 0.12941177, g: 0.5803922, b: 0.8392157, a: 1}
+  displayPrefab: {fileID: 0}
+  cachedSymbol: W

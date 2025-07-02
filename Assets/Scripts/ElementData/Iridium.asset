@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
+  m_Name: Iridium
+  m_EditorClassIdentifier: 
+  elementName: Iridium
+  symbol: Ir
+  atomicNumber: 77
+  group: 9
+  period: 6
+  category: 7
+  electronConfiguration: "\t[Xe] 4f14 5d7 6s2"
+  phase: Solid
+  atomicMass: 192.217
+  atomicRadius: 135
+  density: 22.56
+  meltingPoint: 2719
+  boilingPoint: 4403
+  electronegativity: 2.2
+  valenceElectrons: 9
+  ionizationEnergy: 880
+  electronAffinity: 151
+  isRadioactive: 0
+  commonUses: Spark plugs, crucibles, electronics
+  discoveredBy: Smithson Tennant
+  discoveryYear: 1803
+  isEssentialToLife: 0
+  toxicityInfo: Low
+  displayColor: {r: 0.09019608, g: 0.32941177, b: 0.5294118, a: 1}
+  displayPrefab: {fileID: 0}
+  cachedSymbol: Ir

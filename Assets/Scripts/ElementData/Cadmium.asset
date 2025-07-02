@@ -12,29 +12,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Cadmium
   m_EditorClassIdentifier: 
-  elementName: 
-  symbol: 
-  atomicNumber: 0
-  group: 0
-  period: 0
-  category: 0
-  electronConfiguration: 
-  phase: 
-  atomicMass: 0
-  atomicRadius: 0
-  density: 0
-  meltingPoint: 0
-  boilingPoint: 0
-  electronegativity: 0
-  valenceElectrons: 0
-  ionizationEnergy: 0
+  elementName: Cadmium
+  symbol: Cd
+  atomicNumber: 48
+  group: 12
+  period: 5
+  category: 7
+  electronConfiguration: '[Kr] 4d10 5s2'
+  phase: Solid
+  atomicMass: 112.414
+  atomicRadius: 151
+  density: 8.65
+  meltingPoint: 594.22
+  boilingPoint: 1040
+  electronegativity: 1.69
+  valenceElectrons: 2
+  ionizationEnergy: 867.8
   electronAffinity: 0
   isRadioactive: 0
-  commonUses: 
-  discoveredBy: 
-  discoveryYear: 0
+  commonUses: Batteries, pigments, coatings
+  discoveredBy: Friedrich Stromeyer
+  discoveryYear: 1817
   isEssentialToLife: 0
-  toxicityInfo: 
-  displayColor: {r: 1, g: 1, b: 1, a: 1}
+  toxicityInfo: Highly toxic
+  displayColor: {r: 1, g: 0.8509804, b: 0.56078434, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: 
+  cachedSymbol: Cd

@@ -10,31 +10,31 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
-  m_Name: Neodymium
+  m_Name: Promethium
   m_EditorClassIdentifier: 
-  elementName: Neodymium
-  symbol: Nd
-  atomicNumber: 60
+  elementName: Promethium
+  symbol: Pm
+  atomicNumber: 61
   group: 0
   period: 6
   category: 9
-  electronConfiguration: '[Xe] 4f4 6s2'
+  electronConfiguration: '[Xe] 4f5 6s2'
   phase: Solid
-  atomicMass: 144.242
+  atomicMass: 145
   atomicRadius: 185
-  density: 7.007
-  meltingPoint: 1297
-  boilingPoint: 3347
-  electronegativity: 1.14
+  density: 7.26
+  meltingPoint: 1315
+  boilingPoint: 3273
+  electronegativity: 0
   valenceElectrons: 3
-  ionizationEnergy: 533.1
-  electronAffinity: 50
-  isRadioactive: 0
-  commonUses: Strong magnets, lasers
-  discoveredBy: Carl Auer von Welsbach
-  discoveryYear: 1885
+  ionizationEnergy: 540
+  electronAffinity: 0
+  isRadioactive: 1
+  commonUses: Nuclear batteries, luminous paint
+  discoveredBy: "\tJacob Marinsky et al."
+  discoveryYear: 1945
   isEssentialToLife: 0
-  toxicityInfo: Low
-  displayColor: {r: 0.78039217, g: 1, b: 0.78039217, a: 1}
+  toxicityInfo: Radioactive
+  displayColor: {r: 0.6392157, g: 1, b: 0.78039217, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: Nd
+  cachedSymbol: Pm

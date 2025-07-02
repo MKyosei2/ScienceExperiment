@@ -10,31 +10,31 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
-  m_Name: Neodymium
+  m_Name: Gadolinium
   m_EditorClassIdentifier: 
-  elementName: Neodymium
-  symbol: Nd
-  atomicNumber: 60
+  elementName: Gadolinium
+  symbol: Gd
+  atomicNumber: 64
   group: 0
   period: 6
   category: 9
-  electronConfiguration: '[Xe] 4f4 6s2'
+  electronConfiguration: '[Xe] 4f7 5d1 6s2'
   phase: Solid
-  atomicMass: 144.242
-  atomicRadius: 185
-  density: 7.007
-  meltingPoint: 1297
-  boilingPoint: 3347
-  electronegativity: 1.14
+  atomicMass: 157.25
+  atomicRadius: 180
+  density: 7.9
+  meltingPoint: 1585
+  boilingPoint: 3546
+  electronegativity: 1.2
   valenceElectrons: 3
-  ionizationEnergy: 533.1
+  ionizationEnergy: 593.4
   electronAffinity: 50
   isRadioactive: 0
-  commonUses: Strong magnets, lasers
-  discoveredBy: Carl Auer von Welsbach
-  discoveryYear: 1885
+  commonUses: MRI contrast agents, magnets
+  discoveredBy: "\tJean Charles Galissard de Marignac"
+  discoveryYear: 1880
   isEssentialToLife: 0
-  toxicityInfo: Low
-  displayColor: {r: 0.78039217, g: 1, b: 0.78039217, a: 1}
+  toxicityInfo: Moderate (depends on form)
+  displayColor: {r: 0.27058825, g: 1, b: 0.78039217, a: 0.9843137}
   displayPrefab: {fileID: 0}
-  cachedSymbol: Nd
+  cachedSymbol: Gd

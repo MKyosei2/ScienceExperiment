@@ -10,31 +10,31 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
-  m_Name: Cerium
+  m_Name: Ytterbium
   m_EditorClassIdentifier: 
-  elementName: Cerium
-  symbol: Ce
-  atomicNumber: 58
+  elementName: Ytterbium
+  symbol: Yb
+  atomicNumber: 70
   group: 0
   period: 6
   category: 9
-  electronConfiguration: '[Xe] 4f1 5d1 6s2'
+  electronConfiguration: '[Xe] 4f14 6s2'
   phase: Solid
-  atomicMass: 140.116
-  atomicRadius: 185
-  density: 6.77
-  meltingPoint: 1068
-  boilingPoint: 3716
-  electronegativity: 1.12
-  valenceElectrons: 4
-  ionizationEnergy: 534.4
+  atomicMass: 173.045
+  atomicRadius: 175
+  density: 6.9
+  meltingPoint: 1097
+  boilingPoint: 1469
+  electronegativity: 1.1
+  valenceElectrons: 2
+  ionizationEnergy: 603.4
   electronAffinity: 50
   isRadioactive: 0
-  commonUses: Catalysts, glass polishing
-  discoveredBy: Martin Heinrich Klaproth (independently)
-  discoveryYear: 1803
+  commonUses: Atomic clocks, stainless steel, lasers
+  discoveredBy: Jean Charles Galissard de Marignac
+  discoveryYear: 1878
   isEssentialToLife: 0
-  toxicityInfo: Low to moderate
-  displayColor: {r: 1, g: 1, b: 0.78039217, a: 1}
+  toxicityInfo: Low
+  displayColor: {r: 0, g: 1, b: 0.2784314, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: Ce
+  cachedSymbol: Yb

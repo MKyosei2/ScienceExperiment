@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
+  m_Name: Plutonium
+  m_EditorClassIdentifier: 
+  elementName: Plutonium
+  symbol: Pu
+  atomicNumber: 94
+  group: 0
+  period: 7
+  category: 10
+  electronConfiguration: '[Rn] 5f6 7s2'
+  phase: Solid
+  atomicMass: 244
+  atomicRadius: 175
+  density: 19.84
+  meltingPoint: 639.5
+  boilingPoint: 3232
+  electronegativity: 1.28
+  valenceElectrons: 6
+  ionizationEnergy: 584.7
+  electronAffinity: 48.3
+  isRadioactive: 1
+  commonUses: Nuclear weapons, RTGs
+  discoveredBy: "\tGlenn T. Seaborg et al."
+  discoveryYear: 1940
+  isEssentialToLife: 0
+  toxicityInfo: Extremely toxic and radioactive
+  displayColor: {r: 0, g: 0.4, b: 1, a: 1}
+  displayPrefab: {fileID: 0}
+  cachedSymbol: Pu

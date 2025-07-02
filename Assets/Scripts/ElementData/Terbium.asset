@@ -10,31 +10,31 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
-  m_Name: Cerium
+  m_Name: Terbium
   m_EditorClassIdentifier: 
-  elementName: Cerium
-  symbol: Ce
-  atomicNumber: 58
+  elementName: Terbium
+  symbol: Tb
+  atomicNumber: 65
   group: 0
   period: 6
   category: 9
-  electronConfiguration: '[Xe] 4f1 5d1 6s2'
+  electronConfiguration: '[Xe] 4f9 6s2'
   phase: Solid
-  atomicMass: 140.116
-  atomicRadius: 185
-  density: 6.77
-  meltingPoint: 1068
-  boilingPoint: 3716
-  electronegativity: 1.12
-  valenceElectrons: 4
-  ionizationEnergy: 534.4
+  atomicMass: 158.92535
+  atomicRadius: 175
+  density: 8.23
+  meltingPoint: 1629
+  boilingPoint: 3503
+  electronegativity: 1.1
+  valenceElectrons: 3
+  ionizationEnergy: 565.8
   electronAffinity: 50
   isRadioactive: 0
-  commonUses: Catalysts, glass polishing
-  discoveredBy: Martin Heinrich Klaproth (independently)
-  discoveryYear: 1803
+  commonUses: Green phosphors in CRTs and lamps
+  discoveredBy: Carl Gustaf Mosander
+  discoveryYear: 1843
   isEssentialToLife: 0
-  toxicityInfo: Low to moderate
-  displayColor: {r: 1, g: 1, b: 0.78039217, a: 1}
+  toxicityInfo: Low
+  displayColor: {r: 0.1882353, g: 1, b: 0.78039217, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: Ce
+  cachedSymbol: Tb

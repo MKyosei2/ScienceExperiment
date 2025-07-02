@@ -10,31 +10,31 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
-  m_Name: Neodymium
+  m_Name: Lutetium
   m_EditorClassIdentifier: 
-  elementName: Neodymium
-  symbol: Nd
-  atomicNumber: 60
-  group: 0
+  elementName: Lutetium
+  symbol: Lu
+  atomicNumber: 71
+  group: 3
   period: 6
   category: 9
-  electronConfiguration: '[Xe] 4f4 6s2'
+  electronConfiguration: "\t[Xe] 4f14 5d1 6s2"
   phase: Solid
-  atomicMass: 144.242
-  atomicRadius: 185
-  density: 7.007
-  meltingPoint: 1297
-  boilingPoint: 3347
-  electronegativity: 1.14
+  atomicMass: 174.9668
+  atomicRadius: 175
+  density: 9.84
+  meltingPoint: 1925
+  boilingPoint: 3675
+  electronegativity: 1.27
   valenceElectrons: 3
-  ionizationEnergy: 533.1
+  ionizationEnergy: 523.5
   electronAffinity: 50
   isRadioactive: 0
-  commonUses: Strong magnets, lasers
-  discoveredBy: Carl Auer von Welsbach
-  discoveryYear: 1885
+  commonUses: PET scans, catalysts
+  discoveredBy: Georges Urbain
+  discoveryYear: 1907
   isEssentialToLife: 0
   toxicityInfo: Low
-  displayColor: {r: 0.78039217, g: 1, b: 0.78039217, a: 1}
+  displayColor: {r: 0, g: 1, b: 0.16862746, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: Nd
+  cachedSymbol: Lu

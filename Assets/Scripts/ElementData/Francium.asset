@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
+  m_Name: Francium
+  m_EditorClassIdentifier: 
+  elementName: Francium
+  symbol: Fr
+  atomicNumber: 87
+  group: 1
+  period: 7
+  category: 5
+  electronConfiguration: '[Rn] 7s1'
+  phase: Solid (estimated)
+  atomicMass: 223
+  atomicRadius: 260
+  density: 1.87
+  meltingPoint: 27
+  boilingPoint: 677
+  electronegativity: 0.7
+  valenceElectrons: 1
+  ionizationEnergy: 375.7
+  electronAffinity: 46.9
+  isRadioactive: 1
+  commonUses: Scientific research
+  discoveredBy: Marguerite Perey
+  discoveryYear: 1939
+  isEssentialToLife: 0
+  toxicityInfo: Extremely radioactive
+  displayColor: {r: 0.25882354, g: 0, b: 0.4, a: 1}
+  displayPrefab: {fileID: 0}
+  cachedSymbol: Fr

@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
+  m_Name: Polonium
+  m_EditorClassIdentifier: 
+  elementName: Polonium
+  symbol: Po
+  atomicNumber: 84
+  group: 16
+  period: 6
+  category: 2
+  electronConfiguration: '[Xe] 4f14 5d10 6s2 6p4'
+  phase: Solid
+  atomicMass: 209
+  atomicRadius: 135
+  density: 9.2
+  meltingPoint: 254
+  boilingPoint: 962
+  electronegativity: 2
+  valenceElectrons: 6
+  ionizationEnergy: 812.1
+  electronAffinity: 183.3
+  isRadioactive: 1
+  commonUses: Antistatic devices, heat sources in space
+  discoveredBy: Marie and Pierre Curie
+  discoveryYear: 1898
+  isEssentialToLife: 0
+  toxicityInfo: Extremely radioactive and toxic
+  displayColor: {r: 0.67058825, g: 0.36078432, b: 0, a: 1}
+  displayPrefab: {fileID: 0}
+  cachedSymbol: Po

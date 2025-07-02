@@ -12,29 +12,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Tellurium
   m_EditorClassIdentifier: 
-  elementName: 
-  symbol: 
-  atomicNumber: 0
-  group: 0
-  period: 0
-  category: 0
-  electronConfiguration: 
-  phase: 
-  atomicMass: 0
-  atomicRadius: 0
-  density: 0
-  meltingPoint: 0
-  boilingPoint: 0
-  electronegativity: 0
-  valenceElectrons: 0
-  ionizationEnergy: 0
-  electronAffinity: 0
+  elementName: Tellurium
+  symbol: Te
+  atomicNumber: 52
+  group: 16
+  period: 5
+  category: 2
+  electronConfiguration: '[Kr] 4d10 5s2 5p4'
+  phase: Solid
+  atomicMass: 127.6
+  atomicRadius: 123
+  density: 6.24
+  meltingPoint: 722.66
+  boilingPoint: 1261
+  electronegativity: 2.1
+  valenceElectrons: 6
+  ionizationEnergy: 869.3
+  electronAffinity: 190.2
   isRadioactive: 0
-  commonUses: 
-  discoveredBy: 
-  discoveryYear: 0
-  isEssentialToLife: 0
-  toxicityInfo: 
-  displayColor: {r: 1, g: 1, b: 1, a: 1}
+  commonUses: Solar panels, thermoelectrics
+  discoveredBy: "Franz-Joseph M\xFCller von Reichenstein"
+  discoveryYear: 1782
+  isEssentialToLife: 1
+  toxicityInfo: Toxic in large quantities
+  displayColor: {r: 0.83137256, g: 0.47843137, b: 0, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: 
+  cachedSymbol: Te
