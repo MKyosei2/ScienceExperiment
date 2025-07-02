@@ -1,9 +1,0 @@
-fastapi
-uvicorn
-discord.py
-aiohttp
-python-dotenv
-openai
-langchain
-sentence-transformers
-faiss-cpu
