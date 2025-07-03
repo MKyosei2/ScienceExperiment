@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
+  m_Name: Fermium
+  m_EditorClassIdentifier: 
+  elementName: Fermium
+  symbol: Fm
+  atomicNumber: 100
+  group: 0
+  period: 7
+  category: 10
+  electronConfiguration: '[Rn] 5f12 7s2'
+  phase: Solid
+  atomicMass: 257
+  atomicRadius: 180
+  density: 0
+  meltingPoint: 1527
+  boilingPoint: 0
+  electronegativity: 1.3
+  valenceElectrons: 3
+  ionizationEnergy: 627
+  electronAffinity: 0
+  isRadioactive: 1
+  commonUses: Scientific research
+  discoveredBy: "\tAlbert Ghiorso et al."
+  discoveryYear: 1952
+  isEssentialToLife: 0
+  toxicityInfo: Extremely radioactive
+  displayColor: {r: 0, g: 0, b: 1, a: 1}
+  displayPrefab: {fileID: 0}
+  cachedSymbol: Fm
