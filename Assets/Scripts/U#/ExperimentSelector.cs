@@ -16,6 +16,7 @@ public class ExperimentSelector : UdonSharpBehaviour
     private int selectedToolIndex = -1;
     private int selectedConditionIndex = -1;
 
+    // UI用（ボタンから）
     public void SelectElement(int index)
     {
         if (index >= 0 && index < elementSymbols.Length)
@@ -43,6 +44,49 @@ public class ExperimentSelector : UdonSharpBehaviour
             selectedConditionIndex = index;
             if (selectedConditionText != null)
                 selectedConditionText.text = "環境: " + conditionIDs[index];
+        }
+    }
+
+    // 追加：3Dオブジェクトからの string 選択対応
+    public void SelectElementBySymbol(string symbol)
+    {
+        for (int i = 0; i < elementSymbols.Length; i++)
+        {
+            if (elementSymbols[i] == symbol)
+            {
+                selectedElementIndex = i;
+                if (selectedElementText != null)
+                    selectedElementText.text = "元素: " + symbol;
+                break;
+            }
+        }
+    }
+
+    public void SelectToolByID(string id)
+    {
+        for (int i = 0; i < toolIDs.Length; i++)
+        {
+            if (toolIDs[i] == id)
+            {
+                selectedToolIndex = i;
+                if (selectedToolText != null)
+                    selectedToolText.text = "器具: " + id;
+                break;
+            }
+        }
+    }
+
+    public void SelectConditionByID(string id)
+    {
+        for (int i = 0; i < conditionIDs.Length; i++)
+        {
+            if (conditionIDs[i] == id)
+            {
+                selectedConditionIndex = i;
+                if (selectedConditionText != null)
+                    selectedConditionText.text = "環境: " + id;
+                break;
+            }
         }
     }
 
