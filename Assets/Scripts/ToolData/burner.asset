@@ -10,26 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 040e4bd99d6a96148859ba51fd17077f, type: 3}
-  m_Name: ToolData
+  m_Name: burner
   m_EditorClassIdentifier: 
-  toolName: 
-  toolID: 
-  description: 
+  toolID: burner
+  toolName: "\u30AC\u30B9\u30D0\u30FC\u30CA\u30FC"
   icon: {fileID: 0}
-  functionType: 7
-  isUserOperated: 1
-  requiresPower: 0
-  supportsAutomation: 0
-  isReusable: 1
-  maxUses: 0
-  isHazardous: 0
-  safetyWarning: 
-  maxVolumeML: 0
-  isGraduated: 0
-  supportedReactions: []
-  compatibleToolIDs: []
-  behaviorScriptName: 
-  toolColor: {r: 1, g: 1, b: 1, a: 1}
   toolPrefab: {fileID: 0}
-  usageHint: 
-  usageCategory: 

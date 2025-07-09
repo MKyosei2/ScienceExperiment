@@ -12,29 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Manganese
   m_EditorClassIdentifier: 
+  elementID: Mn
   elementName: Manganese
-  symbol: Mn
   atomicNumber: 25
-  group: 7
-  period: 4
-  category: 7
-  electronConfiguration: '[Ar] 3d5 4s2'
-  phase: Solid
-  atomicMass: 54.93805
-  atomicRadius: 161
-  density: 7.47
-  meltingPoint: 1519
-  boilingPoint: 2334
-  electronegativity: 1.55
-  valenceElectrons: 7
-  ionizationEnergy: 717.3
-  electronAffinity: 0
-  isRadioactive: 0
-  commonUses: Steel alloys, dry cells
-  discoveredBy: Johann Gahn
-  discoveryYear: 1774
-  isEssentialToLife: 1
-  toxicityInfo: Neurotoxic in excess
   displayColor: {r: 0.6117647, g: 0.47843137, b: 0.78039217, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: Mn

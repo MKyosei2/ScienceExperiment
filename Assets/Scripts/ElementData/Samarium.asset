@@ -12,29 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Samarium
   m_EditorClassIdentifier: 
+  elementID: Sm
   elementName: Samarium
-  symbol: Sm
   atomicNumber: 62
-  group: 0
-  period: 6
-  category: 9
-  electronConfiguration: '[Xe] 4f6 6s2'
-  phase: Solid
-  atomicMass: 150.36
-  atomicRadius: 185
-  density: 7.52
-  meltingPoint: 1345
-  boilingPoint: 2173
-  electronegativity: 1.17
-  valenceElectrons: 3
-  ionizationEnergy: 544.5
-  electronAffinity: 50
-  isRadioactive: 0
-  commonUses: Magnets, cancer treatment
-  discoveredBy: Lecoq de Boisbaudran
-  discoveryYear: 1879
-  isEssentialToLife: 0
-  toxicityInfo: Low
   displayColor: {r: 0.56078434, g: 1, b: 0.78039217, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: Sm

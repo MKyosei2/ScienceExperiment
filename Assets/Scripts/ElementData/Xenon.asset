@@ -12,29 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Xenon
   m_EditorClassIdentifier: 
+  elementID: Xe
   elementName: Xenon
-  symbol: Xe
   atomicNumber: 54
-  group: 18
-  period: 5
-  category: 3
-  electronConfiguration: "\t[Kr] 4d10 5s2 5p6"
-  phase: Gas
-  atomicMass: 131.293
-  atomicRadius: 108
-  density: 0.005887
-  meltingPoint: 161.36
-  boilingPoint: 165.03
-  electronegativity: 2.6
-  valenceElectrons: 8
-  ionizationEnergy: 1170.4
-  electronAffinity: -77
-  isRadioactive: 0
-  commonUses: Lighting, anesthesia, ion propulsion
-  discoveredBy: William Ramsay & Morris Travers
-  discoveryYear: 1898
-  isEssentialToLife: 0
-  toxicityInfo: Inert
   displayColor: {r: 0.25882354, g: 0.61960787, b: 0.6901961, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: Xe

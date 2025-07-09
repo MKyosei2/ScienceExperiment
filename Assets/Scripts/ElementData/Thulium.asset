@@ -12,29 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Thulium
   m_EditorClassIdentifier: 
+  elementID: Tm
   elementName: Thulium
-  symbol: Tm
   atomicNumber: 69
-  group: 0
-  period: 6
-  category: 9
-  electronConfiguration: '[Xe] 4f13 6s2'
-  phase: Solid
-  atomicMass: 168.93422
-  atomicRadius: 175
-  density: 9.32
-  meltingPoint: 1818
-  boilingPoint: 2223
-  electronegativity: 1.25
-  valenceElectrons: 3
-  ionizationEnergy: 596.7
-  electronAffinity: 50
-  isRadioactive: 0
-  commonUses: X-ray machines, portable lasers
-  discoveredBy: Per Teodor Cleve
-  discoveryYear: 1879
-  isEssentialToLife: 0
-  toxicityInfo: Low
   displayColor: {r: 0, g: 1, b: 0.3882353, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: Tm

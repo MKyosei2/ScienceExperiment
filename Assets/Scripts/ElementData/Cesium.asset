@@ -12,29 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Cesium
   m_EditorClassIdentifier: 
+  elementID: Cs
   elementName: Cesium
-  symbol: Cs
   atomicNumber: 55
-  group: 1
-  period: 6
-  category: 5
-  electronConfiguration: '[Xe] 6s1'
-  phase: Solid
-  atomicMass: 132.90546
-  atomicRadius: 298
-  density: 1.93
-  meltingPoint: 301.59
-  boilingPoint: 944
-  electronegativity: 0.79
-  valenceElectrons: 1
-  ionizationEnergy: 375.7
-  electronAffinity: 45.5
-  isRadioactive: 0
-  commonUses: Atomic clocks, oil drilling
-  discoveredBy: "\tRobert Bunsen & Gustav Kirchhoff"
-  discoveryYear: 1860
-  isEssentialToLife: 0
-  toxicityInfo: Highly reactive
   displayColor: {r: 0.34117648, g: 0.09019608, b: 0.56078434, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: Cs

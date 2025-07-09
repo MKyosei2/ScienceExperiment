@@ -12,29 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Magnesium
   m_EditorClassIdentifier: 
+  elementID: Mg
   elementName: Magnesium
-  symbol: Mg
   atomicNumber: 12
-  group: 2
-  period: 3
-  category: 6
-  electronConfiguration: '[Ne] 3s2'
-  phase: Solid
-  atomicMass: 24.305
-  atomicRadius: 145
-  density: 1.738
-  meltingPoint: 923
-  boilingPoint: 1363
-  electronegativity: 1.31
-  valenceElectrons: 2
-  ionizationEnergy: 737.7
-  electronAffinity: 0
-  isRadioactive: 0
-  commonUses: Alloys, fire starters, nutrition
-  discoveredBy: Joseph Black
-  discoveryYear: 1755
-  isEssentialToLife: 1
-  toxicityInfo: Low, flammable powder
   displayColor: {r: 0.5411765, g: 1, b: 0, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: Mg

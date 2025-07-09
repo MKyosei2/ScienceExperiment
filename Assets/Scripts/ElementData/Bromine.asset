@@ -12,29 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Bromine
   m_EditorClassIdentifier: 
+  elementID: Br
   elementName: Bromine
-  symbol: Br
   atomicNumber: 35
-  group: 17
-  period: 4
-  category: 4
-  electronConfiguration: '[Ar] 3d10 4s2 4p5'
-  phase: Liquid
-  atomicMass: 79.904
-  atomicRadius: 94
-  density: 3.1028
-  meltingPoint: 265.8
-  boilingPoint: 331.8
-  electronegativity: 2.96
-  valenceElectrons: 7
-  ionizationEnergy: 1139.9
-  electronAffinity: 324.5
-  isRadioactive: 0
-  commonUses: Flame retardants, photography
-  discoveredBy: "Antoine J\xE9r\xF4me Balard"
-  discoveryYear: 1826
-  isEssentialToLife: 0
-  toxicityInfo: Corrosive, toxic fumes
   displayColor: {r: 0.6509804, g: 0.16078432, b: 0.16078432, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: Br

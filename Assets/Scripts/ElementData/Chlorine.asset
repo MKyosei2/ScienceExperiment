@@ -12,29 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Chlorine
   m_EditorClassIdentifier: 
+  elementID: Cl
   elementName: Chlorine
-  symbol: Cl
   atomicNumber: 17
-  group: 17
-  period: 3
-  category: 4
-  electronConfiguration: '[Ne] 3s2 3p5'
-  phase: Gas
-  atomicMass: 35.45
-  atomicRadius: 79
-  density: 0.003214
-  meltingPoint: 171.6
-  boilingPoint: 239.11
-  electronegativity: 3.16
-  valenceElectrons: 7
-  ionizationEnergy: 1251.2
-  electronAffinity: 348.7
-  isRadioactive: 0
-  commonUses: Disinfection, plastics (PVC)
-  discoveredBy: Carl Wilhelm Scheele
-  discoveryYear: 1774
-  isEssentialToLife: 1
-  toxicityInfo: Highly toxic gas
   displayColor: {r: 0.12156863, g: 0.9411765, b: 0.12156863, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: Cl

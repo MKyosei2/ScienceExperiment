@@ -12,29 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Iodine
   m_EditorClassIdentifier: 
+  elementID: I
   elementName: Iodine
-  symbol: I
   atomicNumber: 53
-  group: 17
-  period: 5
-  category: 4
-  electronConfiguration: '[Kr] 4d10 5s2 5p5'
-  phase: Solid
-  atomicMass: 126.90447
-  atomicRadius: 115
-  density: 4.933
-  meltingPoint: 386.85
-  boilingPoint: 457.4
-  electronegativity: 2.66
-  valenceElectrons: 7
-  ionizationEnergy: 1008.4
-  electronAffinity: 295.2
-  isRadioactive: 0
-  commonUses: Antiseptics, nutrition
-  discoveredBy: Bernard Courtois
-  discoveryYear: 1811
-  isEssentialToLife: 1
-  toxicityInfo: Toxic in high doses
   displayColor: {r: 0.5803922, g: 0, b: 0.5803922, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: I

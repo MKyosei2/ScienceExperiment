@@ -12,29 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Dysprosium
   m_EditorClassIdentifier: 
+  elementID: Dy
   elementName: Dysprosium
-  symbol: Dy
   atomicNumber: 66
-  group: 0
-  period: 6
-  category: 9
-  electronConfiguration: '[Xe] 4f10 6s2'
-  phase: Solid
-  atomicMass: 162.5
-  atomicRadius: 175
-  density: 8.55
-  meltingPoint: 1680
-  boilingPoint: 2840
-  electronegativity: 1.22
-  valenceElectrons: 3
-  ionizationEnergy: 573
-  electronAffinity: 50
-  isRadioactive: 0
-  commonUses: "\tMagnets, lasers, control rods"
-  discoveredBy: "Paul \xC9mile Lecoq de Boisbaudran"
-  discoveryYear: 1886
-  isEssentialToLife: 0
-  toxicityInfo: Low
   displayColor: {r: 0.10980392, g: 1, b: 0.78039217, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: Dy

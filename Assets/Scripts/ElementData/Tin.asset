@@ -12,29 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Tin
   m_EditorClassIdentifier: 
+  elementID: Sn
   elementName: Tin
-  symbol: Sn
   atomicNumber: 60
-  group: 14
-  period: 5
-  category: 8
-  electronConfiguration: '[Kr] 4d10 5s2 5p2'
-  phase: Solid
-  atomicMass: 118.71
-  atomicRadius: 145
-  density: 7.31
-  meltingPoint: 505.08
-  boilingPoint: 2875
-  electronegativity: 1.96
-  valenceElectrons: 4
-  ionizationEnergy: 708.6
-  electronAffinity: 107.3
-  isRadioactive: 0
-  commonUses: "\tSolder, plating, alloys (bronze)"
-  discoveredBy: Known since antiquity
-  discoveryYear: 0
-  isEssentialToLife: 1
-  toxicityInfo: Generally low toxicity
   displayColor: {r: 0.61960787, g: 0.61960787, b: 0.61960787, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: Sn

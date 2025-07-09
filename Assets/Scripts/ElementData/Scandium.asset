@@ -12,29 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Scandium
   m_EditorClassIdentifier: 
+  elementID: Sc
   elementName: Scandium
-  symbol: Sc
   atomicNumber: 21
-  group: 3
-  period: 4
-  category: 7
-  electronConfiguration: '[Ar] 3d1 4s2'
-  phase: Solid
-  atomicMass: 44.95591
-  atomicRadius: 184
-  density: 2.985
-  meltingPoint: 1814
-  boilingPoint: 3109
-  electronegativity: 1.36
-  valenceElectrons: 3
-  ionizationEnergy: 633.1
-  electronAffinity: 18.1
-  isRadioactive: 0
-  commonUses: Alloys, aerospace components
-  discoveredBy: Lars Fredrik Nilson
-  discoveryYear: 1879
-  isEssentialToLife: 0
-  toxicityInfo: Low toxicity
   displayColor: {r: 0.9019608, g: 0.9019608, b: 0.9019608, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: Sc

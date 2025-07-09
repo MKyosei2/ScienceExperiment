@@ -12,29 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Calcium
   m_EditorClassIdentifier: 
+  elementID: Ca
   elementName: Calcium
-  symbol: Ca
   atomicNumber: 20
-  group: 2
-  period: 4
-  category: 6
-  electronConfiguration: '[Ar] 4s2'
-  phase: Solid
-  atomicMass: 40.078
-  atomicRadius: 194
-  density: 1.55
-  meltingPoint: 1115
-  boilingPoint: 1757
-  electronegativity: 1
-  valenceElectrons: 2
-  ionizationEnergy: 589.8
-  electronAffinity: 2.4
-  isRadioactive: 0
-  commonUses: Bones, cement, antacids
-  discoveredBy: Humphry Davy
-  discoveryYear: 1808
-  isEssentialToLife: 1
-  toxicityInfo: Low toxicity, essential mineral
   displayColor: {r: 0.23921569, g: 1, b: 0, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: Ca

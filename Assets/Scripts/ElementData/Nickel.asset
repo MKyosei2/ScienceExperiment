@@ -12,29 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Nickel
   m_EditorClassIdentifier: 
+  elementID: Ni
   elementName: Nickel
-  symbol: Ni
   atomicNumber: 28
-  group: 10
-  period: 4
-  category: 7
-  electronConfiguration: '[Ar] 3d8 4s2'
-  phase: Solid
-  atomicMass: 58.6934
-  atomicRadius: 149
-  density: 8.908
-  meltingPoint: 1728
-  boilingPoint: 3186
-  electronegativity: 1.91
-  valenceElectrons: 2
-  ionizationEnergy: 737.1
-  electronAffinity: 112
-  isRadioactive: 0
-  commonUses: Coins, stainless steel, batteries
-  discoveredBy: Axel Fredrik Cronstedt
-  discoveryYear: 1751
-  isEssentialToLife: 1
-  toxicityInfo: Skin allergy in some people
   displayColor: {r: 0.3137255, g: 0.8156863, b: 0.3137255, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: Ni

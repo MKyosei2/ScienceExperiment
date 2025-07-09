@@ -12,29 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Indium
   m_EditorClassIdentifier: 
+  elementID: In
   elementName: Indium
-  symbol: In
   atomicNumber: 49
-  group: 13
-  period: 5
-  category: 8
-  electronConfiguration: '[Kr] 4d10 5s2 5p1'
-  phase: Solid
-  atomicMass: 114.818
-  atomicRadius: 156
-  density: 7.31
-  meltingPoint: 429.75
-  boilingPoint: 2345
-  electronegativity: 1.78
-  valenceElectrons: 3
-  ionizationEnergy: 558.3
-  electronAffinity: 28.9
-  isRadioactive: 0
-  commonUses: LCDs, semiconductors, solder
-  discoveredBy: Ferdinand Reich & Hieronymous Richter
-  discoveryYear: 1863
-  isEssentialToLife: 0
-  toxicityInfo: Low to moderate
   displayColor: {r: 0.6509804, g: 0.45882353, b: 0.4509804, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: In

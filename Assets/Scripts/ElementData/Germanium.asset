@@ -12,29 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Germanium
   m_EditorClassIdentifier: 
+  elementID: Ge
   elementName: Germanium
-  symbol: Ge
   atomicNumber: 32
-  group: 14
-  period: 4
-  category: 2
-  electronConfiguration: '[Ar] 3d10 4s2 4p2'
-  phase: Solid
-  atomicMass: 72.63
-  atomicRadius: 125
-  density: 5.323
-  meltingPoint: 1211.4
-  boilingPoint: 3106
-  electronegativity: 2.01
-  valenceElectrons: 4
-  ionizationEnergy: 762
-  electronAffinity: 119
-  isRadioactive: 0
-  commonUses: Fiber optics, transistors
-  discoveredBy: Clemens Winkler
-  discoveryYear: 1886
-  isEssentialToLife: 0
-  toxicityInfo: Low toxicity
   displayColor: {r: 0.4, g: 0.56078434, b: 0.56078434, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: Ge

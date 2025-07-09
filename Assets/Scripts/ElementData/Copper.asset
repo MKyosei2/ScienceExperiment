@@ -12,29 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Copper
   m_EditorClassIdentifier: 
+  elementID: Cu
   elementName: Copper
-  symbol: Cu
   atomicNumber: 29
-  group: 11
-  period: 4
-  category: 7
-  electronConfiguration: '[Ar] 3d10 4s1'
-  phase: Solid
-  atomicMass: 63.546
-  atomicRadius: 145
-  density: 8.96
-  meltingPoint: 1357.77
-  boilingPoint: 2835
-  electronegativity: 1.9
-  valenceElectrons: 1
-  ionizationEnergy: 745.5
-  electronAffinity: 118.4
-  isRadioactive: 0
-  commonUses: Wires, coins, plumbing, electronics
-  discoveredBy: "\tKnown since ancient times"
-  discoveryYear: 0
-  isEssentialToLife: 1
-  toxicityInfo: Toxic in excess
   displayColor: {r: 0.78431374, g: 0.5019608, b: 0.2, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: Cu

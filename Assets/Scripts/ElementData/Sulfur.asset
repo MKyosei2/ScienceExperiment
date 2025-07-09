@@ -12,29 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Sulfur
   m_EditorClassIdentifier: 
+  elementID: S
   elementName: Sulfur
-  symbol: S
   atomicNumber: 16
-  group: 16
-  period: 3
-  category: 0
-  electronConfiguration: '[Ne] 3s2 3p4'
-  phase: Solid
-  atomicMass: 32.06
-  atomicRadius: 88
-  density: 2.07
-  meltingPoint: 388.36
-  boilingPoint: 717.87
-  electronegativity: 2.58
-  valenceElectrons: 6
-  ionizationEnergy: 999.6
-  electronAffinity: 200.4
-  isRadioactive: 0
-  commonUses: Rubber, gunpowder, medicine
-  discoveredBy: Known since ancient times
-  discoveryYear: 0
-  isEssentialToLife: 1
-  toxicityInfo: Low toxicity
   displayColor: {r: 1, g: 1, b: 0.1882353, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: S

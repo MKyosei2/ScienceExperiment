@@ -12,29 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Lutetium
   m_EditorClassIdentifier: 
+  elementID: Lu
   elementName: Lutetium
-  symbol: Lu
   atomicNumber: 71
-  group: 3
-  period: 6
-  category: 9
-  electronConfiguration: "\t[Xe] 4f14 5d1 6s2"
-  phase: Solid
-  atomicMass: 174.9668
-  atomicRadius: 175
-  density: 9.84
-  meltingPoint: 1925
-  boilingPoint: 3675
-  electronegativity: 1.27
-  valenceElectrons: 3
-  ionizationEnergy: 523.5
-  electronAffinity: 50
-  isRadioactive: 0
-  commonUses: PET scans, catalysts
-  discoveredBy: Georges Urbain
-  discoveryYear: 1907
-  isEssentialToLife: 0
-  toxicityInfo: Low
   displayColor: {r: 0, g: 1, b: 0.16862746, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: Lu

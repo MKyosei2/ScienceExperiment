@@ -12,29 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Aluminium
   m_EditorClassIdentifier: 
+  elementID: Al
   elementName: Aluminium
-  symbol: Al
   atomicNumber: 13
-  group: 13
-  period: 3
-  category: 8
-  electronConfiguration: '[Ne] 3s2 3p1'
-  phase: Solid
-  atomicMass: 26.981539
-  atomicRadius: 118
-  density: 2.7
-  meltingPoint: 933.47
-  boilingPoint: 2792
-  electronegativity: 1.61
-  valenceElectrons: 3
-  ionizationEnergy: 577.5
-  electronAffinity: 42.5
-  isRadioactive: 0
-  commonUses: Foil, cans, aircraft
-  discoveredBy: "Hans Christian \xD8rsted"
-  discoveryYear: 1825
-  isEssentialToLife: 0
-  toxicityInfo: Non-toxic, accumulates in body
   displayColor: {r: 0.7490196, g: 0.6509804, b: 0.6509804, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: Al

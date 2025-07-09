@@ -12,29 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Praseodymium
   m_EditorClassIdentifier: 
+  elementID: Pr
   elementName: Praseodymium
-  symbol: Pr
   atomicNumber: 59
-  group: 0
-  period: 6
-  category: 9
-  electronConfiguration: '[Xe] 4f3 6s2'
-  phase: Solid
-  atomicMass: 140.90765
-  atomicRadius: 185
-  density: 6.773
-  meltingPoint: 1208
-  boilingPoint: 3793
-  electronegativity: 1.13
-  valenceElectrons: 3
-  ionizationEnergy: 527
-  electronAffinity: 50
-  isRadioactive: 0
-  commonUses: Magnets, green coloring in glass
-  discoveredBy: Carl Auer von Welsbach
-  discoveryYear: 1885
-  isEssentialToLife: 0
-  toxicityInfo: Low
   displayColor: {r: 0.8509804, g: 1, b: 0.78039217, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: Pr

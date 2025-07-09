@@ -12,29 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Promethium
   m_EditorClassIdentifier: 
+  elementID: Pm
   elementName: Promethium
-  symbol: Pm
   atomicNumber: 61
-  group: 0
-  period: 6
-  category: 9
-  electronConfiguration: '[Xe] 4f5 6s2'
-  phase: Solid
-  atomicMass: 145
-  atomicRadius: 185
-  density: 7.26
-  meltingPoint: 1315
-  boilingPoint: 3273
-  electronegativity: 0
-  valenceElectrons: 3
-  ionizationEnergy: 540
-  electronAffinity: 0
-  isRadioactive: 1
-  commonUses: Nuclear batteries, luminous paint
-  discoveredBy: "\tJacob Marinsky et al."
-  discoveryYear: 1945
-  isEssentialToLife: 0
-  toxicityInfo: Radioactive
   displayColor: {r: 0.6392157, g: 1, b: 0.78039217, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: Pm

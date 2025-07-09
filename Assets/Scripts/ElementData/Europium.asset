@@ -12,29 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Europium
   m_EditorClassIdentifier: 
+  elementID: Eu
   elementName: Europium
-  symbol: Eu
   atomicNumber: 63
-  group: 0
-  period: 6
-  category: 9
-  electronConfiguration: '[Xe] 4f7 6s2'
-  phase: Solid
-  atomicMass: 151.964
-  atomicRadius: 185
-  density: 5.264
-  meltingPoint: 1099
-  boilingPoint: 1802
-  electronegativity: 1.2
-  valenceElectrons: 2
-  ionizationEnergy: 547.1
-  electronAffinity: 50
-  isRadioactive: 0
-  commonUses: TV phosphors, fluorescent lamps
-  discoveredBy: "Eug\xE8ne-Anatole Demar\xE7ay"
-  discoveryYear: 1896
-  isEssentialToLife: 0
-  toxicityInfo: Moderate
   displayColor: {r: 0.38039216, g: 1, b: 0.78039217, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: Eu

@@ -12,29 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Tantalum
   m_EditorClassIdentifier: 
+  elementID: Ta
   elementName: Tantalum
-  symbol: Ta
   atomicNumber: 73
-  group: 5
-  period: 6
-  category: 7
-  electronConfiguration: '[Xe] 4f14 5d3 6s2'
-  phase: Solid
-  atomicMass: 180.94788
-  atomicRadius: 145
-  density: 16.69
-  meltingPoint: 3290
-  boilingPoint: 5731
-  electronegativity: 1.5
-  valenceElectrons: 5
-  ionizationEnergy: 761
-  electronAffinity: 31
-  isRadioactive: 0
-  commonUses: Electronics (capacitors), surgical tools
-  discoveredBy: Anders Ekeberg
-  discoveryYear: 1802
-  isEssentialToLife: 0
-  toxicityInfo: Low
   displayColor: {r: 0.3019608, g: 0.6509804, b: 1, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: Ta

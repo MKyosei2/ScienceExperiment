@@ -12,29 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Strontium
   m_EditorClassIdentifier: 
-  elementName: 
-  symbol: 
-  atomicNumber: 0
-  group: 0
-  period: 0
-  category: 0
-  electronConfiguration: 
-  phase: 
-  atomicMass: 0
-  atomicRadius: 0
-  density: 0
-  meltingPoint: 0
-  boilingPoint: 0
-  electronegativity: 0
-  valenceElectrons: 0
-  ionizationEnergy: 0
-  electronAffinity: 0
-  isRadioactive: 0
-  commonUses: 
-  discoveredBy: 
-  discoveryYear: 0
-  isEssentialToLife: 0
-  toxicityInfo: 
+  elementID: Sr
+  elementName: Strontium
+  atomicNumber: 38
   displayColor: {r: 1, g: 1, b: 1, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: 

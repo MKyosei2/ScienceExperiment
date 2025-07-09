@@ -12,29 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Erbium
   m_EditorClassIdentifier: 
+  elementID: Er
   elementName: Erbium
-  symbol: Er
   atomicNumber: 68
-  group: 0
-  period: 6
-  category: 9
-  electronConfiguration: '[Xe] 4f12 6s2'
-  phase: Solid
-  atomicMass: 167.259
-  atomicRadius: 175
-  density: 9.07
-  meltingPoint: 1802
-  boilingPoint: 3141
-  electronegativity: 1.24
-  valenceElectrons: 3
-  ionizationEnergy: 589.3
-  electronAffinity: 50
-  isRadioactive: 0
-  commonUses: Optical fibers, lasers, coloring glass
-  discoveredBy: Carl Gustaf Mosander
-  discoveryYear: 1842
-  isEssentialToLife: 0
-  toxicityInfo: Low
   displayColor: {r: 0, g: 1, b: 0.49803922, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: Er

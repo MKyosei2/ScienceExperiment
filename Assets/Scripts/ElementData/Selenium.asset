@@ -12,29 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Selenium
   m_EditorClassIdentifier: 
+  elementID: Se
   elementName: Selenium
-  symbol: Se
   atomicNumber: 34
-  group: 16
-  period: 4
-  category: 0
-  electronConfiguration: '[Ar] 3d10 4s2 4p4'
-  phase: Solid
-  atomicMass: 78.971
-  atomicRadius: 103
-  density: 4.81
-  meltingPoint: 494
-  boilingPoint: 958
-  electronegativity: 2.55
-  valenceElectrons: 6
-  ionizationEnergy: 941
-  electronAffinity: 195
-  isRadioactive: 0
-  commonUses: "\tGlassmaking, electronics, supplements"
-  discoveredBy: "J\xF6ns Jakob Berzelius"
-  discoveryYear: 1817
-  isEssentialToLife: 1
-  toxicityInfo: Toxic in large amounts
   displayColor: {r: 1, g: 0.8, b: 0, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: Se

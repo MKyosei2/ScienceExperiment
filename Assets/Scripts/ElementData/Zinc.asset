@@ -12,29 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Zinc
   m_EditorClassIdentifier: 
+  elementID: Zi
   elementName: Zinc
-  symbol: Zn
   atomicNumber: 30
-  group: 12
-  period: 4
-  category: 7
-  electronConfiguration: '[Ar] 3d10 4s2'
-  phase: Solid
-  atomicMass: 65.38
-  atomicRadius: 142
-  density: 7.14
-  meltingPoint: 692.88
-  boilingPoint: 1180
-  electronegativity: 1.65
-  valenceElectrons: 2
-  ionizationEnergy: 906.4
-  electronAffinity: -58
-  isRadioactive: 0
-  commonUses: Galvanization, brass, nutrition
-  discoveredBy: Andreas Marggraf
-  discoveryYear: 1746
-  isEssentialToLife: 0
-  toxicityInfo: Toxic if inhaled as vapor
   displayColor: {r: 0.49019608, g: 0.5019608, b: 0.6901961, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: Zn

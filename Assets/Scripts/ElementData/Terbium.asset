@@ -12,29 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Terbium
   m_EditorClassIdentifier: 
+  elementID: Tb
   elementName: Terbium
-  symbol: Tb
   atomicNumber: 65
-  group: 0
-  period: 6
-  category: 9
-  electronConfiguration: '[Xe] 4f9 6s2'
-  phase: Solid
-  atomicMass: 158.92535
-  atomicRadius: 175
-  density: 8.23
-  meltingPoint: 1629
-  boilingPoint: 3503
-  electronegativity: 1.1
-  valenceElectrons: 3
-  ionizationEnergy: 565.8
-  electronAffinity: 50
-  isRadioactive: 0
-  commonUses: Green phosphors in CRTs and lamps
-  discoveredBy: Carl Gustaf Mosander
-  discoveryYear: 1843
-  isEssentialToLife: 0
-  toxicityInfo: Low
   displayColor: {r: 0.1882353, g: 1, b: 0.78039217, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: Tb

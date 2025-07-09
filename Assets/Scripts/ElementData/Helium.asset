@@ -12,29 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Helium
   m_EditorClassIdentifier: 
+  elementID: He
   elementName: Helium
-  symbol: He
   atomicNumber: 2
-  group: 18
-  period: 1
-  category: 3
-  electronConfiguration: 1s2
-  phase: Gas
-  atomicMass: 4.002602
-  atomicRadius: 31
-  density: 0.0001786
-  meltingPoint: 0.95
-  boilingPoint: 4.222
-  electronegativity: 0
-  valenceElectrons: 2
-  ionizationEnergy: 2372.3
-  electronAffinity: 0
-  isRadioactive: 0
-  commonUses: Balloons, Cryogenics
-  discoveredBy: Pierre Janssen
-  discoveryYear: 1868
-  isEssentialToLife: 0
-  toxicityInfo: Inert gas
   displayColor: {r: 0.8509804, g: 1, b: 1, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: He

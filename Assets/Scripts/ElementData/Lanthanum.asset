@@ -12,29 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Lanthanum
   m_EditorClassIdentifier: 
+  elementID: La
   elementName: Lanthanum
-  symbol: La
   atomicNumber: 57
-  group: 3
-  period: 6
-  category: 9
-  electronConfiguration: '[Xe] 5d1 6s2'
-  phase: Solid
-  atomicMass: 138.90547
-  atomicRadius: 195
-  density: 6.145
-  meltingPoint: 1193
-  boilingPoint: 3737
-  electronegativity: 1.1
-  valenceElectrons: 3
-  ionizationEnergy: 538.1
-  electronAffinity: 48
-  isRadioactive: 0
-  commonUses: "\tCamera lenses, carbon arc lamps"
-  discoveredBy: Carl Gustaf Mosander
-  discoveryYear: 1839
-  isEssentialToLife: 1
-  toxicityInfo: Low
   displayColor: {r: 0.4392157, g: 0.83137256, b: 1, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: La

@@ -12,29 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Beryllium
   m_EditorClassIdentifier: 
+  elementID: Be
   elementName: Beryllium
-  symbol: Be
   atomicNumber: 4
-  group: 2
-  period: 2
-  category: 6
-  electronConfiguration: '[He] 2s2'
-  phase: Solid
-  atomicMass: 9.012183
-  atomicRadius: 112
-  density: 1.85
-  meltingPoint: 1560
-  boilingPoint: 2742
-  electronegativity: 1.57
-  valenceElectrons: 2
-  ionizationEnergy: 899.5
-  electronAffinity: 0
-  isRadioactive: 0
-  commonUses: Aerospace, X-ray windows
-  discoveredBy: Louis-Nicolas Vauquelin
-  discoveryYear: 1798
-  isEssentialToLife: 0
-  toxicityInfo: Toxic if inhaled
   displayColor: {r: 0.7607843, g: 1, b: 0, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: Be

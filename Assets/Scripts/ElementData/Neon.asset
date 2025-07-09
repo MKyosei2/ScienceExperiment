@@ -12,29 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Neon
   m_EditorClassIdentifier: 
+  elementID: Ne
   elementName: Neon
-  symbol: Ne
   atomicNumber: 10
-  group: 18
-  period: 2
-  category: 3
-  electronConfiguration: '[He] 2s2 2p6'
-  phase: Gas
-  atomicMass: 20.1797
-  atomicRadius: 38
-  density: 0.0008999
-  meltingPoint: 24.56
-  boilingPoint: 27.07
-  electronegativity: 0
-  valenceElectrons: 8
-  ionizationEnergy: 2080.7
-  electronAffinity: 0
-  isRadioactive: 0
-  commonUses: Neon signs, Cryogenics
-  discoveredBy: Sir William Ramsay
-  discoveryYear: 1898
-  isEssentialToLife: 0
-  toxicityInfo: Inert gas
   displayColor: {r: 0.7019608, g: 0.8901961, b: 0.9607843, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: Ne

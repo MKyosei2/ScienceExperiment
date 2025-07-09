@@ -12,29 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Antimony
   m_EditorClassIdentifier: 
+  elementID: Sb
   elementName: Antimony
-  symbol: Sb
   atomicNumber: 51
-  group: 15
-  period: 5
-  category: 2
-  electronConfiguration: "\t[Kr] 4d10 5s2 5p3"
-  phase: Solid
-  atomicMass: 121.76
-  atomicRadius: 133
-  density: 6.697
-  meltingPoint: 903.78
-  boilingPoint: 1860
-  electronegativity: 2.05
-  valenceElectrons: 5
-  ionizationEnergy: 834
-  electronAffinity: 103.2
-  isRadioactive: 0
-  commonUses: Flame retardants, semiconductors
-  discoveredBy: Known since ancient times
-  discoveryYear: 0
-  isEssentialToLife: 0
-  toxicityInfo: Toxic in excess
   displayColor: {r: 0.61960787, g: 0.3882353, b: 0.70980394, a: 1}
   displayPrefab: {fileID: 0}
-  cachedSymbol: Sb
