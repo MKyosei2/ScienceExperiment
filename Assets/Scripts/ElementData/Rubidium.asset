@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Rubidium
   atomicNumber: 37
   displayColor: {r: 1, g: 1, b: 1, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 407789557272098376, guid: 00ea3ed5a5d81cf4589d02f0283a7e99,
+    type: 3}

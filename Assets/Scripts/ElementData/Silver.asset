@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Silver
   atomicNumber: 47
   displayColor: {r: 0.7529412, g: 0.7529412, b: 0.7529412, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 6746831405720984315, guid: c4427a5acb4913b48b15c97223ee3f86,
+    type: 3}

@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Neodymiu
   atomicNumber: 60
   displayColor: {r: 0, g: 0, b: 0, a: 0}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 6858500803229302305, guid: 1264ac3031281a14da22972c1d44941f,
+    type: 3}

@@ -12,29 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Radium
   m_EditorClassIdentifier: 
+  elementID: Ra
   elementName: Radium
-  symbol: Ra
   atomicNumber: 88
-  group: 2
-  period: 7
-  category: 6
-  electronConfiguration: '[Rn] 7s2'
-  phase: Solid
-  atomicMass: 226
-  atomicRadius: 215
-  density: 5.5
-  meltingPoint: 700
-  boilingPoint: 1737
-  electronegativity: 0.9
-  valenceElectrons: 2
-  ionizationEnergy: 509.3
-  electronAffinity: 13.6
-  isRadioactive: 1
-  commonUses: Radiotherapy (historic), research
-  discoveredBy: Marie and Pierre Curie
-  discoveryYear: 1898
-  isEssentialToLife: 0
-  toxicityInfo: Highly radioactive
   displayColor: {r: 0, g: 0.49019608, b: 0, a: 1}
-  displayPrefab: {fileID: 0}
-  cachedSymbol: Ra
+  displayPrefab: {fileID: 7837378713184987467, guid: 2c26f20f5e7c35547a93ca2c69ba887c,
+    type: 3}

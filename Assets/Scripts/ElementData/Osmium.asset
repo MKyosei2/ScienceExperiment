@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Osmium
   atomicNumber: 76
   displayColor: {r: 0.14901961, g: 0.4, b: 0.5882353, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 5364781196777196592, guid: c2af563ceac7cff41b6ca5963dd7e5fd,
+    type: 3}

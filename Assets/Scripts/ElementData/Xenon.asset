@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Xenon
   atomicNumber: 54
   displayColor: {r: 0.25882354, g: 0.61960787, b: 0.6901961, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 3502707483195484279, guid: 293b99b401f91614a94c66fc628e5165,
+    type: 3}

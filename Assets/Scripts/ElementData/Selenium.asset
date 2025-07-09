@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Selenium
   atomicNumber: 34
   displayColor: {r: 1, g: 0.8, b: 0, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 7670087171759124686, guid: 69f600821ff46bc4b8104a17beebf237,
+    type: 3}

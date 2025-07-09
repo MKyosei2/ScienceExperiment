@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Tantalum
   atomicNumber: 73
   displayColor: {r: 0.3019608, g: 0.6509804, b: 1, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 5775684860351468270, guid: 6169c21c5c430984f9ed8535334bf534,
+    type: 3}

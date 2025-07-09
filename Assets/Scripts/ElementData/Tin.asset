@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Tin
   atomicNumber: 60
   displayColor: {r: 0.61960787, g: 0.61960787, b: 0.61960787, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 711578076995046793, guid: b2b63d1ed07277f4983475bda7101782,
+    type: 3}

@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Nitrogen
   atomicNumber: 7
   displayColor: {r: 0.1882353, g: 0.3137255, b: 0.972549, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 873315184534206303, guid: e3d6abda726b8e4418696bf2c8ea98e3,
+    type: 3}

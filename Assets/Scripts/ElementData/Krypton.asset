@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Krypton
   atomicNumber: 36
   displayColor: {r: 0.49019608, g: 0.9764706, b: 1, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 920088145858815024, guid: a1ac2941443543c40896ff6a7a3a751b,
+    type: 3}

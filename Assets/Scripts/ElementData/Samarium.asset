@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Samarium
   atomicNumber: 62
   displayColor: {r: 0.56078434, g: 1, b: 0.78039217, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 3518194228074403336, guid: 4909e2521c0dd2947b60323988115d1c,
+    type: 3}

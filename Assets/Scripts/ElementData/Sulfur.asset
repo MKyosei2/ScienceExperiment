@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Sulfur
   atomicNumber: 16
   displayColor: {r: 1, g: 1, b: 0.1882353, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 3003218516550949860, guid: d7deeaa18de1f704ba7f9b371aa181cf,
+    type: 3}

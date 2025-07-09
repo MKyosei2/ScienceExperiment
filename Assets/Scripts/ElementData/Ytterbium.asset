@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Ytterbium
   atomicNumber: 70
   displayColor: {r: 0, g: 1, b: 0.2784314, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 2683903665330179265, guid: 07848511d5cbb244fbc2196bb09346c0,
+    type: 3}

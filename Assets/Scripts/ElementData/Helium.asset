@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Helium
   atomicNumber: 2
   displayColor: {r: 0.8509804, g: 1, b: 1, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 1292512564982535791, guid: 6e575002f650dcb469bb9ab944d42f9a,
+    type: 3}

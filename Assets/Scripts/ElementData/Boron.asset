@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Boron
   atomicNumber: 5
   displayColor: {r: 1, g: 0.70980394, b: 0.70980394, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 4356756267757062878, guid: 3386787bdc86f7343a9cdbffaf7d03bb,
+    type: 3}

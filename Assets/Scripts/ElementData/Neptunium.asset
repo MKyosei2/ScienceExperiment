@@ -12,29 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Neptunium
   m_EditorClassIdentifier: 
+  elementID: Np
   elementName: Neptunium
-  symbol: Np
   atomicNumber: 93
-  group: 0
-  period: 7
-  category: 10
-  electronConfiguration: "\t[Rn] 5f4 6d1 7s2"
-  phase: Solid
-  atomicMass: 237
-  atomicRadius: 175
-  density: 20.45
-  meltingPoint: 644
-  boilingPoint: 4000
-  electronegativity: 1.36
-  valenceElectrons: 5
-  ionizationEnergy: 604.5
-  electronAffinity: 45
-  isRadioactive: 1
-  commonUses: "\tNuclear research, precursor to Pu-239"
-  discoveredBy: Edwin McMillan, Philip H. Abelson
-  discoveryYear: 1940
-  isEssentialToLife: 0
-  toxicityInfo: Highly radioactive
   displayColor: {r: 0, g: 0.46666667, b: 1, a: 1}
-  displayPrefab: {fileID: 0}
-  cachedSymbol: Np
+  displayPrefab: {fileID: 6604586172293682064, guid: b62a86711bb2eba469b42234c1840e0c,
+    type: 3}

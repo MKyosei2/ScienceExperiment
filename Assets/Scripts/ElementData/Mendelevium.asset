@@ -12,29 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Mendelevium
   m_EditorClassIdentifier: 
+  elementID: Md
   elementName: Mendelevium
-  symbol: Md
   atomicNumber: 101
-  group: 0
-  period: 7
-  category: 10
-  electronConfiguration: '[Rn] 5f13 7s2'
-  phase: "\tSolid (assumed)"
-  atomicMass: 258
-  atomicRadius: 180
-  density: 0
-  meltingPoint: 827
-  boilingPoint: 0
-  electronegativity: 1.3
-  valenceElectrons: 3
-  ionizationEnergy: 635
-  electronAffinity: 0
-  isRadioactive: 1
-  commonUses: "\tScientific research"
-  discoveredBy: Glenn T. Seaborg et al.
-  discoveryYear: 1955
-  isEssentialToLife: 0
-  toxicityInfo: Extremely radioactive
   displayColor: {r: 0.11764706, g: 0, b: 1, a: 1}
-  displayPrefab: {fileID: 0}
-  cachedSymbol: Md
+  displayPrefab: {fileID: 9146098382079752654, guid: 4bfbc9969c288524ca9e82a10e353d7b,
+    type: 3}

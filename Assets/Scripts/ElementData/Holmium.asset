@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Holmium
   atomicNumber: 67
   displayColor: {r: 0, g: 1, b: 0.6117647, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 6620693218800845070, guid: e821e88c6b83279419b781fe3d500ffb,
+    type: 3}

@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Chromium
   atomicNumber: 24
   displayColor: {r: 0.5411765, g: 0.6, b: 0.78039217, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 9151160628543131307, guid: 2c560bcc892059d45ab3fecc0dc37a38,
+    type: 3}

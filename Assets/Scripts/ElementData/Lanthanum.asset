@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Lanthanum
   atomicNumber: 57
   displayColor: {r: 0.4392157, g: 0.83137256, b: 1, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 5644819157854990728, guid: aa6850a069773584cb8875eb86cd4241,
+    type: 3}

@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Chlorine
   atomicNumber: 17
   displayColor: {r: 0.12156863, g: 0.9411765, b: 0.12156863, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 4615314005257886265, guid: 32e333bba97a4bd4ca5f8f7e608e64a5,
+    type: 3}

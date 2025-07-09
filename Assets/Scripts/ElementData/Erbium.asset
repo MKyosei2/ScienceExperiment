@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Erbium
   atomicNumber: 68
   displayColor: {r: 0, g: 1, b: 0.49803922, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 2154830518627584833, guid: 369f50e7bcbdf1e42bdfd7a136283a09,
+    type: 3}

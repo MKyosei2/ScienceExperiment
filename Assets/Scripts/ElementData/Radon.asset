@@ -12,29 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Radon
   m_EditorClassIdentifier: 
+  elementID: Rn
   elementName: Radon
-  symbol: Rn
   atomicNumber: 86
-  group: 18
-  period: 6
-  category: 3
-  electronConfiguration: '[Xe] 4f14 5d10 6s2 6p6'
-  phase: Gas
-  atomicMass: 222
-  atomicRadius: 120
-  density: 9.73
-  meltingPoint: -71
-  boilingPoint: -61.5
-  electronegativity: 2.2
-  valenceElectrons: 8
-  ionizationEnergy: 1037
-  electronAffinity: 0
-  isRadioactive: 1
-  commonUses: Radiation therapy, geological research
-  discoveredBy: Friedrich Ernst Dorn
-  discoveryYear: 1900
-  isEssentialToLife: 0
-  toxicityInfo: Radioactive gas, health hazard
   displayColor: {r: 0.25882354, g: 0.50980395, b: 0.5882353, a: 1}
-  displayPrefab: {fileID: 0}
-  cachedSymbol: Rn
+  displayPrefab: {fileID: 9052912245907072841, guid: 4e4cd15ee21b115468160f144c648a3d,
+    type: 3}

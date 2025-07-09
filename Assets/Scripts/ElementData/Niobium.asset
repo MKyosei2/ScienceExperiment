@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Niobium
   atomicNumber: 41
   displayColor: {r: 0.4490565, g: 0.4490565, b: 0.4490565, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 6216031501305290427, guid: 9f36d138690b11b4c9617f56d595f2c8,
+    type: 3}

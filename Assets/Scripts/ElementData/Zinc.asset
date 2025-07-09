@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Zinc
   m_EditorClassIdentifier: 
-  elementID: Zi
+  elementID: Zn
   elementName: Zinc
   atomicNumber: 30
   displayColor: {r: 0.49019608, g: 0.5019608, b: 0.6901961, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 5838074693562675937, guid: 85faecab5717d48409b708e56daad1fc,
+    type: 3}

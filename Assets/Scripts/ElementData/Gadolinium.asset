@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Gadolinium
   atomicNumber: 64
   displayColor: {r: 0.27058825, g: 1, b: 0.78039217, a: 0.9843137}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 4186181305382200893, guid: 8ff341f8351b98644aa1443e1f8da8d2,
+    type: 3}

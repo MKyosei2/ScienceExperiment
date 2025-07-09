@@ -12,29 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Lead
   m_EditorClassIdentifier: 
+  elementID: Pb
   elementName: Lead
-  symbol: Pb
   atomicNumber: 82
-  group: 14
-  period: 6
-  category: 8
-  electronConfiguration: "\t[Xe] 4f14 5d10 6s2 6p2"
-  phase: Solid
-  atomicMass: 207.2
-  atomicRadius: 175
-  density: 11.34
-  meltingPoint: 327.46
-  boilingPoint: 1749
-  electronegativity: 2.33
-  valenceElectrons: 4
-  ionizationEnergy: 715.6
-  electronAffinity: 35.1
-  isRadioactive: 0
-  commonUses: "\tBatteries, shielding, alloys"
-  discoveredBy: Known since antiquity
-  discoveryYear: 0
-  isEssentialToLife: 0
-  toxicityInfo: Highly toxic (especially to children)
   displayColor: {r: 0.34117648, g: 0.34901962, b: 0.38039216, a: 1}
-  displayPrefab: {fileID: 0}
-  cachedSymbol: Pb
+  displayPrefab: {fileID: 8718622998531891103, guid: 95cd82d6f92bf4b43847ca73bb6e7f35,
+    type: 3}

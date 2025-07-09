@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Nickel
   atomicNumber: 28
   displayColor: {r: 0.3137255, g: 0.8156863, b: 0.3137255, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 6044546275107081766, guid: 8b1443fd35676b64da68d88da9759bbc,
+    type: 3}

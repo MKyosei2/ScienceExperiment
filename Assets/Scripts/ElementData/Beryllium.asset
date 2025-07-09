@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Beryllium
   atomicNumber: 4
   displayColor: {r: 0.7607843, g: 1, b: 0, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 2920816673350521657, guid: e20f0ddb415783844982e8240399fa63,
+    type: 3}

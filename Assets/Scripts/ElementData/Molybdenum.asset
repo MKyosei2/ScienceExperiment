@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Molybdenum
   m_EditorClassIdentifier: 
-  elementID: Mb
+  elementID: Mo
   elementName: Molybdenum
   atomicNumber: 42
   displayColor: {r: 0.6150943, g: 0.6150943, b: 0.6150943, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 1756619979645628829, guid: 578e2e8d7a41d5c4683408f29826bd33,
+    type: 3}

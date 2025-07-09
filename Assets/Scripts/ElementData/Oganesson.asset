@@ -12,29 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Oganesson
   m_EditorClassIdentifier: 
+  elementID: Og
   elementName: Oganesson
-  symbol: Og
   atomicNumber: 118
-  group: 18
-  period: 7
-  category: 3
-  electronConfiguration: "\t[Rn] 5f14 6d10 7s2 7p6"
-  phase: "\tGas (predicted) or Solid"
-  atomicMass: 294
-  atomicRadius: 152
-  density: 5.1
-  meltingPoint: 52
-  boilingPoint: 0
-  electronegativity: 2.2
-  valenceElectrons: 8
-  ionizationEnergy: 0
-  electronAffinity: 0
-  isRadioactive: 1
-  commonUses: Scientific research
-  discoveredBy: JINR & LLNL
-  discoveryYear: 2002
-  isEssentialToLife: 0
-  toxicityInfo: Highly radioactive
   displayColor: {r: 0.9019608, g: 0, b: 0, a: 1}
-  displayPrefab: {fileID: 0}
-  cachedSymbol: Og
+  displayPrefab: {fileID: 4097383114418317671, guid: f41998d331adc844cada2915ad0ccde5,
+    type: 3}

@@ -12,29 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Darmstadtium
   m_EditorClassIdentifier: 
+  elementID: Ds
   elementName: Darmstadtium
-  symbol: Ds
   atomicNumber: 110
-  group: 10
-  period: 7
-  category: 7
-  electronConfiguration: "\t[Rn] 5f14 6d8 7s2"
-  phase: Solid (assumed)
-  atomicMass: 281
-  atomicRadius: 132
-  density: 0
-  meltingPoint: 0
-  boilingPoint: 0
-  electronegativity: 0
-  valenceElectrons: 10
-  ionizationEnergy: 0
-  electronAffinity: 0
-  isRadioactive: 1
-  commonUses: Scientific research
-  discoveredBy: GSI (Germany)
-  discoveryYear: 1994
-  isEssentialToLife: 0
-  toxicityInfo: Highly radioactive
   displayColor: {r: 1, g: 0, b: 0.9411765, a: 1}
-  displayPrefab: {fileID: 0}
-  cachedSymbol: Ds
+  displayPrefab: {fileID: 1491991764655897015, guid: e6eef6109f5f72847ba9b02e81675d7e,
+    type: 3}

@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Fluorine
   atomicNumber: 9
   displayColor: {r: 0.5647059, g: 0.8784314, b: 0.3137255, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 6282962242971689320, guid: 70e18eecd2b6b9b46ab7488b5b4fd14c,
+    type: 3}

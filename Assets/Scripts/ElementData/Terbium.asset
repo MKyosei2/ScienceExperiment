@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Terbium
   atomicNumber: 65
   displayColor: {r: 0.1882353, g: 1, b: 0.78039217, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 430802292191966049, guid: b423bba14c39d864e946ccf66d930b50,
+    type: 3}

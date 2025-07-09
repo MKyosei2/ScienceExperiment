@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Phosphorus
   atomicNumber: 15
   displayColor: {r: 1, g: 0.5019608, b: 0, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 8469014891136783055, guid: c7a7b765cb2949447a78709865e9e185,
+    type: 3}

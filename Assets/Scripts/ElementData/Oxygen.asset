@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Oxygen
   atomicNumber: 8
   displayColor: {r: 1, g: 0.050980393, b: 0.050980393, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 7244564323875126950, guid: 72915328c46d5f54eb871bf47535a877,
+    type: 3}

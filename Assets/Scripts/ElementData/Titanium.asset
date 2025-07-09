@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Titanium
   atomicNumber: 22
   displayColor: {r: 0.7490196, g: 0.7607843, b: 0.78039217, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 1543513425593882390, guid: fd58345c0b83ce44896e42ffe754c979,
+    type: 3}

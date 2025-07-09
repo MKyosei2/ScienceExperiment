@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Strontium
   atomicNumber: 38
   displayColor: {r: 1, g: 1, b: 1, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 6732332843664478604, guid: f7e5ea710353f9d4686b9d3a7ad1cc9c,
+    type: 3}

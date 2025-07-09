@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Argon
   atomicNumber: 18
   displayColor: {r: 0.5019608, g: 0.81960785, b: 0.8901961, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 6056676332264836695, guid: 87ff06da02faf0049b345ff029a4313d,
+    type: 3}

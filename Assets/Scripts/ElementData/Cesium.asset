@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Cesium
   atomicNumber: 55
   displayColor: {r: 0.34117648, g: 0.09019608, b: 0.56078434, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 7206906775435307718, guid: f01fa2784b46e3741a0cf6e37cd65b81,
+    type: 3}

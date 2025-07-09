@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Magnesium
   atomicNumber: 12
   displayColor: {r: 0.5411765, g: 1, b: 0, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 1039083639720237217, guid: db0e6894381ae7f4ba0f4b52926bd088,
+    type: 3}

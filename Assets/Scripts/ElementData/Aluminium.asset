@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Aluminium
   atomicNumber: 13
   displayColor: {r: 0.7490196, g: 0.6509804, b: 0.6509804, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 3522906495843354372, guid: 1901d397cb3e6134aaa123121eeea4bd,
+    type: 3}

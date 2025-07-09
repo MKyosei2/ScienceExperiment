@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Palladium
   atomicNumber: 46
   displayColor: {r: 0, g: 0, b: 0, a: 0}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 4827121043202854666, guid: d52575b083ee8384c9d6612b64264a58,
+    type: 3}

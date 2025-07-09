@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Iodine
   atomicNumber: 53
   displayColor: {r: 0.5803922, g: 0, b: 0.5803922, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 7042758931990943806, guid: feb9ee0ba194e0041ae68e2eec0e877d,
+    type: 3}

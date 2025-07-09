@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Arsenic
   atomicNumber: 33
   displayColor: {r: 0.24705882, g: 0.62352943, b: 0.62352943, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 5707726125612586262, guid: 0e556f42bbfa3614597999417ff4319c,
+    type: 3}

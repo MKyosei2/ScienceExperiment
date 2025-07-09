@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Promethium
   atomicNumber: 61
   displayColor: {r: 0.6392157, g: 1, b: 0.78039217, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 8725951487919627536, guid: 7b3543e0d44352842aeb9b4cc3912d1d,
+    type: 3}

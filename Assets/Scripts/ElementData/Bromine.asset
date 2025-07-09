@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Bromine
   atomicNumber: 35
   displayColor: {r: 0.6509804, g: 0.16078432, b: 0.16078432, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 5942389011356285948, guid: d5d5a376b06d50a439f05538160be3e4,
+    type: 3}

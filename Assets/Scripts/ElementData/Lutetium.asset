@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Lutetium
   atomicNumber: 71
   displayColor: {r: 0, g: 1, b: 0.16862746, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 6222266525033044293, guid: c3183ebdefc06ed41961d61aa1822a3a,
+    type: 3}

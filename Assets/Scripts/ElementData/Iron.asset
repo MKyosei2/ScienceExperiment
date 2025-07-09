@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Iron
   atomicNumber: 26
   displayColor: {r: 0.8784314, g: 0.4, b: 0.2, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 1847258899681021113, guid: 138826e759fe3714e842a4ab3ae84ea6,
+    type: 3}

@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Zirconium
   atomicNumber: 40
   displayColor: {r: 1, g: 1, b: 1, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 8184394213782279061, guid: df0549af487f18145ba2f9690034c8d0,
+    type: 3}

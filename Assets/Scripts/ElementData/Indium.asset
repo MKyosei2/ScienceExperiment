@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Indium
   atomicNumber: 49
   displayColor: {r: 0.6509804, g: 0.45882353, b: 0.4509804, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 5435695536047569614, guid: 0b713da086f5cbd49b38e253c1fb5d2e,
+    type: 3}

@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Tellurium
   atomicNumber: 52
   displayColor: {r: 0.83137256, g: 0.47843137, b: 0, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 6159447688074002860, guid: 4bf470bdbd3e4294fb628ef80e37237d,
+    type: 3}

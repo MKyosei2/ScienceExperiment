@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Neon
   atomicNumber: 10
   displayColor: {r: 0.7019608, g: 0.8901961, b: 0.9607843, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 6356402204089389942, guid: c889ad3b187237c4c97ca14bb5358084,
+    type: 3}

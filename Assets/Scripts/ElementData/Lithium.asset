@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Lithium
   atomicNumber: 3
   displayColor: {r: 0.8, g: 0.5019608, b: 1, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 3751185511910003058, guid: 7dacfe00b710df044a4b5db817fa6b4e,
+    type: 3}

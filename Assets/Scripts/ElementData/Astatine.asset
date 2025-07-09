@@ -12,29 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Astatine
   m_EditorClassIdentifier: 
+  elementID: At
   elementName: Astatine
-  symbol: At
   atomicNumber: 85
-  group: 17
-  period: 6
-  category: 4
-  electronConfiguration: '[Xe] 4f14 5d10 6s2 6p5'
-  phase: "\tSolid (presumed)"
-  atomicMass: 210
-  atomicRadius: 127
-  density: 7
-  meltingPoint: 302
-  boilingPoint: 337
-  electronegativity: 2.2
-  valenceElectrons: 7
-  ionizationEnergy: 899
-  electronAffinity: 270.1
-  isRadioactive: 1
-  commonUses: Cancer treatment (targeted alpha therapy)
-  discoveredBy: Dale R. Corson et al.
-  discoveryYear: 1940
-  isEssentialToLife: 0
-  toxicityInfo: Highly radioactive
   displayColor: {r: 0.45882353, g: 0.30980393, b: 0.27058825, a: 1}
-  displayPrefab: {fileID: 0}
-  cachedSymbol: At
+  displayPrefab: {fileID: 6287881820750669852, guid: 1e5077dc3b136f844b4fb1f9f6a7a941,
+    type: 3}

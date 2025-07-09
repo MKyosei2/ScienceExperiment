@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Technetium
   atomicNumber: 43
   displayColor: {r: 0.5773585, g: 0.5773585, b: 0.5773585, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 3893692593197701774, guid: 8fdf915c33512d5448aa7e1d80dfc33b,
+    type: 3}

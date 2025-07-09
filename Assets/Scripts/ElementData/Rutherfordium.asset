@@ -12,29 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Rutherfordium
   m_EditorClassIdentifier: 
+  elementID: Rf
   elementName: Rutherfordium
-  symbol: Rf
   atomicNumber: 104
-  group: 4
-  period: 7
-  category: 7
-  electronConfiguration: "\t[Rn] 5f14 6d2 7s2"
-  phase: Solid (assumed)
-  atomicMass: 267
-  atomicRadius: 150
-  density: 23
-  meltingPoint: 0
-  boilingPoint: 0
-  electronegativity: -1.3
-  valenceElectrons: 4
-  ionizationEnergy: 578
-  electronAffinity: 0
-  isRadioactive: 1
-  commonUses: Scientific research
-  discoveredBy: "Joint Soviet\u2013US team"
-  discoveryYear: 1964
-  isEssentialToLife: 0
-  toxicityInfo: Highly radioactive
   displayColor: {r: 0.41960785, g: 0, b: 1, a: 1}
-  displayPrefab: {fileID: 0}
-  cachedSymbol: Rf
+  displayPrefab: {fileID: 105329015567006797, guid: b5bfed62af04f69479c76f639e4de7c4,
+    type: 3}

@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Rhodium
   atomicNumber: 45
   displayColor: {r: 0.5320754, g: 0.5320754, b: 0.5320754, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 7611284343597163400, guid: 4893bcf101586ce4aaad37e690c6163e,
+    type: 3}

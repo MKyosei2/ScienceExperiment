@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Barium
   atomicNumber: 56
   displayColor: {r: 0, g: 0.7882353, b: 0, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 1463954747742611645, guid: 3168635d403c36b4fa92f0179dfa1d4f,
+    type: 3}

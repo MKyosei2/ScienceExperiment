@@ -12,29 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Neodymium
   m_EditorClassIdentifier: 
+  elementID: Nd
   elementName: Neodymium
-  symbol: Nd
   atomicNumber: 60
-  group: 0
-  period: 6
-  category: 9
-  electronConfiguration: '[Xe] 4f4 6s2'
-  phase: Solid
-  atomicMass: 144.242
-  atomicRadius: 185
-  density: 7.007
-  meltingPoint: 1297
-  boilingPoint: 3347
-  electronegativity: 1.14
-  valenceElectrons: 3
-  ionizationEnergy: 533.1
-  electronAffinity: 50
-  isRadioactive: 0
-  commonUses: Strong magnets, lasers
-  discoveredBy: Carl Auer von Welsbach
-  discoveryYear: 1885
-  isEssentialToLife: 0
-  toxicityInfo: Low
   displayColor: {r: 0.78039217, g: 1, b: 0.78039217, a: 1}
-  displayPrefab: {fileID: 0}
-  cachedSymbol: Nd
+  displayPrefab: {fileID: 6858500803229302305, guid: 1264ac3031281a14da22972c1d44941f,
+    type: 3}

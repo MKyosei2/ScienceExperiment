@@ -12,29 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Bohrium
   m_EditorClassIdentifier: 
+  elementID: Bh
   elementName: Bohrium
-  symbol: Bh
   atomicNumber: 107
-  group: 7
-  period: 7
-  category: 7
-  electronConfiguration: "\t[Rn] 5f14 6d5 7s2"
-  phase: Solid (assumed)
-  atomicMass: 270
-  atomicRadius: 128
-  density: 0
-  meltingPoint: 0
-  boilingPoint: 0
-  electronegativity: 1.3
-  valenceElectrons: 7
-  ionizationEnergy: 0
-  electronAffinity: 0
-  isRadioactive: 1
-  commonUses: Scientific research
-  discoveredBy: GSI (Germany)
-  discoveryYear: 1981
-  isEssentialToLife: 0
-  toxicityInfo: Highly radioactive
   displayColor: {r: 0.7019608, g: 0, b: 1, a: 1}
-  displayPrefab: {fileID: 0}
-  cachedSymbol: Bh
+  displayPrefab: {fileID: 6717780015599642923, guid: 0ba2149a15dd7264aba0bc9e902cab56,
+    type: 3}

@@ -12,29 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Platinum
   m_EditorClassIdentifier: 
+  elementID: Pt
   elementName: Platinum
-  symbol: Pt
   atomicNumber: 78
-  group: 10
-  period: 6
-  category: 7
-  electronConfiguration: '[Xe] 4f14 5d9 6s1'
-  phase: Solid
-  atomicMass: 195.084
-  atomicRadius: 135
-  density: 21.45
-  meltingPoint: 2041.4
-  boilingPoint: 4098
-  electronegativity: 2.28
-  valenceElectrons: 10
-  ionizationEnergy: 870
-  electronAffinity: 205.3
-  isRadioactive: 0
-  commonUses: "\tJewelry, catalysts, lab equipment"
-  discoveredBy: Antonio de Ulloa
-  discoveryYear: 1735
-  isEssentialToLife: 0
-  toxicityInfo: Low
   displayColor: {r: 0.8156863, g: 0.8156863, b: 0.8784314, a: 1}
-  displayPrefab: {fileID: 0}
-  cachedSymbol: Pt
+  displayPrefab: {fileID: 468688820689103411, guid: 37ab30d0e36f3414baf10228956d2988,
+    type: 3}

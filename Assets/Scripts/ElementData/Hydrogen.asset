@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Hydrogen
   atomicNumber: 1
   displayColor: {r: 1, g: 1, b: 1, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 6827171088710168180, guid: 81ba4868f47621143a9f19955639333a,
+    type: 3}

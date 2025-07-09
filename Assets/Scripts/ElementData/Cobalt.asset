@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Cobalt
   atomicNumber: 27
   displayColor: {r: 0.13725491, g: 0.47843137, b: 0.7019608, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 1991394022463603063, guid: f231e7b38448569488892e4eb3f6ec3b,
+    type: 3}

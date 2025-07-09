@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Ruthenium
   atomicNumber: 44
   displayColor: {r: 0, g: 0, b: 0, a: 0}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 2993822562866590221, guid: d11d71b2fb9966f4fa1e245e8b7dc1aa,
+    type: 3}

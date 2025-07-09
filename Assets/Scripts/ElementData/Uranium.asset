@@ -12,29 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Uranium
   m_EditorClassIdentifier: 
+  elementID: U
   elementName: Uranium
-  symbol: U
   atomicNumber: 92
-  group: 0
-  period: 7
-  category: 10
-  electronConfiguration: '[Rn] 5f3 6d1 7s2'
-  phase: Solid
-  atomicMass: 238.02892
-  atomicRadius: 175
-  density: 18.95
-  meltingPoint: 1132.3
-  boilingPoint: 4131
-  electronegativity: 1.38
-  valenceElectrons: 6
-  ionizationEnergy: 597.6
-  electronAffinity: 50.9
-  isRadioactive: 1
-  commonUses: Nuclear fuel, military applications
-  discoveredBy: Martin Heinrich Klaproth
-  discoveryYear: 1789
-  isEssentialToLife: 0
-  toxicityInfo: Chemically and radiologically toxic
   displayColor: {r: 0, g: 0.56078434, b: 1, a: 1}
-  displayPrefab: {fileID: 0}
-  cachedSymbol: U
+  displayPrefab: {fileID: 8593965829817793188, guid: d9ed81599c1aea948a4e4efd6ab31b93,
+    type: 3}

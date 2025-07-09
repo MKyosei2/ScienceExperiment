@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Cadmium
   atomicNumber: 48
   displayColor: {r: 1, g: 0.8509804, b: 0.56078434, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 8142003798673514443, guid: 111406e3a51b34048bb3a82df51cb95a,
+    type: 3}

@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Gallium
   atomicNumber: 31
   displayColor: {r: 0.7607843, g: 0.56078434, b: 0.56078434, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 5540051551656029762, guid: 27efb919810c26d4f81e9111b34c6868,
+    type: 3}

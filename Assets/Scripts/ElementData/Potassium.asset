@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Potassium
   atomicNumber: 19
   displayColor: {r: 0.56078434, g: 0.2509804, b: 0.83137256, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 8146540061077903951, guid: ccf0dc602852635419f85c81a3982424,
+    type: 3}

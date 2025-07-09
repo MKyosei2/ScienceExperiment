@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Antimony
   atomicNumber: 51
   displayColor: {r: 0.61960787, g: 0.3882353, b: 0.70980394, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 7737101084955120593, guid: 8f9bef0568454c04a8d0b87ed170d67f,
+    type: 3}

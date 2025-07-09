@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3fc8115ab7e6e14b92f3ff182d402fb, type: 3}
+  m_Name: high_temp_oxygen
+  m_EditorClassIdentifier: 
+  conditionID: high_temp_oxygen
+  displayName: "\u9AD8\u6E29\u30FB\u9178\u7D20\u52A0\u5727\u74B0\u5883"
+  displayPrefab: {fileID: 5221873074386985245, guid: eb4601e50a9291b4abbc5b9469890ea0,
+    type: 3}
+  displayColor: {r: 1, g: 1, b: 1, a: 1}

@@ -12,29 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Livermorium
   m_EditorClassIdentifier: 
+  elementID: Lv
   elementName: Livermorium
-  symbol: Lv
   atomicNumber: 116
-  group: 16
-  period: 7
-  category: 8
-  electronConfiguration: "\t[Rn] 5f14 6d10 7s2 7p4"
-  phase: "\tSolid (assumed)"
-  atomicMass: 293
-  atomicRadius: 175
-  density: 0
-  meltingPoint: 0
-  boilingPoint: 0
-  electronegativity: 0
-  valenceElectrons: 6
-  ionizationEnergy: 0
-  electronAffinity: 0
-  isRadioactive: 1
-  commonUses: Scientific research
-  discoveredBy: JINR & LLNL
-  discoveryYear: 2000
-  isEssentialToLife: 0
-  toxicityInfo: Highly radioactive
   displayColor: {r: 1, g: 0, b: 0.1254902, a: 1}
-  displayPrefab: {fileID: 0}
-  cachedSymbol: Lv
+  displayPrefab: {fileID: 4803434162707932584, guid: 93b77c3db649f184aa047767a18ccba8,
+    type: 3}

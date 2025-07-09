@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Copper
   atomicNumber: 29
   displayColor: {r: 0.78431374, g: 0.5019608, b: 0.2, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 312322141632701606, guid: e2eb99e10ee3d7a438b078172a1eb40f,
+    type: 3}

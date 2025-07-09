@@ -12,29 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Nobelium
   m_EditorClassIdentifier: 
+  elementID: No
   elementName: Nobelium
-  symbol: No
   atomicNumber: 102
-  group: 0
-  period: 7
-  category: 10
-  electronConfiguration: '[Rn] 5f14 7s2'
-  phase: Solid (assumed)
-  atomicMass: 259
-  atomicRadius: 180
-  density: 0
-  meltingPoint: 827
-  boilingPoint: 0
-  electronegativity: 1.3
-  valenceElectrons: 2
-  ionizationEnergy: 624
-  electronAffinity: 0
-  isRadioactive: 1
-  commonUses: "\tScientific research"
-  discoveredBy: "Joint Soviet\u2013US team"
-  discoveryYear: 1958
-  isEssentialToLife: 0
-  toxicityInfo: Extremely radioactive
   displayColor: {r: 0.22745098, g: 0, b: 1, a: 1}
-  displayPrefab: {fileID: 0}
-  cachedSymbol: No
+  displayPrefab: {fileID: 3045524389624598267, guid: ed4277dd6b480ba44803b48de29d1c21,
+    type: 3}

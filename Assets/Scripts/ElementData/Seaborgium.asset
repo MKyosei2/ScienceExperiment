@@ -12,29 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Seaborgium
   m_EditorClassIdentifier: 
+  elementID: Sg
   elementName: Seaborgium
-  symbol: Sg
   atomicNumber: 106
-  group: 6
-  period: 7
-  category: 7
-  electronConfiguration: "\t[Rn] 5f14 6d4 7s2"
-  phase: Solid (assumed)
-  atomicMass: 271
-  atomicRadius: 132
-  density: 0
-  meltingPoint: 0
-  boilingPoint: 0
-  electronegativity: 1.3
-  valenceElectrons: 6
-  ionizationEnergy: 760
-  electronAffinity: 0
-  isRadioactive: 1
-  commonUses: Scientific research
-  discoveredBy: Lawrence Berkeley Lab
-  discoveryYear: 1974
-  isEssentialToLife: 0
-  toxicityInfo: Highly radioactive
   displayColor: {r: 0.6039216, g: 0, b: 1, a: 1}
-  displayPrefab: {fileID: 0}
-  cachedSymbol: Sg
+  displayPrefab: {fileID: 2299002531552502600, guid: 892c9a24e2503a64bb52e91201835dee,
+    type: 3}

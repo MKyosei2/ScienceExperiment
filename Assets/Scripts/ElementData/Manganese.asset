@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Manganese
   atomicNumber: 25
   displayColor: {r: 0.6117647, g: 0.47843137, b: 0.78039217, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 5095914166309962989, guid: c7c4785f86cbb494faa801d2e997d7a9,
+    type: 3}

@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Europium
   atomicNumber: 63
   displayColor: {r: 0.38039216, g: 1, b: 0.78039217, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 8926669132041468185, guid: e978a5cd10a30084289b7b76d25a33ca,
+    type: 3}

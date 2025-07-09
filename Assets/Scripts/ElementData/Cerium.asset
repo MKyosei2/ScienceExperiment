@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Cerium
   atomicNumber: 58
   displayColor: {r: 1, g: 1, b: 0.78039217, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 1860027892131458520, guid: 71c2e8d3e375e424390852a50e7847ea,
+    type: 3}

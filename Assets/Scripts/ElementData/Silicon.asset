@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Silicon
   atomicNumber: 14
   displayColor: {r: 0.9411765, g: 0.78431374, b: 0.627451, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 5688279800136427878, guid: 07a009309e6b182449b96eb9b47c7880,
+    type: 3}

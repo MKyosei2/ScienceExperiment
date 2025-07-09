@@ -12,29 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Thorium
   m_EditorClassIdentifier: 
+  elementID: Th
   elementName: Thorium
-  symbol: Th
   atomicNumber: 90
-  group: 0
-  period: 7
-  category: 10
-  electronConfiguration: '[Rn] 6d2 7s2'
-  phase: Solid
-  atomicMass: 232.0377
-  atomicRadius: 180
-  density: 11.72
-  meltingPoint: 1750
-  boilingPoint: 4788
-  electronegativity: 1.3
-  valenceElectrons: 4
-  ionizationEnergy: 587
-  electronAffinity: 112.7
-  isRadioactive: 1
-  commonUses: Nuclear fuel (research), mantles
-  discoveredBy: "J\xF6ns Jakob Berzelius"
-  discoveryYear: 1828
-  isEssentialToLife: 0
-  toxicityInfo: Radioactive
   displayColor: {r: 0, g: 0.7490196, b: 1, a: 1}
-  displayPrefab: {fileID: 0}
-  cachedSymbol: Th
+  displayPrefab: {fileID: 4537367474663706958, guid: d8bb98a06e8deab46ac55e2b498d1ecf,
+    type: 3}

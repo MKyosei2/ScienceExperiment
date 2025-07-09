@@ -12,29 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Americium
   m_EditorClassIdentifier: 
+  elementID: Am
   elementName: Americium
-  symbol: Am
   atomicNumber: 95
-  group: 0
-  period: 7
-  category: 10
-  electronConfiguration: '[Rn] 5f7 7s2'
-  phase: Solid
-  atomicMass: 243
-  atomicRadius: 175
-  density: 12
-  meltingPoint: 1176
-  boilingPoint: 2607
-  electronegativity: 1.3
-  valenceElectrons: 3
-  ionizationEnergy: 578
-  electronAffinity: 9.93
-  isRadioactive: 1
-  commonUses: Smoke detectors, neutron sources
-  discoveredBy: Glenn T. Seaborg et al.
-  discoveryYear: 1944
-  isEssentialToLife: 0
-  toxicityInfo: Highly radioactive
   displayColor: {r: 0, g: 0.33333334, b: 1, a: 1}
-  displayPrefab: {fileID: 0}
-  cachedSymbol: Am
+  displayPrefab: {fileID: 735187957704601436, guid: 64a61bbdf449be44e9a1f2244bf42d00,
+    type: 3}

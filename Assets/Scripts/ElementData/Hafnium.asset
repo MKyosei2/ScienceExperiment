@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Hafnium
   atomicNumber: 72
   displayColor: {r: 0.3019608, g: 0.7607843, b: 1, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 5457491065081087728, guid: 8472375ac0ad9d04babc45358f6526d8,
+    type: 3}

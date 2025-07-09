@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Carbon
   atomicNumber: 6
   displayColor: {r: 0.5647059, g: 0.5647059, b: 0.5647059, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 3128280190157422465, guid: d81a7281e8a37db4ea79d25ec2c1337f,
+    type: 3}

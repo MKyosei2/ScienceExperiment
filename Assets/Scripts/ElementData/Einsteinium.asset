@@ -12,29 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Einsteinium
   m_EditorClassIdentifier: 
+  elementID: Es
   elementName: Einsteinium
-  symbol: Es
   atomicNumber: 99
-  group: 0
-  period: 7
-  category: 10
-  electronConfiguration: '[Rn] 5f11 7s2'
-  phase: Solid
-  atomicMass: 252
-  atomicRadius: 180
-  density: 8.84
-  meltingPoint: 860
-  boilingPoint: 0
-  electronegativity: 1.3
-  valenceElectrons: 3
-  ionizationEnergy: 619
-  electronAffinity: 0
-  isRadioactive: 1
-  commonUses: Scientific research
-  discoveredBy: Albert Ghiorso et al.
-  discoveryYear: 1952
-  isEssentialToLife: 0
-  toxicityInfo: "\tExtremely radioactive"
   displayColor: {r: 0, g: 0.06666667, b: 1, a: 1}
-  displayPrefab: {fileID: 0}
-  cachedSymbol: Es
+  displayPrefab: {fileID: 8833634041507602032, guid: 1fd5f08c65441d44a942ddd0e68b048d,
+    type: 3}

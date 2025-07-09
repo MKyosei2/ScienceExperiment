@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Calcium
   atomicNumber: 20
   displayColor: {r: 0.23921569, g: 1, b: 0, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 9001666564686230117, guid: 6ac44f2a7469b5c408c6d22c3a98a8ba,
+    type: 3}

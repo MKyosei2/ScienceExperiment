@@ -12,29 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Gold
   m_EditorClassIdentifier: 
+  elementID: Au
   elementName: Gold
-  symbol: Au
   atomicNumber: 79
-  group: 11
-  period: 6
-  category: 7
-  electronConfiguration: '[Xe] 4f14 5d10 6s1'
-  phase: Solid
-  atomicMass: 196.96657
-  atomicRadius: 135
-  density: 19.32
-  meltingPoint: 1337.33
-  boilingPoint: 3129
-  electronegativity: 2.54
-  valenceElectrons: 1
-  ionizationEnergy: 890.1
-  electronAffinity: 222.8
-  isRadioactive: 0
-  commonUses: "\tJewelry, currency, electronics"
-  discoveredBy: Known since antiquity
-  discoveryYear: 0
-  isEssentialToLife: 0
-  toxicityInfo: Low
   displayColor: {r: 1, g: 0.84313726, b: 0, a: 1}
-  displayPrefab: {fileID: 0}
-  cachedSymbol: Au
+  displayPrefab: {fileID: 1923879532801322941, guid: ca0d99ce538c2b44faab31dc6f2ab4f5,
+    type: 3}

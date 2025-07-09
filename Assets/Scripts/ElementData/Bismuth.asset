@@ -12,29 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Bismuth
   m_EditorClassIdentifier: 
+  elementID: Bi
   elementName: Bismuth
-  symbol: Bi
   atomicNumber: 83
-  group: 15
-  period: 6
-  category: 8
-  electronConfiguration: '[Xe] 4f14 5d10 6s2 6p3'
-  phase: Solid
-  atomicMass: 208.9804
-  atomicRadius: 160
-  density: 9.78
-  meltingPoint: 271.5
-  boilingPoint: 1564
-  electronegativity: 2.02
-  valenceElectrons: 5
-  ionizationEnergy: 703
-  electronAffinity: 91.2
-  isRadioactive: 0
-  commonUses: Cosmetics, alloys, medicine
-  discoveredBy: Claude Geoffroy
-  discoveryYear: 1753
-  isEssentialToLife: 0
-  toxicityInfo: Low (safe replacement for lead)
   displayColor: {r: 0.61960787, g: 0.30980393, b: 0.70980394, a: 1}
-  displayPrefab: {fileID: 0}
-  cachedSymbol: Bi
+  displayPrefab: {fileID: 531478209692615179, guid: d8650a360a6ecef45a37ec8299aa2d3a,
+    type: 3}

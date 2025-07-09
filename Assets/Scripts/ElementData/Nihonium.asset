@@ -12,29 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Nihonium
   m_EditorClassIdentifier: 
+  elementID: Nh
   elementName: Nihonium
-  symbol: Nh
   atomicNumber: 113
-  group: 13
-  period: 7
-  category: 8
-  electronConfiguration: '[Rn] 5f14 6d10 7s2 7p1'
-  phase: Solid (assumed)
-  atomicMass: 286
-  atomicRadius: 170
-  density: 0
-  meltingPoint: 0
-  boilingPoint: 0
-  electronegativity: 1.5
-  valenceElectrons: 3
-  ionizationEnergy: 0
-  electronAffinity: 0
-  isRadioactive: 1
-  commonUses: Scientific research
-  discoveredBy: RIKEN (Japan)
-  discoveryYear: 2004
-  isEssentialToLife: 0
-  toxicityInfo: Highly radioactive
   displayColor: {r: 1, g: 0, b: 0.5019608, a: 1}
-  displayPrefab: {fileID: 0}
-  cachedSymbol: Nh
+  displayPrefab: {fileID: 327160321502026625, guid: 2114f69d20afd9c40b5b1dd348410014,
+    type: 3}

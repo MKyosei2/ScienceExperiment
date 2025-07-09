@@ -12,29 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Berkelium
   m_EditorClassIdentifier: 
+  elementID: Bk
   elementName: Berkelium
-  symbol: Bk
   atomicNumber: 97
-  group: 0
-  period: 7
-  category: 10
-  electronConfiguration: '[Rn] 5f9 7s2'
-  phase: Solid
-  atomicMass: 247
-  atomicRadius: 170
-  density: 14.78
-  meltingPoint: 1050
-  boilingPoint: 2627
-  electronegativity: 1.3
-  valenceElectrons: 3
-  ionizationEnergy: 601
-  electronAffinity: -48
-  isRadioactive: 1
-  commonUses: Scientific research
-  discoveredBy: Glenn T. Seaborg et al.
-  discoveryYear: 1949
-  isEssentialToLife: 0
-  toxicityInfo: "\tHighly radioactive"
   displayColor: {r: 0, g: 0.2, b: 1, a: 1}
-  displayPrefab: {fileID: 0}
-  cachedSymbol: Bk
+  displayPrefab: {fileID: 3923080319803035064, guid: 344df3933d7c91a40aff254d2ef5a81c,
+    type: 3}

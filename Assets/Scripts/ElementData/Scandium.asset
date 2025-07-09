@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Scandium
   atomicNumber: 21
   displayColor: {r: 0.9019608, g: 0.9019608, b: 0.9019608, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 2987893372083917127, guid: 214fde0c414f9974ebc609f8b7c24024,
+    type: 3}

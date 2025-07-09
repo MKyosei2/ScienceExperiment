@@ -12,29 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
   m_Name: Copernicium
   m_EditorClassIdentifier: 
+  elementID: Cn
   elementName: Copernicium
-  symbol: Cn
   atomicNumber: 112
-  group: 12
-  period: 7
-  category: 7
-  electronConfiguration: "\t[Rn] 5f14 6d10 7s2"
-  phase: Gas (predicted), or liquid
-  atomicMass: 285
-  atomicRadius: 128
-  density: 14
-  meltingPoint: 0
-  boilingPoint: 0
-  electronegativity: 0
-  valenceElectrons: 12
-  ionizationEnergy: 0
-  electronAffinity: 0
-  isRadioactive: 1
-  commonUses: "\tScientific research"
-  discoveredBy: GSI (Germany)
-  discoveryYear: 1996
-  isEssentialToLife: 0
-  toxicityInfo: Highly radioactive
   displayColor: {r: 1, g: 0, b: 0.627451, a: 1}
-  displayPrefab: {fileID: 0}
-  cachedSymbol: Cn
+  displayPrefab: {fileID: 8304298230715165698, guid: 10a851a89fe9ac74aa72e50700d47111,
+    type: 3}

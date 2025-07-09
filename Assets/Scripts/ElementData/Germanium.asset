@@ -16,4 +16,5 @@ MonoBehaviour:
   elementName: Germanium
   atomicNumber: 32
   displayColor: {r: 0.4, g: 0.56078434, b: 0.56078434, a: 1}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 7068211290271494139, guid: bd5ae4daf155e844aad9b1c23da2d7d9,
+    type: 3}
