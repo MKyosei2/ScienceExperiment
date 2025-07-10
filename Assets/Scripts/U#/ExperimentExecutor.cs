@@ -8,7 +8,6 @@ public class ExperimentExecutor : UdonSharpBehaviour
     public SelectedObjectHolder holder;
     public string[] elementIDs;
     public GameObject[] elementPrefabs;
-    public Color[] elementColors;
     public Transform spawnPoint;
 
     public override void Interact()
@@ -20,7 +19,6 @@ public class ExperimentExecutor : UdonSharpBehaviour
             GameObject obj = VRCInstantiate(elementPrefabs[index]);
             obj.transform.position = spawnPoint.position;
             Renderer r = obj.GetComponent<Renderer>();
-            if (r != null) r.material.color = elementColors[index];
         }
     }
 
