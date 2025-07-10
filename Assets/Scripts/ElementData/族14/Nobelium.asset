@@ -15,4 +15,5 @@ MonoBehaviour:
   elementID: No
   elementName: Nobelium
   atomicNumber: 102
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 5458188579261761800, guid: d8ba6f972e2703a4e810eaa7978e4c7d,
+    type: 3}

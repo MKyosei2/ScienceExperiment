@@ -15,4 +15,5 @@ MonoBehaviour:
   elementID: Xe
   elementName: Xenon
   atomicNumber: 54
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 8941363014103004992, guid: db477a10fd0091a479a35dd3a6305cec,
+    type: 3}

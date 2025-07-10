@@ -15,4 +15,5 @@ MonoBehaviour:
   elementID: K
   elementName: Potassium
   atomicNumber: 19
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 3018193675212980952, guid: 930a66437bd459a40b33c004c9e222ee,
+    type: 3}

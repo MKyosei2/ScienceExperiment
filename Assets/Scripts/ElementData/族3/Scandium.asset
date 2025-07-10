@@ -15,4 +15,5 @@ MonoBehaviour:
   elementID: Sc
   elementName: Scandium
   atomicNumber: 21
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 6168527736958976533, guid: ef8f114b03050d64d9db58133ce35ce2,
+    type: 3}

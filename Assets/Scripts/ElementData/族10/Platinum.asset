@@ -15,4 +15,5 @@ MonoBehaviour:
   elementID: Pt
   elementName: Platinum
   atomicNumber: 78
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 5411641530516252700, guid: 4e648bf78e2af554dbb21b714aec4fe3,
+    type: 3}

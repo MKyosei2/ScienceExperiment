@@ -15,4 +15,5 @@ MonoBehaviour:
   elementID: Tb
   elementName: Terbium
   atomicNumber: 65
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 2606002181648482338, guid: 920008f0c4f0db34585044d0c8355130,
+    type: 3}

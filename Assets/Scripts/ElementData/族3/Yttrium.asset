@@ -15,4 +15,5 @@ MonoBehaviour:
   elementID: Y
   elementName: Yttrium
   atomicNumber: 39
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 1072246122780205435, guid: 211c3373665827848bc6baf3f6e55655,
+    type: 3}

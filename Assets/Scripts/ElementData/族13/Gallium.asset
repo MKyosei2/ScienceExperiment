@@ -15,4 +15,5 @@ MonoBehaviour:
   elementID: Ga
   elementName: Gallium
   atomicNumber: 31
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 4295702609591870736, guid: c792a1ec88e755d469d1630b97295bdb,
+    type: 3}

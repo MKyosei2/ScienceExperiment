@@ -15,4 +15,5 @@ MonoBehaviour:
   elementID: Es
   elementName: Einsteinium
   atomicNumber: 99
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 4202571076033680820, guid: 83306ab8849b9c3468abe9c05b07749d,
+    type: 3}

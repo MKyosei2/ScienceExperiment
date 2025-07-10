@@ -15,4 +15,5 @@ MonoBehaviour:
   elementID: Re
   elementName: Rhenium
   atomicNumber: 75
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 7206861741790460663, guid: e03fe4a754424944abc0d5216745a1c0,
+    type: 3}

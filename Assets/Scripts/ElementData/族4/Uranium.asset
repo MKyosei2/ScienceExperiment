@@ -15,4 +15,5 @@ MonoBehaviour:
   elementID: U
   elementName: Uranium
   atomicNumber: 92
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 2531811384501701397, guid: 3f893a36b97a3fa48a83c41c33673352,
+    type: 3}

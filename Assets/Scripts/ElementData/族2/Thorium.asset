@@ -15,4 +15,5 @@ MonoBehaviour:
   elementID: Th
   elementName: Thorium
   atomicNumber: 90
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 4173417180128111352, guid: e8fa5b09dd41ae54f82ad95864ad085f,
+    type: 3}

@@ -15,4 +15,5 @@ MonoBehaviour:
   elementID: Lu
   elementName: Lutetium
   atomicNumber: 71
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 5766191225704367943, guid: 7e17ee0a7b5e7fe40b918d01333a167f,
+    type: 3}

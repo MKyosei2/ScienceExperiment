@@ -15,4 +15,5 @@ MonoBehaviour:
   elementID: W
   elementName: Tungsten
   atomicNumber: 74
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 5259608837779144395, guid: e9db606895348b848ad5edb49a00380e,
+    type: 3}

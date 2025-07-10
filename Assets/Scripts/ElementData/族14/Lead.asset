@@ -15,4 +15,5 @@ MonoBehaviour:
   elementID: Pb
   elementName: Lead
   atomicNumber: 82
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 1409182327994602324, guid: dc65086ed60a26844a396fdd481f0c3f,
+    type: 3}

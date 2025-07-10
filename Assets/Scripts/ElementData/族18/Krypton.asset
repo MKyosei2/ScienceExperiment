@@ -15,4 +15,5 @@ MonoBehaviour:
   elementID: Kr
   elementName: Krypton
   atomicNumber: 36
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 6483373616080613767, guid: 34946db117133fe4680aa9798d34d3e9,
+    type: 3}

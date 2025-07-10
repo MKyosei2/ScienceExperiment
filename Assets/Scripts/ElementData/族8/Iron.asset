@@ -15,4 +15,5 @@ MonoBehaviour:
   elementID: Fe
   elementName: Iron
   atomicNumber: 26
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 8043415945121141281, guid: d05b081c544120e4b98b61e13b443c1f,
+    type: 3}

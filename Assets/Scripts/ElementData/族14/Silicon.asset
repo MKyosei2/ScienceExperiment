@@ -15,4 +15,5 @@ MonoBehaviour:
   elementID: Si
   elementName: Silicon
   atomicNumber: 14
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 1530497732670869884, guid: ca7f38387ad76464485500c7e71b6769,
+    type: 3}

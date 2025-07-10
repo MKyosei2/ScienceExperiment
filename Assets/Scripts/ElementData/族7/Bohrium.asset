@@ -15,4 +15,5 @@ MonoBehaviour:
   elementID: Bh
   elementName: Bohrium
   atomicNumber: 107
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 309167546412674753, guid: 154ce6cec5552924ca2a58abcd930ce9,
+    type: 3}

@@ -15,4 +15,5 @@ MonoBehaviour:
   elementID: Cd
   elementName: Cadmium
   atomicNumber: 48
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 1107093397460678104, guid: 440909b2973a2694ebad24fe9f17392e,
+    type: 3}

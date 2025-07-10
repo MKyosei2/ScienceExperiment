@@ -15,4 +15,5 @@ MonoBehaviour:
   elementID: Sg
   elementName: Seaborgium
   atomicNumber: 106
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 4065087516173326782, guid: d218b5306bd532341a69f48cc706408f,
+    type: 3}

@@ -15,4 +15,5 @@ MonoBehaviour:
   elementID: Mn
   elementName: Manganese
   atomicNumber: 25
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 6657476924142203655, guid: 432cf50d8f671694ab5a34fdc2e0c098,
+    type: 3}

@@ -15,4 +15,5 @@ MonoBehaviour:
   elementID: Cs
   elementName: Cesium
   atomicNumber: 55
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 8275903929352983254, guid: c8f874fcbd1123047824812370b19ab7,
+    type: 3}

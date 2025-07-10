@@ -15,4 +15,5 @@ MonoBehaviour:
   elementID: Mg
   elementName: Magnesium
   atomicNumber: 12
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 7760336340337071140, guid: a13e1c9be64211542a5405f8591b3404,
+    type: 3}

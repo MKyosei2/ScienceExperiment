@@ -15,4 +15,5 @@ MonoBehaviour:
   elementID: Hg
   elementName: Mercury
   atomicNumber: 80
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 1247752098054619800, guid: 5f11206db4d6eed47bafe248e0bac075,
+    type: 3}

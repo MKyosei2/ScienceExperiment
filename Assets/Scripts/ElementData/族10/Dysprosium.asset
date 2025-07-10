@@ -15,4 +15,5 @@ MonoBehaviour:
   elementID: Dy
   elementName: Dysprosium
   atomicNumber: 66
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 1313150427504657840, guid: 8f4486512f1945d4ebdf209f56d46e0c,
+    type: 3}

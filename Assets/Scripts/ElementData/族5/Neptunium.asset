@@ -15,4 +15,5 @@ MonoBehaviour:
   elementID: Np
   elementName: Neptunium
   atomicNumber: 93
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 8596158625363807397, guid: be8492e6a64add741bd55f356e40ddf7,
+    type: 3}

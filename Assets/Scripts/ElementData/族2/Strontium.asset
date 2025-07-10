@@ -15,4 +15,5 @@ MonoBehaviour:
   elementID: Sr
   elementName: Strontium
   atomicNumber: 38
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 1263092100364854588, guid: cc486f3b0c18d5547b0152b993e72cbe,
+    type: 3}

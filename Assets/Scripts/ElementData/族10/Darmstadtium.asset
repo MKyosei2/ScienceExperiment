@@ -15,4 +15,5 @@ MonoBehaviour:
   elementID: Ds
   elementName: Darmstadtium
   atomicNumber: 110
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 1002358794494137495, guid: cf40714774b57ab4ca8165e706d8afcb,
+    type: 3}

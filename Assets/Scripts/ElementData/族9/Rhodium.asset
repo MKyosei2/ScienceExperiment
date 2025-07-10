@@ -15,4 +15,5 @@ MonoBehaviour:
   elementID: Rh
   elementName: Rhodium
   atomicNumber: 45
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 5978240694475016515, guid: 74f89add0a41d364d9cd4151e310c876,
+    type: 3}

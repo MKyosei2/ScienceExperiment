@@ -15,4 +15,5 @@ MonoBehaviour:
   elementID: Na
   elementName: Sodium
   atomicNumber: 11
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 2835106078523615895, guid: 05f2ecbe5168a0b40b44d25169bb04ee,
+    type: 3}

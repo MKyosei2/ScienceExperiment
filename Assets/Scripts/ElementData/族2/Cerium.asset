@@ -15,4 +15,5 @@ MonoBehaviour:
   elementID: Ce
   elementName: Cerium
   atomicNumber: 58
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 4249093442606463671, guid: ffb56df9ed885f14bb998bb30c712a5d,
+    type: 3}

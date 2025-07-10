@@ -15,4 +15,5 @@ MonoBehaviour:
   elementID: Cn
   elementName: Copernicium
   atomicNumber: 112
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 5667408796299314398, guid: 9ef1d74ddf49af84e985d9784533a8f1,
+    type: 3}
