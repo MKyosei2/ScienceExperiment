@@ -5,7 +5,7 @@ using VRC.Udon;
 
 public class SelectionZone : UdonSharpBehaviour
 {
-    public GameObject[] objectsInZone = new GameObject[32];
+    public GameObject[] objectsInZone = new GameObject[1];
     private int count = 0;
 
     private void OnTriggerEnter(Collider other)
