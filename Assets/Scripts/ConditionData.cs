@@ -9,5 +9,4 @@ public class ConditionData : ScriptableObject
     [Header("視覚表示")]
     public string displayName;
     public GameObject displayPrefab;
-    public Color displayColor = Color.white;
 }
