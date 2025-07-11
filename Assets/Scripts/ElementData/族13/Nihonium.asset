@@ -17,3 +17,5 @@ MonoBehaviour:
   atomicNumber: 113
   displayPrefab: {fileID: 3616951105227388788, guid: e8b3ab6624cfaa94c96cb5b7f0ac8153,
     type: 3}
+  group: 13
+  period: 7

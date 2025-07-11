@@ -7,4 +7,6 @@ public class ElementData : ScriptableObject
     public string elementName;
     public int atomicNumber;
     public GameObject displayPrefab;
+    public int group;              // ‘°”Ô†
+    public int period;             // üŠú”Ô†
 }
