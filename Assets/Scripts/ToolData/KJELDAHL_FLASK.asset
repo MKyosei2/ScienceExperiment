@@ -15,4 +15,5 @@ MonoBehaviour:
   toolID: KJELDAHL_FLASK
   toolName: KJELDAHL_FLASK
   icon: {fileID: 0}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 2210260678054544070, guid: 3ae2ddec665a21a4f91164ce767d5ce2,
+    type: 3}

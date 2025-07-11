@@ -15,5 +15,5 @@ MonoBehaviour:
   toolID: glass_rod
   toolName: "\u30AC\u30E9\u30B9\u68D2 "
   icon: {fileID: 0}
-  displayPrefab: {fileID: 6042345923772962308, guid: 548e17bd166378740be356a85c3d34f4,
+  displayPrefab: {fileID: 5409967314501061056, guid: 548e17bd166378740be356a85c3d34f4,
     type: 3}

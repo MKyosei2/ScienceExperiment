@@ -15,4 +15,5 @@ MonoBehaviour:
   toolID: FLORENCE_FLASK
   toolName: FLORENCE_FLASK
   icon: {fileID: 0}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 735879157622919596, guid: 7a2b8a48ced703a4bae2c3a102cf1832,
+    type: 3}

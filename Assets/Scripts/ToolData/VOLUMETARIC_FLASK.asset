@@ -15,4 +15,5 @@ MonoBehaviour:
   toolID: VOLUMETARIC_FLASK
   toolName: VOLUMETARIC_FLASK
   icon: {fileID: 0}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 7640641620016229403, guid: 89d7a135f9b4d1a4babf2e648c73dc7a,
+    type: 3}

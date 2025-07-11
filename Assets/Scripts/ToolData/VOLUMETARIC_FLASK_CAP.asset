@@ -15,4 +15,5 @@ MonoBehaviour:
   toolID: 'VOLUMETARIC_FLASK_CAP '
   toolName: 'VOLUMETARIC_FLASK_CAP '
   icon: {fileID: 0}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 6734300424622356286, guid: d9a0e909ffe36b4419a8d355117c064b,
+    type: 3}

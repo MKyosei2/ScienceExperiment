@@ -15,4 +15,5 @@ MonoBehaviour:
   toolID: RETORT_FLASK
   toolName: RETORT_FLASK
   icon: {fileID: 0}
-  displayPrefab: {fileID: 0}
+  displayPrefab: {fileID: 514864725408908860, guid: 9cba1e3b3aefbe349a58554c9051588d,
+    type: 3}

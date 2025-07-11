@@ -15,5 +15,5 @@ MonoBehaviour:
   toolID: burner
   toolName: "\u30AC\u30B9\u30D0\u30FC\u30CA\u30FC"
   icon: {fileID: 0}
-  displayPrefab: {fileID: 5103548597917121512, guid: 0c82f11bc6f72284482c3b85f10c6763,
+  displayPrefab: {fileID: 8082164347037553145, guid: 0c82f11bc6f72284482c3b85f10c6763,
     type: 3}

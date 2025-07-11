@@ -15,5 +15,5 @@ MonoBehaviour:
   toolID: test_tube
   toolName: "\u8A66\u9A13\u7BA1"
   icon: {fileID: 0}
-  displayPrefab: {fileID: 5356626201860776233, guid: 22fef925889e80d4ea43ee1a46d8bdb4,
+  displayPrefab: {fileID: 951958160606292317, guid: 22fef925889e80d4ea43ee1a46d8bdb4,
     type: 3}

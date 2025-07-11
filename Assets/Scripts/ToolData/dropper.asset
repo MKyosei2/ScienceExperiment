@@ -15,5 +15,5 @@ MonoBehaviour:
   toolID: dropper
   toolName: "\u30B9\u30DD\u30A4\u30C8 "
   icon: {fileID: 0}
-  displayPrefab: {fileID: 4102939504957542122, guid: 1fbbba39c29994f49ae554ee50d0811e,
+  displayPrefab: {fileID: 1049553705658000196, guid: 1fbbba39c29994f49ae554ee50d0811e,
     type: 3}

@@ -15,5 +15,5 @@ MonoBehaviour:
   toolID: beaker
   toolName: "\u30D3\u30FC\u30AB\u30FC"
   icon: {fileID: 0}
-  displayPrefab: {fileID: 1898856900536091502, guid: cafaa3710958faa45bbf439a80d64e1e,
+  displayPrefab: {fileID: 5253690945868290579, guid: cafaa3710958faa45bbf439a80d64e1e,
     type: 3}
