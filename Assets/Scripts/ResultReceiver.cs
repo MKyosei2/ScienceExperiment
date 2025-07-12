@@ -10,6 +10,7 @@ public class ResultReceiver : MonoBehaviour
     public GameObject[] reactionPrefabs;
     public string[] styleIDs;
     public ExperimentHistory history;
+    public GameObject toolObject; // 修正ポイント: 対象器具をInspectorで指定
     private string filePath;
 
     void Start()
@@ -23,15 +24,15 @@ public class ResultReceiver : MonoBehaviour
         if (!File.Exists(filePath)) return;
 
         string text = File.ReadAllText(filePath);
-        if (text.Contains("🧬 結果"))
+        if (text.Contains("\uD83E\uDDEA 結果")) // "🧬 結果"
         {
-            // パース（シンプルに処理）
-            string result = Extract(text, "🧬 結果:", "\n");
-            string trivia = Extract(text, "📖 雑学:", "\n");
-            string style = Extract(text, "🎮 StyleID:", "\n");
+            string result = Extract(text, "\uD83E\uDDEA 結果:", "\n");
+            string trivia = Extract(text, "\uD83D\uDCDA 雑学:", "\n");
+            string style = Extract(text, "\uD83C\uDFAE StyleID:", "\n");
+            string shaderName = Extract(text, "\uD83C\uDFA8 Shader:", "\n");
 
-            resultText.text = result;
-            triviaText.text = trivia;
+            if (resultText != null) resultText.text = result;
+            if (triviaText != null) triviaText.text = trivia;
 
             int index = System.Array.IndexOf(styleIDs, style.Trim());
             if (index >= 0 && index < reactionPrefabs.Length)
@@ -39,7 +40,29 @@ public class ResultReceiver : MonoBehaviour
                 Instantiate(reactionPrefabs[index], spawnPoint.position, Quaternion.identity);
             }
 
-            File.Delete(filePath); // 一度読み込んだら削除
+            ApplyShaderToTool(shaderName);
+
+            if (history != null)
+            {
+                history.AddEntry("?", "?", "?", result, trivia); // ID埋め込みは別途対応
+            }
+
+            File.Delete(filePath);
+        }
+    }
+
+    void ApplyShaderToTool(string shaderName)
+    {
+        if (toolObject == null || string.IsNullOrEmpty(shaderName)) return;
+
+        Renderer renderer = toolObject.GetComponent<Renderer>();
+        if (renderer != null)
+        {
+            Shader shader = Shader.Find(shaderName);
+            if (shader != null)
+            {
+                renderer.material.shader = shader;
+            }
         }
     }
 

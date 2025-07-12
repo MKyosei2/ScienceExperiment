@@ -11,9 +11,12 @@ public class SelectionSummaryDisplay : UdonSharpBehaviour
 
     private void Update()
     {
-        outputText.text = "@InferenceBot\n" +
-                          "element: " + holder.selectedElementID + "\n" +
-                          "tool: " + holder.selectedToolID + "\n" +
-                          "condition: " + holder.selectedConditionID;
+        if (outputText != null)
+        {
+            outputText.text = "@InferenceBot\n" +
+                              "element: " + holder.selectedElementID + "\n" +
+                              "tool: " + holder.selectedToolID + "\n" +
+                              "condition: " + holder.selectedConditionID;
+        }
     }
 }

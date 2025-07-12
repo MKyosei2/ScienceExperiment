@@ -19,14 +19,14 @@ public class ElementTextureGenerator : EditorWindow
         "Tl", "Pb", "Bi", "Po", "At", "Rn",
         "Fr", "Ra", "Ac", "Th", "Pa", "U", "Np", "Pu", "Am", "Cm",
         "Bk", "Cf", "Es", "Fm", "Md", "No", "Lr",
-        "Rf", "Db", "Sg", "Bh", "Hs", "Mt", "Ds", "Rg", "Cn", "Fl", "Lv", "Ts", "Og"
+        "Rf", "Db", "Sg", "Bh", "Hs", "Mt", "Ds", "Rg", "Cn", "Nh","Fl","Mc", "Lv", "Ts", "Og"
     };
 
     private Font font;
     private int fontSize = 128;
     private Color textColor = Color.black;
     private Color backgroundColor = Color.white;
-    private string savePath = "Assets/Textures/Elements/";
+    private string savePath = "Assets/Texture";
 
     [MenuItem("Tools/元素記号テクスチャ生成")]
     public static void ShowWindow()

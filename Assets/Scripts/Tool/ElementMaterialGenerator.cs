@@ -4,8 +4,8 @@ using System.IO;
 
 public class ElementMaterialGenerator : EditorWindow
 {
-    private string pngPath = "Assets/Textures/Elements/";
-    private string matSavePath = "Assets/Materials/Elements/";
+    private string pngPath = "Assets/Texture";
+    private string matSavePath = "Assets/Material";
     private float metallicValue = 0.9f;
     private float smoothnessValue = 0.6f;
 
