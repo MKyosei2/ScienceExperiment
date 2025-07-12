@@ -15,8 +15,8 @@ MonoBehaviour:
   effectType: 0
   effectColor: {r: 1, g: 1, b: 1, a: 1}
   intensity: 1
-  bubbleSpeed: 0
-  bubbleNoise: {fileID: 0}
+  bubbleSpeed: 0.5
+  bubbleNoise: {fileID: 2800000, guid: 5d812a42cc4f3114e8611013e46934fc, type: 3}
   liquidWobbleAmount: 0
   liquidTex: {fileID: 0}
   heatDistortionAmount: 0

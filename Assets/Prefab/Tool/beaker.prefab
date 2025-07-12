@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2839241876907089429}
   - component: {fileID: 1934117533586963208}
   - component: {fileID: -9148546582827197220}
-  - component: {fileID: -9170404981615576779}
+  - component: {fileID: -6055001581965248763}
   m_Layer: 13
   m_Name: beaker
   m_TagString: Untagged
@@ -64,7 +64,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 630379fd492554b45bdfeb2b05a2e851, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -134,7 +134,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &-9170404981615576779
+--- !u!114 &-6055001581965248763
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

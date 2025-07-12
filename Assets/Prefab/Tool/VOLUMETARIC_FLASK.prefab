@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 497169754079439026}
   - component: {fileID: 6923457188104013682}
   - component: {fileID: -1637833818437062760}
-  - component: {fileID: 1613644561862949916}
+  - component: {fileID: -7068417402592188094}
   m_Layer: 13
   m_Name: VOLUMETARIC_FLASK
   m_TagString: Untagged
@@ -63,7 +63,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 5561349426305759274, guid: 9e7ae7f7342886b4da1e2b3894d56bf4, type: 3}
+  - {fileID: 2100000, guid: 630379fd492554b45bdfeb2b05a2e851, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -112,7 +112,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &1613644561862949916
+--- !u!114 &-7068417402592188094
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

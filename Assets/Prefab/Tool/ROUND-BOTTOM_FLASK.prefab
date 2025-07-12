@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 9035627770756904964}
   - component: {fileID: 1698632139699530025}
   - component: {fileID: 6317589523940306770}
-  - component: {fileID: -2843769087010877784}
+  - component: {fileID: 289486490604967053}
   m_Layer: 13
   m_Name: ROUND-BOTTOM_FLASK
   m_TagString: Untagged
@@ -63,7 +63,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 8748892135801146194, guid: 3b88fa7a27a21e74d90fe256b8eb31cb, type: 3}
+  - {fileID: 2100000, guid: 630379fd492554b45bdfeb2b05a2e851, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -112,7 +112,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &-2843769087010877784
+--- !u!114 &289486490604967053
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

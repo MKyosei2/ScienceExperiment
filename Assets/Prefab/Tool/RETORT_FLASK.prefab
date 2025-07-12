@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4509389620498706815}
   - component: {fileID: 5526142950351285122}
   - component: {fileID: -9027948900274071690}
-  - component: {fileID: 7406109599323817887}
+  - component: {fileID: -5475860055689172539}
   m_Layer: 13
   m_Name: RETORT_FLASK
   m_TagString: Untagged
@@ -63,7 +63,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 5561349426305759274, guid: c757d81504c9e864181d982228bef80d, type: 3}
+  - {fileID: 2100000, guid: 630379fd492554b45bdfeb2b05a2e851, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -112,7 +112,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &7406109599323817887
+--- !u!114 &-5475860055689172539
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

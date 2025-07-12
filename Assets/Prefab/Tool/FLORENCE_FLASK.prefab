@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7040024270960671341}
   - component: {fileID: 5135841503643583016}
   - component: {fileID: 8597558411445388975}
-  - component: {fileID: 6733593085747856728}
+  - component: {fileID: -81902065449950167}
   m_Layer: 13
   m_Name: FLORENCE_FLASK
   m_TagString: Untagged
@@ -63,7 +63,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 8748892135801146194, guid: 8e2a200217bf6bb4ead7b2eee60d6046, type: 3}
+  - {fileID: 2100000, guid: 630379fd492554b45bdfeb2b05a2e851, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -112,7 +112,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &6733593085747856728
+--- !u!114 &-81902065449950167
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

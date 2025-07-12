@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1958089561025637429}
   - component: {fileID: 3054204434406926296}
   - component: {fileID: -9220949946720658782}
-  - component: {fileID: 2572247330669953212}
+  - component: {fileID: 6133824959359908551}
   m_Layer: 13
   m_Name: glass_rod
   m_TagString: Untagged
@@ -64,7 +64,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 630379fd492554b45bdfeb2b05a2e851, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -134,7 +134,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &2572247330669953212
+--- !u!114 &6133824959359908551
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

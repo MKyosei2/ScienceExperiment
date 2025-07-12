@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6109632812862246956}
   - component: {fileID: 843469297760694771}
   - component: {fileID: -4609077739151252521}
-  - component: {fileID: 1252927091791932042}
+  - component: {fileID: -521071963901862056}
   m_Layer: 13
   m_Name: test_tube
   m_TagString: Untagged
@@ -64,7 +64,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 630379fd492554b45bdfeb2b05a2e851, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -134,7 +134,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &1252927091791932042
+--- !u!114 &-521071963901862056
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

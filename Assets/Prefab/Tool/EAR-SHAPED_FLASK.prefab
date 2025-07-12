@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7622140802798816145}
   - component: {fileID: 5592295925200761640}
   - component: {fileID: -5175296119121104631}
-  - component: {fileID: 7196642599709487028}
+  - component: {fileID: -2383242977142843105}
   m_Layer: 13
   m_Name: EAR-SHAPED_FLASK
   m_TagString: Untagged
@@ -63,7 +63,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 5561349426305759274, guid: e7e8bfd2f48388e429dc22796aa86a76, type: 3}
+  - {fileID: 2100000, guid: 630379fd492554b45bdfeb2b05a2e851, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -112,7 +112,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &7196642599709487028
+--- !u!114 &-2383242977142843105
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

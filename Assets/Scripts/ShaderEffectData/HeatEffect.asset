@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a397531d79939a4199c712faac02ebc, type: 3}
   m_Name: HeatEffect
   m_EditorClassIdentifier: 
-  effectType: 0
-  effectColor: {r: 1, g: 1, b: 1, a: 1}
+  effectType: 2
+  effectColor: {r: 1, g: 0.2, b: 0.1, a: 1}
   intensity: 1
   bubbleSpeed: 0
   bubbleNoise: {fileID: 0}
   liquidWobbleAmount: 0
   liquidTex: {fileID: 0}
-  heatDistortionAmount: 0
-  heatWaveMap: {fileID: 0}
+  heatDistortionAmount: 0.15
+  heatWaveMap: {fileID: 2800000, guid: aba083b86c0ec684c86e07ef9bb9f0b9, type: 3}

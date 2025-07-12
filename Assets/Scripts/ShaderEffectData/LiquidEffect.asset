@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a397531d79939a4199c712faac02ebc, type: 3}
   m_Name: LiquidEffect
   m_EditorClassIdentifier: 
-  effectType: 0
-  effectColor: {r: 1, g: 1, b: 1, a: 1}
+  effectType: 1
+  effectColor: {r: 0, g: 0.5, b: 1, a: 1}
   intensity: 1
   bubbleSpeed: 0
   bubbleNoise: {fileID: 0}
-  liquidWobbleAmount: 0
-  liquidTex: {fileID: 0}
+  liquidWobbleAmount: 0.1
+  liquidTex: {fileID: 2800000, guid: 7586b8499d3644745924ea7c9ecc83c6, type: 3}
   heatDistortionAmount: 0
   heatWaveMap: {fileID: 0}

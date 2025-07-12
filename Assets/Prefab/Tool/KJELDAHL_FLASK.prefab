@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7829469529812046062}
   - component: {fileID: 9073983895009182647}
   - component: {fileID: 4507732058014027232}
-  - component: {fileID: 2258971169795619814}
+  - component: {fileID: -5682229151777150817}
   m_Layer: 13
   m_Name: KJELDAHL_FLASK
   m_TagString: Untagged
@@ -63,7 +63,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 8748892135801146194, guid: 3058c445df307044a865ce1919fa4712, type: 3}
+  - {fileID: 2100000, guid: 630379fd492554b45bdfeb2b05a2e851, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -112,7 +112,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &2258971169795619814
+--- !u!114 &-5682229151777150817
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1110619164739087713}
   - component: {fileID: 8001866316262935193}
   - component: {fileID: -8797345024868395020}
-  - component: {fileID: 1979672409736187014}
+  - component: {fileID: 7411781655321231072}
   m_Layer: 13
   m_Name: CONICAL_FLASK
   m_TagString: Untagged
@@ -63,7 +63,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 5561349426305759274, guid: 97d09c839cf1a774f8a75ce6f8663c07, type: 3}
+  - {fileID: 2100000, guid: 630379fd492554b45bdfeb2b05a2e851, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -112,7 +112,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &1979672409736187014
+--- !u!114 &7411781655321231072
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

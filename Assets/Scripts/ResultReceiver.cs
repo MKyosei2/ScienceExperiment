@@ -6,7 +6,6 @@ public class ResultReceiver : MonoBehaviour
 {
     public TextMeshProUGUI resultText;
     public TextMeshProUGUI triviaText;
-    public Transform spawnPoint;
     public GameObject[] reactionPrefabs;
     public string[] styleIDs;
     public ExperimentHistory history;
@@ -36,11 +35,7 @@ public class ResultReceiver : MonoBehaviour
             if (triviaText != null) triviaText.text = trivia;
 
             int index = System.Array.IndexOf(styleIDs, style.Trim());
-            if (index >= 0 && index < reactionPrefabs.Length)
-            {
-                Instantiate(reactionPrefabs[index], spawnPoint.position, Quaternion.identity);
-            }
-
+           
             ApplyEffectsToTool();
 
             if (history != null)
