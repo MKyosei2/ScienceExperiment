@@ -10,7 +10,9 @@ public class ResultReceiver : MonoBehaviour
     public GameObject[] reactionPrefabs;
     public string[] styleIDs;
     public ExperimentHistory history;
-    public GameObject toolObject; // 修正ポイント: 対象器具をInspectorで指定
+    public GameObject toolObject;
+    public ShaderEffectData[] effectProfiles; // 追加: 実行時に適用するエフェクト
+
     private string filePath;
 
     void Start()
@@ -24,12 +26,11 @@ public class ResultReceiver : MonoBehaviour
         if (!File.Exists(filePath)) return;
 
         string text = File.ReadAllText(filePath);
-        if (text.Contains("\uD83E\uDDEA 結果")) // "🧬 結果"
+        if (text.Contains("\uD83E\uDDEA 結果"))
         {
             string result = Extract(text, "\uD83E\uDDEA 結果:", "\n");
             string trivia = Extract(text, "\uD83D\uDCDA 雑学:", "\n");
             string style = Extract(text, "\uD83C\uDFAE StyleID:", "\n");
-            string shaderName = Extract(text, "\uD83C\uDFA8 Shader:", "\n");
 
             if (resultText != null) resultText.text = result;
             if (triviaText != null) triviaText.text = trivia;
@@ -40,29 +41,26 @@ public class ResultReceiver : MonoBehaviour
                 Instantiate(reactionPrefabs[index], spawnPoint.position, Quaternion.identity);
             }
 
-            ApplyShaderToTool(shaderName);
+            ApplyEffectsToTool();
 
             if (history != null)
             {
-                history.AddEntry("?", "?", "?", result, trivia); // ID埋め込みは別途対応
+                history.AddEntry("?", "?", "?", result, trivia);
             }
 
             File.Delete(filePath);
         }
     }
 
-    void ApplyShaderToTool(string shaderName)
+    void ApplyEffectsToTool()
     {
-        if (toolObject == null || string.IsNullOrEmpty(shaderName)) return;
+        if (toolObject == null || effectProfiles == null) return;
 
-        Renderer renderer = toolObject.GetComponent<Renderer>();
-        if (renderer != null)
+        var controller = toolObject.GetComponent<GlassRendererController>();
+        if (controller != null)
         {
-            Shader shader = Shader.Find(shaderName);
-            if (shader != null)
-            {
-                renderer.material.shader = shader;
-            }
+            controller.effects = effectProfiles;
+            controller.ApplyEffects();
         }
     }
 
