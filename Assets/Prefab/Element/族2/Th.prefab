@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 4865165728460169053}
   - component: {fileID: 4382030258874475880}
   - component: {fileID: -8309341168202395200}
-  - component: {fileID: 4189138201550583513}
   m_Layer: 13
   m_Name: Th
   m_TagString: Untagged
@@ -64,11 +63,6 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: b3af0784f060ff54abd1719afeeac9e1, type: 2}
-  - {fileID: 2100000, guid: b3af0784f060ff54abd1719afeeac9e1, type: 2}
-  - {fileID: 2100000, guid: b3af0784f060ff54abd1719afeeac9e1, type: 2}
-  - {fileID: 2100000, guid: b3af0784f060ff54abd1719afeeac9e1, type: 2}
-  - {fileID: 2100000, guid: b3af0784f060ff54abd1719afeeac9e1, type: 2}
   - {fileID: 2100000, guid: b3af0784f060ff54abd1719afeeac9e1, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -139,35 +133,3 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 126
   m_CollisionDetection: 0
---- !u!114 &4189138201550583513
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4173417180128111352}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1804438810, guid: 661092b4961be7145bfbe56e1e62337b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  MomentumTransferMethod: 0
-  DisallowTheft: 0
-  ExactGun: {fileID: 0}
-  ExactGrip: {fileID: 0}
-  allowManipulationWhenEquipped: 0
-  orientation: 0
-  AutoHold: 0
-  InteractionText: 
-  UseText: Use
-  useEventBroadcastType: 0
-  UseDownEventName: 
-  UseUpEventName: 
-  pickupDropEventBroadcastType: 0
-  PickupEventName: 
-  DropEventName: 
-  ThrowVelocityBoostMinSpeed: 1
-  ThrowVelocityBoostScale: 1
-  currentlyHeldBy: {fileID: 0}
-  pickupable: 1
-  proximity: 2
