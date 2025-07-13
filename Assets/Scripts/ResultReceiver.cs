@@ -9,8 +9,11 @@ public class ResultReceiver : MonoBehaviour
     public GameObject[] reactionPrefabs;
     public string[] styleIDs;
     public ExperimentHistory history;
-    public GameObject toolObject;
-    public ShaderEffectData[] effectProfiles; // 追加: 実行時に適用するエフェクト
+    public GameObject[] toolObjects;
+    public GameObject[] elementObjects;
+    public GameObject[] conditionObjects;
+
+    public ShaderEffectData[] effectProfiles;
 
     private string filePath;
 
@@ -35,8 +38,14 @@ public class ResultReceiver : MonoBehaviour
             if (triviaText != null) triviaText.text = trivia;
 
             int index = System.Array.IndexOf(styleIDs, style.Trim());
-           
-            ApplyEffectsToTool();
+            if (index >= 0 && index < reactionPrefabs.Length)
+            {
+                Instantiate(reactionPrefabs[index], transform.position, Quaternion.identity);
+            }
+
+            ApplyEffectsToTargets(toolObjects);
+            ApplyEffectsToTargets(elementObjects);
+            ApplyEffectsToTargets(conditionObjects);
 
             if (history != null)
             {
@@ -47,15 +56,20 @@ public class ResultReceiver : MonoBehaviour
         }
     }
 
-    void ApplyEffectsToTool()
+    void ApplyEffectsToTargets(GameObject[] targets)
     {
-        if (toolObject == null || effectProfiles == null) return;
+        if (targets == null || effectProfiles == null) return;
 
-        var controller = toolObject.GetComponent<GlassRendererController>();
-        if (controller != null)
+        foreach (var obj in targets)
         {
-            controller.effects = effectProfiles;
-            controller.ApplyEffects();
+            if (obj == null) continue;
+
+            var controller = obj.GetComponent<GlassRendererController>();
+            if (controller != null)
+            {
+                controller.effects = effectProfiles;
+                controller.ApplyEffects();
+            }
         }
     }
 
