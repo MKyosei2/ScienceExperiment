@@ -16,6 +16,11 @@ public class SelectorObject : UdonSharpBehaviour
     [Tooltip("ID（例: Na, beaker, vacuum など）")]
     [SerializeField]
     private string objectID;
+    public string GetObjectType() => objectType;
+    public string GetObjectID() => objectID;
+
+    public void SetObjectType(string type) => objectType = type;
+    public void SetObjectID(string id) => objectID = id;
 
     public void SetObjectTypeAndID(string type, string id)
     {
