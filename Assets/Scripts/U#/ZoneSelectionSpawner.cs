@@ -2,6 +2,9 @@
 using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
+using System;
+using System.IO;
+using TMPro;
 
 public class ZoneSelectionSpawner : UdonSharpBehaviour
 {
@@ -23,17 +26,14 @@ public class ZoneSelectionSpawner : UdonSharpBehaviour
 
         if (!selector.GetObjectType().Equals(zoneType)) return;
 
-        // 既存のものがあれば削除
         if (currentSpawned != null)
         {
             Destroy(currentSpawned);
         }
 
-        // 生成して指定位置に置く
         currentSpawned = VRCInstantiate(spawnablePrefab);
         currentSpawned.transform.SetPositionAndRotation(spawnTarget.position, spawnTarget.rotation);
 
-        // IDをコピーする（SelectorObjectがあれば）
         SelectorObject newSel = currentSpawned.GetComponent<SelectorObject>();
         if (newSel != null)
         {
@@ -43,7 +43,6 @@ public class ZoneSelectionSpawner : UdonSharpBehaviour
 
     void OnTriggerExit(Collider other)
     {
-        // 退去時に削除
         Destroy(currentSpawned);
     }
 }
