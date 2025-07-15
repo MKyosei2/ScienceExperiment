@@ -12,8 +12,9 @@ public class ResultReceiver : MonoBehaviour
     public GameObject[] toolObjects;
     public GameObject[] elementObjects;
     public GameObject[] conditionObjects;
-
     public ShaderEffectData[] effectProfiles;
+
+    public SelectedObjectHolder holder;  // ← 追加ポイント
 
     private string filePath;
 
@@ -27,12 +28,37 @@ public class ResultReceiver : MonoBehaviour
     {
         if (!File.Exists(filePath)) return;
 
-        string text = File.ReadAllText(filePath);
-        if (text.Contains("\uD83E\uDDEA 結果"))
+        string rawText = File.ReadAllText(filePath);  // ← 変数名を変更（以前は text だった）
+
+        if (rawText.Contains("🧪 結果"))
         {
-            string result = Extract(text, "\uD83E\uDDEA 結果:", "\n");
-            string trivia = Extract(text, "\uD83D\uDCDA 雑学:", "\n");
-            string style = Extract(text, "\uD83C\uDFAE StyleID:", "\n");
+            string result = Extract(rawText, "🧪 結果:", "\n");
+            string trivia = Extract(rawText, "📖 雑学:", "\n");
+            string style = Extract(rawText, "🎮 StyleID:", "\n");
+
+            bool fallback = false;
+
+            string elementID = holder != null ? holder.selectedElementID : "?";
+            string toolID = holder != null ? holder.selectedToolID : "?";
+            string conditionID = holder != null ? holder.selectedConditionID : "?";
+
+            if (string.IsNullOrEmpty(result))
+            {
+                if (history != null)
+                {
+                    fallback = BotFallbackHelper.TryFallbackFromHistory(
+                        history, elementID, toolID, conditionID,
+                        out result, out trivia
+                    );
+                }
+
+                if (!fallback)
+                {
+                    result = "❌ 記録が見つかりません";
+                    trivia = "この組み合わせには履歴が存在しませんでした。";
+                    Debug.LogWarning("❗ Bot応答も履歴も存在しませんでした");
+                }
+            }
 
             if (resultText != null) resultText.text = result;
             if (triviaText != null) triviaText.text = trivia;
@@ -42,6 +68,10 @@ public class ResultReceiver : MonoBehaviour
             {
                 Instantiate(reactionPrefabs[index], transform.position, Quaternion.identity);
             }
+            else if (!fallback && reactionPrefabs.Length > 0)
+            {
+                Instantiate(reactionPrefabs[0], transform.position, Quaternion.identity);
+            }
 
             ApplyEffectsToTargets(toolObjects);
             ApplyEffectsToTargets(elementObjects);
@@ -49,7 +79,7 @@ public class ResultReceiver : MonoBehaviour
 
             if (history != null)
             {
-                history.AddEntry("?", "?", "?", result, trivia);
+                history.AddEntry(elementID, toolID, conditionID, result, trivia);
             }
 
             File.Delete(filePath);
