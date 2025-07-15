@@ -194,6 +194,7 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 5102042705655992389}
   objectType: Tool
   objectID: CLAISEN_FLASK
+  holder: {fileID: 0}
 --- !u!114 &5102042705655992389
 MonoBehaviour:
   m_ObjectHideFlags: 0

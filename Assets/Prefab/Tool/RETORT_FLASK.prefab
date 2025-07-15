@@ -162,6 +162,7 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: -1180339176046958336}
   objectType: Tool
   objectID: RETORT_FLASK
+  holder: {fileID: 0}
 --- !u!114 &-1180339176046958336
 MonoBehaviour:
   m_ObjectHideFlags: 0

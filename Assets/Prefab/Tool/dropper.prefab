@@ -162,6 +162,7 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: -4898949651665045322}
   objectType: Tool
   objectID: dropper
+  holder: {fileID: 0}
 --- !u!114 &-4898949651665045322
 MonoBehaviour:
   m_ObjectHideFlags: 0

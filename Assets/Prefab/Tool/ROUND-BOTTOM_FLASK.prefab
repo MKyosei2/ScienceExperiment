@@ -162,6 +162,7 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 6133079484692768082}
   objectType: Tool
   objectID: ROUND-BOTTOM_FLASK
+  holder: {fileID: 0}
 --- !u!114 &6133079484692768082
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -162,6 +162,7 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: -286419387414536343}
   objectType: Tool
   objectID: glass_rod
+  holder: {fileID: 0}
 --- !u!114 &-286419387414536343
 MonoBehaviour:
   m_ObjectHideFlags: 0

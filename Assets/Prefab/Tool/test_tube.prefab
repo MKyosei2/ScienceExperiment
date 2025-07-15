@@ -162,6 +162,7 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: -2957605671993465345}
   objectType: Tool
   objectID: test_tube
+  holder: {fileID: 0}
 --- !u!114 &-2957605671993465345
 MonoBehaviour:
   m_ObjectHideFlags: 0

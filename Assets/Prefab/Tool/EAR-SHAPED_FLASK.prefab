@@ -162,6 +162,7 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: -2429032636298747229}
   objectType: Tool
   objectID: EAR-SHAPED_FLASK
+  holder: {fileID: 0}
 --- !u!114 &-2429032636298747229
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -162,6 +162,7 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 3827206176932870276}
   objectType: Tool
   objectID: VOLUMETARIC_FLASK_CAP
+  holder: {fileID: 0}
 --- !u!114 &3827206176932870276
 MonoBehaviour:
   m_ObjectHideFlags: 0

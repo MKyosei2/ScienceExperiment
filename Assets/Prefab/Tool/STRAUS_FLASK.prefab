@@ -195,6 +195,7 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 6021490336153126257}
   objectType: Tool
   objectID: STRAUS_FLASK
+  holder: {fileID: 0}
 --- !u!114 &6021490336153126257
 MonoBehaviour:
   m_ObjectHideFlags: 0

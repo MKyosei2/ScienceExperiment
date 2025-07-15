@@ -162,6 +162,7 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 6625177810629581583}
   objectType: Condition
   objectID: underwater_light
+  holder: {fileID: 0}
 --- !u!114 &6625177810629581583
 MonoBehaviour:
   m_ObjectHideFlags: 0

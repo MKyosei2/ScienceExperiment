@@ -162,6 +162,7 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 2623154450806042955}
   objectType: Tool
   objectID: SCHLENK_FLASK
+  holder: {fileID: 0}
 --- !u!114 &2623154450806042955
 MonoBehaviour:
   m_ObjectHideFlags: 0

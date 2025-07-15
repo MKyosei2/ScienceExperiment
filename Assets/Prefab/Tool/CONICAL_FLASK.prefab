@@ -162,6 +162,7 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: -3798263203673792467}
   objectType: Tool
   objectID: CONICAL_FLASK
+  holder: {fileID: 0}
 --- !u!114 &-3798263203673792467
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -162,6 +162,7 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 2645055067452806860}
   objectType: Condition
   objectID: high_temp_oxygen
+  holder: {fileID: 0}
 --- !u!114 &2645055067452806860
 MonoBehaviour:
   m_ObjectHideFlags: 0

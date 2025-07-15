@@ -162,6 +162,7 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 4157279195675079276}
   objectType: Element
   objectID: Sr
+  holder: {fileID: 0}
 --- !u!114 &4157279195675079276
 MonoBehaviour:
   m_ObjectHideFlags: 0

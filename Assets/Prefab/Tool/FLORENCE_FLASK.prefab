@@ -162,6 +162,7 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: -7621209241999924163}
   objectType: Tool
   objectID: FLORENCE_FLASK
+  holder: {fileID: 0}
 --- !u!114 &-7621209241999924163
 MonoBehaviour:
   m_ObjectHideFlags: 0

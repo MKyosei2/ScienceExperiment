@@ -162,6 +162,7 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 3503305561149213577}
   objectType: Condition
   objectID: air_normal
+  holder: {fileID: 0}
 --- !u!114 &3503305561149213577
 MonoBehaviour:
   m_ObjectHideFlags: 0

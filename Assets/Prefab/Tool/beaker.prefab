@@ -162,6 +162,7 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: -6617278810895892004}
   objectType: Tool
   objectID: beaker
+  holder: {fileID: 0}
 --- !u!114 &-6617278810895892004
 MonoBehaviour:
   m_ObjectHideFlags: 0

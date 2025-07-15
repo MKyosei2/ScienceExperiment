@@ -162,6 +162,7 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 2634241739068209690}
   objectType: Tool
   objectID: burner
+  holder: {fileID: 0}
 --- !u!114 &2634241739068209690
 MonoBehaviour:
   m_ObjectHideFlags: 0
