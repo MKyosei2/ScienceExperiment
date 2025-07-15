@@ -3,16 +3,16 @@ using UnityEngine;
 
 public class ExperimentController : UdonSharpBehaviour
 {
-    public ExperimentSelector selector;
     public AIRequestSender requestSender;
+    public SelectedObjectHolder holder;
 
     public void RunExperiment()
     {
-        if (selector == null || requestSender == null) return;
+        if (requestSender == null || holder == null) return;
 
-        string symbol = selector.GetSymbol();
-        string toolID = selector.GetToolID();
-        string conditionID = selector.GetConditionID();
+        string symbol = holder.selectedElementID;
+        string toolID = holder.selectedToolID;
+        string conditionID = holder.selectedConditionID;
 
         if (string.IsNullOrWhiteSpace(symbol) || string.IsNullOrWhiteSpace(toolID) || string.IsNullOrWhiteSpace(conditionID))
         {
@@ -20,9 +20,7 @@ public class ExperimentController : UdonSharpBehaviour
             return;
         }
 
-        // 条件に応じてURLのインデックスを算出（例：0固定、または symbol + toolID + conditionID に応じて割り振るなど）
-        int urlIndex = 0; // TODO: 条件に応じて切り替えたい場合はここをロジックにする
-
+        int urlIndex = 0; // 条件による分岐はここに実装可
         requestSender.SendToAI(urlIndex);
     }
 }

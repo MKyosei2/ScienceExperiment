@@ -3,19 +3,13 @@ using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
 
-/// <summary>
-/// 選択可能な元素・器具・環境オブジェクトにアタッチされる
-/// 選択時に、渡された SelectedObjectHolder に自分の objectType / objectID を反映する
-/// </summary>
 public class SelectorObject : UdonSharpBehaviour
 {
-    [Tooltip("Element / Tool / Condition のいずれか")]
-    [SerializeField]
-    private string objectType;
+    [SerializeField] private string objectType;  // "Element", "Tool", "Condition"
+    [SerializeField] private string objectID;
 
-    [Tooltip("ID（例: Na, beaker, vacuum など）")]
-    [SerializeField]
-    private string objectID;
+    public SelectedObjectHolder holder;
+
     public string GetObjectType() => objectType;
     public string GetObjectID() => objectID;
 
@@ -28,24 +22,32 @@ public class SelectorObject : UdonSharpBehaviour
         objectID = id;
     }
 
-    /// <summary>
-    /// 選択ゾーンボタンから呼ばれる。objectTypeに応じて Holder に値を渡す。
-    /// </summary>
-    public void Select(SelectedObjectHolder holder)
+    public void Select()
     {
         if (holder == null) return;
 
         switch (objectType)
         {
-            case "Element":
-                holder.selectedElementID = objectID;
-                break;
-            case "Tool":
-                holder.selectedToolID = objectID;
-                break;
-            case "Condition":
-                holder.selectedConditionID = objectID;
-                break;
+            case "Element": holder.selectedElementID = objectID; break;
+            case "Tool": holder.selectedToolID = objectID; break;
+            case "Condition": holder.selectedConditionID = objectID; break;
         }
+    }
+
+    public void Select(SelectedObjectHolder targetHolder)
+    {
+        if (targetHolder == null) return;
+
+        switch (objectType)
+        {
+            case "Element": targetHolder.selectedElementID = objectID; break;
+            case "Tool": targetHolder.selectedToolID = objectID; break;
+            case "Condition": targetHolder.selectedConditionID = objectID; break;
+        }
+    }
+
+    public override void Interact()
+    {
+        Select(); // VR/PC 共通でクリック選択
     }
 }
