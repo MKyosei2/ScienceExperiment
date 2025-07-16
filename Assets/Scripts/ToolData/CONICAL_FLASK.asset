@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: CONICAL_FLASK
   m_EditorClassIdentifier: 
   toolID: CONICAL_FLASK
-  toolName: CONICAL_FLASK
+  toolName: 
   icon: {fileID: 0}
-  displayPrefab: {fileID: 4658232299907392678, guid: 6d6fc21eb1c0fbc4f846fcd61fcc6a61,
+  displayPrefab: {fileID: 6010952657104110859, guid: 6d6fc21eb1c0fbc4f846fcd61fcc6a61,
     type: 3}

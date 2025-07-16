@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ROUND-BOTTOM_FLASK
   m_EditorClassIdentifier: 
   toolID: ROUND-BOTTOM_FLASK
-  toolName: ROUND-BOTTOM_FLASK
+  toolName: 
   icon: {fileID: 0}
-  displayPrefab: {fileID: 1315269175926817116, guid: 736dfe91bedddbe4ea3fd9b26653d989,
+  displayPrefab: {fileID: 2692865968006411484, guid: 736dfe91bedddbe4ea3fd9b26653d989,
     type: 3}

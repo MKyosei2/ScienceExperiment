@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 040e4bd99d6a96148859ba51fd17077f, type: 3}
-  m_Name: beaker
+  m_Name: BEAKER
   m_EditorClassIdentifier: 
-  toolID: beaker
+  toolID: BEAKER
   toolName: "\u30D3\u30FC\u30AB\u30FC"
   icon: {fileID: 0}
-  displayPrefab: {fileID: 5253690945868290579, guid: cafaa3710958faa45bbf439a80d64e1e,
+  displayPrefab: {fileID: 7170545087244136939, guid: cafaa3710958faa45bbf439a80d64e1e,
     type: 3}
