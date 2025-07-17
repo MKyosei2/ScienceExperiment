@@ -12,19 +12,23 @@ public class ExperimentExecutor : UdonSharpBehaviour
 
     public override void Interact()
     {
-        string id = holder.selectedElementID;
+        if (holder.selectedElementIDs.Length == 0) return;
+        string id = holder.selectedElementIDs[0];
         int index = GetIndex(id);
-        if (index != -1)
+        if (index != -1 && spawnPoint != null)
         {
-            GameObject obj = VRCInstantiate(elementPrefabs[index]);
+            GameObject prefab = elementPrefabs[index];
+            GameObject obj = VRCInstantiate(prefab);
             obj.transform.position = spawnPoint.position;
-            Renderer r = obj.GetComponent<Renderer>();
         }
     }
 
     private int GetIndex(string id)
     {
-        for (int i = 0; i < elementIDs.Length; i++) if (elementIDs[i] == id) return i;
+        for (int i = 0; i < elementIDs.Length; i++)
+        {
+            if (elementIDs[i] == id) return i;
+        }
         return -1;
     }
 }

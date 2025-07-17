@@ -87,7 +87,6 @@ public class CHEMLABComponentConnector
         // AIRequestSender に handler 接続
         if (aiSender && aiHandler)
         {
-            aiSender.handler = aiHandler;
             EditorUtility.SetDirty(aiSender);
         }
 

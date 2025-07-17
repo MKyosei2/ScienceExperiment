@@ -14,7 +14,7 @@ public class ResultReceiver : MonoBehaviour
     public GameObject[] conditionObjects;
     public ShaderEffectData[] effectProfiles;
 
-    public SelectedObjectHolder holder;  // ← 追加ポイント
+    public SelectedObjectHolder holder;
 
     private string filePath;
 
@@ -28,7 +28,7 @@ public class ResultReceiver : MonoBehaviour
     {
         if (!File.Exists(filePath)) return;
 
-        string rawText = File.ReadAllText(filePath);  // ← 変数名を変更（以前は text だった）
+        string rawText = File.ReadAllText(filePath);
 
         if (rawText.Contains("🧪 結果"))
         {
@@ -38,8 +38,8 @@ public class ResultReceiver : MonoBehaviour
 
             bool fallback = false;
 
-            string elementID = holder != null ? holder.selectedElementID : "?";
-            string toolID = holder != null ? holder.selectedToolID : "?";
+            string elementID = holder != null && holder.selectedElementIDs.Length > 0 ? holder.selectedElementIDs[0] : "?";
+            string toolID = holder != null && holder.selectedToolIDs.Length > 0 ? holder.selectedToolIDs[0] : "?";
             string conditionID = holder != null ? holder.selectedConditionID : "?";
 
             if (string.IsNullOrEmpty(result))

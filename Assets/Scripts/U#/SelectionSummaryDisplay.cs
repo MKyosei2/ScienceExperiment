@@ -13,10 +13,14 @@ public class SelectionSummaryDisplay : UdonSharpBehaviour
     {
         if (outputText != null)
         {
+            string element = holder.selectedElementIDs.Length > 0 ? holder.selectedElementIDs[0] : "";
+            string tool = holder.selectedToolIDs.Length > 0 ? holder.selectedToolIDs[0] : "";
+            string condition = holder.selectedConditionID;
+
             outputText.text = "@InferenceBot\n" +
-                              "element: " + holder.selectedElementID + "\n" +
-                              "tool: " + holder.selectedToolID + "\n" +
-                              "condition: " + holder.selectedConditionID;
+                              "element: " + element + "\n" +
+                              "tool: " + tool + "\n" +
+                              "condition: " + condition;
         }
     }
 }

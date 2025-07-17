@@ -25,29 +25,27 @@ public class SelectorObject : UdonSharpBehaviour
     public void Select()
     {
         if (holder == null) return;
-
-        switch (objectType)
-        {
-            case "Element": holder.selectedElementID = objectID; break;
-            case "Tool": holder.selectedToolID = objectID; break;
-            case "Condition": holder.selectedConditionID = objectID; break;
-        }
+        ApplySelection(holder);
     }
 
     public void Select(SelectedObjectHolder targetHolder)
     {
         if (targetHolder == null) return;
+        ApplySelection(targetHolder);
+    }
 
+    private void ApplySelection(SelectedObjectHolder target)
+    {
         switch (objectType)
         {
-            case "Element": targetHolder.selectedElementID = objectID; break;
-            case "Tool": targetHolder.selectedToolID = objectID; break;
-            case "Condition": targetHolder.selectedConditionID = objectID; break;
+            case "Element": target.AddElement(objectID); break;
+            case "Tool": target.AddTool(objectID); break;
+            case "Condition": target.SetCondition(objectID); break;
         }
     }
 
     public override void Interact()
     {
-        Select(); // VR/PC 共通でクリック選択
+        Select();
     }
 }

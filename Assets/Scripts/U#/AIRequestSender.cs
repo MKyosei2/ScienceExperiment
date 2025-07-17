@@ -7,34 +7,34 @@ using VRC.Udon.Common.Interfaces;
 
 public class AIRequestSender : UdonSharpBehaviour
 {
-    [Header("URL テンプレート設定（Unityで設定）")]
-    [Tooltip("最大登録数 10 件程度まで推奨")]
     public VRCUrl[] predefinedUrls;
-
     public Text statusText;
-    public AIReactionHandler handler;
+    public VRExperimentMonitor monitor;
 
-    // 入力情報（Unity側の別スクリプトが呼び出す）
     public void SendToAI(int urlIndex)
     {
         if (urlIndex < 0 || urlIndex >= predefinedUrls.Length)
         {
-            if (statusText != null) statusText.text = "❌ URLインデックス範囲外";
+            if (statusText != null) statusText.text = "❌ URL範囲外";
             return;
         }
 
-        if (statusText != null) statusText.text = "AIに送信中...";
-        VRCStringDownloader.LoadUrl(predefinedUrls[urlIndex], (IUdonEventReceiver)this);
+        string additionalParam = monitor != null ? monitor.GetLogText() : "";
+        VRCUrl baseUrl = predefinedUrls[urlIndex];
+
+        if (statusText != null) statusText.text = "📡 送信中...";
+
+        // 追加情報は送れないが最低限送信できる状態にする
+        VRCStringDownloader.LoadUrl(baseUrl, (IUdonEventReceiver)this);
     }
 
     public override void OnStringLoadSuccess(IVRCStringDownload result)
     {
-        if (handler != null) handler.HandleResponse(result.Result);
-        if (statusText != null) statusText.text = "✅ AI応答成功";
+        if (statusText != null) statusText.text = "✅ 応答成功";
     }
 
     public override void OnStringLoadError(IVRCStringDownload result)
     {
-        if (statusText != null) statusText.text = "⚠️ AI応答エラー";
+        if (statusText != null) statusText.text = "⚠️ 応答失敗";
     }
 }

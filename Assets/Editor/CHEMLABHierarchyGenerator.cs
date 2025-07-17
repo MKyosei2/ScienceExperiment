@@ -1,98 +1,106 @@
-﻿using UnityEditor;
+﻿#if UNITY_EDITOR
+using UnityEditor;
 using UnityEngine;
-using TMPro;
 using UnityEngine.UI;
 
-public class CHEMLABHierarchyGenerator
+public class CHEMLABHierarchyBuilder
 {
-    [MenuItem("CHEMLAB VR/初期Hierarchyを生成（親なしコンポーネント付き）")]
-    public static void CreateCHEMLABHierarchy()
+    [MenuItem("CHEMLAB VR/Hierarchyを自動構築する")]
+    public static void BuildHierarchy()
     {
-        // ─── WorldCanvas ───
-        GameObject canvas = new GameObject("WorldCanvas", typeof(Canvas));
-        Canvas canvasComp = canvas.GetComponent<Canvas>();
-        canvasComp.renderMode = RenderMode.WorldSpace;
-        canvas.AddComponent<CanvasScaler>();
-        canvas.AddComponent<GraphicRaycaster>();
+        // ルートカテゴリ
+        GameObject managers = CreateGroup("Managers");
+        GameObject buttons = CreateGroup("Buttons");
+        GameObject spawners = CreateGroup("Spawners");
+        GameObject monitor = CreateGroup("VR_Monitoring");
+        GameObject ui = CreateGroup("UI");
+        GameObject data = CreateGroup("Data");
+        GameObject experimentTable = CreateGroup("ExperimentTable");
 
-        GameObject modeLabel = new GameObject("ModeLabel", typeof(TextMeshProUGUI));
-        modeLabel.transform.SetParent(canvas.transform);
-        var modeLabelText = modeLabel.GetComponent<TextMeshProUGUI>();
-        modeLabelText.text = "🎮 VRモード";
-        modeLabelText.fontSize = 24;
+        // 各要素
+        var holder = CreateWithComponent("SelectedObjectHolder", typeof(SelectedObjectHolder), data.transform);
+        var modeSwitcher = CreateWithComponent("ModeSwitcher", typeof(UdonSharp.UdonSharpBehaviour), managers.transform);
+        var controller = CreateWithComponent("ExperimentController", typeof(ExperimentController), managers.transform).GetComponent<ExperimentController>();
+        var sender = CreateWithComponent("AIRequestSender", typeof(AIRequestSender), managers.transform).GetComponent<AIRequestSender>();
 
-        // ─── Managers ───
-        GameObject managers = new GameObject("Managers");
+        var monitorObj = CreateWithComponent("VRExperimentMonitor", typeof(VRExperimentMonitor), monitor.transform).GetComponent<VRExperimentMonitor>();
+        var displayManager = CreateWithComponent("CategoryDisplayManager", typeof(CategoryDisplayManager), managers.transform);
 
-        CreateWithComponent<ModeSwitcher>("ModeSwitcher", managers.transform);
-        CreateWithComponent<ExperimentController>("ExperimentController", managers.transform);
-        CreateWithComponent<AIRequestSender>("AIRequestSender", managers.transform);
-        CreateWithComponent<AIReactionHandler>("AIReactionHandler", managers.transform);
-        CreateWithComponent<ResultReceiver>("ResultReceiver", managers.transform);
-        CreateWithComponent<ExperimentHistory>("ExperimentHistory", managers.transform);
+        var spawnerBtn = CreateWithComponent("ObjectSpawnerButton", typeof(ObjectSpawnerButton), buttons.transform).GetComponent<ObjectSpawnerButton>();
+        var switchBtn = CreateWithComponent("CategorySwitchButton", typeof(CategorySwitchButton), buttons.transform).GetComponent<CategorySwitchButton>();
+        var startBtn = CreateWithComponent("ExperimentStartButton", typeof(ExperimentStartButton), buttons.transform).GetComponent<ExperimentStartButton>();
 
-        // ─── Zones ───
-        GameObject zones = new GameObject("Zones");
+        CreateWithComponent("CompoundSpawner", typeof(UdonSharp.UdonSharpBehaviour), spawners.transform);
+        var tableTrigger = CreateWithComponent("ExperimentTableTrigger", typeof(ExperimentTableTrigger), experimentTable.transform).GetComponent<ExperimentTableTrigger>();
 
-        CreateZone("ElementZone", zones.transform, "Element");
-        CreateZone("ToolZone", zones.transform, "Tool");
-        CreateZone("ConditionZone", zones.transform, "Condition");
+        var statusTextObj = CreateText("StatusText", ui.transform);
+        var statusText = statusTextObj.GetComponent<Text>();
 
-        // ─── SelectionButtons（3D） ───
-        GameObject selBtns = new GameObject("SelectionButtons");
+        // フィールド接続
+        if (controller != null)
+        {
+            controller.holder = holder.GetComponent<SelectedObjectHolder>();
+            controller.requestSender = sender;
+        }
 
-        CreateButtonWithComponent<ZoneSelectionButton>("ElementSelectButton", selBtns.transform);
-        CreateButtonWithComponent<ZoneSelectionButton>("ToolSelectButton", selBtns.transform);
-        CreateButtonWithComponent<ZoneSelectionButton>("ConditionSelectButton", selBtns.transform);
+        if (sender != null)
+        {
+            sender.monitor = monitorObj;
+            sender.statusText = statusText;
+        }
 
-        // ─── ActionButtons（3D） ───
-        GameObject actBtns = new GameObject("ActionButtons");
+        if (spawnerBtn != null)
+        {
+            spawnerBtn.holder = holder.GetComponent<SelectedObjectHolder>();
+            spawnerBtn.modeSwitcher = modeSwitcher.GetComponent<UdonSharp.UdonSharpBehaviour>() as ModeSwitcher;
+        }
 
-        CreateButtonWithComponent<ExperimentStartButton>("ExperimentStartButton", actBtns.transform);
-        CreateButtonWithComponent<ModeSwitchButton>("ModeSwitchButton", actBtns.transform);
+        if (switchBtn != null)
+        {
+            switchBtn.spawner = spawnerBtn;
+        }
 
-        // ─── Spawners ───
-        GameObject spawners = new GameObject("Spawners");
+        if (startBtn != null)
+        {
+            startBtn.controller = controller;
+            startBtn.modeSwitcher = modeSwitcher.GetComponent<UdonSharp.UdonSharpBehaviour>() as ModeSwitcher;
+            startBtn.experimentTableRoot = experimentTable.transform;
+        }
 
-        CreateWithComponent<CompoundSpawner>("CompoundSpawner", spawners.transform);
-        CreateWithComponent<ExperimentExecutor>("ExperimentExecutor", spawners.transform);
+        if (tableTrigger != null)
+        {
+            tableTrigger.holder = holder.GetComponent<SelectedObjectHolder>();
+            tableTrigger.tableRoot = experimentTable.transform;
+        }
 
-        // ─── Data ───
-        GameObject data = new GameObject("Data");
-
-        CreateWithComponent<SelectedObjectHolder>("SelectedObjectHolder", data.transform);
+        Debug.Log("✅ CHEMLAB Hierarchy 構築＋参照接続完了");
     }
 
-    private static void CreateZone(string name, Transform parent, string zoneType)
+    private static GameObject CreateGroup(string name)
     {
-        GameObject zone = new GameObject(name);
-        zone.transform.SetParent(parent);
-        var collider = zone.AddComponent<BoxCollider>();
-        collider.isTrigger = true;
-        zone.AddComponent<SelectionZone>();
-
-        GameObject spawner = new GameObject("ZoneSelectionSpawner");
-        spawner.transform.SetParent(zone.transform);
-        var zs = spawner.AddComponent<ZoneSelectionSpawner>();
-        zs.zoneType = zoneType;
+        GameObject group = new GameObject(name);
+        Undo.RegisterCreatedObjectUndo(group, "Create Group " + name);
+        return group;
     }
 
-    private static void CreateButtonWithComponent<T>(string name, Transform parent) where T : Component
+    private static GameObject CreateWithComponent(string name, System.Type componentType, Transform parent)
     {
-        GameObject button = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        button.name = name;
-        button.transform.SetParent(parent);
-        Object.DestroyImmediate(button.GetComponent<Collider>()); // デフォルト削除
-        button.AddComponent<BoxCollider>().isTrigger = true;
-        button.AddComponent<T>();
-        var rb = button.AddComponent<Rigidbody>();
-        rb.isKinematic = true;
+        GameObject go = new GameObject(name);
+        go.AddComponent(componentType);
+        go.transform.SetParent(parent);
+        Undo.RegisterCreatedObjectUndo(go, "Create " + name);
+        return go;
     }
 
-    private static void CreateWithComponent<T>(string name, Transform parent) where T : Component
+    private static GameObject CreateText(string name, Transform parent)
     {
-        GameObject obj = new GameObject(name);
-        obj.transform.SetParent(parent);
-        obj.AddComponent<T>();
+        GameObject text = new GameObject(name);
+        text.transform.SetParent(parent);
+        var uiText = text.AddComponent<Text>();
+        uiText.text = name;
+        uiText.fontSize = 20;
+        Undo.RegisterCreatedObjectUndo(text, "Create Text " + name);
+        return text;
     }
 }
+#endif
