@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 040e4bd99d6a96148859ba51fd17077f, type: 3}
   m_Name: ROUND-BOTTOM_FLASK
   m_EditorClassIdentifier: 
-  toolID: ROUND-BOTTOM_FLASK
-  toolName: 
+  toolID: round_bottom_flask
+  toolName: "\u4E38\u5E95\u30D5\u30E9\u30B9\u30B3"
   icon: {fileID: 0}
   displayPrefab: {fileID: 2692865968006411484, guid: 736dfe91bedddbe4ea3fd9b26653d989,
     type: 3}

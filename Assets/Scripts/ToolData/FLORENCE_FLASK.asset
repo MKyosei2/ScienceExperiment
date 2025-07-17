@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 040e4bd99d6a96148859ba51fd17077f, type: 3}
   m_Name: FLORENCE_FLASK
   m_EditorClassIdentifier: 
-  toolID: FLORENCE_FLASK
-  toolName: 
+  toolID: florence_flask
+  toolName: "\u30D5\u30ED\u30FC\u30EC\u30F3\u30B9\u30D5\u30E9\u30B9\u30B3\uFF08\u4E38\u5E95\u30D5\u30E9\u30B9\u30B3\uFF09"
   icon: {fileID: 0}
   displayPrefab: {fileID: 4444200843149485690, guid: 7a2b8a48ced703a4bae2c3a102cf1832,
     type: 3}

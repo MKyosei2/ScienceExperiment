@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 040e4bd99d6a96148859ba51fd17077f, type: 3}
   m_Name: CLAISEN_FLASK
   m_EditorClassIdentifier: 
-  toolID: CLAISEN_FLASK
-  toolName: 
+  toolID: claisen_flask
+  toolName: "\u30AF\u30E9\u30A4\u30BC\u30F3\u30D5\u30E9\u30B9\u30B3"
   icon: {fileID: 0}
   displayPrefab: {fileID: 3354227859561047312, guid: b97df90dc8e5f464dae3f777bbf6ba48,
     type: 3}

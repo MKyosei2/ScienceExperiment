@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 040e4bd99d6a96148859ba51fd17077f, type: 3}
   m_Name: VOLUMETARIC_FLASK_CAP
   m_EditorClassIdentifier: 
-  toolID: VOLUMETARIC_FLASK_CAP
-  toolName: 
+  toolID: volumetaric_flask_cap
+  toolName: "\u30E1\u30B9\u30D5\u30E9\u30B9\u30B3\u7528\u30AD\u30E3\u30C3\u30D7"
   icon: {fileID: 0}
   displayPrefab: {fileID: 8960086109696577820, guid: d9a0e909ffe36b4419a8d355117c064b,
     type: 3}

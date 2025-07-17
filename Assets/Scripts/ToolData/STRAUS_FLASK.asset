@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 040e4bd99d6a96148859ba51fd17077f, type: 3}
   m_Name: STRAUS_FLASK
   m_EditorClassIdentifier: 
-  toolID: STRAUS_FLASK
-  toolName: 
+  toolID: straus_flask
+  toolName: "\u30B7\u30E5\u30C8\u30E9\u30A6\u30B9\u30D5\u30E9\u30B9\u30B3"
   icon: {fileID: 0}
   displayPrefab: {fileID: 5394365063987786843, guid: 72223587a00a91848a01674ca38e2cc9,
     type: 3}

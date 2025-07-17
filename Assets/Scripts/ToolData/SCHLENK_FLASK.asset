@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 040e4bd99d6a96148859ba51fd17077f, type: 3}
   m_Name: SCHLENK_FLASK
   m_EditorClassIdentifier: 
-  toolID: SCHLENK_FLASK
-  toolName: 
+  toolID: schlenk_flask
+  toolName: "\u30B7\u30E5\u30EC\u30F3\u30AF\u30D5\u30E9\u30B9\u30B3"
   icon: {fileID: 0}
   displayPrefab: {fileID: 4395894792408804018, guid: e868831ce9ceb8d4d97ee55322d95c8d,
     type: 3}

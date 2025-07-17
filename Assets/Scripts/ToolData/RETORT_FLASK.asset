@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 040e4bd99d6a96148859ba51fd17077f, type: 3}
   m_Name: RETORT_FLASK
   m_EditorClassIdentifier: 
-  toolID: RETORT_FLASK
-  toolName: 
+  toolID: retort_flask
+  toolName: "\u30EC\u30C8\u30EB\u30C8\u30D5\u30E9\u30B9\u30B3"
   icon: {fileID: 0}
   displayPrefab: {fileID: 1685915541836426055, guid: 9cba1e3b3aefbe349a58554c9051588d,
     type: 3}

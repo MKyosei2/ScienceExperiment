@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 040e4bd99d6a96148859ba51fd17077f, type: 3}
   m_Name: EAR-SHAPED_FLASK
   m_EditorClassIdentifier: 
-  toolID: EAR-SHAPED_FLASK
-  toolName: 
+  toolID: ear_shaped_flask
+  toolName: "\u8033\u4ED8\u30D5\u30E9\u30B9\u30B3"
   icon: {fileID: 0}
   displayPrefab: {fileID: 7466384212601986057, guid: fa11e782b42b4e34da7cbb83c4dcfe37,
     type: 3}

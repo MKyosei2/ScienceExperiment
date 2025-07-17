@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 040e4bd99d6a96148859ba51fd17077f, type: 3}
   m_Name: Test tube
   m_EditorClassIdentifier: 
-  toolID: Test tube
-  toolName: 
+  toolID: test_tube
+  toolName: "\u8A66\u9A13\u7BA1"
   icon: {fileID: 0}
   displayPrefab: {fileID: 7008665147148742240, guid: 5e1fdc4d88a7b6b4b82e01a740ab8f4e,
     type: 3}

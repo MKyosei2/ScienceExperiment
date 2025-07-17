@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 040e4bd99d6a96148859ba51fd17077f, type: 3}
   m_Name: Gasburner
   m_EditorClassIdentifier: 
-  toolID: Gasburner
-  toolName: 
+  toolID: gasburner
+  toolName: "\u30AC\u30B9\u30D0\u30FC\u30CA\u30FC"
   icon: {fileID: 0}
   displayPrefab: {fileID: 2636461562147003614, guid: e6639dfe28cb0b248aa7ca5063a270b1,
     type: 3}

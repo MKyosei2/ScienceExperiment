@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 040e4bd99d6a96148859ba51fd17077f, type: 3}
   m_Name: Spoit
   m_EditorClassIdentifier: 
-  toolID: Spoit
-  toolName: 
+  toolID: spoit
+  toolName: "\u30B9\u30DD\u30A4\u30C8"
   icon: {fileID: 0}
   displayPrefab: {fileID: 1380001807766113878, guid: 7b80e52f1f970b842b2a3687d2b9a71c,
     type: 3}

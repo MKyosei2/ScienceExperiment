@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 040e4bd99d6a96148859ba51fd17077f, type: 3}
   m_Name: KJELDAHL_FLASK
   m_EditorClassIdentifier: 
-  toolID: CLAISEN_FLASK
-  toolName: 
+  toolID: kjeldahl_flask
+  toolName: "\u30B1\u30EB\u30C0\u30FC\u30EB\u30D5\u30E9\u30B9\u30B3"
   icon: {fileID: 0}
   displayPrefab: {fileID: 3117835186750312889, guid: 3ae2ddec665a21a4f91164ce767d5ce2,
     type: 3}

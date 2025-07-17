@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 040e4bd99d6a96148859ba51fd17077f, type: 3}
   m_Name: CONICAL_FLASK
   m_EditorClassIdentifier: 
-  toolID: CONICAL_FLASK
-  toolName: 
+  toolID: conical_flask
+  toolName: "\u30B3\u30CB\u30AB\u30EB\u30D5\u30E9\u30B9\u30B3\uFF08\u307E\u305F\u306F\u4E09\u89D2\u30D5\u30E9\u30B9\u30B3\uFF09"
   icon: {fileID: 0}
   displayPrefab: {fileID: 6010952657104110859, guid: 6d6fc21eb1c0fbc4f846fcd61fcc6a61,
     type: 3}
