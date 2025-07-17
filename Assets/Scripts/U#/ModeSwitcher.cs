@@ -4,38 +4,29 @@ using TMPro;
 
 public class ModeSwitcher : UdonSharpBehaviour
 {
-    public bool isVRMode = true;
-
+    public TextMeshProUGUI modeLabel;
+    public GameObject experimentButton;
     public GameObject pcUIRoot;
     public GameObject vrUIRoot;
-    public GameObject experimentButton;
-    public TextMeshProUGUI modeLabel;
+
+    public bool isPCMode = true;
 
     public void ToggleMode()
     {
-        isVRMode = !isVRMode;
+        isPCMode = !isPCMode;
         UpdateUI();
     }
 
-    private void Start()
+    public bool IsPCMode()
     {
-        UpdateUI();
+        return isPCMode;
     }
 
     private void UpdateUI()
     {
-        if (pcUIRoot != null) pcUIRoot.SetActive(!isVRMode);
-        if (vrUIRoot != null) vrUIRoot.SetActive(isVRMode);
-        if (experimentButton != null) experimentButton.SetActive(!isVRMode);
-
-        if (modeLabel != null)
-        {
-            modeLabel.text = isVRMode ? "🎮 VRモード" : "🖱 PCモード";
-        }
-    }
-
-    public bool IsVRMode()
-    {
-        return isVRMode;
+        modeLabel.text = isPCMode ? "🖱 PCモード" : "🎮 VRモード";
+        pcUIRoot.SetActive(isPCMode);
+        vrUIRoot.SetActive(!isPCMode);
+        experimentButton.SetActive(isPCMode);
     }
 }

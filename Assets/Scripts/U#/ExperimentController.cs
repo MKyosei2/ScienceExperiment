@@ -6,29 +6,38 @@ public class ExperimentController : UdonSharpBehaviour
     public SelectedObjectHolder holder;
     public AIRequestSender requestSender;
 
-    public void CollectFromTable(Transform tableRoot)
+    public void ExecuteExperiment()
     {
-        holder.ClearAll();
-        foreach (Transform child in tableRoot)
+        if (holder == null || requestSender == null)
         {
-            string objName = child.gameObject.name.ToLower();
-            if (objName.Contains("element")) holder.AddElement(child.gameObject.name);
-            else if (objName.Contains("tool")) holder.AddTool(child.gameObject.name);
+            Debug.LogWarning("❌ 必要な参照が設定されていません (holder or requestSender)");
+            return;
         }
+
+        string elementID = holder.selectedElementID;
+        string toolID = holder.selectedToolID;
+        string conditionID = holder.selectedConditionID;
+
+        if (string.IsNullOrEmpty(elementID) || string.IsNullOrEmpty(toolID) || string.IsNullOrEmpty(conditionID))
+        {
+            Debug.LogWarning("⚠️ 実験に必要な選択が完了していません");
+            return;
+        }
+
+        Debug.Log($"🧪 実験開始：Element={elementID}, Tool={toolID}, Condition={conditionID}");
+        requestSender.SendToAI(elementID, toolID, conditionID);
+    }
+
+    // 🔽 ExperimentStartButton から呼ばれる
+    public void CollectFromTable()
+    {
+        Debug.Log("📥 実験台からオブジェクトを収集（仮）");
+        // ここにオブジェクトのタグ or collider 検出処理を入れても良い
     }
 
     public void RunExperiment()
     {
-        bool hasElement = holder.selectedElementIDs.Length > 0 && !string.IsNullOrEmpty(holder.selectedElementIDs[0]);
-        bool hasTool = holder.selectedToolIDs.Length > 0 && !string.IsNullOrEmpty(holder.selectedToolIDs[0]);
-        bool hasCondition = !string.IsNullOrEmpty(holder.selectedConditionID);
-
-        if (!hasElement || !hasTool || !hasCondition)
-        {
-            Debug.Log("⚠️ 実験条件が揃っていません");
-            return;
-        }
-
-        requestSender.SendToAI(0);
+        Debug.Log("▶ 実験を実行します");
+        ExecuteExperiment(); // 内部でAI呼び出し
     }
 }

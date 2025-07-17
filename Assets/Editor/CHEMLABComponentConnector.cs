@@ -17,12 +17,13 @@ public class CHEMLABComponentConnector
         var aiSender = GameObject.Find("AIRequestSender")?.GetComponent<AIRequestSender>();
         var aiHandler = GameObject.Find("AIReactionHandler")?.GetComponent<AIReactionHandler>();
         var monitor = GameObject.Find("VRExperimentMonitor")?.GetComponent<VRExperimentMonitor>();
-        var modeLabel = GameObject.Find("ModeLabel")?.GetComponent<TextMeshProUGUI>();
-        var statusText = GameObject.Find("StatusText")?.GetComponent<UnityEngine.UI.Text>();
+
+        var modeLabelTMP = GameObject.Find("ModeLabel")?.GetComponent<TextMeshProUGUI>();
+        var statusTextTMP = GameObject.Find("StatusText")?.GetComponent<TextMeshProUGUI>();
 
         if (modeSwitcher)
         {
-            modeSwitcher.modeLabel = modeLabel;
+            modeSwitcher.modeLabel = modeLabelTMP;
             modeSwitcher.experimentButton = GameObject.Find("ExperimentStartButton");
             modeSwitcher.pcUIRoot = GameObject.Find("SelectionButtons");
             modeSwitcher.vrUIRoot = GameObject.Find("Zones");
@@ -60,11 +61,10 @@ public class CHEMLABComponentConnector
         if (aiSender)
         {
             aiSender.monitor = monitor;
-            aiSender.statusText = statusText;
+            aiSender.statusText = statusTextTMP;
             EditorUtility.SetDirty(aiSender);
         }
 
-        // ZoneSelectionButton x3
         var selBtns = new[] {
             GameObject.Find("ElementSelectButton")?.GetComponent<ZoneSelectionButton>(),
             GameObject.Find("ToolSelectButton")?.GetComponent<ZoneSelectionButton>(),

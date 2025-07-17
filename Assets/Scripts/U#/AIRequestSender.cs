@@ -1,40 +1,32 @@
 ﻿using UdonSharp;
 using UnityEngine;
+using TMPro;
 using UnityEngine.UI;
-using VRC.SDK3.StringLoading;
-using VRC.SDKBase;
-using VRC.Udon.Common.Interfaces;
 
 public class AIRequestSender : UdonSharpBehaviour
 {
-    public VRCUrl[] predefinedUrls;
-    public Text statusText;
     public VRExperimentMonitor monitor;
+    public TextMeshProUGUI statusText;
 
-    public void SendToAI(int urlIndex)
+    public void SendToAI(string elementID, string toolID, string conditionID)
     {
-        if (urlIndex < 0 || urlIndex >= predefinedUrls.Length)
-        {
-            if (statusText != null) statusText.text = "❌ URL範囲外";
-            return;
-        }
-
-        string additionalParam = monitor != null ? monitor.GetLogText() : "";
-        VRCUrl baseUrl = predefinedUrls[urlIndex];
-
-        if (statusText != null) statusText.text = "📡 送信中...";
-
-        // 追加情報は送れないが最低限送信できる状態にする
-        VRCStringDownloader.LoadUrl(baseUrl, (IUdonEventReceiver)this);
+        SendRequest(elementID, toolID, conditionID);
     }
 
-    public override void OnStringLoadSuccess(IVRCStringDownload result)
+    public void SendRequest(string elementID, string toolID, string conditionID)
     {
-        if (statusText != null) statusText.text = "✅ 応答成功";
+        string url = $"https://api.example.com/experiment?e={elementID}&t={toolID}&c={conditionID}";
+        statusText.text = "🧪 リクエスト送信中...";
+        if (monitor != null) monitor.Log("Request sent to: " + url);
+
+        // 疑似レスポンス
+        SendCustomEventDelayedSeconds(nameof(MockReceiveResponse), 2.0f);
     }
 
-    public override void OnStringLoadError(IVRCStringDownload result)
+    public void MockReceiveResponse()
     {
-        if (statusText != null) statusText.text = "⚠️ 応答失敗";
+        string result = "🔥 化学反応成功！酸素が放出されました。";
+        statusText.text = result;
+        if (monitor != null) monitor.Log(result);
     }
 }
