@@ -94,12 +94,11 @@ public class CHEMLABComponentConnector
             EditorUtility.SetDirty(conditionBtn);
         }
 
-        // ✅ Hierarchy上の Element / Tool / Condition の子オブジェクトを範囲として各ゾーンに適用
+        // ✅ 全ゾーンとも Hierarchy 上のオブジェクトを対象に BoxCollider を調整
         ApplyZoneFromSceneChildren("Element", "ElementExperimentZone");
         ApplyZoneFromSceneChildren("Tool", "ToolExperimentZone");
         ApplyZoneFromSceneChildren("Condition", "ConditionExperimentZone");
 
-        // ✅ ExperimentZoneにもSelectionZoneタグを付与
         string[] expZones = new[] {
             "ElementExperimentZone",
             "ToolExperimentZone",
@@ -123,7 +122,7 @@ public class CHEMLABComponentConnector
         Bounds? bounds = null;
         foreach (var r in renderers)
         {
-            if (r.gameObject.name.Contains("(Clone)")) continue; // 生成されたものは除外
+            if (r.gameObject.name.Contains("(Clone)")) continue;
 
             if (bounds == null) bounds = r.bounds;
             else bounds = EncapsulateBounds(bounds.Value, r.bounds);
