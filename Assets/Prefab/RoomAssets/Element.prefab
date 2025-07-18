@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6495231032259087164}
   m_Layer: 0
-  m_Name: "\u65CF9"
+  m_Name: G9
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -47,7 +47,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6377273346435927965}
   m_Layer: 0
-  m_Name: "\u65CF3"
+  m_Name: G3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -82,7 +82,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1872961326016676343}
   m_Layer: 0
-  m_Name: "\u65CF5"
+  m_Name: G5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -119,7 +119,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6795705890756456205}
   m_Layer: 0
-  m_Name: "\u65CF1"
+  m_Name: G1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -159,7 +159,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3935734500573761277}
   m_Layer: 0
-  m_Name: "\u65CF10"
+  m_Name: G10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -196,7 +196,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1240432849055821098}
   m_Layer: 0
-  m_Name: "\u65CF14"
+  m_Name: G14
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -235,7 +235,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4465354132504051158}
   m_Layer: 0
-  m_Name: "\u65CF12"
+  m_Name: G12
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -272,7 +272,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6796598407686481076}
   m_Layer: 0
-  m_Name: "\u65CF8"
+  m_Name: G8
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -309,7 +309,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1799646568471025918}
   m_Layer: 0
-  m_Name: "\u65CF2"
+  m_Name: G2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -348,7 +348,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2856913862064916742}
   m_Layer: 0
-  m_Name: "\u65CF6"
+  m_Name: G6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -385,7 +385,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1730198964878652254}
   m_Layer: 0
-  m_Name: "\u65CF15"
+  m_Name: G15
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -424,7 +424,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8100207651446719441}
   m_Layer: 0
-  m_Name: "\u65CF11"
+  m_Name: G11
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -461,7 +461,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4534499125024410614}
   m_Layer: 0
-  m_Name: "\u65CF13"
+  m_Name: G13
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -549,7 +549,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2540258022110271155}
   m_Layer: 0
-  m_Name: "\u65CF17"
+  m_Name: G17
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -586,7 +586,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3692415704379563224}
   m_Layer: 0
-  m_Name: "\u65CF4"
+  m_Name: G4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -623,7 +623,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3904836551310856256}
   m_Layer: 0
-  m_Name: "\u65CF16"
+  m_Name: G16
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -660,7 +660,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3866561454073478774}
   m_Layer: 0
-  m_Name: "\u65CF7"
+  m_Name: G7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -697,7 +697,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6839451666880198615}
   m_Layer: 0
-  m_Name: "\u65CF18"
+  m_Name: G18
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
