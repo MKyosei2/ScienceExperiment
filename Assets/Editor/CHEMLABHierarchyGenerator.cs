@@ -41,9 +41,13 @@ public class CHEMLABHierarchyBuilder
         var toolZone = CreateSelectionZone("ToolZone", spawners.transform).GetComponent<SelectionZone>();
         var conditionZone = CreateSelectionZone("ConditionZone", spawners.transform).GetComponent<SelectionZone>();
 
-        CreateExperimentZone("ElementExperimentZone", spawners.transform);
-        CreateExperimentZone("ToolExperimentZone", spawners.transform);
-        CreateExperimentZone("ConditionExperimentZone", spawners.transform);
+        var ez = CreateExperimentZone("ElementExperimentZone", spawners.transform);
+        var tz = CreateExperimentZone("ToolExperimentZone", spawners.transform);
+        var cz = CreateExperimentZone("ConditionExperimentZone", spawners.transform);
+
+        ez.tag = "SelectionZone";
+        tz.tag = "SelectionZone";
+        cz.tag = "SelectionZone";
 
         CreateWithComponent("ExperimentTableTrigger", typeof(ExperimentTableTrigger), experimentTable.transform);
 
@@ -108,7 +112,6 @@ public class CHEMLABHierarchyBuilder
             EditorUtility.SetDirty(conditionBtn);
         }
 
-        // 🧪 自動プレハブ読み込み＆展開
         string prefabRoot = "Assets/Prefab/RoomAsset";
         string[] guids = AssetDatabase.FindAssets("t:GameObject", new[] { prefabRoot });
         GameObject autoParent = CreateGroup("AutoSpawnedObjects");
@@ -187,7 +190,6 @@ public class CHEMLABHierarchyBuilder
     {
         GameObject zone = new GameObject(name);
         zone.transform.SetParent(parent);
-        zone.tag = "ExperimentZone";
         var col = zone.AddComponent<BoxCollider>();
         col.isTrigger = true;
         var rb = zone.AddComponent<Rigidbody>();

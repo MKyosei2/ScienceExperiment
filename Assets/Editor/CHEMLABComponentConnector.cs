@@ -94,51 +94,42 @@ public class CHEMLABComponentConnector
             EditorUtility.SetDirty(conditionBtn);
         }
 
-        // 🧠 各カテゴリ別に ExperimentZone を自動リサイズ
-        string prefabRoot = "Assets/Prefab/RoomAsset";
-        string[] guids = AssetDatabase.FindAssets("t:GameObject", new[] { prefabRoot });
-        Dictionary<string, Bounds?> zoneBounds = new Dictionary<string, Bounds?>()
-        {
-            { "Element", null },
-            { "Tool", null },
-            { "Condition", null }
-        };
+        // ✅ Hierarchy上の Element / Tool / Condition の子オブジェクトを範囲として各ゾーンに適用
+        ApplyZoneFromSceneChildren("Element", "ElementExperimentZone");
+        ApplyZoneFromSceneChildren("Tool", "ToolExperimentZone");
+        ApplyZoneFromSceneChildren("Condition", "ConditionExperimentZone");
 
-        foreach (string guid in guids)
+        // ✅ ExperimentZoneにもSelectionZoneタグを付与
+        string[] expZones = new[] {
+            "ElementExperimentZone",
+            "ToolExperimentZone",
+            "ConditionExperimentZone"
+        };
+        foreach (string zone in expZones)
         {
-            string path = AssetDatabase.GUIDToAssetPath(guid);
-            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
-            if (prefab != null)
-            {
-                GameObject temp = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
-                string category = GetCategoryName(prefab.name);
-                if (category != null)
-                {
-                    Renderer[] renderers = temp.GetComponentsInChildren<Renderer>();
-                    foreach (var r in renderers)
-                    {
-                        if (zoneBounds[category] == null) zoneBounds[category] = r.bounds;
-                        else zoneBounds[category] = EncapsulateBounds(zoneBounds[category].Value, r.bounds);
-                    }
-                }
-                GameObject.DestroyImmediate(temp);
-            }
+            GameObject z = GameObject.Find(zone);
+            if (z != null) z.tag = "SelectionZone";
         }
 
-        ApplyToZone("ElementExperimentZone", zoneBounds["Element"]);
-        ApplyToZone("ToolExperimentZone", zoneBounds["Tool"]);
-        ApplyToZone("ConditionExperimentZone", zoneBounds["Condition"]);
-
-        Debug.Log("🔁 CHEMLAB VR: 参照とゾーンBoxColliderの再接続が完了しました。");
+        Debug.Log("🔁 CHEMLAB VR: 各ExperimentZoneのBoxColliderがHierarchyの子オブジェクトに基づき更新されました。");
     }
 
-    private static string GetCategoryName(string prefabName)
+    private static void ApplyZoneFromSceneChildren(string parentName, string zoneName)
     {
-        prefabName = prefabName.ToLower();
-        if (prefabName.Contains("element")) return "Element";
-        if (prefabName.Contains("tool")) return "Tool";
-        if (prefabName.Contains("condition")) return "Condition";
-        return null;
+        GameObject parent = GameObject.Find(parentName);
+        if (parent == null) return;
+
+        Renderer[] renderers = parent.GetComponentsInChildren<Renderer>(true);
+        Bounds? bounds = null;
+        foreach (var r in renderers)
+        {
+            if (r.gameObject.name.Contains("(Clone)")) continue; // 生成されたものは除外
+
+            if (bounds == null) bounds = r.bounds;
+            else bounds = EncapsulateBounds(bounds.Value, r.bounds);
+        }
+
+        ApplyToZone(zoneName, bounds);
     }
 
     private static void ApplyToZone(string zoneName, Bounds? bounds)

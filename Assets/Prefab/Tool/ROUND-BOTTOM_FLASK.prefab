@@ -20,7 +20,7 @@ GameObject:
   - component: {fileID: 3577484077958224048}
   m_Layer: 13
   m_Name: ROUND-BOTTOM_FLASK
-  m_TagString: Untagged
+  m_TagString: Tool
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
