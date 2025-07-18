@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
-  m_Name: ZoneAwareObject
+  m_Name: PickupZoneRestrictor
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: c0bf44247da10e64dbfedf8cb507f705,
+  serializedUdonProgramAsset: {fileID: 11400000, guid: 96087d96934f6784b9a84c7b8ebb3ade,
     type: 2}
   udonAssembly: 
   assemblyError: 
-  sourceCsScript: {fileID: 11500000, guid: a799dc68230e2444193b86947ef0c40e, type: 3}
+  sourceCsScript: {fileID: 11500000, guid: 9c61ddbc7a4a0ff4484d1c6e0cc441af, type: 3}
   scriptVersion: 2
   compiledVersion: 2
   behaviourSyncMode: 0
   hasInteractEvent: 0
-  scriptID: -6149205202984804926
+  scriptID: 2422484905237013411
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 

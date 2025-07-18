@@ -3,9 +3,9 @@ using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
 
-public class ZoneAwareObject : UdonSharpBehaviour
+public class PickupZoneRestrictor : UdonSharpBehaviour
 {
-    public GameObject[] zoneObjects; // Element/Tool/ConditionExperimentZoneなどを手動 or 自動でセット
+    public GameObject[] zoneObjects; // 対象となるゾーン（例: ElementExperimentZone など）
 
     private VRC_Pickup pickup;
 
