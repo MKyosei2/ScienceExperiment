@@ -5,14 +5,24 @@ public class ExperimentController : UdonSharpBehaviour
 {
     public SelectedObjectHolder holder;
     public AIRequestSender requestSender;
+    public ModeSwitcher modeSwitcher;
 
-    public void ExecuteExperiment()
+    [Header("Element候補")]
+    public GameObject[] candidateElements;
+    [Header("Tool候補")]
+    public GameObject[] candidateTools;
+    [Header("Condition候補")]
+    public GameObject[] candidateConditions;
+
+    public void RunExperiment()
     {
-        if (holder == null || requestSender == null)
+        if (holder == null || requestSender == null || modeSwitcher == null)
         {
-            Debug.LogWarning("❌ 必要な参照が設定されていません (holder or requestSender)");
+            Debug.LogWarning("❌ 必要な参照が不足しています");
             return;
         }
+
+        CollectFromTable();
 
         string elementID = holder.selectedElementID;
         string toolID = holder.selectedToolID;
@@ -20,24 +30,40 @@ public class ExperimentController : UdonSharpBehaviour
 
         if (string.IsNullOrEmpty(elementID) || string.IsNullOrEmpty(toolID) || string.IsNullOrEmpty(conditionID))
         {
-            Debug.LogWarning("⚠️ 実験に必要な選択が完了していません");
+            Debug.LogWarning("⚠️ 実験に必要な要素が選択されていません");
             return;
         }
 
-        Debug.Log($"🧪 実験開始：Element={elementID}, Tool={toolID}, Condition={conditionID}");
+        Debug.Log("🧪 実験を実行します");
         requestSender.SendToAI(elementID, toolID, conditionID);
     }
 
-    // 🔽 ExperimentStartButton から呼ばれる
     public void CollectFromTable()
     {
-        Debug.Log("📥 実験台からオブジェクトを収集（仮）");
-        // ここにオブジェクトのタグ or collider 検出処理を入れても良い
+        CollectByGroup(candidateElements, 0);
+        CollectByGroup(candidateTools, 1);
+        CollectByGroup(candidateConditions, 2);
     }
 
-    public void RunExperiment()
+    private void CollectByGroup(GameObject[] objects, int type)
     {
-        Debug.Log("▶ 実験を実行します");
-        ExecuteExperiment(); // 内部でAI呼び出し
+        if (objects == null) return;
+
+        for (int i = 0; i < objects.Length; i++)
+        {
+            GameObject obj = objects[i];
+            if (obj == null) continue;
+
+            PlaceableObject placeable = obj.GetComponent<PlaceableObject>();
+            if (placeable != null && placeable.isFixed)
+            {
+                switch (type)
+                {
+                    case 0: holder.AddElement(obj.name); break;
+                    case 1: holder.AddTool(obj.name); break;
+                    case 2: holder.SetCondition(obj.name); break;
+                }
+            }
+        }
     }
 }

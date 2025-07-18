@@ -9,7 +9,7 @@ public class ModeSwitcher : UdonSharpBehaviour
     public GameObject pcUIRoot;
     public GameObject vrUIRoot;
 
-    public bool isPCMode = true;
+    private bool isPCMode = true;
 
     public void ToggleMode()
     {
@@ -17,16 +17,13 @@ public class ModeSwitcher : UdonSharpBehaviour
         UpdateUI();
     }
 
-    public bool IsPCMode()
-    {
-        return isPCMode;
-    }
+    public bool IsPCMode() => isPCMode;
 
     private void UpdateUI()
     {
-        modeLabel.text = isPCMode ? "🖱 PCモード" : "🎮 VRモード";
-        pcUIRoot.SetActive(isPCMode);
-        vrUIRoot.SetActive(!isPCMode);
-        experimentButton.SetActive(isPCMode);
+        if (modeLabel != null) modeLabel.text = isPCMode ? "🖱 PCモード" : "🎮 VRモード";
+        if (pcUIRoot != null) pcUIRoot.SetActive(isPCMode);
+        if (vrUIRoot != null) vrUIRoot.SetActive(!isPCMode);
+        if (experimentButton != null) experimentButton.SetActive(isPCMode);
     }
 }
