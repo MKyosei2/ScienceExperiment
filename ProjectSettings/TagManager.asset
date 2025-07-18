@@ -4,9 +4,13 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Tool
-  - Element
+  - ElementZone
+  - ToolZone
+  - ConditionZone
   - Condition
+  - Element
+  - Tool
+  - ExperimentZone
   layers:
   - Default
   - TransparentFX

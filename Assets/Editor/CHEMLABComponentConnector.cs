@@ -1,30 +1,40 @@
-﻿using UnityEditor;
+﻿#if UNITY_EDITOR
+using UnityEditor;
 using UnityEngine;
-using TMPro;
+using System.IO;
+using System.Collections.Generic;
 
 public class CHEMLABComponentConnector
 {
-    [MenuItem("CHEMLAB VR/コンポーネントのフィールドを接続")]
-    public static void ConnectComponentReferences()
+    [MenuItem("CHEMLAB VR/Hierarchyを再接続する")]
+    public static void Reconnect()
     {
         var holder = GameObject.Find("SelectedObjectHolder")?.GetComponent<SelectedObjectHolder>();
         var modeSwitcher = GameObject.Find("ModeSwitcher")?.GetComponent<ModeSwitcher>();
         var controller = GameObject.Find("ExperimentController")?.GetComponent<ExperimentController>();
-        var startButton = GameObject.Find("ExperimentStartButton")?.GetComponent<ExperimentStartButton>();
-        var modeButton = GameObject.Find("ModeSwitchButton")?.GetComponent<ModeSwitchButton>();
-        var resultReceiver = GameObject.Find("ResultReceiver")?.GetComponent<ResultReceiver>();
-        var experimentHistory = GameObject.Find("ExperimentHistory")?.GetComponent<ExperimentHistory>();
         var aiSender = GameObject.Find("AIRequestSender")?.GetComponent<AIRequestSender>();
-        var aiHandler = GameObject.Find("AIReactionHandler")?.GetComponent<AIReactionHandler>();
-        var monitor = GameObject.Find("VRExperimentMonitor")?.GetComponent<VRExperimentMonitor>();
+        var vrMonitor = GameObject.Find("VRExperimentMonitor")?.GetComponent<VRExperimentMonitor>();
+        var history = GameObject.Find("ExperimentHistory")?.GetComponent<ExperimentHistory>();
+        var resultReceiver = GameObject.Find("ResultReceiver")?.GetComponent<ResultReceiver>();
 
-        var modeLabelTMP = GameObject.Find("ModeLabel")?.GetComponent<TextMeshProUGUI>();
-        var statusTextTMP = GameObject.Find("StatusText")?.GetComponent<TextMeshProUGUI>();
+        var modeLabelTMP = GameObject.Find("ModeLabel")?.GetComponent<TMPro.TextMeshProUGUI>();
+        var statusTextTMP = GameObject.Find("StatusText")?.GetComponent<TMPro.TextMeshProUGUI>();
+
+        var startBtn = GameObject.Find("ExperimentStartButton")?.GetComponent<ExperimentStartButton>();
+        var modeBtn = GameObject.Find("ModeSwitchButton")?.GetComponent<ModeSwitchButton>();
+
+        var elementBtn = GameObject.Find("ElementSelectButton")?.GetComponent<ZoneSelectionButton>();
+        var toolBtn = GameObject.Find("ToolSelectButton")?.GetComponent<ZoneSelectionButton>();
+        var conditionBtn = GameObject.Find("ConditionSelectButton")?.GetComponent<ZoneSelectionButton>();
+
+        var elementZone = GameObject.Find("ElementZone")?.GetComponent<SelectionZone>();
+        var toolZone = GameObject.Find("ToolZone")?.GetComponent<SelectionZone>();
+        var conditionZone = GameObject.Find("ConditionZone")?.GetComponent<SelectionZone>();
 
         if (modeSwitcher)
         {
             modeSwitcher.modeLabel = modeLabelTMP;
-            modeSwitcher.experimentButton = GameObject.Find("ExperimentStartButton");
+            modeSwitcher.experimentButton = startBtn?.gameObject;
             modeSwitcher.pcUIRoot = GameObject.Find("SelectionButtons");
             modeSwitcher.vrUIRoot = GameObject.Find("Zones");
             EditorUtility.SetDirty(modeSwitcher);
@@ -37,54 +47,121 @@ public class CHEMLABComponentConnector
             EditorUtility.SetDirty(controller);
         }
 
-        if (startButton)
+        if (startBtn)
         {
-            startButton.controller = controller;
-            startButton.modeSwitcher = modeSwitcher;
-            startButton.experimentTableRoot = GameObject.Find("ExperimentTable")?.transform;
-            EditorUtility.SetDirty(startButton);
+            startBtn.controller = controller;
+            startBtn.modeSwitcher = modeSwitcher;
+            startBtn.experimentTableRoot = GameObject.Find("ExperimentTable")?.transform;
+            EditorUtility.SetDirty(startBtn);
         }
 
-        if (modeButton)
+        if (modeBtn)
         {
-            modeButton.modeSwitcher = modeSwitcher;
-            EditorUtility.SetDirty(modeButton);
+            modeBtn.modeSwitcher = modeSwitcher;
+            EditorUtility.SetDirty(modeBtn);
         }
 
         if (resultReceiver)
         {
             resultReceiver.holder = holder;
-            resultReceiver.history = experimentHistory;
+            resultReceiver.history = history;
             EditorUtility.SetDirty(resultReceiver);
         }
 
         if (aiSender)
         {
-            aiSender.monitor = monitor;
+            aiSender.monitor = vrMonitor;
             aiSender.statusText = statusTextTMP;
             EditorUtility.SetDirty(aiSender);
         }
 
-        var selBtns = new[] {
-            GameObject.Find("ElementSelectButton")?.GetComponent<ZoneSelectionButton>(),
-            GameObject.Find("ToolSelectButton")?.GetComponent<ZoneSelectionButton>(),
-            GameObject.Find("ConditionSelectButton")?.GetComponent<ZoneSelectionButton>()
-        };
-        var selZones = new[] {
-            GameObject.Find("ElementZone")?.GetComponent<SelectionZone>(),
-            GameObject.Find("ToolZone")?.GetComponent<SelectionZone>(),
-            GameObject.Find("ConditionZone")?.GetComponent<SelectionZone>()
-        };
-        for (int i = 0; i < 3; i++)
+        if (elementBtn && elementZone)
         {
-            if (selBtns[i] && selZones[i])
+            elementBtn.holder = holder;
+            elementBtn.selectionZone = elementZone;
+            EditorUtility.SetDirty(elementBtn);
+        }
+        if (toolBtn && toolZone)
+        {
+            toolBtn.holder = holder;
+            toolBtn.selectionZone = toolZone;
+            EditorUtility.SetDirty(toolBtn);
+        }
+        if (conditionBtn && conditionZone)
+        {
+            conditionBtn.holder = holder;
+            conditionBtn.selectionZone = conditionZone;
+            EditorUtility.SetDirty(conditionBtn);
+        }
+
+        // 🧠 各カテゴリ別に ExperimentZone を自動リサイズ
+        string prefabRoot = "Assets/Prefab/RoomAsset";
+        string[] guids = AssetDatabase.FindAssets("t:GameObject", new[] { prefabRoot });
+        Dictionary<string, Bounds?> zoneBounds = new Dictionary<string, Bounds?>()
+        {
+            { "Element", null },
+            { "Tool", null },
+            { "Condition", null }
+        };
+
+        foreach (string guid in guids)
+        {
+            string path = AssetDatabase.GUIDToAssetPath(guid);
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+            if (prefab != null)
             {
-                selBtns[i].holder = holder;
-                selBtns[i].selectionZone = selZones[i];
-                EditorUtility.SetDirty(selBtns[i]);
+                GameObject temp = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+                string category = GetCategoryName(prefab.name);
+                if (category != null)
+                {
+                    Renderer[] renderers = temp.GetComponentsInChildren<Renderer>();
+                    foreach (var r in renderers)
+                    {
+                        if (zoneBounds[category] == null) zoneBounds[category] = r.bounds;
+                        else zoneBounds[category] = EncapsulateBounds(zoneBounds[category].Value, r.bounds);
+                    }
+                }
+                GameObject.DestroyImmediate(temp);
             }
         }
 
-        Debug.Log("✅ CHEMLAB VR: 参照の自動接続が完了しました。");
+        ApplyToZone("ElementExperimentZone", zoneBounds["Element"]);
+        ApplyToZone("ToolExperimentZone", zoneBounds["Tool"]);
+        ApplyToZone("ConditionExperimentZone", zoneBounds["Condition"]);
+
+        Debug.Log("🔁 CHEMLAB VR: 参照とゾーンBoxColliderの再接続が完了しました。");
+    }
+
+    private static string GetCategoryName(string prefabName)
+    {
+        prefabName = prefabName.ToLower();
+        if (prefabName.Contains("element")) return "Element";
+        if (prefabName.Contains("tool")) return "Tool";
+        if (prefabName.Contains("condition")) return "Condition";
+        return null;
+    }
+
+    private static void ApplyToZone(string zoneName, Bounds? bounds)
+    {
+        if (!bounds.HasValue) return;
+        GameObject z = GameObject.Find(zoneName);
+        if (z != null)
+        {
+            var col = z.GetComponent<BoxCollider>();
+            if (col != null)
+            {
+                z.transform.position = bounds.Value.center;
+                col.size = bounds.Value.size;
+                EditorUtility.SetDirty(z);
+            }
+        }
+    }
+
+    private static Bounds EncapsulateBounds(Bounds baseBounds, Bounds newBounds)
+    {
+        baseBounds.Encapsulate(newBounds.min);
+        baseBounds.Encapsulate(newBounds.max);
+        return baseBounds;
     }
 }
+#endif

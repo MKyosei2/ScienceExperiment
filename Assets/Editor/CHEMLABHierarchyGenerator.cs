@@ -3,6 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System.IO;
 
 public class CHEMLABHierarchyBuilder
 {
@@ -39,6 +40,10 @@ public class CHEMLABHierarchyBuilder
         var elementZone = CreateSelectionZone("ElementZone", spawners.transform).GetComponent<SelectionZone>();
         var toolZone = CreateSelectionZone("ToolZone", spawners.transform).GetComponent<SelectionZone>();
         var conditionZone = CreateSelectionZone("ConditionZone", spawners.transform).GetComponent<SelectionZone>();
+
+        CreateExperimentZone("ElementExperimentZone", spawners.transform);
+        CreateExperimentZone("ToolExperimentZone", spawners.transform);
+        CreateExperimentZone("ConditionExperimentZone", spawners.transform);
 
         CreateWithComponent("ExperimentTableTrigger", typeof(ExperimentTableTrigger), experimentTable.transform);
 
@@ -103,6 +108,23 @@ public class CHEMLABHierarchyBuilder
             EditorUtility.SetDirty(conditionBtn);
         }
 
+        // 🧪 自動プレハブ読み込み＆展開
+        string prefabRoot = "Assets/Prefab/RoomAsset";
+        string[] guids = AssetDatabase.FindAssets("t:GameObject", new[] { prefabRoot });
+        GameObject autoParent = CreateGroup("AutoSpawnedObjects");
+        foreach (string guid in guids)
+        {
+            string path = AssetDatabase.GUIDToAssetPath(guid);
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+            if (prefab != null)
+            {
+                GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+                instance.name = prefab.name;
+                instance.transform.SetParent(autoParent.transform);
+                Undo.RegisterCreatedObjectUndo(instance, "Instantiate Prefab " + prefab.name);
+            }
+        }
+
         Debug.Log("✅ CHEMLAB VR: Hierarchyの構築と参照接続が完了しました。");
     }
 
@@ -158,6 +180,20 @@ public class CHEMLABHierarchyBuilder
         rb.useGravity = false;
         rb.isKinematic = false;
         Undo.RegisterCreatedObjectUndo(zone, "Create Zone " + name);
+        return zone;
+    }
+
+    private static GameObject CreateExperimentZone(string name, Transform parent)
+    {
+        GameObject zone = new GameObject(name);
+        zone.transform.SetParent(parent);
+        zone.tag = "ExperimentZone";
+        var col = zone.AddComponent<BoxCollider>();
+        col.isTrigger = true;
+        var rb = zone.AddComponent<Rigidbody>();
+        rb.useGravity = false;
+        rb.isKinematic = false;
+        Undo.RegisterCreatedObjectUndo(zone, "Create ExperimentZone " + name);
         return zone;
     }
 }
