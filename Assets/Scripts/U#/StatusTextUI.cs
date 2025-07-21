@@ -6,9 +6,8 @@ public class StatusTextUI : UdonSharpBehaviour
 {
     public TextMeshProUGUI statusText;
 
-    public void UpdateStatus(string status)
+    public void Show(string message)
     {
-        if (statusText != null)
-            statusText.text = status;
+        statusText.text = message;
     }
 }

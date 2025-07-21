@@ -1,19 +1,24 @@
 ﻿using UdonSharp;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class ToolSelector : UdonSharpBehaviour
 {
-    public string toolId;
-    public GameObject managerObject;
+    public GameObject toolPrefab;
+    public Transform spawnPoint;
+    private GameObject currentInstance;
 
-    public void SelectTool()
+    public override void Interact()
     {
-        if (managerObject != null)
+        if (currentInstance != null)
         {
-            var holder = managerObject.GetComponent<UdonSharpBehaviour>();
-            if (holder != null)
-                holder.SendCustomEvent($"OnToolSelected_{toolId}");
+            Destroy(currentInstance);
+        }
+
+        if (toolPrefab != null && spawnPoint != null)
+        {
+            currentInstance = VRCInstantiate(toolPrefab);
+            currentInstance.transform.position = spawnPoint.position;
+            currentInstance.transform.rotation = spawnPoint.rotation;
         }
     }
 }

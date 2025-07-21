@@ -1,19 +1,24 @@
 ﻿using UdonSharp;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class ElementSelector : UdonSharpBehaviour
 {
-    public string elementId;
-    public GameObject managerObject;
+    public GameObject elementPrefab;
+    public Transform spawnPoint;
+    private GameObject currentInstance;
 
-    public void SelectElement()
+    public override void Interact()
     {
-        if (managerObject != null)
+        if (currentInstance != null)
         {
-            var holder = managerObject.GetComponent<UdonSharpBehaviour>();
-            if (holder != null)
-                holder.SendCustomEvent($"OnElementSelected_{elementId}");
+            Destroy(currentInstance);
+        }
+
+        if (elementPrefab != null && spawnPoint != null)
+        {
+            currentInstance = VRCInstantiate(elementPrefab);
+            currentInstance.transform.position = spawnPoint.position;
+            currentInstance.transform.rotation = spawnPoint.rotation;
         }
     }
 }

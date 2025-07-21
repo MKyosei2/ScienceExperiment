@@ -1,15 +1,13 @@
 ﻿using UdonSharp;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 
 public class ModeLabelUI : UdonSharpBehaviour
 {
-    public TextMeshProUGUI label;
+    public TextMeshProUGUI modeText;
 
-    public void SetModeText(string mode)
+    public void SetMode(bool isVR)
     {
-        if (label != null)
-            label.text = $"Mode: {mode}";
+        modeText.text = isVR ? "Mode: VR" : "Mode: PC";
     }
 }

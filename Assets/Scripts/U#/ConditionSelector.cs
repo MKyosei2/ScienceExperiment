@@ -1,19 +1,32 @@
 ﻿using UdonSharp;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class ConditionSelector : UdonSharpBehaviour
 {
-    public string conditionId;
-    public GameObject managerObject;
+    public GameObject conditionPrefab;
+    public Transform spawnPoint;
+    private GameObject currentInstance;
 
-    public void SelectCondition()
+    [Header("クリア対象（ExperimentZone内の生成済みオブジェクト）")]
+    public GameObject[] existingObjects;
+
+    public override void Interact()
     {
-        if (managerObject != null)
+        // 1. 既存オブジェクト削除
+        foreach (GameObject obj in existingObjects)
         {
-            var holder = managerObject.GetComponent<UdonSharpBehaviour>();
-            if (holder != null)
-                holder.SendCustomEvent($"OnConditionSelected_{conditionId}");
+            if (obj != null)
+            {
+                Destroy(obj);
+            }
+        }
+
+        // 2. Condition生成
+        if (conditionPrefab != null && spawnPoint != null)
+        {
+            currentInstance = VRCInstantiate(conditionPrefab);
+            currentInstance.transform.position = spawnPoint.position;
+            currentInstance.transform.rotation = spawnPoint.rotation;
         }
     }
 }
