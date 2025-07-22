@@ -14,6 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   conditionID: underwater_light
   displayName: "\u6C34\u4E2D + \u5149\u7167\u5C04"
-  displayPrefab: {fileID: 8291290352379988695, guid: 16930146cf5285144bc262244cb28657,
+  displayPrefab: {fileID: 6148882256640634675, guid: 16930146cf5285144bc262244cb28657,
     type: 3}
-  displayColor: {r: 1, g: 1, b: 1, a: 1}

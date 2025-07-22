@@ -14,6 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   conditionID: vacuum
   displayName: "\u771F\u7A7A"
-  displayPrefab: {fileID: 2949186627087817844, guid: 1a352090f615bca4ba79e32c0df1f2cb,
+  displayPrefab: {fileID: 1976625550190263766, guid: 1a352090f615bca4ba79e32c0df1f2cb,
     type: 3}
-  displayColor: {r: 1, g: 1, b: 1, a: 1}

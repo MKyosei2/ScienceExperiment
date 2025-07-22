@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: Ac
   elementName: Actinium
   atomicNumber: 89
-  displayPrefab: {fileID: 4164694025231155180, guid: f06a4817c417b9543a99aa8cadb33aa9,
+  displayPrefab: {fileID: 5646229728072504106, guid: f06a4817c417b9543a99aa8cadb33aa9,
     type: 3}
   group: 1
   period: 9

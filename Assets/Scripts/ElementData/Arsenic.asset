@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: As
   elementName: Arsenic
   atomicNumber: 33
-  displayPrefab: {fileID: 2390316468032254432, guid: 087171daca4f51d42b31121edfd107fa,
+  displayPrefab: {fileID: 3924914176113827901, guid: 087171daca4f51d42b31121edfd107fa,
     type: 3}
   group: 15
   period: 4

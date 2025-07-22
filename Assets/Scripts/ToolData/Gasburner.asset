@@ -15,5 +15,5 @@ MonoBehaviour:
   toolID: gasburner
   toolName: "\u30AC\u30B9\u30D0\u30FC\u30CA\u30FC"
   icon: {fileID: 0}
-  displayPrefab: {fileID: 2636461562147003614, guid: e6639dfe28cb0b248aa7ca5063a270b1,
+  displayPrefab: {fileID: 517652098347501345, guid: 7307f9d4611cfd047a4998d754729b5e,
     type: 3}

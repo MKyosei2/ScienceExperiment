@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: Sb
   elementName: Antimony
   atomicNumber: 51
-  displayPrefab: {fileID: 53277837817725885, guid: e9e8d8bb9f3680c498f63b8b2a761a4a,
+  displayPrefab: {fileID: 4165458524722339079, guid: e9e8d8bb9f3680c498f63b8b2a761a4a,
     type: 3}
   group: 15
   period: 5
