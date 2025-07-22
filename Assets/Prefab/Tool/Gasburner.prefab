@@ -41,8 +41,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -4.5, y: 1.5, z: 0}
-  m_LocalScale: {x: 8.987684, y: 8.987684, z: 8.987684}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -343,6 +343,7 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4284247844485023096}
   isFixed: 0
+  monitor: {fileID: 0}
 --- !u!114 &3781955475377671941
 MonoBehaviour:
   m_ObjectHideFlags: 0
