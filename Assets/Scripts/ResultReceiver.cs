@@ -6,14 +6,11 @@ public class ResultReceiver : MonoBehaviour
 {
     public TextMeshProUGUI resultText;
     public TextMeshProUGUI triviaText;
-    public GameObject[] reactionPrefabs;
-    public string[] styleIDs;
-    public ExperimentHistory history;
     public GameObject[] toolObjects;
-    public GameObject[] elementObjects;
-    public GameObject[] conditionObjects;
+    public string[] styleIDs;
     public ShaderEffectData[] effectProfiles;
 
+    public ExperimentHistory history;
     public SelectedObjectHolder holder;
 
     private string filePath;
@@ -34,9 +31,7 @@ public class ResultReceiver : MonoBehaviour
         {
             string result = Extract(rawText, "🧪 結果:", "\n");
             string trivia = Extract(rawText, "📖 雑学:", "\n");
-            string style = Extract(rawText, "🎮 StyleID:", "\n");
-
-            bool fallback = false;
+            string style = Extract(rawText, "🎮 StyleID:", "\n").Trim();
 
             string elementID = holder != null && holder.selectedElementIDs.Length > 0 ? holder.selectedElementIDs[0] : "?";
             string toolID = holder != null && holder.selectedToolIDs.Length > 0 ? holder.selectedToolIDs[0] : "?";
@@ -44,6 +39,7 @@ public class ResultReceiver : MonoBehaviour
 
             if (string.IsNullOrEmpty(result))
             {
+                bool fallback = false;
                 if (history != null)
                 {
                     fallback = BotFallbackHelper.TryFallbackFromHistory(
@@ -63,19 +59,7 @@ public class ResultReceiver : MonoBehaviour
             if (resultText != null) resultText.text = result;
             if (triviaText != null) triviaText.text = trivia;
 
-            int index = System.Array.IndexOf(styleIDs, style.Trim());
-            if (index >= 0 && index < reactionPrefabs.Length)
-            {
-                Instantiate(reactionPrefabs[index], transform.position, Quaternion.identity);
-            }
-            else if (!fallback && reactionPrefabs.Length > 0)
-            {
-                Instantiate(reactionPrefabs[0], transform.position, Quaternion.identity);
-            }
-
-            ApplyEffectsToTargets(toolObjects);
-            ApplyEffectsToTargets(elementObjects);
-            ApplyEffectsToTargets(conditionObjects);
+            ApplyEffectToToolsByStyle(style);
 
             if (history != null)
             {
@@ -86,18 +70,31 @@ public class ResultReceiver : MonoBehaviour
         }
     }
 
-    void ApplyEffectsToTargets(GameObject[] targets)
+    void ApplyEffectToToolsByStyle(string styleID)
     {
-        if (targets == null || effectProfiles == null) return;
+        ShaderEffectData selectedEffect = null;
+        for (int i = 0; i < styleIDs.Length && i < effectProfiles.Length; i++)
+        {
+            if (styleIDs[i] == styleID)
+            {
+                selectedEffect = effectProfiles[i];
+                break;
+            }
+        }
 
-        foreach (var obj in targets)
+        if (selectedEffect == null)
+        {
+            Debug.LogWarning($"⚠️ Style '{styleID}' に対応するエフェクトが見つかりません");
+            return;
+        }
+
+        foreach (var obj in toolObjects)
         {
             if (obj == null) continue;
-
             var controller = obj.GetComponent<GlassRendererController>();
             if (controller != null)
             {
-                controller.effects = effectProfiles;
+                controller.effects = new ShaderEffectData[] { selectedEffect };
                 controller.ApplyEffects();
             }
         }
