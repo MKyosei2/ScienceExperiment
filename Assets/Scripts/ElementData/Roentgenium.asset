@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: Rg
   elementName: Roentgenium
   atomicNumber: 111
-  displayPrefab: {fileID: 1330082687053475294, guid: 412966864dd2a1f40a030461bd012b72,
+  displayPrefab: {fileID: 2853417387023486406, guid: 412966864dd2a1f40a030461bd012b72,
     type: 3}
   group: 11
   period: 7

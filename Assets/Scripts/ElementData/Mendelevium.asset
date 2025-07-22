@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: Md
   elementName: Mendelevium
   atomicNumber: 101
-  displayPrefab: {fileID: 5068653616932222189, guid: 7b0215e56e506864995fcb95fa39ee60,
+  displayPrefab: {fileID: 4261359820533573192, guid: 7b0215e56e506864995fcb95fa39ee60,
     type: 3}
   group: 13
   period: 9

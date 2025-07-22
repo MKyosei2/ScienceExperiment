@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: Pm
   elementName: Promethium
   atomicNumber: 61
-  displayPrefab: {fileID: 264175658567723990, guid: ab08c26b99b1c9549a9aff3b42f87476,
+  displayPrefab: {fileID: 2078032777724861927, guid: ab08c26b99b1c9549a9aff3b42f87476,
     type: 3}
   group: 5
   period: 8

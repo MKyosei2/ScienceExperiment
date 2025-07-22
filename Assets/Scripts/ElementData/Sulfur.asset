@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: S
   elementName: Sulfur
   atomicNumber: 16
-  displayPrefab: {fileID: 5451298066170610711, guid: 88c7c95dffa8acf4d95a2b2a9948f331,
+  displayPrefab: {fileID: 8131915715580399881, guid: 88c7c95dffa8acf4d95a2b2a9948f331,
     type: 3}
   group: 16
   period: 3

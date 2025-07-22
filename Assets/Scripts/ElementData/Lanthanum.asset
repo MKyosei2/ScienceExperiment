@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: La
   elementName: Lanthanum
   atomicNumber: 57
-  displayPrefab: {fileID: 2849468628964430631, guid: bb97b1488a3be62428d4ad1fee90fd21,
+  displayPrefab: {fileID: 4402164636972323180, guid: bb97b1488a3be62428d4ad1fee90fd21,
     type: 3}
   group: 1
   period: 8

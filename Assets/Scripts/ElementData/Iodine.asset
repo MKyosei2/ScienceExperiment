@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: I
   elementName: Iodine
   atomicNumber: 53
-  displayPrefab: {fileID: 5533112906255434934, guid: 2fc42744fefaaf0488aeb90197419641,
+  displayPrefab: {fileID: 808140314873362808, guid: 2fc42744fefaaf0488aeb90197419641,
     type: 3}
   group: 17
   period: 5

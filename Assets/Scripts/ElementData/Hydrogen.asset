@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: H
   elementName: Hydrogen
   atomicNumber: 1
-  displayPrefab: {fileID: 7922262040192237905, guid: db1564b2c2ef4e34bb1b0b5f02c3e68b,
+  displayPrefab: {fileID: 7820095102324158217, guid: db1564b2c2ef4e34bb1b0b5f02c3e68b,
     type: 3}
   group: 1
   period: 1

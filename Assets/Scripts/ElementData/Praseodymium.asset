@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: Pr
   elementName: Praseodymium
   atomicNumber: 59
-  displayPrefab: {fileID: 258165489961365591, guid: af6c4e14adfa7c94abb43514c9db86d4,
+  displayPrefab: {fileID: 5963738398623557477, guid: af6c4e14adfa7c94abb43514c9db86d4,
     type: 3}
   group: 3
   period: 8

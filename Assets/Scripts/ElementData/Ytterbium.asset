@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: Yb
   elementName: Ytterbium
   atomicNumber: 70
-  displayPrefab: {fileID: 8677078477265833410, guid: b62d19499da55424fb64f347dfa8dbbd,
+  displayPrefab: {fileID: 3618076203475534438, guid: b62d19499da55424fb64f347dfa8dbbd,
     type: 3}
   group: 14
   period: 8

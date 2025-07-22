@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: F
   elementName: Fluorine
   atomicNumber: 9
-  displayPrefab: {fileID: 4356999774515189960, guid: 9cc99f35d23909c4d98c40a9dd8dee1a,
+  displayPrefab: {fileID: 3586290913271902480, guid: 9cc99f35d23909c4d98c40a9dd8dee1a,
     type: 3}
   group: 17
   period: 2

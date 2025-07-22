@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: Tm
   elementName: Thulium
   atomicNumber: 69
-  displayPrefab: {fileID: 7030202380588075028, guid: 43478ae94221d4b48a377b178ece96c8,
+  displayPrefab: {fileID: 3580397029658389113, guid: 43478ae94221d4b48a377b178ece96c8,
     type: 3}
   group: 13
   period: 8

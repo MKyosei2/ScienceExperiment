@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: Eu
   elementName: Europium
   atomicNumber: 63
-  displayPrefab: {fileID: 3753360909140649502, guid: 117df958de2acf74eb73b414694eb6d1,
+  displayPrefab: {fileID: 8026909277563140179, guid: 117df958de2acf74eb73b414694eb6d1,
     type: 3}
   group: 7
   period: 8

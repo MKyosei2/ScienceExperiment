@@ -14,6 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   toolID: florence_flask
   toolName: "\u30D5\u30ED\u30FC\u30EC\u30F3\u30B9\u30D5\u30E9\u30B9\u30B3\uFF08\u4E38\u5E95\u30D5\u30E9\u30B9\u30B3\uFF09"
-  icon: {fileID: 0}
-  displayPrefab: {fileID: 4444200843149485690, guid: 7a2b8a48ced703a4bae2c3a102cf1832,
+  displayPrefab: {fileID: 7547113446430855994, guid: 7a2b8a48ced703a4bae2c3a102cf1832,
     type: 3}

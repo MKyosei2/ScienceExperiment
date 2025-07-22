@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: Ti
   elementName: Titanium
   atomicNumber: 22
-  displayPrefab: {fileID: 6875955755582882230, guid: 883a5888d74122747ab8c196c797955a,
+  displayPrefab: {fileID: 6801428010802829625, guid: 883a5888d74122747ab8c196c797955a,
     type: 3}
   group: 4
   period: 4

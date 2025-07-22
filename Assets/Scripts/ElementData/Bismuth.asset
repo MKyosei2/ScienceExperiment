@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: Bi
   elementName: Bismuth
   atomicNumber: 83
-  displayPrefab: {fileID: 4980355011362426375, guid: 92300b8cdc83ce640871ca7e68610f2c,
+  displayPrefab: {fileID: 4211093389216182742, guid: 92300b8cdc83ce640871ca7e68610f2c,
     type: 3}
   group: 15
   period: 6

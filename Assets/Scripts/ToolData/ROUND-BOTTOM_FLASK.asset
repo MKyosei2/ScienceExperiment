@@ -14,6 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   toolID: round_bottom_flask
   toolName: "\u4E38\u5E95\u30D5\u30E9\u30B9\u30B3"
-  icon: {fileID: 0}
-  displayPrefab: {fileID: 2692865968006411484, guid: 736dfe91bedddbe4ea3fd9b26653d989,
+  displayPrefab: {fileID: 4797006293779671913, guid: 736dfe91bedddbe4ea3fd9b26653d989,
     type: 3}

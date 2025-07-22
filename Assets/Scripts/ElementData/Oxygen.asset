@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: O
   elementName: Oxygen
   atomicNumber: 8
-  displayPrefab: {fileID: 7601891246586358429, guid: 267b780e618db884b9fca120f477c485,
+  displayPrefab: {fileID: 5476062128250201887, guid: 267b780e618db884b9fca120f477c485,
     type: 3}
   group: 16
   period: 2

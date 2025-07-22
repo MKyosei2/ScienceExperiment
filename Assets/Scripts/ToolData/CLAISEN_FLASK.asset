@@ -14,6 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   toolID: claisen_flask
   toolName: "\u30AF\u30E9\u30A4\u30BC\u30F3\u30D5\u30E9\u30B9\u30B3"
-  icon: {fileID: 0}
-  displayPrefab: {fileID: 3354227859561047312, guid: b97df90dc8e5f464dae3f777bbf6ba48,
+  displayPrefab: {fileID: 6838442834937921069, guid: b97df90dc8e5f464dae3f777bbf6ba48,
     type: 3}

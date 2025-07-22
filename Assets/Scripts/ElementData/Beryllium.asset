@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: Be
   elementName: Beryllium
   atomicNumber: 4
-  displayPrefab: {fileID: 2567732896590254769, guid: c54d0be48d3c99e45a179cb4770e38b8,
+  displayPrefab: {fileID: 2701734896915106883, guid: c54d0be48d3c99e45a179cb4770e38b8,
     type: 3}
   group: 2
   period: 2

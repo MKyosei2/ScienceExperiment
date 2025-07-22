@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: Pa
   elementName: Protactinium
   atomicNumber: 91
-  displayPrefab: {fileID: 8411938662288220922, guid: 167a0b2a2457d224088414881a93d215,
+  displayPrefab: {fileID: 70742581870007560, guid: 167a0b2a2457d224088414881a93d215,
     type: 3}
   group: 3
   period: 9

@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: Ru
   elementName: Ruthenium
   atomicNumber: 44
-  displayPrefab: {fileID: 4144669024375643266, guid: a4f166714ec17e840a9162ed658f0c9c,
+  displayPrefab: {fileID: 778816412632441600, guid: a4f166714ec17e840a9162ed658f0c9c,
     type: 3}
   group: 8
   period: 5

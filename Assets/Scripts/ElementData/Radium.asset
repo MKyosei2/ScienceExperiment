@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: Ra
   elementName: Radium
   atomicNumber: 88
-  displayPrefab: {fileID: 5014080457819724827, guid: 65fc5e6e3a104774494ed2886de4219d,
+  displayPrefab: {fileID: 145584385153596191, guid: 65fc5e6e3a104774494ed2886de4219d,
     type: 3}
   group: 2
   period: 7

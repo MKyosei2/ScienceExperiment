@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: Li
   elementName: Lithium
   atomicNumber: 3
-  displayPrefab: {fileID: 7708581089658887480, guid: 1e0b1f8790922c347aa510754596d9fb,
+  displayPrefab: {fileID: 3497955443569533754, guid: 1e0b1f8790922c347aa510754596d9fb,
     type: 3}
   group: 1
   period: 2

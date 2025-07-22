@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: Ag
   elementName: Silver
   atomicNumber: 47
-  displayPrefab: {fileID: 1720324558143442025, guid: 5d347379c34fec843be724910d6fb8a0,
+  displayPrefab: {fileID: 4019681386265585416, guid: 5d347379c34fec843be724910d6fb8a0,
     type: 3}
   group: 11
   period: 5

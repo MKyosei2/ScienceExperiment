@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: Sm
   elementName: Samarium
   atomicNumber: 62
-  displayPrefab: {fileID: 8120089381073194186, guid: 0c53c2e81d4dd724bbc9e1dd1c457766,
+  displayPrefab: {fileID: 8834912198049808000, guid: 0c53c2e81d4dd724bbc9e1dd1c457766,
     type: 3}
   group: 6
   period: 8

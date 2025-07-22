@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: Pd
   elementName: Palladium
   atomicNumber: 46
-  displayPrefab: {fileID: 5792620521418306652, guid: fb58bc90373fbc242867411d9ce1e13a,
+  displayPrefab: {fileID: 8538151046052835518, guid: fb58bc90373fbc242867411d9ce1e13a,
     type: 3}
   group: 10
   period: 5

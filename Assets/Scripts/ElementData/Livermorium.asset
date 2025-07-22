@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: Lv
   elementName: Livermorium
   atomicNumber: 116
-  displayPrefab: {fileID: 3370809570438184091, guid: 9f243a09ceeba184191e4c832bbc7f6e,
+  displayPrefab: {fileID: 5410972671951678335, guid: 9f243a09ceeba184191e4c832bbc7f6e,
     type: 3}
   group: 16
   period: 7

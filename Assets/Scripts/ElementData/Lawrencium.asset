@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: Lr
   elementName: Lawrencium
   atomicNumber: 103
-  displayPrefab: {fileID: 5235096966471468016, guid: 37370244ce9b86945b2e72c6f6a05b62,
+  displayPrefab: {fileID: 4083021441512148701, guid: 37370244ce9b86945b2e72c6f6a05b62,
     type: 3}
   group: 15
   period: 9

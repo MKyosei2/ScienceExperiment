@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: Pu
   elementName: Plutonium
   atomicNumber: 94
-  displayPrefab: {fileID: 2673537328020155940, guid: 65e51852597d74a49b5fb379bc16fa0d,
+  displayPrefab: {fileID: 934737477399507037, guid: 65e51852597d74a49b5fb379bc16fa0d,
     type: 3}
   group: 6
   period: 9

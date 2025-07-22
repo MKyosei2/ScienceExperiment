@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: Tl
   elementName: Thallium
   atomicNumber: 81
-  displayPrefab: {fileID: 6875955755582882230, guid: 883a5888d74122747ab8c196c797955a,
+  displayPrefab: {fileID: 1613040955488284880, guid: a6a8a8704cada3345ac1c9eaac067996,
     type: 3}
   group: 13
   period: 6

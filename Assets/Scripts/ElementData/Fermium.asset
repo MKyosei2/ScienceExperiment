@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: Fm
   elementName: Fermium
   atomicNumber: 100
-  displayPrefab: {fileID: 7532130154739251754, guid: ab4c1a142c869f34880f81338c2b0baf,
+  displayPrefab: {fileID: 7243901385727505815, guid: ab4c1a142c869f34880f81338c2b0baf,
     type: 3}
   group: 12
   period: 9

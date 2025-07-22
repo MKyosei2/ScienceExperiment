@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: Rf
   elementName: Rutherfordium
   atomicNumber: 104
-  displayPrefab: {fileID: 3142650236812481922, guid: ba7eae90f59c39d48bce2a1c12005aaa,
+  displayPrefab: {fileID: 6208694377065151915, guid: ba7eae90f59c39d48bce2a1c12005aaa,
     type: 3}
   group: 4
   period: 7

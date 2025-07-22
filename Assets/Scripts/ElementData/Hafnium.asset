@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: Hf
   elementName: Hafnium
   atomicNumber: 72
-  displayPrefab: {fileID: 5337695852028672563, guid: 9a534bb855ed44045874bca5ea13db6d,
+  displayPrefab: {fileID: 4560842520444018562, guid: 9a534bb855ed44045874bca5ea13db6d,
     type: 3}
   group: 4
   period: 6

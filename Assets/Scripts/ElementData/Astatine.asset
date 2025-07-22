@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: At
   elementName: Astatine
   atomicNumber: 85
-  displayPrefab: {fileID: 4409643519684867472, guid: afecd48af43fab846848a5deeffc266e,
+  displayPrefab: {fileID: 8059912565635825174, guid: afecd48af43fab846848a5deeffc266e,
     type: 3}
   group: 17
   period: 6

@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: Se
   elementName: Selenium
   atomicNumber: 34
-  displayPrefab: {fileID: 7497435781444026760, guid: 88aa37ade87d7914db92e16cbebd05f1,
+  displayPrefab: {fileID: 7512040365339285603, guid: 88aa37ade87d7914db92e16cbebd05f1,
     type: 3}
   group: 16
   period: 4

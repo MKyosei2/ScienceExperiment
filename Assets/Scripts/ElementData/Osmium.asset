@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: Os
   elementName: Osmium
   atomicNumber: 76
-  displayPrefab: {fileID: 2084392039534952098, guid: 94034fe716d407e4587e059ca5a94774,
+  displayPrefab: {fileID: 3365068008399368737, guid: 94034fe716d407e4587e059ca5a94774,
     type: 3}
   group: 8
   period: 6

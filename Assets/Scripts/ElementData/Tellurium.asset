@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: Te
   elementName: Tellurium
   atomicNumber: 52
-  displayPrefab: {fileID: 5771602755851612596, guid: bd1043b4f241c684cb6f0c7e17bd1e1a,
+  displayPrefab: {fileID: 5544682981380421948, guid: bd1043b4f241c684cb6f0c7e17bd1e1a,
     type: 3}
   group: 16
   period: 5

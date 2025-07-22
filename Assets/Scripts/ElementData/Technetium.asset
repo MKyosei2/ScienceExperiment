@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: Tc
   elementName: Technetium
   atomicNumber: 43
-  displayPrefab: {fileID: 7732713428596501642, guid: 76024af1a479f0d4dbe6ee7e52a5ea41,
+  displayPrefab: {fileID: 1485753559381988116, guid: 76024af1a479f0d4dbe6ee7e52a5ea41,
     type: 3}
   group: 7
   period: 5

@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: Zr
   elementName: Zirconium
   atomicNumber: 40
-  displayPrefab: {fileID: 5157618821434049841, guid: 8b82f5297eb49c342b2ea892497e4fba,
+  displayPrefab: {fileID: 4876996853625146450, guid: 8b82f5297eb49c342b2ea892497e4fba,
     type: 3}
   group: 4
   period: 5

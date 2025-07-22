@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: Ho
   elementName: Holmium
   atomicNumber: 67
-  displayPrefab: {fileID: 2855337032333830767, guid: 6cc8badd6fe78f24bb9ba02a2b428332,
+  displayPrefab: {fileID: 6679727547830081476, guid: 6cc8badd6fe78f24bb9ba02a2b428332,
     type: 3}
   group: 11
   period: 8

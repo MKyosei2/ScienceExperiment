@@ -15,7 +15,7 @@ MonoBehaviour:
   elementID: Nh
   elementName: Nihonium
   atomicNumber: 113
-  displayPrefab: {fileID: 3616951105227388788, guid: e8b3ab6624cfaa94c96cb5b7f0ac8153,
+  displayPrefab: {fileID: 4313221742065253184, guid: e8b3ab6624cfaa94c96cb5b7f0ac8153,
     type: 3}
   group: 13
   period: 7
