@@ -5,37 +5,45 @@ using TMPro;
 public class VRExperimentMonitor : UdonSharpBehaviour
 {
     [Header("ログ出力UI")]
-    public TextMeshProUGUI logUI;
+    public TextMeshProUGUI logText;
 
-    [Header("最新ログ数")]
-    public int maxLines = 5;
-    private string[] logHistory;
-    private int index = 0;
+    [Header("最大履歴数")]
+    public int maxLogs = 10;
 
-    void Start()
-    {
-        logHistory = new string[maxLines];
-    }
+    private string[] logs = new string[10];
+    private int logIndex = 0;
 
     public void Log(string message)
     {
-        string time = System.DateTime.Now.ToString("HH:mm:ss");
-        string full = $"[{time}] {message}";
-
-        Debug.Log($"[VRMonitor] {full}");
-
-        logHistory[index % maxLines] = full;
-        index++;
-
-        if (logUI != null)
+        if (logs.Length != maxLogs)
         {
-            logUI.text = "";
-            for (int i = 0; i < maxLines; i++)
+            logs = new string[maxLogs];
+        }
+
+        logs[logIndex] = message;
+        logIndex = (logIndex + 1) % maxLogs;
+
+        UpdateLogDisplay();
+    }
+
+    private void UpdateLogDisplay()
+    {
+        string combined = "";
+        int count = 0;
+        for (int i = 0; i < maxLogs; i++)
+        {
+            int idx = (logIndex + i) % maxLogs;
+            string entry = logs[idx];
+            if (!string.IsNullOrEmpty(entry))
             {
-                int idx = (index + i) % maxLines;
-                if (!string.IsNullOrEmpty(logHistory[idx]))
-                    logUI.text += logHistory[idx] + "\n";
+                combined += "• " + entry + "\n";
+                count++;
             }
+        }
+
+        if (logText != null)
+        {
+            logText.text = "📜 実験ログ（最新 " + count + " 件）\n" + combined;
         }
     }
 }
