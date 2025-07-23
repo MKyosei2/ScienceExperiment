@@ -16,32 +16,40 @@ public class ExperimentStartButton : UdonSharpBehaviour
 
     public override void Interact()
     {
-        // チェック：Element, Tool, Condition 全て揃っているか？
+        Debug.Log("🧪 ExperimentStartButton: Interact() 呼び出し");
+
         if (elementObject == null || !elementObject.activeInHierarchy)
         {
             ShowStatus("Element がありません。");
+            Debug.LogWarning("❌ ExperimentStartButton: Element が null または非表示です");
             return;
         }
 
         if (toolObject == null || !toolObject.activeInHierarchy)
         {
             ShowStatus("Tool がありません。");
+            Debug.LogWarning("❌ ExperimentStartButton: Tool が null または非表示です");
             return;
         }
 
         if (conditionObject == null || !conditionObject.activeInHierarchy)
         {
             ShowStatus("Condition がありません。");
+            Debug.LogWarning("❌ ExperimentStartButton: Condition が null または非表示です");
             return;
         }
 
-        // 実験開始イベント送信
         if (experimentController != null)
         {
+            Debug.Log("✅ ExperimentStartButton: StartExperiment イベント送信中");
             experimentController.SendCustomEvent("StartExperiment");
+            ShowStatus("実験を開始しました。");
         }
-
-        ShowStatus("実験を開始しました。");
+        else
+        {
+            Debug.LogError("❌ ExperimentStartButton: experimentController が設定されていません");
+            ShowStatus("実験コントローラーが見つかりません");
+        }
     }
 
     private void ShowStatus(string message)
@@ -50,6 +58,10 @@ public class ExperimentStartButton : UdonSharpBehaviour
         {
             statusTextUI.SetProgramVariable("statusText", message);
             statusTextUI.SendCustomEvent("ShowStatus");
+        }
+        else
+        {
+            Debug.Log($"ℹ️ 状態表示なし: {message}");
         }
     }
 }
