@@ -155,7 +155,7 @@ MonoBehaviour:
       Data: 9|UnityEngine.HeaderAttribute, UnityEngine.CoreModule
     - Name: header
       Entry: 1
-      Data: "\u751F\u6210\u3059\u308B\u30D7\u30EC\u30CF\u30D6"
+      Data: "\u751F\u6210\u3059\u308B\u30D7\u30EC\u30CF\u30D6\uFF08null\u30C1\u30A7\u30C3\u30AF\u5FC5\u9808\uFF09"
     - Name: 
       Entry: 8
       Data: 

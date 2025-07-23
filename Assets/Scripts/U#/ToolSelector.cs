@@ -4,7 +4,7 @@ using UnityEngine;
 public class ToolSelector : UdonSharpBehaviour
 {
     public GameObject toolPrefab;
-    public Transform spawnPoint;
+    public Transform toolExperimentZone;
     private GameObject currentInstance;
 
     public override void Interact()
@@ -14,11 +14,11 @@ public class ToolSelector : UdonSharpBehaviour
             Destroy(currentInstance);
         }
 
-        if (toolPrefab != null && spawnPoint != null)
+        if (toolPrefab != null && toolExperimentZone != null)
         {
             currentInstance = VRCInstantiate(toolPrefab);
-            currentInstance.transform.position = spawnPoint.position;
-            currentInstance.transform.rotation = spawnPoint.rotation;
+            currentInstance.transform.position = toolExperimentZone.position;
+            currentInstance.transform.rotation = toolExperimentZone.rotation;
         }
     }
 }

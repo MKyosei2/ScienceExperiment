@@ -4,15 +4,13 @@ using UnityEngine;
 public class ConditionSelector : UdonSharpBehaviour
 {
     public GameObject conditionPrefab;
-    public Transform spawnPoint;
-    private GameObject currentInstance;
-
-    [Header("クリア対象（ExperimentZone内の生成済みオブジェクト）")]
+    public Transform conditionExperimentZone;
     public GameObject[] existingObjects;
+    private GameObject currentInstance;
 
     public override void Interact()
     {
-        // 1. 既存オブジェクト削除
+        // 既存のElement/Tool/Conditionを削除
         foreach (GameObject obj in existingObjects)
         {
             if (obj != null)
@@ -21,12 +19,12 @@ public class ConditionSelector : UdonSharpBehaviour
             }
         }
 
-        // 2. Condition生成
-        if (conditionPrefab != null && spawnPoint != null)
+        // Condition生成
+        if (conditionPrefab != null && conditionExperimentZone != null)
         {
             currentInstance = VRCInstantiate(conditionPrefab);
-            currentInstance.transform.position = spawnPoint.position;
-            currentInstance.transform.rotation = spawnPoint.rotation;
+            currentInstance.transform.position = conditionExperimentZone.position;
+            currentInstance.transform.rotation = conditionExperimentZone.rotation;
         }
     }
 }

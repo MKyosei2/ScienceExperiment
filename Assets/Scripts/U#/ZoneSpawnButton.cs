@@ -8,7 +8,7 @@ public class ZoneSpawnButton : UdonSharpBehaviour
     [Header("Zone種別 (Element / Tool / Condition)")]
     public string objectType = "Element";
 
-    [Header("生成するプレハブ")]
+    [Header("生成するプレハブ（nullチェック必須）")]
     public GameObject spawnPrefab;
 
     [Header("生成先（例: ElementExperimentZone）")]
@@ -19,7 +19,17 @@ public class ZoneSpawnButton : UdonSharpBehaviour
 
     public override void Interact()
     {
-        if (spawnPrefab == null || spawnZone == null) return;
+        if (spawnPrefab == null)
+        {
+            Debug.LogError("[ZoneSpawnButton] spawnPrefab が null です");
+            return;
+        }
+
+        if (spawnZone == null)
+        {
+            Debug.LogError("[ZoneSpawnButton] spawnZone が null です");
+            return;
+        }
 
         GameObject instance = VRCInstantiate(spawnPrefab);
         instance.transform.SetPositionAndRotation(spawnZone.position, spawnZone.rotation);
@@ -32,7 +42,7 @@ public class ZoneSpawnButton : UdonSharpBehaviour
         var pickup = (VRC_Pickup)instance.GetComponent(typeof(VRC_Pickup));
         if (pickup != null) pickup.pickupable = false;
 
-        // 📝 選択登録
+        // 📝 選択記録
         string id = spawnPrefab.name;
         if (holder != null)
         {

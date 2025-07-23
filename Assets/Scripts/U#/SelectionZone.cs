@@ -5,11 +5,23 @@ using VRC.Udon;
 
 public class SelectionZone : UdonSharpBehaviour
 {
-    public GameObject[] objectsInZone = new GameObject[1];
+    [Tooltip("最大格納数（Zone内オブジェクト）")]
+    public int maxCount = 8;
+
+    [HideInInspector]
+    public GameObject[] objectsInZone;
+
     private int count = 0;
+
+    void Start()
+    {
+        objectsInZone = new GameObject[maxCount];
+    }
 
     private void OnTriggerEnter(Collider other)
     {
+        if (count >= maxCount) return;
+
         GameObject go = other.gameObject;
         if (!Contains(go))
         {
