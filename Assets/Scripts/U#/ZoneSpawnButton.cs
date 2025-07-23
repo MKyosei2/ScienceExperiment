@@ -5,9 +5,16 @@ using VRC.Udon;
 
 public class ZoneSpawnButton : UdonSharpBehaviour
 {
-    public string objectType = "Element"; // "Tool", "Condition"
+    [Header("Zone種別 (Element / Tool / Condition)")]
+    public string objectType = "Element";
+
+    [Header("生成するプレハブ")]
     public GameObject spawnPrefab;
+
+    [Header("生成先（例: ElementExperimentZone）")]
     public Transform spawnZone;
+
+    [Header("データ記録先")]
     public SelectedObjectHolder holder;
 
     public override void Interact()
@@ -16,13 +23,17 @@ public class ZoneSpawnButton : UdonSharpBehaviour
 
         GameObject instance = VRCInstantiate(spawnPrefab);
         instance.transform.SetPositionAndRotation(spawnZone.position, spawnZone.rotation);
+        instance.transform.SetParent(spawnZone); // 子として追加
 
-        // 再帰防止・Pickup無効化
-        Destroy(instance.GetComponent<ZoneSpawnButton>());
-        var pickup = instance.GetComponent<VRC_Pickup>();
-        if (pickup) pickup.pickupable = false;
+        // 🛑 再帰防止
+        ZoneSpawnButton zb = instance.GetComponent<ZoneSpawnButton>();
+        if (zb != null) Destroy(zb);
 
-        // 選択状態として登録
+        // 🚫 Pickup無効
+        VRC_Pickup pickup = (VRC_Pickup)instance.GetComponent(typeof(VRC_Pickup));
+        if (pickup != null) pickup.pickupable = false;
+
+        // 📝 選択登録
         string id = spawnPrefab.name;
         if (holder != null)
         {
@@ -34,6 +45,6 @@ public class ZoneSpawnButton : UdonSharpBehaviour
             }
         }
 
-        Debug.Log($"✅ {objectType} {id} を {spawnZone.name} に生成し、選択登録");
+        Debug.Log($"✅ {objectType} {id} を {spawnZone.name} に生成（子として追加）");
     }
 }
