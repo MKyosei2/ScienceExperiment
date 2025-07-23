@@ -5,23 +5,25 @@ using VRC.Udon;
 
 public class ExperimentController : UdonSharpBehaviour
 {
-    [Header("必要な参照")]
+    [Header("選択情報")]
     public SelectedObjectHolder holder;
+
+    [Header("通信・演出送信先")]
     public AIRequestSender requestSender;
 
-    [Header("反応対象のRenderer")]
+    [Header("視覚演出対象")]
     public Renderer reactionRenderer;
 
-    [Header("VR Trigger 実行を許可")]
+    [Header("VRモード実行許可")]
     public bool enableTriggerReaction = true;
 
     public void StartExperiment()
     {
-        Debug.Log("🧪 StartExperiment() が呼ばれました");
+        Debug.Log("🧪 StartExperiment() 呼び出し");
 
         if (Utilities.IsValid(Networking.LocalPlayer) && Networking.LocalPlayer.IsUserInVR())
         {
-            Debug.Log("🎮 VRモード中：ボタン操作は無効（Triggerを使用）");
+            Debug.Log("🎮 VRモードでは Trigger 実行に任せます");
             return;
         }
 
@@ -33,12 +35,11 @@ public class ExperimentController : UdonSharpBehaviour
         if (!enableTriggerReaction) return;
 
         GameObject obj = other.gameObject;
-        string objName = obj.name.ToLower();
+        string name = obj != null ? obj.name.ToLower() : "";
 
-        // VRプレイヤーの手などのオブジェクトに "hand" が含まれていると仮定
-        if (objName.Contains("hand") || objName.Contains("controller") || objName.Contains("player"))
+        if (name.Contains("hand") || name.Contains("controller") || name.Contains("player"))
         {
-            Debug.Log("🚶 VR Triggerゾーンに侵入 → 実験条件チェック");
+            Debug.Log("🖐 VR Trigger 検出 → 実験実行チェック");
             RunExperimentIfValid();
         }
     }
@@ -47,40 +48,40 @@ public class ExperimentController : UdonSharpBehaviour
     {
         if (holder == null || requestSender == null)
         {
-            Debug.LogError("❌ holder または requestSender が未設定です");
+            Debug.LogError("❌ holder または requestSender が未設定");
             return;
         }
 
-        string[] elementIDs = holder.selectedElementIDs;
-        string[] toolIDs = holder.selectedToolIDs;
-        string conditionID = holder.selectedConditionID;
+        string[] elements = holder.selectedElementIDs;
+        string[] tools = holder.selectedToolIDs;
+        string condition = holder.selectedConditionID;
 
-        if (elementIDs.Length == 0 || toolIDs.Length == 0 || string.IsNullOrWhiteSpace(conditionID))
+        if (elements.Length == 0 || tools.Length == 0 || string.IsNullOrWhiteSpace(condition))
         {
-            Debug.LogWarning("⚠️ 実験条件が未選択です");
+            Debug.LogWarning("⚠️ 実験に必要な選択が未完了");
             return;
         }
 
-        string elementStr = string.Join(",", elementIDs);
-        string toolStr = string.Join(",", toolIDs);
+        // 代表1つずつ使って送信（ここは実際のID統合ロジックに応じて調整可能）
+        string elementID = string.Join(",", elements);
+        string toolID = string.Join(",", tools);
+        string conditionID = condition;
 
-        Debug.Log($"✅ 実験条件: Element({elementStr}), Tool({toolStr}), Condition({conditionID})");
+        Debug.Log("🧪 実験データ送信: " + elementID + " / " + toolID + " / " + conditionID);
+        requestSender.SendToAI(elementID, toolID, conditionID);
 
-        // 🌊 Shader演出
+        // 演出も即時適用（通信失敗時の保険）
         if (reactionRenderer != null)
         {
             Material mat = reactionRenderer.material;
             if (mat != null)
             {
-                mat.SetFloat("_WobbleAmount", 0.12f);
                 mat.SetFloat("_BubbleSpeed", 2.0f);
+                mat.SetFloat("_WobbleAmount", 0.12f);
                 mat.SetFloat("_HeatDistortion", 0.2f);
                 mat.SetColor("_MainColor", new Color(0.2f, 0.6f, 1f, 1f));
-                Debug.Log("🎨 Shader演出を適用しました");
+                Debug.Log("🎨 シェーダー演出適用");
             }
         }
-
-        // 🔁 AI送信
-        requestSender.SendToAI(elementStr, toolStr, conditionID);
     }
 }
