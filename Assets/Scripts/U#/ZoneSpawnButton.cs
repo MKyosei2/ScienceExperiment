@@ -17,34 +17,50 @@ public class ZoneSpawnButton : UdonSharpBehaviour
     [Header("データ記録先")]
     public SelectedObjectHolder holder;
 
+    [Header("演出プレイヤー（VisualExperimentPlayer）")]
+    public VisualExperimentPlayer visualPlayer;
+
     public override void Interact()
     {
         if (spawnPrefab == null || spawnZone == null) return;
 
         GameObject instance = VRCInstantiate(spawnPrefab);
         instance.transform.SetPositionAndRotation(spawnZone.position, spawnZone.rotation);
-        instance.transform.SetParent(spawnZone); // 子として追加
 
-        // 🛑 再帰防止
+        // 🛑 自身の ZoneSpawnButton を除去
         ZoneSpawnButton zb = instance.GetComponent<ZoneSpawnButton>();
         if (zb != null) Destroy(zb);
 
-        // 🚫 Pickup無効
-        VRC_Pickup pickup = (VRC_Pickup)instance.GetComponent(typeof(VRC_Pickup));
-        if (pickup != null) pickup.pickupable = false;
+        string objectID = spawnPrefab.name;
 
-        // 📝 選択登録
-        string id = spawnPrefab.name;
+        // 🔁 選択記録
         if (holder != null)
         {
-            switch (objectType)
+            if (objectType == "Element")
             {
-                case "Element": holder.AddElement(id); break;
-                case "Tool": holder.AddTool(id); break;
-                case "Condition": holder.SetCondition(id); break;
+                holder.AddElement(objectID);
+            }
+            else if (objectType == "Tool")
+            {
+                holder.AddTool(objectID);
+            }
+            else if (objectType == "Condition")
+            {
+                holder.SetCondition(objectID);
             }
         }
 
-        Debug.Log($"✅ {objectType} {id} を {spawnZone.name} に生成（子として追加）");
+        // 🎥 VisualExperimentPlayer への登録（Inspectorからの参照）
+        if (visualPlayer != null)
+        {
+            if (objectType == "Element")
+            {
+                visualPlayer.RegisterElement(objectID, instance);
+            }
+            else if (objectType == "Tool")
+            {
+                visualPlayer.RegisterTool(objectID, instance);
+            }
+        }
     }
 }

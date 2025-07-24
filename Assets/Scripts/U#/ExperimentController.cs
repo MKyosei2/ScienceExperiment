@@ -5,79 +5,103 @@ using VRC.Udon;
 
 public class ExperimentController : UdonSharpBehaviour
 {
-    [Header("選択情報")]
     public SelectedObjectHolder holder;
-
-    [Header("通信・演出送信先")]
     public AIRequestSender requestSender;
-
-    [Header("視覚演出対象")]
+    public Transform[] objectsToAnimate;
     public Renderer reactionRenderer;
 
-    [Header("VRモード実行許可")]
-    public bool enableTriggerReaction = true;
+    public Vector3 animationOffset = new Vector3(0, 0.15f, 0);
+    public float animationDuration = 1.0f;
 
-    public void StartExperiment()
+    private bool hasRun = false;
+    private float requestTime = 0f;
+    private const float timeout = 5f;
+
+    void Update()
     {
-        if (Utilities.IsValid(Networking.LocalPlayer) && Networking.LocalPlayer.IsUserInVR())
+        if (hasRun && Time.time - requestTime >= timeout)
         {
-            Debug.Log("🎮 VRモードでは Trigger 実行に任せます");
-            return;
-        }
-
-        RunExperimentIfValid();
-    }
-
-    public void OnTriggerEnter(Collider other)
-    {
-        if (!enableTriggerReaction) return;
-
-        string name = other != null ? other.gameObject.name.ToLower() : "";
-        if (name.Contains("hand") || name.Contains("controller") || name.Contains("player"))
-        {
-            Debug.Log("🖐 VR Trigger 検出 → 実験実行チェック");
-            RunExperimentIfValid();
+            hasRun = false;
+            RunFallback();
         }
     }
 
-    private void RunExperimentIfValid()
+    public void RunExperiment()
     {
         if (holder == null || requestSender == null)
         {
-            Debug.LogError("❌ holder または requestSender が未設定");
+            Debug.LogWarning("⚠️ holder または requestSender が未設定です");
             return;
         }
 
-        string[] elements = holder.selectedElementIDs;
-        string[] tools = holder.selectedToolIDs;
+        string elementID = holder.selectedElementID;
+        string toolID = holder.selectedToolID;
         string condition = holder.selectedConditionID;
 
-        if (elements == null || tools == null || elements.Length == 0 || tools.Length == 0 || string.IsNullOrWhiteSpace(condition))
+        if (string.IsNullOrWhiteSpace(elementID) || string.IsNullOrWhiteSpace(toolID) || string.IsNullOrWhiteSpace(condition))
         {
             Debug.LogWarning("⚠️ 実験に必要な選択が未完了");
             return;
         }
 
-        string elementID = string.Join(",", elements);
-        string toolID = string.Join(",", tools);
-        string conditionID = condition;
+        Debug.Log("🧪 実験開始: " + elementID + " x " + toolID + " x " + condition);
 
-        Debug.Log($"🧪 実験データ送信: {elementID} / {toolID} / {conditionID}");
-        requestSender.SendToAI(elementID, toolID, conditionID);
+        hasRun = true;
+        requestTime = Time.time;
+
+        requestSender.SendToAI(elementID, toolID, condition);
+    }
+
+    public void OnTriggerEnter(Collider other)
+    {
+        if (!Networking.LocalPlayer.IsUserInVR()) return;
+        if (!hasRun) RunExperiment();
+    }
+
+    public void OnAIResponseReceived()
+    {
+        hasRun = false;
+        ApplyVisualEffect();
+    }
+
+    public void RunFallback()
+    {
+        Debug.Log("⚠️ 通信応答なし → ローカル演出を適用");
+        ApplyVisualEffect();
     }
 
     public void ApplyVisualEffect()
     {
-        if (reactionRenderer == null) return;
+        if (reactionRenderer != null && reactionRenderer.material != null)
+        {
+            Material mat = reactionRenderer.material;
+            mat.SetFloat("_BubbleSpeed", 2.5f);
+            mat.SetFloat("_WobbleAmount", 0.12f);
+            mat.SetFloat("_HeatDistortion", 0.15f);
+            mat.SetColor("_MainColor", new Color(0.2f, 0.6f, 1f, 1f));
+        }
 
-        Material mat = reactionRenderer.material;
-        if (mat == null) return;
+        for (int i = 0; i < objectsToAnimate.Length; i++)
+        {
+            Transform t = objectsToAnimate[i];
+            if (t != null)
+            {
+                Vector3 targetPos = t.position + animationOffset;
+                t.position = targetPos;
+                SendCustomEventDelayedSeconds(nameof(ResetPosition), animationDuration);
+            }
+        }
+    }
 
-        mat.SetFloat("_BubbleSpeed", 2.5f);
-        mat.SetFloat("_WobbleAmount", 0.12f);
-        mat.SetFloat("_HeatDistortion", 0.15f);
-        mat.SetColor("_MainColor", new Color(0.2f, 0.6f, 1f, 1f));
-
-        Debug.Log("🎨 ローカル演出適用済み");
+    public void ResetPosition()
+    {
+        for (int i = 0; i < objectsToAnimate.Length; i++)
+        {
+            Transform t = objectsToAnimate[i];
+            if (t != null)
+            {
+                t.position -= animationOffset;
+            }
+        }
     }
 }

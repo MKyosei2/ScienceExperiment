@@ -4,59 +4,75 @@ using TMPro;
 
 public class AIRequestSender : UdonSharpBehaviour
 {
-    [Header("ステータス表示")]
-    public TextMeshProUGUI statusText;
-
-    [Header("反応エフェクト")]
-    public Renderer reactionRenderer;
-
-    [Header("ログ出力")]
     public VRExperimentMonitor monitor;
+    public TextMeshProUGUI statusText;
+    public VisualExperimentPlayer experimentPlayer;
 
-    [Header("演出フォールバック先")]
-    public ExperimentController controller;
+    private string latestElementID;
+    private string latestToolID;
+    private string latestConditionID;
 
-    private bool hasResponded = false;
+    private bool responseReceived = false;
 
     public void SendToAI(string elementID, string toolID, string conditionID)
     {
-        hasResponded = false;
+        latestElementID = elementID;
+        latestToolID = toolID;
+        latestConditionID = conditionID;
 
-        if (statusText != null)
-            statusText.text = "🧪 Status: 実験を開始しました。";
+        SendRequest(elementID, toolID, conditionID);
+    }
 
+    public void SendRequest(string elementID, string toolID, string conditionID)
+    {
         string url = $"https://api.example.com/experiment?e={elementID}&t={toolID}&c={conditionID}";
-        Debug.Log("🌐 送信先: " + url);
-        if (monitor != null) monitor.Log("送信先: " + url);
+        statusText.text = "🧪 実験を開始しました。";
+        responseReceived = false;
 
-        // 疑似応答を2秒後に発生
+        if (monitor != null) monitor.Log("Request sent to: " + url);
+
+        // 通信の代替として2秒待ってレスポンスを模倣
         SendCustomEventDelayedSeconds(nameof(MockReceiveResponse), 2.0f);
 
-        // 5秒後フォールバック
+        // 5秒以内にレスポンスが来なければローカル演出
         SendCustomEventDelayedSeconds(nameof(FallbackIfNoResponse), 5.0f);
     }
 
     public void MockReceiveResponse()
     {
-        if (hasResponded) return;
-        hasResponded = true;
+        if (responseReceived) return;
+        responseReceived = true;
 
-        string result = "✅ 実験完了: 化学反応成功！";
-        if (statusText != null) statusText.text = result;
+        string result = "🔥 化学反応成功！酸素が放出されました。";
+        statusText.text = result;
         if (monitor != null) monitor.Log(result);
 
-        if (controller != null) controller.ApplyVisualEffect();
+        if (experimentPlayer != null)
+        {
+            experimentPlayer.PlaySequence(
+                new string[] { latestElementID },
+                new string[] { latestToolID },
+                latestConditionID
+            );
+        }
     }
 
     public void FallbackIfNoResponse()
     {
-        if (hasResponded) return;
-        hasResponded = true;
+        if (responseReceived) return;
 
-        string result = "⚠️ 通信失敗。ローカル演出を実行します。";
-        if (statusText != null) statusText.text = result;
+        responseReceived = true;
+        string result = "⚠️ 通信に失敗しました。ローカル演出を実行します。";
+        statusText.text = result;
         if (monitor != null) monitor.Log(result);
 
-        if (controller != null) controller.ApplyVisualEffect();
+        if (experimentPlayer != null)
+        {
+            experimentPlayer.PlaySequence(
+                new string[] { latestElementID },
+                new string[] { latestToolID },
+                latestConditionID
+            );
+        }
     }
 }
