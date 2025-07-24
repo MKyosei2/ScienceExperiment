@@ -13,6 +13,9 @@ public class AIRequestSender : UdonSharpBehaviour
     [Header("ログ出力")]
     public VRExperimentMonitor monitor;
 
+    [Header("演出フォールバック先")]
+    public ExperimentController controller;
+
     private bool hasResponded = false;
 
     public void SendToAI(string elementID, string toolID, string conditionID)
@@ -28,7 +31,8 @@ public class AIRequestSender : UdonSharpBehaviour
 
         // 疑似応答を2秒後に発生
         SendCustomEventDelayedSeconds(nameof(MockReceiveResponse), 2.0f);
-        // 5秒経過しても応答がなければフォールバック
+
+        // 5秒後フォールバック
         SendCustomEventDelayedSeconds(nameof(FallbackIfNoResponse), 5.0f);
     }
 
@@ -41,7 +45,7 @@ public class AIRequestSender : UdonSharpBehaviour
         if (statusText != null) statusText.text = result;
         if (monitor != null) monitor.Log(result);
 
-        ApplyVisualEffect();
+        if (controller != null) controller.ApplyVisualEffect();
     }
 
     public void FallbackIfNoResponse()
@@ -53,27 +57,6 @@ public class AIRequestSender : UdonSharpBehaviour
         if (statusText != null) statusText.text = result;
         if (monitor != null) monitor.Log(result);
 
-        ApplyVisualEffect(); // 同じ演出でカバー
-    }
-
-    private void ApplyVisualEffect()
-    {
-        if (reactionRenderer == null)
-        {
-            Debug.LogWarning("⚠️ reactionRenderer が未設定");
-            return;
-        }
-
-        Material mat = reactionRenderer.material;
-        if (mat == null)
-        {
-            Debug.LogWarning("⚠️ マテリアルが未設定");
-            return;
-        }
-
-        mat.SetFloat("_BubbleSpeed", 2.5f);
-        mat.SetFloat("_WobbleAmount", 0.12f);
-        mat.SetFloat("_HeatDistortion", 0.15f);
-        mat.SetColor("_MainColor", new Color(0.2f, 0.6f, 1.0f, 1.0f));
+        if (controller != null) controller.ApplyVisualEffect();
     }
 }
