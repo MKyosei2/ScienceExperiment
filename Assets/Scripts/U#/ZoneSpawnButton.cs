@@ -50,17 +50,6 @@ public class ZoneSpawnButton : UdonSharpBehaviour
             }
         }
 
-        // 🎥 VisualExperimentPlayer への登録（Inspectorからの参照）
-        if (visualPlayer != null)
-        {
-            if (objectType == "Element")
-            {
-                visualPlayer.RegisterElement(objectID, instance);
-            }
-            else if (objectType == "Tool")
-            {
-                visualPlayer.RegisterTool(objectID, instance);
-            }
-        }
+        // 🎥 VisualExperimentPlayer への登録は不要になったため削除
     }
 }

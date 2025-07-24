@@ -49,11 +49,7 @@ public class AIRequestSender : UdonSharpBehaviour
 
         if (experimentPlayer != null)
         {
-            experimentPlayer.PlaySequence(
-                new string[] { latestElementID },
-                new string[] { latestToolID },
-                latestConditionID
-            );
+            experimentPlayer.PlaySequence(); // 修正済み：引数なし
         }
     }
 
@@ -68,11 +64,7 @@ public class AIRequestSender : UdonSharpBehaviour
 
         if (experimentPlayer != null)
         {
-            experimentPlayer.PlaySequence(
-                new string[] { latestElementID },
-                new string[] { latestToolID },
-                latestConditionID
-            );
+            experimentPlayer.PlaySequence(); // 修正済み：引数なし
         }
     }
 }

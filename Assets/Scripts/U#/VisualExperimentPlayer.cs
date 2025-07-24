@@ -5,144 +5,97 @@ using VRC.Udon;
 
 public class VisualExperimentPlayer : UdonSharpBehaviour
 {
-    public GameObject[] elementObjects;
-    public string[] elementIDs;
+    public StepType[] stepTypes;
+    public GameObject[] stepTargets;
+    public float[] stepDurations;
 
-    public GameObject[] toolObjects;
-    public string[] toolIDs;
+    public Vector3[] moveOffsets;
+    public Color[] emissionColors;
+    public string[] shaderProperties;
+    public float[] shaderValues;
+    public GameObject[] resultPrefabs;
+    public AudioClip[] stepSounds;
 
-    public string[] patternElementIDs;
-    public string[] patternToolIDs;
-    public string[] patternConditionIDs;
-    public Color[] patternEmissionColors;
-    public GameObject[] patternResultPrefabs;
-
-    public Transform spawnPoint;
-
+    private int currentStep = 0;
     private float timer = 0f;
-    private int step = 0;
-    private GameObject movingElement;
-    private Vector3 moveStart;
-    private Vector3 moveEnd;
-    private Renderer targetRenderer;
-    private GameObject resultPrefab;
-    private Color emissionColor;
-
     private bool isRunning = false;
 
-    // ✅ 実験演出を再生
-    public void PlaySequence(string[] elements, string[] tools, string condition)
+    public void PlaySequence()
     {
-        if (isRunning || elements.Length == 0 || tools.Length == 0) return;
-
-        string e = elements[0];
-        string t = tools[0];
-
-        movingElement = null;
-        targetRenderer = null;
-        resultPrefab = null;
-        emissionColor = Color.red;
-
-        for (int i = 0; i < elementIDs.Length; i++)
-        {
-            if (elementIDs[i] == e)
-            {
-                movingElement = elementObjects[i];
-                break;
-            }
-        }
-
-        for (int i = 0; i < toolIDs.Length; i++)
-        {
-            if (toolIDs[i] == t)
-            {
-                Transform toolT = toolObjects[i].transform;
-                moveEnd = toolT.position + Vector3.up * 0.1f;
-                targetRenderer = toolObjects[i].GetComponent<Renderer>();
-                break;
-            }
-        }
-
-        for (int i = 0; i < patternElementIDs.Length; i++)
-        {
-            if (patternElementIDs[i] == e && patternToolIDs[i] == t && patternConditionIDs[i] == condition)
-            {
-                resultPrefab = patternResultPrefabs[i];
-                emissionColor = patternEmissionColors[i];
-                break;
-            }
-        }
-
-        if (movingElement != null)
-        {
-            moveStart = movingElement.transform.position;
-        }
-
+        currentStep = 0;
         timer = 0f;
-        step = 0;
         isRunning = true;
     }
 
     void Update()
     {
-        if (!isRunning) return;
+        if (!isRunning || currentStep >= stepTypes.Length) return;
 
         timer += Time.deltaTime;
 
-        if (step == 0 && movingElement != null)
+        if (timer >= stepDurations[currentStep])
         {
-            float t = Mathf.Clamp01(timer / 1f);
-            movingElement.transform.position = Vector3.Lerp(moveStart, moveEnd, t);
-            if (t >= 1f)
-            {
-                timer = 0f;
-                step++;
-            }
-        }
-        else if (step == 1 && timer >= 1f)
-        {
-            if (targetRenderer != null && targetRenderer.material.HasProperty("_EmissionColor"))
-            {
-                targetRenderer.material.SetColor("_EmissionColor", emissionColor);
-            }
-
+            ExecuteStep(currentStep);
+            currentStep++;
             timer = 0f;
-            step++;
-        }
-        else if (step == 2 && timer >= 1f)
-        {
-            if (resultPrefab != null && spawnPoint != null)
-            {
-                GameObject result = VRCInstantiate(resultPrefab);
-                result.transform.SetPositionAndRotation(spawnPoint.position, spawnPoint.rotation);
-            }
 
-            isRunning = false;
+            if (currentStep >= stepTypes.Length)
+            {
+                isRunning = false;
+            }
         }
     }
 
-    // ✅ ZoneSpawnButtonから呼び出す登録関数
-    public void RegisterElement(string id, GameObject obj)
+    void ExecuteStep(int index)
     {
-        for (int i = 0; i < elementIDs.Length; i++)
-        {
-            if (elementIDs[i] == id)
-            {
-                elementObjects[i] = obj;
-                return;
-            }
-        }
-    }
+        GameObject target = stepTargets[index];
+        if (target == null) return;
 
-    public void RegisterTool(string id, GameObject obj)
-    {
-        for (int i = 0; i < toolIDs.Length; i++)
+        switch (stepTypes[index])
         {
-            if (toolIDs[i] == id)
-            {
-                toolObjects[i] = obj;
-                return;
-            }
+            case StepType.MoveElement:
+                target.transform.position += moveOffsets[index];
+                break;
+
+            case StepType.EmissionChange:
+                Renderer renderer = target.GetComponent<Renderer>();
+                if (renderer != null && renderer.material.HasProperty("_EmissionColor"))
+                {
+                    renderer.material.SetColor("_EmissionColor", emissionColors[index]);
+                }
+                break;
+
+            case StepType.ShaderEffect:
+                Renderer rend = target.GetComponent<Renderer>();
+                if (rend != null && rend.material.HasProperty(shaderProperties[index]))
+                {
+                    rend.material.SetFloat(shaderProperties[index], shaderValues[index]);
+                }
+                break;
+
+            case StepType.SpawnResult:
+                if (resultPrefabs[index] != null)
+                {
+                    GameObject result = VRCInstantiate(resultPrefabs[index]);
+                    result.transform.position = target.transform.position + Vector3.up * 0.2f;
+                }
+                break;
+
+            case StepType.PlaySound:
+                if (stepSounds[index] != null)
+                {
+                    AudioSource.PlayClipAtPoint(stepSounds[index], target.transform.position);
+                }
+                break;
         }
     }
+}
+
+public enum StepType
+{
+    MoveElement,
+    EmissionChange,
+    ShaderEffect,
+    SpawnResult,
+    PlaySound
 }
