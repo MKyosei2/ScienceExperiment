@@ -13,36 +13,46 @@ public class ExperimentStartButton : UdonSharpBehaviour
     public UdonBehaviour experimentController;
     public UdonBehaviour statusTextUI;
 
+    [Header("選択オブジェクト管理")]
+    public SelectedObjectHolder holder;
+
     public override void Interact()
     {
         Debug.Log("🧪 ExperimentStartButton: Interact() 実行");
 
-        if (!HasChild(elementZone))
+        if (holder == null)
         {
-            ShowStatus("Element がありません。");
+            Debug.LogError("❌ ExperimentStartButton: holder が設定されていません");
+            ShowStatus("❌ 選択管理オブジェクトが未設定です");
             return;
         }
 
-        if (!HasChild(toolZone))
+        Debug.Log("🧪 ExperimentStartButton.holder instance ID = " + holder.GetInstanceID());
+        Debug.Log("🧪 holder.selectedElementIDs.Length = " + holder.selectedElementIDs.Length);
+        Debug.Log("🧪 holder.selectedToolIDs.Length = " + holder.selectedToolIDs.Length);
+        Debug.Log("🧪 holder.selectedConditionID = " + holder.selectedConditionID);
+
+        if (holder.selectedElementIDs.Length == 0)
         {
-            ShowStatus("Tool がありません。");
+            ShowStatus("⚠️ Element が選択されていません。");
+            return;
+        }
+
+        if (holder.selectedToolIDs.Length == 0)
+        {
+            ShowStatus("⚠️ Tool が選択されていません。");
             return;
         }
 
         if (experimentController != null)
         {
             experimentController.SendCustomEvent("StartExperiment");
-            ShowStatus("実験を開始しました。");
+            ShowStatus("🧪 実験を開始しました。");
         }
         else
         {
-            ShowStatus("実験コントローラーが未設定です。");
+            ShowStatus("❌ 実験コントローラーが未設定です。");
         }
-    }
-
-    private bool HasChild(Transform zone)
-    {
-        return zone != null && zone.childCount > 0;
     }
 
     private void ShowStatus(string msg)

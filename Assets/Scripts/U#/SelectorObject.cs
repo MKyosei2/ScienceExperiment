@@ -24,13 +24,23 @@ public class SelectorObject : UdonSharpBehaviour
 
     public void Select()
     {
-        if (holder == null) return;
+        if (holder == null)
+        {
+            Debug.LogWarning("⚠️ SelectorObject: holder が未設定です。選択処理をスキップします。");
+            return;
+        }
+
         ApplySelection(holder);
     }
 
     public void Select(SelectedObjectHolder targetHolder)
     {
-        if (targetHolder == null) return;
+        if (targetHolder == null)
+        {
+            Debug.LogError("❌ SelectorObject: targetHolder が null のため選択できません。");
+            return;
+        }
+
         ApplySelection(targetHolder);
     }
 
@@ -38,9 +48,24 @@ public class SelectorObject : UdonSharpBehaviour
     {
         switch (objectType)
         {
-            case "Element": target.AddElement(objectID); break;
-            case "Tool": target.AddTool(objectID); break;
-            case "Condition": target.SetCondition(objectID); break;
+            case "Element":
+                target.AddElement(objectID);
+                Debug.Log($"✅ Element {objectID} を選択しました");
+                break;
+
+            case "Tool":
+                target.AddTool(objectID);
+                Debug.Log($"✅ Tool {objectID} を選択しました");
+                break;
+
+            case "Condition":
+                target.SetCondition(objectID);
+                Debug.Log($"✅ Condition {objectID} を設定しました");
+                break;
+
+            default:
+                Debug.LogWarning($"⚠️ 未知の objectType: {objectType}（正しくは 'Element', 'Tool', 'Condition'）");
+                break;
         }
     }
 

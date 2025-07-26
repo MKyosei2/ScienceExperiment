@@ -25,13 +25,14 @@ public class ZoneSpawnButton : UdonSharpBehaviour
 
     public override void Interact()
     {
+        Debug.Log("🧪 ZoneSpawnButton: Interact() 実行");
+
         // 多重防止
         if (hasSpawned)
         {
             Debug.Log("⛔ Interact() はすでに実行済みです。無視します。");
             return;
         }
-        hasSpawned = true;
 
         // nullチェック
         if (spawnPrefab == null || spawnZone == null || holder == null)
@@ -40,7 +41,7 @@ public class ZoneSpawnButton : UdonSharpBehaviour
             return;
         }
 
-        // 同じ名前のオブジェクトがすでにSceneに存在していたらスキップ
+        // すでに同名オブジェクトが存在していたら生成スキップ
         string expectedName = spawnPrefab.name + "(Clone)";
         GameObject existing = GameObject.Find(expectedName);
         if (existing != null)
@@ -51,24 +52,34 @@ public class ZoneSpawnButton : UdonSharpBehaviour
 
         // プレハブ生成
         GameObject instance = VRCInstantiate(spawnPrefab);
-        instance.transform.SetPositionAndRotation(spawnZone.position, spawnZone.rotation);
+        if (instance == null)
+        {
+            Debug.LogError("❌ VRCInstantiate に失敗しました（Prefabが無効）");
+            return;
+        }
 
-        // 保険：生成されたPrefabにZoneSpawnButtonがあれば削除
+        instance.transform.SetPositionAndRotation(spawnZone.position, spawnZone.rotation);
+        hasSpawned = true;
+
+        // 自身のコピーが生成されたら削除（再生成防止）
         ZoneSpawnButton zb = instance.GetComponent<ZoneSpawnButton>();
         if (zb != null) Destroy(zb);
 
         // データ登録
-        if (objectType == "Element")
+        switch (objectType)
         {
-            holder.AddElement(objectID);
-        }
-        else if (objectType == "Tool")
-        {
-            holder.AddTool(objectID);
-        }
-        else if (objectType == "Condition")
-        {
-            holder.SetCondition(objectID);
+            case "Element":
+                holder.AddElement(objectID);
+                break;
+            case "Tool":
+                holder.AddTool(objectID);
+                break;
+            case "Condition":
+                holder.SetCondition(objectID);
+                break;
+            default:
+                Debug.LogWarning($"⚠️ 未対応の objectType: {objectType}");
+                break;
         }
 
         Debug.Log($"✅ {objectType} {objectID} を生成して登録しました。");

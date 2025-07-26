@@ -37300,6 +37300,7 @@ MonoBehaviour:
   toolZone: {fileID: 1655153491828425540}
   experimentController: {fileID: 5819203186075691215}
   statusTextUI: {fileID: 6973178661389197919}
+  holder: {fileID: 0}
 --- !u!23 &6996146965247936859
 MeshRenderer:
   m_ObjectHideFlags: 0
