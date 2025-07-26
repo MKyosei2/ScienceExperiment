@@ -2,7 +2,7 @@
 using UnityEngine;
 using TMPro;
 
-public class AIRequestSender : UdonSharpBehaviour
+public class AIRequestSender_MockOnly : UdonSharpBehaviour
 {
     public VRExperimentMonitor monitor;
     public TextMeshProUGUI statusText;
@@ -18,21 +18,20 @@ public class AIRequestSender : UdonSharpBehaviour
 
     public void SendRequest(string elementID, string toolID, string conditionID)
     {
-        // Discord通信はスキップ
+        statusText.text = "🧪 モック送信中（Discord通信なし）";
+        responseReceived = false;
+
         string message = $"@InferenceBot\n" +
                          $"element: {elementID}\n" +
                          $"tool: {toolID}\n" +
                          $"condition: {conditionID}";
 
-        statusText.text = "🧪 実験データ送信中（モック）...";
-        responseReceived = false;
-
         if (monitor != null) monitor.Log("📡 モック送信: " + message);
 
-        // 模擬応答（Botの代用）
+        // モック応答を即時再生（Bot応答の代用）
         SendCustomEventDelayedSeconds(nameof(MockReceiveResponse), 1.0f);
 
-        // フォールバック（Botが応答しない想定）
+        // 応答なし時のフォールバック
         SendCustomEventDelayedSeconds(nameof(FallbackIfNoResponse), 5.0f);
     }
 
@@ -41,8 +40,8 @@ public class AIRequestSender : UdonSharpBehaviour
         if (responseReceived) return;
         responseReceived = true;
 
-        statusText.text = "✅ 応答あり（モック）：酸素が発生しました！";
-        if (monitor != null) monitor.Log("✅ モック応答：酸素生成演出再生");
+        statusText.text = "✅ モック応答あり：酸素が発生しました！";
+        if (monitor != null) monitor.Log("🧪 モック応答：酸素生成演出再生");
 
         if (experimentPlayer != null) experimentPlayer.PlaySequence();
 
@@ -55,10 +54,10 @@ public class AIRequestSender : UdonSharpBehaviour
     public void FallbackIfNoResponse()
     {
         if (responseReceived) return;
-
         responseReceived = true;
-        statusText.text = "⚠️ 応答なし：ローカル演出を再生します。";
-        if (monitor != null) monitor.Log("⚠️ モック応答なし：フォールバック演出実行");
+
+        statusText.text = "⚠️ 応答なし。ローカル演出を実行します。";
+        if (monitor != null) monitor.Log("⚠️ 応答なし：フォールバック演出を再生");
 
         if (experimentController != null)
         {

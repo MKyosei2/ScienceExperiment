@@ -1,7 +1,12 @@
 ﻿using UdonSharp;
 using UnityEngine;
-using VRC.SDKBase;
-using VRC.Udon;
+
+public enum StepType
+{
+    EmissionChange,
+    MoveElement,
+    ShaderEffect
+}
 
 public class VisualExperimentPlayer : UdonSharpBehaviour
 {
@@ -9,93 +14,99 @@ public class VisualExperimentPlayer : UdonSharpBehaviour
     public GameObject[] stepTargets;
     public float[] stepDurations;
 
-    public Vector3[] moveOffsets;
     public Color[] emissionColors;
+    public Vector3[] moveOffsets;
     public string[] shaderProperties;
     public float[] shaderValues;
-    public GameObject[] resultPrefabs;
-    public AudioClip[] stepSounds;
+
+    public Renderer reactionRenderer;
 
     private int currentStep = 0;
-    private float timer = 0f;
-    private bool isRunning = false;
+    private bool isPlaying = false;
 
     public void PlaySequence()
     {
+        if (stepTypes == null || stepTargets == null || stepTypes.Length == 0)
+        {
+            Debug.LogError("❌ stepTypes または stepTargets が未設定です");
+            return;
+        }
+
+        if (isPlaying)
+        {
+            Debug.Log("⚠️ 演出がすでに実行中です");
+            return;
+        }
+
+        isPlaying = true;
         currentStep = 0;
-        timer = 0f;
-        isRunning = true;
+        SendCustomEventDelayedFrames(nameof(PlayNextStep), 1);
     }
 
-    void Update()
+    public void PlayNextStep()
     {
-        if (!isRunning || currentStep >= stepTypes.Length) return;
-
-        timer += Time.deltaTime;
-
-        if (timer >= stepDurations[currentStep])
+        if (currentStep >= stepTypes.Length)
         {
-            ExecuteStep(currentStep);
-            currentStep++;
-            timer = 0f;
+            Debug.Log("✅ 全ステップ完了");
+            isPlaying = false;
+            return;
+        }
 
-            if (currentStep >= stepTypes.Length)
+        StepType step = stepTypes[currentStep];
+        GameObject target = (currentStep < stepTargets.Length) ? stepTargets[currentStep] : null;
+        float duration = (currentStep < stepDurations.Length) ? stepDurations[currentStep] : 1.0f;
+
+        if (target == null)
+        {
+            Debug.LogWarning($"⚠️ ステップ {currentStep}: 対象が null です。スキップします");
+        }
+        else
+        {
+            switch (step)
             {
-                isRunning = false;
+                case StepType.EmissionChange:
+                    if (currentStep < emissionColors.Length && reactionRenderer != null)
+                    {
+                        Material mat = reactionRenderer.material;
+                        if (mat.HasProperty("_EmissionColor"))
+                        {
+                            mat.EnableKeyword("_EMISSION");
+                            mat.SetColor("_EmissionColor", emissionColors[currentStep]);
+                            Debug.Log($"✨ EmissionColor を変更: {emissionColors[currentStep]}");
+                        }
+                    }
+                    break;
+
+                case StepType.MoveElement:
+                    if (currentStep < moveOffsets.Length)
+                    {
+                        target.transform.position += moveOffsets[currentStep];
+                        Debug.Log($"📦 {target.name} を移動: {moveOffsets[currentStep]}");
+                    }
+                    break;
+
+                case StepType.ShaderEffect:
+                    if (reactionRenderer != null && currentStep < shaderProperties.Length && currentStep < shaderValues.Length)
+                    {
+                        Material mat = reactionRenderer.material;
+                        string prop = shaderProperties[currentStep];
+                        float val = shaderValues[currentStep];
+
+                        if (!string.IsNullOrWhiteSpace(prop) && mat.HasProperty(prop))
+                        {
+                            mat.SetFloat(prop, val);
+                            Debug.Log($"🎨 Shader '{prop}' を {val} に設定");
+                        }
+                        else
+                        {
+                            Debug.LogWarning($"⚠️ Shader プロパティ '{prop}' が見つかりません");
+                        }
+                    }
+                    break;
             }
         }
+
+        currentStep++;
+        SendCustomEventDelayedSeconds(nameof(PlayNextStep), duration);
     }
-
-    void ExecuteStep(int index)
-    {
-        GameObject target = stepTargets[index];
-        if (target == null) return;
-
-        switch (stepTypes[index])
-        {
-            case StepType.MoveElement:
-                target.transform.position += moveOffsets[index];
-                break;
-
-            case StepType.EmissionChange:
-                Renderer renderer = target.GetComponent<Renderer>();
-                if (renderer != null && renderer.material.HasProperty("_EmissionColor"))
-                {
-                    renderer.material.SetColor("_EmissionColor", emissionColors[index]);
-                }
-                break;
-
-            case StepType.ShaderEffect:
-                Renderer rend = target.GetComponent<Renderer>();
-                if (rend != null && rend.material.HasProperty(shaderProperties[index]))
-                {
-                    rend.material.SetFloat(shaderProperties[index], shaderValues[index]);
-                }
-                break;
-
-            case StepType.SpawnResult:
-                if (resultPrefabs[index] != null)
-                {
-                    GameObject result = VRCInstantiate(resultPrefabs[index]);
-                    result.transform.position = target.transform.position + Vector3.up * 0.2f;
-                }
-                break;
-
-            case StepType.PlaySound:
-                if (stepSounds[index] != null)
-                {
-                    AudioSource.PlayClipAtPoint(stepSounds[index], target.transform.position);
-                }
-                break;
-        }
-    }
-}
-
-public enum StepType
-{
-    MoveElement,
-    EmissionChange,
-    ShaderEffect,
-    SpawnResult,
-    PlaySound
 }

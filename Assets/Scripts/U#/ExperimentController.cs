@@ -1,211 +1,131 @@
 ﻿using UdonSharp;
 using UnityEngine;
-using VRC.SDKBase;
-using VRC.Udon;
+using TMPro;
 
 public class ExperimentController : UdonSharpBehaviour
 {
-    [Header("選択情報")]
     public SelectedObjectHolder holder;
-
-    [Header("通信・演出送信先")]
     public AIRequestSender requestSender;
-
-    [Header("視覚演出対象")]
-    public Renderer reactionRenderer;
-
-    [Header("VRモード実行許可")]
-    public bool enableTriggerReaction = true;
-
-    [Header("演出プレイヤー")]
     public VisualExperimentPlayer experimentPlayer;
-
-    [Header("ステータスUI")]
-    public UdonBehaviour statusTextUI;
+    public Renderer reactionRenderer;
+    public UdonSharpBehaviour statusTextUI;
 
     private bool responseReceived = false;
 
     public void StartExperiment()
     {
-        Debug.Log("🧪 StartExperiment() 呼び出し");
-
-        if (Utilities.IsValid(Networking.LocalPlayer) && Networking.LocalPlayer.IsUserInVR())
-        {
-            Debug.Log("🎮 VRモードでは Trigger 実行に任せます");
-            return;
-        }
-
-        // 遅延して反応（Prefab反映待ち）
-        SendCustomEventDelayedFrames(nameof(RunExperimentIfValid), 1);
-    }
-
-    public void OnTriggerEnter(Collider other)
-    {
-        if (!enableTriggerReaction) return;
-
-        GameObject obj = other.gameObject;
-        string name = obj != null ? obj.name.ToLower() : "";
-
-        if (name.Contains("hand") || name.Contains("controller") || name.Contains("player"))
-        {
-            Debug.Log("🖐 VR Trigger 検出 → 実験実行チェック");
-            RunExperimentIfValid();
-        }
-    }
-
-    public void RunExperimentIfValid()
-    {
-        Debug.Log("📦 RunExperimentIfValid() 呼び出し確認");
-
+        Debug.Log("▶️ StartExperiment() 呼び出し");
         if (holder == null || requestSender == null)
         {
             Debug.LogError("❌ holder または requestSender が未設定");
             return;
         }
 
-        string[] elements = holder.selectedElementIDs;
-        string[] tools = holder.selectedToolIDs;
-        string condition = holder.selectedConditionID;
-
-        if (elements.Length == 0 || tools.Length == 0 || string.IsNullOrWhiteSpace(condition))
+        if (holder.selectedElementIDs.Length == 0 || holder.selectedToolIDs.Length == 0 || string.IsNullOrEmpty(holder.selectedConditionID))
         {
-            Debug.LogWarning("⚠️ 実験に必要な選択が未完了");
+            Debug.LogWarning("⚠️ 必須の選択が不足しています");
             return;
         }
 
-        string elementID = string.Join(",", elements);
-        string toolID = string.Join(",", tools);
-        string conditionID = condition;
+        RunExperimentIfValid();
+    }
 
-        Debug.Log("🧪 実験データ送信: " + elementID + " / " + toolID + " / " + conditionID);
+    public void RunExperimentIfValid()
+    {
+        Debug.Log("🧪 RunExperimentIfValid() 呼び出し確認");
+
+        string eID = string.Join("_", holder.selectedElementIDs);
+        string tID = holder.selectedToolIDs[0];
+        string cID = holder.selectedConditionID;
+
+        Debug.Log($"🧪 実験データ送信: {eID} / {tID} / {cID}");
+
+        // 安全構成で仮のターゲットを決定（Elementの最初）
+        GameObject target = GameObject.Find(holder.selectedElementIDs[0] + "(Clone)");
+        if (target == null)
+        {
+            Debug.LogError("❌ 対象ターゲットが見つかりません");
+            return;
+        }
+
+        if (reactionRenderer == null)
+        {
+            Renderer r = target.GetComponent<Renderer>();
+            if (r != null) reactionRenderer = r;
+        }
+
+        // stepTypes に合わせて配列を統一
+        experimentPlayer.stepTypes = new StepType[]
+        {
+            StepType.EmissionChange,
+            StepType.MoveElement,
+            StepType.ShaderEffect
+        };
+
+        experimentPlayer.stepTargets = new GameObject[]
+        {
+            target, target, target
+        };
+
+        experimentPlayer.stepDurations = new float[]
+        {
+            0.5f, 1.0f, 1.2f
+        };
+
+        experimentPlayer.emissionColors = new Color[]
+        {
+            Color.yellow, Color.black, Color.black
+        };
+
+        experimentPlayer.moveOffsets = new Vector3[]
+        {
+            Vector3.up * 0.1f, Vector3.zero, Vector3.zero
+        };
+
+        experimentPlayer.shaderProperties = new string[]
+        {
+            "_Shininess", "", ""
+        };
+
+        experimentPlayer.shaderValues = new float[]
+        {
+            0.8f, 0f, 0f
+        };
+
+        experimentPlayer.reactionRenderer = reactionRenderer;
+
+        // 応答済みフラグをリセット
         responseReceived = false;
 
-        requestSender.SendToAI(elementID, toolID, conditionID);
-
-        // 5秒後に応答がなければフォールバック
-        SendCustomEventDelayedSeconds(nameof(FallbackIfNoResponse), 5.0f);
-
-        // リアルタイムシェーダー効果（応急演出）
-        if (reactionRenderer != null)
-        {
-            Material mat = reactionRenderer.material;
-            if (mat != null)
-            {
-                mat.SetFloat("_BubbleSpeed", 2.0f);
-                mat.SetFloat("_WobbleAmount", 0.12f);
-                mat.SetFloat("_HeatDistortion", 0.2f);
-                mat.SetColor("_MainColor", new Color(0.2f, 0.6f, 1f, 1f));
-                Debug.Log("🎨 シェーダー演出適用");
-            }
-        }
-
-        // 通常演出の構築（成功パターン）
-        if (experimentPlayer != null)
-        {
-            string elementCloneName = elements[0] + "(Clone)";
-            GameObject target = GameObject.Find(elementCloneName);
-            if (target == null)
-            {
-                Debug.LogWarning($"⚠️ 実験オブジェクト {elementCloneName} が Scene に存在しません");
-                return;
-            }
-
-            experimentPlayer.stepTypes = new StepType[]
-            {
-                StepType.EmissionChange,
-                StepType.MoveElement,
-                StepType.ShaderEffect
-            };
-
-            experimentPlayer.stepTargets = new GameObject[]
-            {
-                target, target, target
-            };
-
-            experimentPlayer.stepDurations = new float[]
-            {
-                0.6f, 0.8f, 1.0f
-            };
-
-            experimentPlayer.emissionColors = new Color[]
-            {
-                Color.green
-            };
-
-            experimentPlayer.moveOffsets = new Vector3[]
-            {
-                Vector3.up * 0.1f
-            };
-
-            experimentPlayer.shaderProperties = new string[]
-            {
-                "_BubbleSpeed"
-            };
-
-            experimentPlayer.shaderValues = new float[]
-            {
-                3.5f
-            };
-
-            experimentPlayer.stepSounds = new AudioClip[] { };
-
-            experimentPlayer.PlaySequence();
-            Debug.Log("🎬 実験シーケンスを構成して再生しました");
-        }
+        // リクエスト送信（Mock or 本番）
+        requestSender.SendToAI(eID, tID, cID);
     }
 
     public void MarkResponseReceived()
     {
         responseReceived = true;
-        Debug.Log("✅ Response received flag set");
     }
 
     public void FallbackIfNoResponse()
     {
         if (responseReceived) return;
+        responseReceived = true;
 
-        Debug.LogWarning("⚠️ 応答なし → ローカルフォールバック演出を実行");
+        Debug.Log("⚠️ 応答がなかったため、フォールバック演出を再生します");
 
-        if (statusTextUI != null)
+        if (experimentPlayer != null)
         {
-            statusTextUI.SetProgramVariable("statusText", "⚠️ 応答なし。ローカル演出を再生します。");
-            statusTextUI.SendCustomEvent("ShowStatus");
-        }
-
-        if (experimentPlayer != null && holder.selectedElementIDs.Length > 0)
-        {
-            string elementCloneName = holder.selectedElementIDs[0] + "(Clone)";
-            GameObject target = GameObject.Find(elementCloneName);
-            if (target == null) return;
-
             experimentPlayer.stepTypes = new StepType[]
             {
-                StepType.EmissionChange,
                 StepType.MoveElement
             };
 
-            experimentPlayer.stepTargets = new GameObject[]
-            {
-                target, target
-            };
-
-            experimentPlayer.stepDurations = new float[]
-            {
-                0.5f, 0.6f
-            };
-
-            experimentPlayer.emissionColors = new Color[]
-            {
-                Color.red
-            };
-
-            experimentPlayer.moveOffsets = new Vector3[]
-            {
-                Vector3.down * 0.1f
-            };
+            GameObject fallbackTarget = GameObject.Find(holder.selectedElementIDs[0] + "(Clone)");
+            experimentPlayer.stepTargets = new GameObject[] { fallbackTarget };
+            experimentPlayer.stepDurations = new float[] { 1.0f };
+            experimentPlayer.moveOffsets = new Vector3[] { Vector3.down * 0.2f };
 
             experimentPlayer.PlaySequence();
-            Debug.Log("🧪 Fallback演出（赤色警告）を再生しました");
         }
     }
 }
