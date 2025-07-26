@@ -4026,6 +4026,7 @@ MonoBehaviour:
   monitor: {fileID: 3537670302577907766}
   statusText: {fileID: 3967592488595216121}
   experimentPlayer: {fileID: 738564366}
+  experimentController: {fileID: 3246231596183167969}
 --- !u!114 &839135627682873145
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -15928,10 +15929,10 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 5819203186075691215}
   holder: {fileID: 2482320227317222469}
   requestSender: {fileID: 827513843783986088}
-  objectsToAnimate: []
   reactionRenderer: {fileID: 0}
-  animationOffset: {x: 0, y: 0.15, z: 0}
-  animationDuration: 1
+  enableTriggerReaction: 1
+  experimentPlayer: {fileID: 0}
+  statusTextUI: {fileID: 0}
 --- !u!54 &3254972471565097252
 Rigidbody:
   m_ObjectHideFlags: 0

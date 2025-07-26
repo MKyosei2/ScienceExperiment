@@ -7,35 +7,28 @@ public class AIRequestSender : UdonSharpBehaviour
     public VRExperimentMonitor monitor;
     public TextMeshProUGUI statusText;
     public VisualExperimentPlayer experimentPlayer;
-
-    private string latestElementID;
-    private string latestToolID;
-    private string latestConditionID;
+    public ExperimentController experimentController; // ← 明示的参照（安全）
 
     private bool responseReceived = false;
 
     public void SendToAI(string elementID, string toolID, string conditionID)
     {
-        latestElementID = elementID;
-        latestToolID = toolID;
-        latestConditionID = conditionID;
-
         SendRequest(elementID, toolID, conditionID);
     }
 
     public void SendRequest(string elementID, string toolID, string conditionID)
     {
         string url = $"https://api.example.com/experiment?e={elementID}&t={toolID}&c={conditionID}";
-        statusText.text = "🧪 実験を開始しました。";
+        statusText.text = "🧪 実験データ送信中...";
         responseReceived = false;
 
         if (monitor != null) monitor.Log("Request sent to: " + url);
 
-        // 通信の代替として2秒待ってレスポンスを模倣
-        SendCustomEventDelayedSeconds(nameof(MockReceiveResponse), 2.0f);
-
-        // 5秒以内にレスポンスが来なければローカル演出
+        // 応答待ちタイマー
         SendCustomEventDelayedSeconds(nameof(FallbackIfNoResponse), 5.0f);
+
+        // 模擬応答（2秒後）
+        SendCustomEventDelayedSeconds(nameof(MockReceiveResponse), 2.0f);
     }
 
     public void MockReceiveResponse()
@@ -43,13 +36,15 @@ public class AIRequestSender : UdonSharpBehaviour
         if (responseReceived) return;
         responseReceived = true;
 
-        string result = "🔥 化学反応成功！酸素が放出されました。";
-        statusText.text = result;
-        if (monitor != null) monitor.Log(result);
+        statusText.text = "✅ 応答あり：酸素が発生しました！";
+        if (monitor != null) monitor.Log("成功応答: 酸素発生");
 
-        if (experimentPlayer != null)
+        if (experimentPlayer != null) experimentPlayer.PlaySequence();
+
+        // ✅ 通知（成功）
+        if (experimentController != null)
         {
-            experimentPlayer.PlaySequence(); // 修正済み：引数なし
+            experimentController.MarkResponseReceived();
         }
     }
 
@@ -58,13 +53,13 @@ public class AIRequestSender : UdonSharpBehaviour
         if (responseReceived) return;
 
         responseReceived = true;
-        string result = "⚠️ 通信に失敗しました。ローカル演出を実行します。";
-        statusText.text = result;
-        if (monitor != null) monitor.Log(result);
+        statusText.text = "⚠️ 応答がありません。ローカル演出を実行します。";
+        if (monitor != null) monitor.Log("⚠️ 応答なし: Fallback 実行");
 
-        if (experimentPlayer != null)
+        // ✅ 通知（失敗）
+        if (experimentController != null)
         {
-            experimentPlayer.PlaySequence(); // 修正済み：引数なし
+            experimentController.FallbackIfNoResponse();
         }
     }
 }

@@ -42,7 +42,7 @@ public class ZoneSpawnButton : UdonSharpBehaviour
         }
 
         // すでに同名オブジェクトが存在していたら生成スキップ
-        string expectedName = spawnPrefab.name + "(Clone)";
+        string expectedName = objectID + "(Clone)";
         GameObject existing = GameObject.Find(expectedName);
         if (existing != null)
         {
@@ -59,9 +59,12 @@ public class ZoneSpawnButton : UdonSharpBehaviour
         }
 
         instance.transform.SetPositionAndRotation(spawnZone.position, spawnZone.rotation);
+
+        // 名前を強制設定（これが重要！）
+        instance.name = objectID + "(Clone)";
         hasSpawned = true;
 
-        // 自身のコピーが生成されたら削除（再生成防止）
+        // 保険：生成されたPrefabにZoneSpawnButtonがあれば削除
         ZoneSpawnButton zb = instance.GetComponent<ZoneSpawnButton>();
         if (zb != null) Destroy(zb);
 
@@ -82,6 +85,6 @@ public class ZoneSpawnButton : UdonSharpBehaviour
                 break;
         }
 
-        Debug.Log($"✅ {objectType} {objectID} を生成して登録しました。");
+        Debug.Log($"✅ {objectType} {objectID} を生成し、名前を {instance.name} に設定、登録完了しました");
     }
 }
