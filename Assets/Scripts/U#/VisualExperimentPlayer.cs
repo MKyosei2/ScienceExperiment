@@ -1,11 +1,13 @@
 ﻿using UdonSharp;
 using UnityEngine;
+using VRC.Udon;
 
 public enum StepType
 {
     EmissionChange,
     MoveElement,
-    ShaderEffect
+    ShaderEffect,
+    CustomEvent
 }
 
 public class VisualExperimentPlayer : UdonSharpBehaviour
@@ -56,7 +58,7 @@ public class VisualExperimentPlayer : UdonSharpBehaviour
         GameObject target = (currentStep < stepTargets.Length) ? stepTargets[currentStep] : null;
         float duration = (currentStep < stepDurations.Length) ? stepDurations[currentStep] : 1.0f;
 
-        if (target == null)
+        if (target == null && step != StepType.CustomEvent)
         {
             Debug.LogWarning($"⚠️ ステップ {currentStep}: 対象が null です。スキップします");
         }
@@ -71,17 +73,18 @@ public class VisualExperimentPlayer : UdonSharpBehaviour
                         if (mat.HasProperty("_EmissionColor"))
                         {
                             mat.EnableKeyword("_EMISSION");
-                            mat.SetColor("_EmissionColor", emissionColors[currentStep]);
-                            Debug.Log($"✨ EmissionColor を変更: {emissionColors[currentStep]}");
+                            mat.SetColor("_EmissionColor", emissionColors[currentStep] * 2f);
+                            Debug.Log($"✨ EmissionColor を変更: {emissionColors[currentStep] * 2f}");
                         }
                     }
                     break;
 
                 case StepType.MoveElement:
-                    if (currentStep < moveOffsets.Length)
+                    if (currentStep < moveOffsets.Length && target != null)
                     {
-                        target.transform.position += moveOffsets[currentStep];
-                        Debug.Log($"📦 {target.name} を移動: {moveOffsets[currentStep]}");
+                        Vector3 offset = moveOffsets[currentStep];
+                        target.transform.position += offset;
+                        Debug.Log($"📦 {target.name} を移動: {offset}");
                     }
                     break;
 
@@ -92,14 +95,38 @@ public class VisualExperimentPlayer : UdonSharpBehaviour
                         string prop = shaderProperties[currentStep];
                         float val = shaderValues[currentStep];
 
-                        if (!string.IsNullOrWhiteSpace(prop) && mat.HasProperty(prop))
+                        if (!string.IsNullOrWhiteSpace(prop))
                         {
-                            mat.SetFloat(prop, val);
-                            Debug.Log($"🎨 Shader '{prop}' を {val} に設定");
+                            if (mat.HasProperty(prop))
+                            {
+                                mat.SetFloat(prop, val);
+                                Debug.Log($"🎨 Shader '{prop}' を {val} に設定");
+                            }
+                            else if (prop == "_Shininess" && mat.HasProperty("_Glossiness"))
+                            {
+                                mat.SetFloat("_Glossiness", val);
+                                Debug.Log($"🔁 Shader '_Shininess' → '_Glossiness' に変換して {val} を設定");
+                            }
+                            else
+                            {
+                                Debug.LogWarning($"⚠️ Shader プロパティ '{prop}' が見つかりません");
+                            }
+                        }
+                    }
+                    break;
+
+                case StepType.CustomEvent:
+                    if (target != null)
+                    {
+                        UdonBehaviour udon = target.GetComponent<UdonBehaviour>();
+                        if (udon != null)
+                        {
+                            udon.SendCustomEvent("Spawn");
+                            Debug.Log($"📢 CustomEvent 'Spawn' を {target.name} に送信しました");
                         }
                         else
                         {
-                            Debug.LogWarning($"⚠️ Shader プロパティ '{prop}' が見つかりません");
+                            Debug.LogWarning($"⚠️ {target.name} に UdonBehaviour が見つかりません");
                         }
                     }
                     break;
