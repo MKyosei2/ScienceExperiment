@@ -4,13 +4,9 @@ using TMPro;
 
 public class StatusTextUI : UdonSharpBehaviour
 {
-    [Header("表示対象UI")]
     public TextMeshProUGUI statusText;
-
-    [Header("参照する選択情報")]
     public SelectedObjectHolder holder;
 
-    // ✅ 外部から直接呼び出してメッセージ表示
     public void Show(string message)
     {
         if (statusText != null)
@@ -23,7 +19,6 @@ public class StatusTextUI : UdonSharpBehaviour
         }
     }
 
-    // ✅ 選択状況を表示（Element / Tool / Condition）
     public void ShowCurrentSelection()
     {
         if (statusText == null || holder == null)
@@ -40,11 +35,9 @@ public class StatusTextUI : UdonSharpBehaviour
         statusText.text = result;
     }
 
-    // 🔧 配列整形
     private string FormatArray(string[] array)
     {
         if (array == null || array.Length == 0) return "なし";
-
         string result = "";
         for (int i = 0; i < array.Length; i++)
         {

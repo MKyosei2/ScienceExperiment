@@ -4,7 +4,7 @@ using UnityEngine;
 public class ExperimentController : UdonSharpBehaviour
 {
     public SelectedObjectHolder holder;
-    public AIRequestSender requestSender;
+    public AIRequestSender_MockOnly requestSender;
     public VisualExperimentPlayer experimentPlayer;
     public Renderer reactionRenderer;
 
@@ -12,7 +12,7 @@ public class ExperimentController : UdonSharpBehaviour
 
     public void StartExperiment()
     {
-        Debug.Log("▶️ StartExperiment() 呼び出し");
+        Debug.Log("🚩 ExperimentController: StartExperiment 実行開始");
 
         if (holder == null || requestSender == null)
         {
@@ -40,15 +40,13 @@ public class ExperimentController : UdonSharpBehaviour
         GameObject na = GameObject.Find("Na(Clone)");
         GameObject cl = GameObject.Find("Cl(Clone)");
         GameObject beaker = GameObject.Find("beaker(Clone)");
-        GameObject naclSpawner = GameObject.Find("NaClSpawner");
 
-        if (na == null || cl == null || beaker == null || naclSpawner == null)
+        if (na == null || cl == null || beaker == null)
         {
             Debug.LogError("❌ 実験に必要なオブジェクトのいずれかが見つかりません");
             return;
         }
 
-        // Rendererが未設定なら自動取得
         if (reactionRenderer == null)
         {
             reactionRenderer = beaker.GetComponent<Renderer>();
@@ -58,43 +56,14 @@ public class ExperimentController : UdonSharpBehaviour
         {
             StepType.MoveElement,
             StepType.MoveElement,
-            StepType.ShaderEffect,
-            StepType.CustomEvent
+            StepType.ShaderEffect
         };
-
-        experimentPlayer.stepTargets = new GameObject[]
-        {
-            na, cl, beaker, naclSpawner
-        };
-
-        experimentPlayer.stepDurations = new float[]
-        {
-            1.0f, 1.0f, 0.8f, 0.5f
-        };
-
-        experimentPlayer.emissionColors = new Color[]
-        {
-            Color.white, Color.white, Color.white, Color.white
-        };
-
-        experimentPlayer.shaderProperties = new string[]
-        {
-            "", "", "_Shininess", ""
-        };
-
-        experimentPlayer.shaderValues = new float[]
-        {
-            0f, 0f, 0.8f, 0f
-        };
-
-        experimentPlayer.moveOffsets = new Vector3[]
-        {
-            Vector3.down * 0.1f,
-            Vector3.down * 0.1f,
-            Vector3.zero,
-            Vector3.zero
-        };
-
+        experimentPlayer.stepTargets = new GameObject[] { na, cl, beaker };
+        experimentPlayer.stepDurations = new float[] { 1.0f, 1.0f, 0.8f };
+        experimentPlayer.emissionColors = new Color[] { Color.white, Color.white, Color.white };
+        experimentPlayer.shaderProperties = new string[] { "", "", "_Shininess" };
+        experimentPlayer.shaderValues = new float[] { 0f, 0f, 0.8f };
+        experimentPlayer.moveOffsets = new Vector3[] { Vector3.down * 0.1f, Vector3.down * 0.1f, Vector3.zero };
         experimentPlayer.reactionRenderer = reactionRenderer;
 
         responseReceived = false;
@@ -103,6 +72,7 @@ public class ExperimentController : UdonSharpBehaviour
 
     public void MarkResponseReceived()
     {
+        Debug.Log("✅ MarkResponseReceived 実行");
         responseReceived = true;
     }
 

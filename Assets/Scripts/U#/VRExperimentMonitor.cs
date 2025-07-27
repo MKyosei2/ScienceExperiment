@@ -4,10 +4,7 @@ using TMPro;
 
 public class VRExperimentMonitor : UdonSharpBehaviour
 {
-    [Header("ログ出力UI")]
     public TextMeshProUGUI logText;
-
-    [Header("最大履歴数")]
     public int maxLogs = 10;
 
     private string[] logs = new string[10];
@@ -15,14 +12,9 @@ public class VRExperimentMonitor : UdonSharpBehaviour
 
     public void Log(string message)
     {
-        if (logs.Length != maxLogs)
-        {
-            logs = new string[maxLogs];
-        }
-
+        if (logs.Length != maxLogs) logs = new string[maxLogs];
         logs[logIndex] = message;
         logIndex = (logIndex + 1) % maxLogs;
-
         UpdateLogDisplay();
     }
 

@@ -25,25 +25,34 @@ public class AIRequestSender_MockOnly : UdonSharpBehaviour
                          $"element: {elementID}\n" +
                          $"tool: {toolID}\n" +
                          $"condition: {conditionID}";
-
         if (monitor != null) monitor.Log("📡 モック送信: " + message);
 
-        // モック応答を即時再生（Bot応答の代用）
         SendCustomEventDelayedSeconds(nameof(MockReceiveResponse), 1.0f);
-
-        // 応答なし時のフォールバック
         SendCustomEventDelayedSeconds(nameof(FallbackIfNoResponse), 5.0f);
     }
 
     public void MockReceiveResponse()
     {
+        Debug.Log("⭐ MockReceiveResponse実行");
         if (responseReceived) return;
         responseReceived = true;
 
         statusText.text = "✅ モック応答あり：酸素が発生しました！";
-        if (monitor != null) monitor.Log("🧪 モック応答：酸素生成演出再生");
+        if (monitor != null)
+        {
+            monitor.Log("🧪 モック応答：酸素生成演出再生");
+            monitor.Log("▶️ 演出シーケンス開始");
+        }
 
-        if (experimentPlayer != null) experimentPlayer.PlaySequence();
+        if (experimentPlayer != null)
+        {
+            Debug.Log("🎬 experimentPlayer.PlaySequence() 実行");
+            experimentPlayer.PlaySequence();
+        }
+        else
+        {
+            Debug.Log("❌ experimentPlayerがnullです");
+        }
 
         if (experimentController != null)
         {

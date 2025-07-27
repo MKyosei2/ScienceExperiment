@@ -6,8 +6,7 @@ public enum StepType
 {
     EmissionChange,
     MoveElement,
-    ShaderEffect,
-    CustomEvent
+    ShaderEffect
 }
 
 public class VisualExperimentPlayer : UdonSharpBehaviour
@@ -22,12 +21,15 @@ public class VisualExperimentPlayer : UdonSharpBehaviour
     public float[] shaderValues;
 
     public Renderer reactionRenderer;
+    public VRExperimentMonitor monitor;
 
     private int currentStep = 0;
     private bool isPlaying = false;
 
     public void PlaySequence()
     {
+        Debug.Log("🎬 PlaySequence呼び出し");
+
         if (stepTypes == null || stepTargets == null || stepTypes.Length == 0)
         {
             Debug.LogError("❌ stepTypes または stepTargets が未設定です");
@@ -51,6 +53,7 @@ public class VisualExperimentPlayer : UdonSharpBehaviour
         {
             Debug.Log("✅ 全ステップ完了");
             isPlaying = false;
+            if (monitor != null) monitor.Log("✅ 実験が完了しました！");
             return;
         }
 
@@ -58,7 +61,7 @@ public class VisualExperimentPlayer : UdonSharpBehaviour
         GameObject target = (currentStep < stepTargets.Length) ? stepTargets[currentStep] : null;
         float duration = (currentStep < stepDurations.Length) ? stepDurations[currentStep] : 1.0f;
 
-        if (target == null && step != StepType.CustomEvent)
+        if (target == null)
         {
             Debug.LogWarning($"⚠️ ステップ {currentStep}: 対象が null です。スキップします");
         }
@@ -78,7 +81,6 @@ public class VisualExperimentPlayer : UdonSharpBehaviour
                         }
                     }
                     break;
-
                 case StepType.MoveElement:
                     if (currentStep < moveOffsets.Length && target != null)
                     {
@@ -87,7 +89,6 @@ public class VisualExperimentPlayer : UdonSharpBehaviour
                         Debug.Log($"📦 {target.name} を移動: {offset}");
                     }
                     break;
-
                 case StepType.ShaderEffect:
                     if (reactionRenderer != null && currentStep < shaderProperties.Length && currentStep < shaderValues.Length)
                     {
@@ -114,25 +115,8 @@ public class VisualExperimentPlayer : UdonSharpBehaviour
                         }
                     }
                     break;
-
-                case StepType.CustomEvent:
-                    if (target != null)
-                    {
-                        UdonBehaviour udon = target.GetComponent<UdonBehaviour>();
-                        if (udon != null)
-                        {
-                            udon.SendCustomEvent("Spawn");
-                            Debug.Log($"📢 CustomEvent 'Spawn' を {target.name} に送信しました");
-                        }
-                        else
-                        {
-                            Debug.LogWarning($"⚠️ {target.name} に UdonBehaviour が見つかりません");
-                        }
-                    }
-                    break;
             }
         }
-
         currentStep++;
         SendCustomEventDelayedSeconds(nameof(PlayNextStep), duration);
     }

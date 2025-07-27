@@ -3,16 +3,13 @@ using UnityEngine;
 
 public class SelectedObjectHolder : UdonSharpBehaviour
 {
-    [Header("最新選択ID（実験用）")]
     public string selectedElementID;
     public string selectedToolID;
     public string selectedConditionID;
 
-    [Header("履歴保持（複数）")]
     public string[] selectedElementIDs = new string[0];
     public string[] selectedToolIDs = new string[0];
 
-    [Header("ステータス表示UI")]
     public StatusTextUI statusTextUI;
 
     public void AddElement(string id)

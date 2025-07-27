@@ -5,21 +5,14 @@ using VRC.Udon;
 
 public class ExperimentStartButton : UdonSharpBehaviour
 {
-    [Header("対象ゾーン（各カテゴリの生成先）")]
-    public Transform elementZone;
-    public Transform toolZone;
-
-    [Header("連携スクリプト")]
-    public UdonBehaviour experimentController;
-    public UdonBehaviour statusTextUI;
-
-    [Header("選択オブジェクト管理")]
+    public UdonSharpBehaviour experimentController;
+    public StatusTextUI statusTextUI;
     public SelectedObjectHolder holder;
 
     public override void Interact()
     {
         Debug.Log("🧪 ExperimentStartButton: Interact() 実行");
-
+        Debug.Log($"experimentController is {(experimentController == null ? "NULL" : "SET")}");
         if (holder == null)
         {
             Debug.LogError("❌ ExperimentStartButton: holder が設定されていません");
@@ -27,17 +20,11 @@ public class ExperimentStartButton : UdonSharpBehaviour
             return;
         }
 
-        Debug.Log("🧪 ExperimentStartButton.holder instance ID = " + holder.GetInstanceID());
-        Debug.Log("🧪 holder.selectedElementIDs.Length = " + holder.selectedElementIDs.Length);
-        Debug.Log("🧪 holder.selectedToolIDs.Length = " + holder.selectedToolIDs.Length);
-        Debug.Log("🧪 holder.selectedConditionID = " + holder.selectedConditionID);
-
         if (holder.selectedElementIDs.Length == 0)
         {
             ShowStatus("⚠️ Element が選択されていません。");
             return;
         }
-
         if (holder.selectedToolIDs.Length == 0)
         {
             ShowStatus("⚠️ Tool が選択されていません。");
@@ -48,6 +35,7 @@ public class ExperimentStartButton : UdonSharpBehaviour
         {
             experimentController.SendCustomEvent("StartExperiment");
             ShowStatus("🧪 実験を開始しました。");
+            Debug.Log("🧪 ExperimentControllerにStartExperimentイベント送信");
         }
         else
         {
@@ -59,10 +47,8 @@ public class ExperimentStartButton : UdonSharpBehaviour
     {
         if (statusTextUI != null)
         {
-            statusTextUI.SetProgramVariable("statusText", msg);
-            statusTextUI.SendCustomEvent("ShowStatus");
+            statusTextUI.Show(msg);
         }
-
         Debug.Log($"📝 Status: {msg}");
     }
 }
