@@ -209,12 +209,11 @@ MonoBehaviour:
   stepTypes: 
   stepTargets: []
   stepDurations: []
-  moveOffsets: []
   emissionColors: []
+  moveOffsets: []
   shaderProperties: []
   shaderValues: []
-  resultPrefabs: []
-  stepSounds: []
+  reactionRenderer: {fileID: 0}
 --- !u!1 &1600586880
 GameObject:
   m_ObjectHideFlags: 0
@@ -15988,10 +15987,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 5819203186075691215}
   holder: {fileID: 2482320227317222469}
   requestSender: {fileID: 827513843783986088}
-  reactionRenderer: {fileID: 0}
-  enableTriggerReaction: 0
   experimentPlayer: {fileID: 738564366}
-  statusTextUI: {fileID: 1600586882}
+  reactionRenderer: {fileID: 0}
 --- !u!54 &3254972471565097252
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -42626,7 +42623,7 @@ Transform:
   m_GameObject: {fileID: 4669492264099433597}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 2.5, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
