@@ -59,11 +59,16 @@ public class ExperimentController : UdonSharpBehaviour
             StepType.ShaderEffect
         };
         experimentPlayer.stepTargets = new GameObject[] { na, cl, beaker };
-        experimentPlayer.stepDurations = new float[] { 1.0f, 1.0f, 0.8f };
+        experimentPlayer.stepDurations = new float[] { 1.2f, 1.2f, 0.8f };
         experimentPlayer.emissionColors = new Color[] { Color.white, Color.white, Color.white };
         experimentPlayer.shaderProperties = new string[] { "", "", "_Shininess" };
         experimentPlayer.shaderValues = new float[] { 0f, 0f, 0.8f };
-        experimentPlayer.moveOffsets = new Vector3[] { Vector3.down * 0.1f, Vector3.down * 0.1f, Vector3.zero };
+        experimentPlayer.moveOffsets = new Vector3[]
+        {
+            Vector3.down * 0.2f,   // Naを下げる
+            Vector3.down * 0.2f,   // Clを下げる
+            Vector3.zero           // beakerは動かさない
+        };
         experimentPlayer.reactionRenderer = reactionRenderer;
 
         responseReceived = false;
