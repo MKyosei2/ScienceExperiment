@@ -289,7 +289,13 @@ MonoBehaviour:
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
-    SerializationNodes: []
+    SerializationNodes:
+    - Name: reaction_elementIDs
+      Entry: 6
+      Data: 
+    - Name: reaction_toolIDs
+      Entry: 6
+      Data: 
   _udonSharpBackingUdonBehaviour: {fileID: 738564365}
   stepTypes: 
   stepTargets: []
@@ -300,6 +306,13 @@ MonoBehaviour:
   shaderValues: []
   reactionRenderer: {fileID: 6963262465967810581}
   monitor: {fileID: 3537670302577907766}
+  holder: {fileID: 2482320227317222469}
+  toolIDs: []
+  toolSpawnPoints: []
+  reaction_conditionIDs: []
+  reaction_productPrefabs: []
+  reaction_productCounts: 
+  reaction_productOffsets: []
 --- !u!1 &1600586880
 GameObject:
   m_ObjectHideFlags: 0
@@ -12072,11 +12085,9 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 209758498376140560}
-  selectedElementID: 
-  selectedToolID: 
-  selectedConditionID: 
   selectedElementIDs: []
   selectedToolIDs: []
+  selectedConditionID: 
   statusTextUI: {fileID: 1600586881}
 --- !u!4 &2484304402831693612
 Transform:
