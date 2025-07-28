@@ -11,7 +11,7 @@ public enum StepType
 
 public class VisualExperimentPlayer : UdonSharpBehaviour
 {
-    // === 基本演出 ===
+    // --- ステップバイステップ演出設定 ---
     public StepType[] stepTypes;
     public GameObject[] stepTargets;
     public float[] stepDurations;
@@ -23,47 +23,36 @@ public class VisualExperimentPlayer : UdonSharpBehaviour
     public VRExperimentMonitor monitor;
     public SelectedObjectHolder holder;
 
-    // === 複数器具対応 ===
-    public string[] toolIDs;
-    public Transform[] toolSpawnPoints;
-
-    // === 反応パターン配列 ===
+    // --- 配列型パターン（生成結果・パターン追加もInspectorでOK） ---
     public string[][] reaction_elementIDs;
     public string[][] reaction_toolIDs;
     public string[] reaction_conditionIDs;
     public GameObject[] reaction_productPrefabs;
     public int[] reaction_productCounts;
     public Vector3[] reaction_productOffsets;
+    public string[] reaction_descriptions;
 
-    // === 内部状態 ===
+    // --- 複数器具スポーン位置対応 ---
+    public string[] toolIDs;
+    public Transform[] toolSpawnPoints;
+
+    // --- 内部: Move制御(UdonSharp式) ---
     private int currentStep = 0;
     private bool isPlaying = false;
+    private GameObject[] usedElements;
     private GameObject moveTarget;
     private Vector3 moveStart;
     private Vector3 moveEnd;
     private float moveDuration;
     private float moveElapsed;
     private bool isMoving = false;
-    private GameObject[] usedElements;
 
     public void PlaySequence()
     {
-        Debug.Log("🎬 PlaySequence呼び出し");
-        if (stepTypes == null || stepTargets == null || stepTypes.Length == 0)
-        {
-            Debug.LogError("❌ stepTypes または stepTargets が未設定です");
-            return;
-        }
-        if (holder == null)
-        {
-            Debug.LogError("❌ holder (SelectedObjectHolder) が未設定です");
-            return;
-        }
-        if (isPlaying)
-        {
-            Debug.Log("⚠️ 演出がすでに実行中です");
-            return;
-        }
+        if (stepTypes == null || stepTargets == null || stepTypes.Length == 0) return;
+        if (holder == null) return;
+        if (isPlaying) return;
+
         usedElements = new GameObject[stepTargets.Length];
         for (int i = 0; i < stepTargets.Length; i++) usedElements[i] = stepTargets[i];
 
@@ -76,71 +65,46 @@ public class VisualExperimentPlayer : UdonSharpBehaviour
     {
         if (currentStep >= stepTypes.Length)
         {
-            Debug.Log("✅ 全ステップ完了");
             isPlaying = false;
-
-            // 元素オブジェクトをすべて消去
+            // 元素オブジェクト消去
             if (usedElements != null)
-            {
                 for (int i = 0; i < usedElements.Length; i++)
-                {
-                    if (usedElements[i] != null)
-                    {
-                        Destroy(usedElements[i]);
-                    }
-                }
-                Debug.Log("🧪 元素オブジェクトをすべて削除しました");
-            }
+                    if (usedElements[i] != null) Destroy(usedElements[i]);
 
+            // 生成物生成
             if (holder != null)
-            {
                 CreateProducts(holder.selectedElementIDs, holder.selectedToolIDs, holder.selectedConditionID);
-            }
 
             if (monitor != null) monitor.Log("✅ 実験が完了しました！");
             return;
         }
 
         StepType step = stepTypes[currentStep];
-        GameObject target = null;
-        if (currentStep < stepTargets.Length)
-        {
-            target = stepTargets[currentStep];
-        }
-        float duration = 1.0f;
-        if (currentStep < stepDurations.Length)
-        {
-            duration = stepDurations[currentStep];
-        }
+        GameObject target = (currentStep < stepTargets.Length) ? stepTargets[currentStep] : null;
+        float duration = (currentStep < stepDurations.Length) ? stepDurations[currentStep] : 1.0f;
 
-        if (target == null)
-        {
-            Debug.LogWarning($"⚠️ ステップ {currentStep}: 対象が null です。スキップします");
-        }
-        else
+        if (target != null)
         {
             if (step == StepType.EmissionChange)
             {
                 if (currentStep < emissionColors.Length && reactionRenderer != null)
                 {
-                    Material mat = reactionRenderer.material;
+                    var mat = reactionRenderer.material;
                     if (mat.HasProperty("_EmissionColor"))
                     {
                         mat.EnableKeyword("_EMISSION");
                         mat.SetColor("_EmissionColor", emissionColors[currentStep] * 2f);
-                        Debug.Log($"✨ EmissionColor を変更: {emissionColors[currentStep] * 2f}");
                     }
                 }
             }
             else if (step == StepType.MoveElement)
             {
-                if (currentStep < moveOffsets.Length && target != null)
+                if (currentStep < moveOffsets.Length)
                 {
                     Vector3 start = target.transform.position;
                     Vector3 end = start + moveOffsets[currentStep];
                     float moveTime = duration;
                     StartMove(target, start, end, moveTime);
-                    Debug.Log($"📦 {target.name} をアニメーション移動: {moveOffsets[currentStep]}");
                     return;
                 }
             }
@@ -148,27 +112,11 @@ public class VisualExperimentPlayer : UdonSharpBehaviour
             {
                 if (reactionRenderer != null && currentStep < shaderProperties.Length && currentStep < shaderValues.Length)
                 {
-                    Material mat = reactionRenderer.material;
+                    var mat = reactionRenderer.material;
                     string prop = shaderProperties[currentStep];
                     float val = shaderValues[currentStep];
-
-                    if (prop != null && prop != "")
-                    {
-                        if (mat.HasProperty(prop))
-                        {
-                            mat.SetFloat(prop, val);
-                            Debug.Log($"🎨 Shader '{prop}' を {val} に設定");
-                        }
-                        else if (prop == "_Shininess" && mat.HasProperty("_Glossiness"))
-                        {
-                            mat.SetFloat("_Glossiness", val);
-                            Debug.Log($"🔁 Shader '_Shininess' → '_Glossiness' に変換して {val} を設定");
-                        }
-                        else
-                        {
-                            Debug.LogWarning($"⚠️ Shader プロパティ '{prop}' が見つかりません");
-                        }
-                    }
+                    if (!string.IsNullOrEmpty(prop) && mat.HasProperty(prop))
+                        mat.SetFloat(prop, val);
                 }
             }
         }
@@ -176,6 +124,7 @@ public class VisualExperimentPlayer : UdonSharpBehaviour
         SendCustomEventDelayedSeconds(nameof(PlayNextStep), duration);
     }
 
+    // ---- Move制御をUdonSharp純正方式で ----
     public void StartMove(GameObject target, Vector3 from, Vector3 to, float duration)
     {
         moveTarget = target;
@@ -186,7 +135,6 @@ public class VisualExperimentPlayer : UdonSharpBehaviour
         isMoving = true;
         SendCustomEventDelayedFrames(nameof(UpdateMove), 1);
     }
-
     public void UpdateMove()
     {
         if (!isMoving || moveTarget == null)
@@ -215,110 +163,72 @@ public class VisualExperimentPlayer : UdonSharpBehaviour
         }
     }
 
-    private Transform GetSpawnPointForTool(string toolID)
-    {
-        if (toolID == null) return null;
-        for (int i = 0; i < toolIDs.Length; i++)
-        {
-            if (toolIDs[i] == toolID && toolSpawnPoints[i] != null)
-            {
-                return toolSpawnPoints[i];
-            }
-        }
-        return null;
-    }
-
+    // パターン照合&生成
     private void CreateProducts(string[] elements, string[] tools, string condition)
     {
-        string toolID = null;
-        if (tools != null && tools.Length > 0)
-        {
-            toolID = tools[0];
-        }
+        string toolID = (tools != null && tools.Length > 0) ? tools[0] : null;
         Transform spawnPoint = GetSpawnPointForTool(toolID);
         if (spawnPoint == null)
         {
-            Debug.LogWarning("⚠️ ツールIDに対応するスポーン位置がありません");
             if (monitor != null) monitor.Log("⚠️ 反応生成位置が不明です");
             return;
         }
 
-        // --- PC/VR判定 ---
+        // PC/VR判定
         bool isVR = false;
 #if UNITY_EDITOR
         isVR = false;
 #else
-        if (Networking.LocalPlayer != null)
-        {
-            isVR = Networking.LocalPlayer.IsUserInVR();
-        }
+        if (Networking.LocalPlayer != null) isVR = Networking.LocalPlayer.IsUserInVR();
 #endif
 
         for (int i = 0; i < reaction_productPrefabs.Length; i++)
         {
-            string[] patternElements = reaction_elementIDs[i];
-            string[] patternTools = reaction_toolIDs[i];
-            string patternCondition = reaction_conditionIDs[i];
-            GameObject patternPrefab = reaction_productPrefabs[i];
-            int patternCount = reaction_productCounts[i];
-            Vector3 patternOffset = reaction_productOffsets[i];
-
-            if (MatchPattern(elements, tools, condition, patternElements, patternTools, patternCondition))
+            if (MatchPattern(elements, tools, condition, reaction_elementIDs[i], reaction_toolIDs[i], reaction_conditionIDs[i]))
             {
-                for (int j = 0; j < patternCount; j++)
+                for (int j = 0; j < reaction_productCounts[i]; j++)
                 {
-                    if (patternPrefab != null)
+                    if (reaction_productPrefabs[i] != null)
                     {
-                        Vector3 pos = spawnPoint.position + patternOffset + Vector3.right * 0.07f * (j - (patternCount - 1) * 0.5f);
-                        GameObject obj = Instantiate(patternPrefab, pos, Quaternion.identity);
-
-                        // --- PCモードではVRC_Pickupを外す（型がない場合は文字列） ---
+                        Vector3 pos = spawnPoint.position + reaction_productOffsets[i] + Vector3.right * 0.07f * (j - (reaction_productCounts[i] - 1) * 0.5f);
+                        GameObject obj = Instantiate(reaction_productPrefabs[i], pos, Quaternion.identity);
                         if (!isVR)
                         {
-                            Component pickup = obj.GetComponent("VRC_Pickup");
-                            if (pickup != null)
-                            {
-                                Destroy(pickup);
-                                Debug.Log("💻 PCモードなのでVRC_Pickupを外しました: " + obj.name);
-                            }
-                        }
-                        else
-                        {
-                            Debug.Log("🕶️ VRモードなのでVRC_Pickupを残しました: " + obj.name);
+                            var pickup = obj.GetComponent("VRC_Pickup");
+                            if (pickup != null) Destroy(pickup);
                         }
                     }
                 }
-                if (monitor != null) monitor.Log("🧪 " + patternPrefab.name + "×" + patternCount + " が" + toolID + "でできた！");
+                if (monitor != null && reaction_descriptions != null && i < reaction_descriptions.Length)
+                    monitor.Log("🧪 " + reaction_descriptions[i]);
                 return;
             }
         }
-        Debug.LogWarning("⚠️ 該当する反応パターンがありませんでした");
         if (monitor != null) monitor.Log("⚠️ 反応しませんでした");
     }
 
+    private Transform GetSpawnPointForTool(string toolID)
+    {
+        for (int i = 0; i < toolIDs.Length; i++)
+            if (toolIDs[i] == toolID && toolSpawnPoints[i] != null) return toolSpawnPoints[i];
+        return null;
+    }
     private bool MatchPattern(string[] selE, string[] selT, string selC, string[] patE, string[] patT, string patC)
     {
-        if (!MatchArray(selE, patE)) return false;
-        if (!MatchArray(selT, patT)) return false;
-        if (patC != null && patC != "" && patC != selC) return false;
-        return true;
+        return MatchArray(selE, patE) && MatchArray(selT, patT) && (string.IsNullOrEmpty(patC) || patC == selC);
     }
-
-    private bool MatchArray(string[] arr1, string[] arr2)
+    private bool MatchArray(string[] a, string[] b)
     {
-        if (arr1 == null || arr2 == null) return false;
-        if (arr1.Length != arr2.Length) return false;
-        bool[] used = new bool[arr1.Length];
-        for (int i = 0; i < arr2.Length; i++)
+        if (a == null || b == null || a.Length != b.Length) return false;
+        bool[] used = new bool[a.Length];
+        for (int i = 0; i < b.Length; i++)
         {
             bool found = false;
-            for (int j = 0; j < arr1.Length; j++)
+            for (int j = 0; j < a.Length; j++)
             {
-                if (!used[j] && arr2[i] == arr1[j])
+                if (!used[j] && a[j] == b[i])
                 {
-                    used[j] = true;
-                    found = true;
-                    break;
+                    used[j] = true; found = true; break;
                 }
             }
             if (!found) return false;

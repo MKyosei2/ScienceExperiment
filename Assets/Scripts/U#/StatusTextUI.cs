@@ -10,31 +10,16 @@ public class StatusTextUI : UdonSharpBehaviour
     public void Show(string message)
     {
         if (statusText != null)
-        {
             statusText.text = message;
-        }
-        else
-        {
-            Debug.LogWarning("⚠️ StatusTextUI: statusText が未設定です");
-        }
     }
-
     public void ShowCurrentSelection()
     {
-        if (statusText == null || holder == null)
-        {
-            Debug.LogWarning("⚠️ StatusTextUI: statusText または holder が未設定です");
-            return;
-        }
-
+        if (statusText == null || holder == null) return;
         string elements = FormatArray(holder.selectedElementIDs);
         string tools = FormatArray(holder.selectedToolIDs);
         string condition = string.IsNullOrEmpty(holder.selectedConditionID) ? "なし" : holder.selectedConditionID;
-
-        string result = $"🧪 元素: {elements}\n🔧 器具: {tools}\n🌡️ 条件: {condition}";
-        statusText.text = result;
+        statusText.text = $"🧪 元素: {elements}\n🔧 器具: {tools}\n🌡️ 条件: {condition}";
     }
-
     private string FormatArray(string[] array)
     {
         if (array == null || array.Length == 0) return "なし";

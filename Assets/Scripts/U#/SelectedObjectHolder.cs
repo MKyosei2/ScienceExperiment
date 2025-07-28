@@ -10,12 +10,12 @@ public class SelectedObjectHolder : UdonSharpBehaviour
 
     public void AddElement(string id)
     {
-        selectedElementIDs = Append(selectedElementIDs, id); // 何度でも追加OK
+        selectedElementIDs = Append(selectedElementIDs, id);
         UpdateUI();
     }
     public void AddTool(string id)
     {
-        selectedToolIDs = Append(selectedToolIDs, id); // 何度でも追加OK
+        selectedToolIDs = Append(selectedToolIDs, id);
         UpdateUI();
     }
     public void SetCondition(string id)
@@ -23,12 +23,10 @@ public class SelectedObjectHolder : UdonSharpBehaviour
         selectedConditionID = id;
         UpdateUI();
     }
-
     private void UpdateUI()
     {
         if (statusTextUI != null) statusTextUI.ShowCurrentSelection();
     }
-
     private string[] Append(string[] array, string newValue)
     {
         int len = array.Length;

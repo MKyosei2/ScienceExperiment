@@ -33,44 +33,21 @@ public class AIRequestSender_MockOnly : UdonSharpBehaviour
 
     public void MockReceiveResponse()
     {
-        Debug.Log("⭐ MockReceiveResponse実行");
         if (responseReceived) return;
         responseReceived = true;
 
-        statusText.text = "✅ モック応答あり：酸素が発生しました！";
-        if (monitor != null)
-        {
-            monitor.Log("🧪 モック応答：酸素生成演出再生");
-            monitor.Log("▶️ 演出シーケンス開始");
-        }
-
-        if (experimentPlayer != null)
-        {
-            Debug.Log("🎬 experimentPlayer.PlaySequence() 実行");
-            experimentPlayer.PlaySequence();
-        }
-        else
-        {
-            Debug.Log("❌ experimentPlayerがnullです");
-        }
-
-        if (experimentController != null)
-        {
-            experimentController.MarkResponseReceived();
-        }
+        statusText.text = "✅ モック応答あり";
+        if (monitor != null) monitor.Log("🧪 モック応答：演出再生");
+        if (experimentPlayer != null) experimentPlayer.PlaySequence();
+        if (experimentController != null) experimentController.MarkResponseReceived();
     }
 
     public void FallbackIfNoResponse()
     {
         if (responseReceived) return;
         responseReceived = true;
-
         statusText.text = "⚠️ 応答なし。ローカル演出を実行します。";
         if (monitor != null) monitor.Log("⚠️ 応答なし：フォールバック演出を再生");
-
-        if (experimentController != null)
-        {
-            experimentController.FallbackIfNoResponse();
-        }
+        if (experimentController != null) experimentController.FallbackIfNoResponse();
     }
 }
