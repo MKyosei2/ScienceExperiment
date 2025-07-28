@@ -7,25 +7,19 @@ public class AIRequestSender_MockOnly : UdonSharpBehaviour
     public VRExperimentMonitor monitor;
     public TextMeshProUGUI statusText;
     public VisualExperimentPlayer experimentPlayer;
-    public ExperimentController experimentController;
 
     private bool responseReceived = false;
 
-    public void SendToAI(string elementID, string toolID, string conditionID)
+    public void SendToAI(string[] elementIDs, string[] toolIDs, string conditionID)
     {
-        SendRequest(elementID, toolID, conditionID);
-    }
-
-    public void SendRequest(string elementID, string toolID, string conditionID)
-    {
-        statusText.text = "🧪 モック送信中（Discord通信なし）";
         responseReceived = false;
 
-        string message = $"@InferenceBot\n" +
-                         $"element: {elementID}\n" +
-                         $"tool: {toolID}\n" +
-                         $"condition: {conditionID}";
-        if (monitor != null) monitor.Log("📡 モック送信: " + message);
+        string el = (elementIDs != null) ? string.Join(",", elementIDs) : "";
+        string tl = (toolIDs != null) ? string.Join(",", toolIDs) : "";
+        string msg = $"[MOCK] element: {el}\ntool: {tl}\ncondition: {conditionID}";
+
+        if (monitor) monitor.Log("📡 モック送信: " + msg);
+        if (statusText) statusText.text = "🧪 モック送信中…";
 
         SendCustomEventDelayedSeconds(nameof(MockReceiveResponse), 1.0f);
         SendCustomEventDelayedSeconds(nameof(FallbackIfNoResponse), 5.0f);
@@ -35,19 +29,17 @@ public class AIRequestSender_MockOnly : UdonSharpBehaviour
     {
         if (responseReceived) return;
         responseReceived = true;
-
-        statusText.text = "✅ モック応答あり";
-        if (monitor != null) monitor.Log("🧪 モック応答：演出再生");
+        if (statusText) statusText.text = "✅ モック応答あり";
+        if (monitor) monitor.Log("🧪 モック応答：演出再生");
         if (experimentPlayer != null) experimentPlayer.PlaySequence();
-        if (experimentController != null) experimentController.MarkResponseReceived();
     }
 
     public void FallbackIfNoResponse()
     {
         if (responseReceived) return;
         responseReceived = true;
-        statusText.text = "⚠️ 応答なし。ローカル演出を実行します。";
-        if (monitor != null) monitor.Log("⚠️ 応答なし：フォールバック演出を再生");
-        if (experimentController != null) experimentController.FallbackIfNoResponse();
+        if (statusText) statusText.text = "⚠️ 応答なし。ローカル演出を実行します。";
+        if (monitor) monitor.Log("⚠️ 応答なし：ローカル演出");
+        if (experimentPlayer != null) experimentPlayer.PlaySequence();
     }
 }

@@ -7,62 +7,43 @@ public class AIRequestSender : UdonSharpBehaviour
     public VRExperimentMonitor monitor;
     public TextMeshProUGUI statusText;
     public VisualExperimentPlayer experimentPlayer;
-    public ExperimentController experimentController;
 
     private bool responseReceived = false;
 
-    public void SendToAI(string elementID, string toolID, string conditionID)
+    public void SendToAI(string[] elementIDs, string[] toolIDs, string conditionID)
     {
-        SendRequest(elementID, toolID, conditionID);
-    }
-
-    public void SendRequest(string elementID, string toolID, string conditionID)
-    {
-        // Discord通信はスキップ
-        string message = $"@InferenceBot\n" +
-                         $"element: {elementID}\n" +
-                         $"tool: {toolID}\n" +
-                         $"condition: {conditionID}";
-
-        statusText.text = "🧪 実験データ送信中（モック）...";
         responseReceived = false;
 
-        if (monitor != null) monitor.Log("📡 モック送信: " + message);
+        string el = (elementIDs != null) ? string.Join(",", elementIDs) : "";
+        string tl = (toolIDs != null) ? string.Join(",", toolIDs) : "";
+        string msg = $"@BotRequest\nelement: {el}\ntool: {tl}\ncondition: {conditionID}";
 
-        // 模擬応答（Botの代用）
-        SendCustomEventDelayedSeconds(nameof(MockReceiveResponse), 1.0f);
+        if (monitor) monitor.Log("📡 Discord送信: " + msg);
+        if (statusText) statusText.text = "🧪 Discord Botに送信中…";
 
-        // フォールバック（Botが応答しない想定）
+        // ここでDiscord送信APIを呼ぶ
+
         SendCustomEventDelayedSeconds(nameof(FallbackIfNoResponse), 5.0f);
     }
 
-    public void MockReceiveResponse()
+    // Discord応答が来たらこれを呼ぶ
+    public void OnDiscordResponse(string result)
     {
         if (responseReceived) return;
         responseReceived = true;
-
-        statusText.text = "✅ 応答あり（モック）：酸素が発生しました！";
-        if (monitor != null) monitor.Log("✅ モック応答：酸素生成演出再生");
+        if (statusText) statusText.text = "✅ Discord応答あり：" + result;
+        if (monitor) monitor.Log("🧪 Discord応答：" + result);
 
         if (experimentPlayer != null) experimentPlayer.PlaySequence();
-
-        if (experimentController != null)
-        {
-            experimentController.MarkResponseReceived();
-        }
     }
 
     public void FallbackIfNoResponse()
     {
         if (responseReceived) return;
-
         responseReceived = true;
-        statusText.text = "⚠️ 応答なし：ローカル演出を再生します。";
-        if (monitor != null) monitor.Log("⚠️ モック応答なし：フォールバック演出実行");
+        if (statusText) statusText.text = "⚠️ Discord Bot無応答。ローカル演出を実行します。";
+        if (monitor) monitor.Log("⚠️ 5秒間応答なし→ローカル演出へ切り替え");
 
-        if (experimentController != null)
-        {
-            experimentController.FallbackIfNoResponse();
-        }
+        if (experimentPlayer != null) experimentPlayer.PlaySequence();
     }
 }

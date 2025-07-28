@@ -11,7 +11,6 @@ public enum StepType
 
 public class VisualExperimentPlayer : UdonSharpBehaviour
 {
-    // --- ステップバイステップ演出設定 ---
     public StepType[] stepTypes;
     public GameObject[] stepTargets;
     public float[] stepDurations;
@@ -23,7 +22,6 @@ public class VisualExperimentPlayer : UdonSharpBehaviour
     public VRExperimentMonitor monitor;
     public SelectedObjectHolder holder;
 
-    // --- 配列型パターン（生成結果・パターン追加もInspectorでOK） ---
     public string[][] reaction_elementIDs;
     public string[][] reaction_toolIDs;
     public string[] reaction_conditionIDs;
@@ -32,11 +30,9 @@ public class VisualExperimentPlayer : UdonSharpBehaviour
     public Vector3[] reaction_productOffsets;
     public string[] reaction_descriptions;
 
-    // --- 複数器具スポーン位置対応 ---
     public string[] toolIDs;
     public Transform[] toolSpawnPoints;
 
-    // --- 内部: Move制御(UdonSharp式) ---
     private int currentStep = 0;
     private bool isPlaying = false;
     private GameObject[] usedElements;
@@ -66,12 +62,10 @@ public class VisualExperimentPlayer : UdonSharpBehaviour
         if (currentStep >= stepTypes.Length)
         {
             isPlaying = false;
-            // 元素オブジェクト消去
             if (usedElements != null)
                 for (int i = 0; i < usedElements.Length; i++)
                     if (usedElements[i] != null) Destroy(usedElements[i]);
 
-            // 生成物生成
             if (holder != null)
                 CreateProducts(holder.selectedElementIDs, holder.selectedToolIDs, holder.selectedConditionID);
 
@@ -124,7 +118,6 @@ public class VisualExperimentPlayer : UdonSharpBehaviour
         SendCustomEventDelayedSeconds(nameof(PlayNextStep), duration);
     }
 
-    // ---- Move制御をUdonSharp純正方式で ----
     public void StartMove(GameObject target, Vector3 from, Vector3 to, float duration)
     {
         moveTarget = target;

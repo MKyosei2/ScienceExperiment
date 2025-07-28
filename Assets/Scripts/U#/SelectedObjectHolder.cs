@@ -3,10 +3,10 @@ using UnityEngine;
 
 public class SelectedObjectHolder : UdonSharpBehaviour
 {
-    public string[] selectedElementIDs = new string[0]; // 複数回押し対応
+    public string[] selectedElementIDs = new string[0];
     public string[] selectedToolIDs = new string[0];
     public string selectedConditionID;
-    public StatusTextUI statusTextUI;
+    public StatusTextUI statusTextUI; // 任意でUI更新
 
     public void AddElement(string id)
     {
@@ -23,13 +23,15 @@ public class SelectedObjectHolder : UdonSharpBehaviour
         selectedConditionID = id;
         UpdateUI();
     }
+
     private void UpdateUI()
     {
         if (statusTextUI != null) statusTextUI.ShowCurrentSelection();
     }
+
     private string[] Append(string[] array, string newValue)
     {
-        int len = array.Length;
+        int len = (array == null) ? 0 : array.Length;
         string[] newArray = new string[len + 1];
         for (int i = 0; i < len; i++) newArray[i] = array[i];
         newArray[len] = newValue;
