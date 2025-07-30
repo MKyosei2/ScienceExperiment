@@ -209,7 +209,6 @@ MonoBehaviour:
   monitor: {fileID: 3537670302577907766}
   statusText: {fileID: 3967592488595216121}
   experimentPlayer: {fileID: 738564366}
-  experimentController: {fileID: 3246231596183167969}
 --- !u!1 &738564363
 GameObject:
   m_ObjectHideFlags: 0
@@ -307,12 +306,13 @@ MonoBehaviour:
   reactionRenderer: {fileID: 6963262465967810581}
   monitor: {fileID: 3537670302577907766}
   holder: {fileID: 2482320227317222469}
-  toolIDs: []
-  toolSpawnPoints: []
   reaction_conditionIDs: []
   reaction_productPrefabs: []
   reaction_productCounts: 
   reaction_productOffsets: []
+  reaction_descriptions: []
+  toolIDs: []
+  toolSpawnPoints: []
 --- !u!1 &1600586880
 GameObject:
   m_ObjectHideFlags: 0
@@ -4183,7 +4183,6 @@ MonoBehaviour:
   monitor: {fileID: 3537670302577907766}
   statusText: {fileID: 3967592488595216121}
   experimentPlayer: {fileID: 738564366}
-  experimentController: {fileID: 3246231596183167969}
 --- !u!114 &839135627682873145
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -16083,9 +16082,8 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5819203186075691215}
   holder: {fileID: 2482320227317222469}
-  requestSender: {fileID: 494752671}
-  experimentPlayer: {fileID: 738564366}
-  reactionRenderer: {fileID: 0}
+  aiRequestSender: {fileID: 0}
+  monitor: {fileID: 0}
 --- !u!54 &3254972471565097252
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -18994,7 +18992,6 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6839189957268049520}
   logText: {fileID: 0}
-  maxLogs: 10
 --- !u!23 &3540474303592818659
 MeshRenderer:
   m_ObjectHideFlags: 0

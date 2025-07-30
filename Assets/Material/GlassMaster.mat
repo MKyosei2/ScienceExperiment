@@ -38,8 +38,12 @@ Material:
     m_Ints: []
     m_Floats:
     - _BubbleSpeed: 0.5
+    - _Dissolve: 0
+    - _EmissionStrength: 1
     - _HeatDistortion: 0.1
     - _WobbleAmount: 0.1
     m_Colors:
     - _MainColor: {r: 1, g: 1, b: 1, a: 0}
+    - _MeshCenter: {r: 9.5, g: 1.73475, b: 4.9700074, a: 0}
+    - _MeshSize: {r: 0.38355356, g: 0.5, b: 0.6704358, a: 0}
   m_BuildTextureStacks: []
