@@ -24,15 +24,15 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BubbleNoise:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 5d812a42cc4f3114e8611013e46934fc, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _HeatWaveMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: aba083b86c0ec684c86e07ef9bb9f0b9, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _LiquidTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 7586b8499d3644745924ea7c9ecc83c6, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
@@ -40,10 +40,12 @@ Material:
     - _BubbleSpeed: 0.5
     - _Dissolve: 0
     - _EmissionStrength: 1
-    - _HeatDistortion: 0.1
+    - _HeatDistortion: 0.15
+    - _ReactionProgress: 0
     - _WobbleAmount: 0.1
     m_Colors:
     - _MainColor: {r: 1, g: 1, b: 1, a: 0}
-    - _MeshCenter: {r: 9.5, g: 1.73475, b: 4.9700074, a: 0}
-    - _MeshSize: {r: 0.38355356, g: 0.5, b: 0.6704358, a: 0}
+    - _MeshCenter: {r: 0, g: 1.7883029, b: 0, a: 0}
+    - _MeshSize: {r: 0.354554, g: 0.99999994, b: 0.3545541, a: 0}
+    - _PrecipitationColor: {r: 0.8, g: 0.39999998, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []

@@ -14,18 +14,16 @@ public class AIRequestSender : UdonSharpBehaviour
     {
         responseReceived = false;
 
-        string el = (elementIDs != null && elementIDs.Length > 0) ? string.Join(",", elementIDs) : "未選択";
-        string tl = (toolIDs != null && toolIDs.Length > 0) ? string.Join(",", toolIDs) : "未選択";
+        string el = (elementIDs != null && elementIDs.Length > 0) ? string.Join("\",\"", elementIDs) : "未選択";
+        string tl = (toolIDs != null && toolIDs.Length > 0) ? string.Join("\",\"", toolIDs) : "未選択";
         string cond = string.IsNullOrEmpty(conditionID) ? "未選択" : conditionID;
 
-        string msg = $"🧪 実験リクエスト\n元素: {el}\n器具: {tl}\n環境: {cond}";
+        string json = "{\"element\":[\"" + el + "\"],\"tool\":[\"" + tl + "\"],\"condition\":\"" + cond + "\"}";
 
-        if (monitor) monitor.Log("📡 Discord送信: " + msg);
-        if (statusText) statusText.text = "🧪 Discord Webhookに送信中…";
+        if (monitor != null) monitor.Log("📡 JSONログ出力: " + json);
+        if (statusText != null) statusText.text = "🧪 JSONログを出力しました（外部が送信）";
 
-#if UNITY_EDITOR
-        ExperimentRequestWriter.Write(msg);
-#endif
+        Debug.Log("[EXPERIMENT_REQUEST] " + json);
 
         SendCustomEventDelayedSeconds(nameof(FallbackIfNoResponse), 5.0f);
     }
@@ -35,8 +33,8 @@ public class AIRequestSender : UdonSharpBehaviour
         if (responseReceived) return;
         responseReceived = true;
 
-        if (statusText) statusText.text = "✅ Discord応答あり：" + result;
-        if (monitor) monitor.Log("🧪 Discord応答：" + result);
+        if (statusText != null) statusText.text = "✅ Discord応答あり：" + result;
+        if (monitor != null) monitor.Log("🧪 Discord応答：" + result);
 
         if (experimentPlayer != null)
         {
@@ -49,8 +47,8 @@ public class AIRequestSender : UdonSharpBehaviour
         if (responseReceived) return;
         responseReceived = true;
 
-        if (statusText) statusText.text = "⚠️ Discord Bot無応答。ローカル演出を実行します。";
-        if (monitor) monitor.Log("⚠️ 5秒間応答なし→ローカル演出へ切り替え");
+        if (statusText != null) statusText.text = "⚠️ Discord Bot無応答。ローカル演出を実行します。";
+        if (monitor != null) monitor.Log("⚠️ 5秒間応答なし → ローカル演出へ切り替え");
 
         if (experimentPlayer != null)
         {

@@ -1,6 +1,7 @@
 ﻿using UdonSharp;
 using UnityEngine;
 using VRC.Udon;
+using VRC.SDKBase;  // ← 重要：Networking の代替を使うため
 
 public enum StepType
 {
@@ -114,6 +115,7 @@ public class VisualExperimentPlayer : UdonSharpBehaviour
                 }
             }
         }
+
         currentStep++;
         SendCustomEventDelayedSeconds(nameof(PlayNextStep), duration);
     }
@@ -128,6 +130,7 @@ public class VisualExperimentPlayer : UdonSharpBehaviour
         isMoving = true;
         SendCustomEventDelayedFrames(nameof(UpdateMove), 1);
     }
+
     public void UpdateMove()
     {
         if (!isMoving || moveTarget == null)
@@ -156,7 +159,6 @@ public class VisualExperimentPlayer : UdonSharpBehaviour
         }
     }
 
-    // パターン照合&生成
     private void CreateProducts(string[] elements, string[] tools, string condition)
     {
         string toolID = (tools != null && tools.Length > 0) ? tools[0] : null;
@@ -167,13 +169,13 @@ public class VisualExperimentPlayer : UdonSharpBehaviour
             return;
         }
 
-        // PC/VR判定
+        // PC/VR判定（UdonSharp 1.0対応）
         bool isVR = false;
-#if UNITY_EDITOR
-        isVR = false;
-#else
-        if (Networking.LocalPlayer != null) isVR = Networking.LocalPlayer.IsUserInVR();
-#endif
+        var localPlayer = Networking.LocalPlayer;
+        if (localPlayer != null)
+        {
+            isVR = localPlayer.IsUserInVR();
+        }
 
         for (int i = 0; i < reaction_productPrefabs.Length; i++)
         {
@@ -192,11 +194,13 @@ public class VisualExperimentPlayer : UdonSharpBehaviour
                         }
                     }
                 }
+
                 if (monitor != null && reaction_descriptions != null && i < reaction_descriptions.Length)
                     monitor.Log("🧪 " + reaction_descriptions[i]);
                 return;
             }
         }
+
         if (monitor != null) monitor.Log("⚠️ 反応しませんでした");
     }
 
@@ -206,10 +210,12 @@ public class VisualExperimentPlayer : UdonSharpBehaviour
             if (toolIDs[i] == toolID && toolSpawnPoints[i] != null) return toolSpawnPoints[i];
         return null;
     }
+
     private bool MatchPattern(string[] selE, string[] selT, string selC, string[] patE, string[] patT, string patC)
     {
         return MatchArray(selE, patE) && MatchArray(selT, patT) && (string.IsNullOrEmpty(patC) || patC == selC);
     }
+
     private bool MatchArray(string[] a, string[] b)
     {
         if (a == null || b == null || a.Length != b.Length) return false;
