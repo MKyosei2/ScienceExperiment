@@ -18992,6 +18992,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6839189957268049520}
   logText: {fileID: 0}
+  leftPointerLine: {fileID: 0}
+  rightPointerLine: {fileID: 0}
+  pointerLength: 2
 --- !u!23 &3540474303592818659
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -37290,7 +37293,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 630379fd492554b45bdfeb2b05a2e851, type: 2}
+  - {fileID: 2100000, guid: ad8572d586a7d2b459adc91e56dcd3e4, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
