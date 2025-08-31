@@ -7,8 +7,9 @@ public class ResultReceiver : MonoBehaviour
     public TextMeshProUGUI resultText;
     public TextMeshProUGUI triviaText;
     public GameObject[] toolObjects;
-    public string[] styleIDs;
+
     public ShaderEffectData[] effectProfiles;
+    public string[] styleIDs;
 
     public ExperimentHistory history;
     public SelectedObjectHolder holder;
@@ -94,7 +95,20 @@ public class ResultReceiver : MonoBehaviour
             var controller = obj.GetComponent<GlassRendererController>();
             if (controller != null)
             {
-                controller.effects = new ShaderEffectData[] { selectedEffect };
+                controller.liquidColor = selectedEffect.liquidColor;
+                controller.liquidAlpha = selectedEffect.liquidAlpha;
+                controller.fillLevel = selectedEffect.fillLevel;
+                controller.wobble = selectedEffect.wobble;
+
+                controller.precipitateColor = selectedEffect.precipitateColor;
+                controller.precipitateAmount = selectedEffect.precipitateAmount;
+
+                controller.swirlStrength = selectedEffect.swirlStrength;
+                controller.swirlSpeed = selectedEffect.swirlSpeed;
+
+                controller.sparkle = selectedEffect.sparkle;
+                controller.heat = selectedEffect.heat;
+
                 controller.ApplyEffects();
             }
         }
