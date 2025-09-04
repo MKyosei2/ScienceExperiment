@@ -1,19 +1,41 @@
-﻿using UdonSharp;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class ExperimentTableTrigger : UdonSharpBehaviour
+/// <summary>
+/// テーブルに置かれたオブジェクトを選択状態に反映する簡易トリガー。
+/// 旧実装の AddElement/AddTool 相当を、新APIにマッピング。
+/// </summary>
+[RequireComponent(typeof(Collider))]
+public class ExperimentTableTrigger : MonoBehaviour
 {
-    public Transform tableRoot;
-    public SelectedObjectHolder holder;
+    public enum Category { Element, Tool, Condition }
+
+    [SerializeField] private SelectedObjectHolder selected;
+    [SerializeField] private Category category = Category.Element;
+    [SerializeField] private bool useObjectNameAsId = false;
 
     private void OnTriggerEnter(Collider other)
     {
-        var placeable = other.GetComponent<PlaceableObject>();
-        if (placeable != null && placeable.isFixed)
+        if (!selected || !other) return;
+
+        if (useObjectNameAsId)
         {
-            string objName = other.gameObject.name.ToLower();
-            if (objName.Contains("element")) holder.AddElement(other.gameObject.name);
-            else if (objName.Contains("tool")) holder.AddTool(other.gameObject.name);
+            var id = other.gameObject.name;
+            switch (category)
+            {
+                case Category.Element: selected.AddElement(id); break;
+                case Category.Tool: selected.AddTool(id); break;
+                case Category.Condition: selected.SetCondition(id); break;
+            }
+        }
+        else
+        {
+            var go = other.gameObject;
+            switch (category)
+            {
+                case Category.Element: selected.SetElement(go); break;
+                case Category.Tool: selected.SetTool(go); break;
+                case Category.Condition: selected.SetCondition(go); break;
+            }
         }
     }
 }
