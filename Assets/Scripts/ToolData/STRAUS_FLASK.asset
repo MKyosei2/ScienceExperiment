@@ -9,10 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 040e4bd99d6a96148859ba51fd17077f, type: 3}
+  m_Script: {fileID: 11500000, guid: 9a0ffec50fdc0e84c91a3b0688797aa1, type: 3}
   m_Name: STRAUS_FLASK
   m_EditorClassIdentifier: 
-  toolID: straus_flask
-  toolName: "\u30B7\u30E5\u30C8\u30E9\u30A6\u30B9\u30D5\u30E9\u30B9\u30B3"
-  displayPrefab: {fileID: 6087225349971947494, guid: 72223587a00a91848a01674ca38e2cc9,
-    type: 3}
+  id: 
+  displayName: 
+  type: 1
+  displayPrefab: {fileID: 0}
+  element:
+    enabled: 0
+    atomicNumber: 0
+    group: 0
+    period: 0
+    symbol: 

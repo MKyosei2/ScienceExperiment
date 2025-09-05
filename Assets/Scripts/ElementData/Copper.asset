@@ -9,13 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
+  m_Script: {fileID: 11500000, guid: 9a0ffec50fdc0e84c91a3b0688797aa1, type: 3}
   m_Name: Copper
   m_EditorClassIdentifier: 
-  elementID: Cu
-  elementName: Copper
-  atomicNumber: 29
-  displayPrefab: {fileID: 1895033238995007848, guid: 89f1d861758a7b548b24a14276c62ef1,
-    type: 3}
-  group: 11
-  period: 4
+  id: 
+  displayName: 
+  type: 0
+  displayPrefab: {fileID: 0}
+  element:
+    enabled: 0
+    atomicNumber: 0
+    group: 0
+    period: 0
+    symbol: 

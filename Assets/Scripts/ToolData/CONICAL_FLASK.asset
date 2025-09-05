@@ -9,10 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 040e4bd99d6a96148859ba51fd17077f, type: 3}
+  m_Script: {fileID: 11500000, guid: 9a0ffec50fdc0e84c91a3b0688797aa1, type: 3}
   m_Name: CONICAL_FLASK
   m_EditorClassIdentifier: 
-  toolID: conical_flask
-  toolName: "\u30B3\u30CB\u30AB\u30EB\u30D5\u30E9\u30B9\u30B3\uFF08\u307E\u305F\u306F\u4E09\u89D2\u30D5\u30E9\u30B9\u30B3\uFF09"
-  displayPrefab: {fileID: 5262137734005257793, guid: 6d6fc21eb1c0fbc4f846fcd61fcc6a61,
-    type: 3}
+  id: 
+  displayName: 
+  type: 1
+  displayPrefab: {fileID: 0}
+  element:
+    enabled: 0
+    atomicNumber: 0
+    group: 0
+    period: 0
+    symbol: 

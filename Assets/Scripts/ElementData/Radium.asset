@@ -9,13 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
+  m_Script: {fileID: 11500000, guid: 9a0ffec50fdc0e84c91a3b0688797aa1, type: 3}
   m_Name: Radium
   m_EditorClassIdentifier: 
-  elementID: Ra
-  elementName: Radium
-  atomicNumber: 88
-  displayPrefab: {fileID: 145584385153596191, guid: 65fc5e6e3a104774494ed2886de4219d,
-    type: 3}
-  group: 2
-  period: 7
+  id: 
+  displayName: 
+  type: 0
+  displayPrefab: {fileID: 0}
+  element:
+    enabled: 0
+    atomicNumber: 0
+    group: 0
+    period: 0
+    symbol: 

@@ -9,13 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
+  m_Script: {fileID: 11500000, guid: 9a0ffec50fdc0e84c91a3b0688797aa1, type: 3}
   m_Name: Zinc
   m_EditorClassIdentifier: 
-  elementID: Zn
-  elementName: Zinc
-  atomicNumber: 30
-  displayPrefab: {fileID: 199445945404967363, guid: 4835d4a962a29c84593656660f5c468c,
-    type: 3}
-  group: 12
-  period: 4
+  id: 
+  displayName: 
+  type: 0
+  displayPrefab: {fileID: 0}
+  element:
+    enabled: 0
+    atomicNumber: 0
+    group: 0
+    period: 0
+    symbol: 

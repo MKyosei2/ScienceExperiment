@@ -9,13 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
+  m_Script: {fileID: 11500000, guid: 9a0ffec50fdc0e84c91a3b0688797aa1, type: 3}
   m_Name: Lawrencium
   m_EditorClassIdentifier: 
-  elementID: Lr
-  elementName: Lawrencium
-  atomicNumber: 103
-  displayPrefab: {fileID: 4083021441512148701, guid: 37370244ce9b86945b2e72c6f6a05b62,
-    type: 3}
-  group: 15
-  period: 9
+  id: 
+  displayName: 
+  type: 0
+  displayPrefab: {fileID: 0}
+  element:
+    enabled: 0
+    atomicNumber: 0
+    group: 0
+    period: 0
+    symbol: 

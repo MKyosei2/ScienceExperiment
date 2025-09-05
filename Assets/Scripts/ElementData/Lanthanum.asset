@@ -9,13 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9fa9f440995e38341a508ec28a52f312, type: 3}
+  m_Script: {fileID: 11500000, guid: 9a0ffec50fdc0e84c91a3b0688797aa1, type: 3}
   m_Name: Lanthanum
   m_EditorClassIdentifier: 
-  elementID: La
-  elementName: Lanthanum
-  atomicNumber: 57
-  displayPrefab: {fileID: 4402164636972323180, guid: bb97b1488a3be62428d4ad1fee90fd21,
-    type: 3}
-  group: 1
-  period: 8
+  id: 
+  displayName: 
+  type: 0
+  displayPrefab: {fileID: 0}
+  element:
+    enabled: 0
+    atomicNumber: 0
+    group: 0
+    period: 0
+    symbol: 
