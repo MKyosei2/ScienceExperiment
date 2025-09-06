@@ -365,7 +365,7 @@ MonoBehaviour:
       Data: 17|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: GenericSelector, Assembly-CSharp
+      Data: SpawnSelectorButton, Assembly-CSharp
     - Name: 
       Entry: 8
       Data: 
@@ -401,7 +401,7 @@ MonoBehaviour:
       Data: 20|UnityEngine.HeaderAttribute, UnityEngine.CoreModule
     - Name: header
       Entry: 1
-      Data: Selector (optional)
+      Data: Selector Button (optional)
     - Name: 
       Entry: 8
       Data: 

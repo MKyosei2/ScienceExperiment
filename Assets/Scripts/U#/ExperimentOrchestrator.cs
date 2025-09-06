@@ -5,7 +5,10 @@ public class ExperimentOrchestrator : UdonSharpBehaviour
 {
     [Header("Selection")]
     public SelectedObjectHolder selected;
-    public GenericSelector[] autoSpawnSelectors;
+
+    // 旧: GenericSelector[] autoSpawnSelectors
+    [Header("Auto Spawn (optional)")]
+    public SpawnSelectorButton[] autoSpawnButtons; // ゾーンが空なら Press() して自動スポーン
 
     [Header("I/O & Effects")]
     public VRExperimentMonitor monitor;
@@ -24,16 +27,15 @@ public class ExperimentOrchestrator : UdonSharpBehaviour
     {
         if (monitor != null) monitor.Log("Experiment: Start requested.");
 
-        // 空のゾーンにだけ自動スポーン
-        if (autoSpawnSelectors != null)
+        // 自動スポーン（各ゾーンが空なら押す）
+        if (autoSpawnButtons != null)
         {
-            for (int i = 0; i < autoSpawnSelectors.Length; i++)
+            for (int i = 0; i < autoSpawnButtons.Length; i++)
             {
-                GenericSelector s = autoSpawnSelectors[i];
-                if (s != null && s.prefab != null && s.zone != null && s.zone.childCount == 0)
+                SpawnSelectorButton b = autoSpawnButtons[i];
+                if (b != null && b.zone != null)
                 {
-                    GameObject go = s.SpawnOrReplace();
-                    if (monitor != null) monitor.Log("Spawned: " + (go != null ? go.name : "(null)"));
+                    if (b.zone.childCount == 0) b.Press();
                 }
             }
         }

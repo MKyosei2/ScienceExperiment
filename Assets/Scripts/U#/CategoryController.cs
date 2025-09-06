@@ -11,9 +11,9 @@ public class CategoryController : UdonSharpBehaviour
     public GameObject[] conditionShow;
     public GameObject[] conditionHide;
 
-    [Header("Selector (optional)")]
-    public GenericSelector selectorToSet;
-    public int selectorEnumValue = 0; // 0:Element 1:Tool 2:Condition
+    [Header("Selector Button (optional)")]
+    public SpawnSelectorButton selectorToSet;  // ← GenericSelector ではなく SpawnSelectorButton
+    public int selectorEnumValue = 0;          // 0:Element 1:Tool 2:Condition
 
     private int currentIndex = -1;
 
@@ -52,6 +52,8 @@ public class CategoryController : UdonSharpBehaviour
     {
         if (arr == null) return;
         for (int k = 0; k < arr.Length; k++)
-            if (arr[k]) arr[k].SetActive(state);
+        {
+            if (arr[k] != null) arr[k].SetActive(state);
+        }
     }
 }

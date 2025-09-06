@@ -1,21 +1,21 @@
 ﻿using UdonSharp;
 using UnityEngine;
 
-// 入れ子enumはU#非対応のため、トップレベルに列挙体を定義
+// トップレベル列挙体（U#は入れ子NG）
 public enum SelectionActionMode
 {
     SpawnFixedPrefab = 0,
-    SpawnFromSelector = 1,
+    SpawnFromButton = 1,   // ← SpawnSelectorButton を押す
     SelectFromZone = 2
 }
 
 public class SelectionActionController : UdonSharpBehaviour
 {
     [Header("Mode")]
-    public SelectionActionMode mode = SelectionActionMode.SpawnFromSelector;
+    public SelectionActionMode mode = SelectionActionMode.SpawnFromButton;
 
     [Header("Refs")]
-    public GenericSelector selector;
+    public SpawnSelectorButton spawnButton; // ← GenericSelector から置換
     public Transform zone;
     public GameObject fixedPrefab;
     public SelectedObjectHolder selected;
@@ -29,12 +29,12 @@ public class SelectionActionController : UdonSharpBehaviour
         {
             SpawnFixed();
         }
-        else if (mode == SelectionActionMode.SpawnFromSelector)
+        else if (mode == SelectionActionMode.SpawnFromButton)
         {
-            if (selector != null) selector.SpawnOrReplace();
-            else Debug.LogWarning("[SelectionActionController] Selector not set.");
+            if (spawnButton != null) spawnButton.Press();
+            else Debug.LogWarning("[SelectionActionController] spawnButton not set.");
         }
-        else // SelectionActionMode.SelectFromZone
+        else // SelectFromZone
         {
             SelectFromZone();
         }
@@ -57,8 +57,7 @@ public class SelectionActionController : UdonSharpBehaviour
         }
 
         GameObject go = GameObject.Instantiate(fixedPrefab, zone.position, zone.rotation, zone);
-        if (selector != null) selector.TrySetSelection(go);
-        else if (selected != null) selected.SetAny(go);
+        if (selected != null) selected.SetAny(go);
     }
 
     private void SelectFromZone()
@@ -71,7 +70,6 @@ public class SelectionActionController : UdonSharpBehaviour
         if (zone.childCount == 0) return;
 
         GameObject go = zone.GetChild(0).gameObject;
-        if (selector != null) selector.TrySetSelection(go);
-        else selected.SetAny(go);
+        selected.SetAny(go);
     }
 }

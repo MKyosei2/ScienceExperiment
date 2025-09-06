@@ -119,19 +119,19 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: selector
+      Data: spawnButton
     - Name: $v
       Entry: 7
       Data: 7|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: selector
+      Data: spawnButton
     - Name: <UserType>k__BackingField
       Entry: 7
       Data: 8|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: GenericSelector, Assembly-CSharp
+      Data: SpawnSelectorButton, Assembly-CSharp
     - Name: 
       Entry: 8
       Data: 
