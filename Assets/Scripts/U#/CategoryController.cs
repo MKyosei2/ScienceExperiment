@@ -12,39 +12,51 @@ public class CategoryController : UdonSharpBehaviour
     public GameObject[] conditionHide;
 
     [Header("Selector Button (optional)")]
-    public SpawnSelectorButton selectorToSet;  // ← GenericSelector ではなく SpawnSelectorButton
+    public SpawnSelectorButton selectorToSet;  // GenericSelectorではなく SpawnSelectorButton
     public int selectorEnumValue = 0;          // 0:Element 1:Tool 2:Condition
 
-    private int currentIndex = -1;
-
-    public void SetCategoryByName(string name)
+    public void ShowElement()
     {
-        if (name == "Element") ApplySimple(0);
-        else if (name == "Tool") ApplySimple(1);
-        else if (name == "Condition") ApplySimple(2);
-        else Debug.LogWarning("[CategoryController] Category not found: " + name);
+        ToggleArray(elementShow, true);
+        ToggleArray(elementHide, false);
+        ToggleArray(toolShow, false);
+        ToggleArray(toolHide, true);
+        ToggleArray(conditionShow, false);
+        ToggleArray(conditionHide, true);
+
+        if (selectorToSet != null) selectorToSet.category = SelectionCategory.Element;
     }
 
-    public void SetCategoryByIndex(int i)
+    public void ShowTool()
     {
-        ApplySimple(i);
+        ToggleArray(elementShow, false);
+        ToggleArray(elementHide, true);
+        ToggleArray(toolShow, true);
+        ToggleArray(toolHide, false);
+        ToggleArray(conditionShow, false);
+        ToggleArray(conditionHide, true);
+
+        if (selectorToSet != null) selectorToSet.category = SelectionCategory.Tool;
     }
 
-    private void ApplySimple(int i)
+    public void ShowCondition()
     {
-        currentIndex = i;
+        ToggleArray(elementShow, false);
+        ToggleArray(elementHide, true);
+        ToggleArray(toolShow, false);
+        ToggleArray(toolHide, true);
+        ToggleArray(conditionShow, true);
+        ToggleArray(conditionHide, false);
 
-        ToggleArray(elementShow, i == 0);
-        ToggleArray(toolShow, i == 1);
-        ToggleArray(conditionShow, i == 2);
+        if (selectorToSet != null) selectorToSet.category = SelectionCategory.Condition;
+    }
 
-        ToggleArray(elementHide, i != 0);
-        ToggleArray(toolHide, i != 1);
-        ToggleArray(conditionHide, i != 2);
-
+    /// UI等から呼んで enum 値で設定したい場合
+    public void ApplyEnumToSelector()
+    {
         if (selectorToSet != null)
         {
-            selectorToSet.category = (ESelectorCategory)selectorEnumValue;
+            selectorToSet.category = (SelectionCategory)selectorEnumValue;
         }
     }
 

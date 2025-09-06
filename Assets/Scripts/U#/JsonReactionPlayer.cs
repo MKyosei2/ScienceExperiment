@@ -1,15 +1,16 @@
-﻿using UdonSharp;
+﻿// Assets/Scripts/U#/JsonReactionPlayer.cs
+using UdonSharp;
 using UnityEngine;
-using UnityEngine.UI;
+using TMPro;
 
+/// JSON文字列をそのまま表示。将来はパースしてエフェクトを制御。
 public class JsonReactionPlayer : UdonSharpBehaviour
 {
-    public Text output; // 任意
+    public TextMeshProUGUI output;
 
-    public void Play(string json)
+    public void PlayJson(string json)
     {
-        if (output) output.text = "JSON受信: " + json;
-        Debug.Log("[JsonReaction] " + json);
-        // 実際の演出に合わせてパース処理を追加してください
+        if (output != null) output.text = "JSON:\n" + json;
+        // TODO: Udonで扱いやすい形にパースして具体的なエフェクトを再生
     }
 }

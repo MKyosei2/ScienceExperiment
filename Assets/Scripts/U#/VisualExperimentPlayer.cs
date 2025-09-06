@@ -1,26 +1,16 @@
-﻿using UdonSharp;
+﻿// Assets/Scripts/U#/VisualExperimentPlayer.cs
+using UdonSharp;
 using UnityEngine;
-using UnityEngine.UI;
+using TMPro;
 
+/// テキストで実験の進行を表示する簡易プレイヤー（演出はここを差し替えて拡張）
 public class VisualExperimentPlayer : UdonSharpBehaviour
 {
-    public Text output; // 任意
-
-    public void PlayStart(SelectedObjectHolder sel)
-    {
-        if (output) output.text = "実験開始…";
-        Debug.Log("[Visual] Start");
-    }
+    public TextMeshProUGUI output;
 
     public void PlayMessage(string message)
     {
-        if (output) output.text = message;
-        Debug.Log("[Visual] " + message);
-    }
-
-    public void PlayFallback()
-    {
-        if (output) output.text = "（フォールバック演出）";
-        Debug.Log("[Visual] Fallback");
+        if (output != null) output.text = message;
+        // ここでパーティクルやアニメ等を呼ぶ
     }
 }

@@ -1,99 +1,159 @@
 ﻿using UdonSharp;
 using UnityEngine;
-using System.Text;
+using TMPro;
 
+/// プレイヤーが選んだオブジェクトやIDを保持し、妥当性チェックやペイロード化を行う。
 public class SelectedObjectHolder : UdonSharpBehaviour
 {
-    [SerializeField] private GameObject element;
-    [SerializeField] private GameObject tool;
-    [SerializeField] private GameObject condition;
+    [Header("Zones (スポーン/設置先)")]
+    public Transform elementZone;
+    public Transform toolZone;
+    public Transform conditionZone;
 
-    [Header("Legacy IDs (optional)")]
-    [SerializeField] private string[] elementIDs = new string[8];
-    [SerializeField] private string[] toolIDs = new string[8];
-    [SerializeField] private string conditionID = "";
+    [Header("UI (任意)")]
+    public TextMeshProUGUI statusText;
+
+    private const int MaxElements = 8;
+    private const int MaxTools = 8;
+
+    // 実体参照
+    public GameObject[] elementObjects = new GameObject[MaxElements];
+    public GameObject[] toolObjects = new GameObject[MaxTools];
+    public GameObject conditionObject;
+
+    // ID（未指定ならオブジェクト名を使う）
+    public string[] elementIDs = new string[MaxElements];
+    public string[] toolIDs = new string[MaxTools];
+    public string conditionID = "";
+
     private int elementCount = 0;
     private int toolCount = 0;
 
-    public GameObject Element => element;
-    public GameObject Tool => tool;
-    public GameObject Condition => condition;
+    // ====== 公開API ======
 
-    public void SetElement(GameObject go) { element = go; }
-    public void SetTool(GameObject go) { tool = go; }
-    public void SetCondition(GameObject go) { condition = go; }
+    /// オブジェクトを追加/設定する。戻り値: 成功/失敗
+    public bool AddSelection(SelectionCategory category, GameObject obj, string idOrName = "")
+    {
+        if (obj == null) return false;
+        string id = string.IsNullOrEmpty(idOrName) ? obj.name : idOrName;
 
+        if (category == SelectionCategory.Element)
+        {
+            if (elementCount >= MaxElements) return false;
+            elementObjects[elementCount] = obj;
+            elementIDs[elementCount] = id;
+            elementCount++;
+            RefreshUI();
+            return true;
+        }
+        else if (category == SelectionCategory.Tool)
+        {
+            if (toolCount >= MaxTools) return false;
+            toolObjects[toolCount] = obj;
+            toolIDs[toolCount] = id;
+            toolCount++;
+            RefreshUI();
+            return true;
+        }
+        else // Condition（常に1つのみ）
+        {
+            conditionObject = obj;
+            conditionID = id;
+            RefreshUI();
+            return true;
+        }
+    }
+
+    /// SelectionActionController 互換：ゾーンなどから渡されたGOをいい感じに振り分ける
     public void SetAny(GameObject go)
     {
-        if (element == null) element = go;
-        else if (tool == null) tool = go;
-        else condition = go;
+        if (go == null) return;
+
+        // 1) 親ゾーンから推定
+        if (elementZone != null && go.transform.IsChildOf(elementZone))
+        { AddSelection(SelectionCategory.Element, go, go.name); return; }
+
+        if (toolZone != null && go.transform.IsChildOf(toolZone))
+        { AddSelection(SelectionCategory.Tool, go, go.name); return; }
+
+        if (conditionZone != null && go.transform.IsChildOf(conditionZone))
+        { AddSelection(SelectionCategory.Condition, go, go.name); return; }
+
+        // 2) フォールバック：足りない枠へ順に入れる
+        if (elementCount < 2) { AddSelection(SelectionCategory.Element, go, go.name); return; }
+        if (toolCount < 1) { AddSelection(SelectionCategory.Tool, go, go.name); return; }
+        AddSelection(SelectionCategory.Condition, go, go.name);
     }
 
-    // 旧互換（ID）
-    public void AddElement(string id) { AddUnique(ref elementIDs, ref elementCount, id); }
-    public void AddTool(string id) { AddUnique(ref toolIDs, ref toolCount, id); }
-    public void SetCondition(string id) { conditionID = string.IsNullOrEmpty(id) ? "" : id; }
-
-    private void AddUnique(ref string[] arr, ref int count, string id)
+    /// Condition を明示的にクリア
+    public void ClearCondition()
     {
-        if (string.IsNullOrEmpty(id)) return;
-        for (int i = 0; i < count; i++) if (arr[i] == id) return;
-        if (count < arr.Length) arr[count++] = id; else arr[arr.Length - 1] = id;
+        conditionObject = null;
+        conditionID = "";
+        RefreshUI();
     }
 
+    /// すべての選択を初期化
+    public void ClearAll()
+    {
+        for (int i = 0; i < MaxElements; i++) { elementObjects[i] = null; elementIDs[i] = ""; }
+        for (int i = 0; i < MaxTools; i++) { toolObjects[i] = null; toolIDs[i] = ""; }
+        elementCount = 0; toolCount = 0;
+        conditionObject = null; conditionID = "";
+        RefreshUI();
+    }
+
+    /// 妥当性: Element 2個以上、Tool 1個以上、Condition 1個
     public bool IsValid()
     {
-        return element != null || tool != null || condition != null ||
-               elementCount > 0 || toolCount > 0 || !string.IsNullOrEmpty(conditionID);
+        if (elementCount < 2) return false;
+        if (toolCount < 1) return false;
+        if (string.IsNullOrEmpty(conditionID) && conditionObject == null) return false;
+        return true;
     }
 
-    public string ToSummaryString()
-    {
-        var sb = new StringBuilder();
-        sb.AppendLine("Element:   " + (element ? element.name : (elementCount > 0 ? Join(elementIDs, elementCount) : "-")));
-        sb.AppendLine("Tool:      " + (tool ? tool.name : (toolCount > 0 ? Join(toolIDs, toolCount) : "-")));
-        sb.AppendLine("Condition: " + (condition ? condition.name : (!string.IsNullOrEmpty(conditionID) ? conditionID : "-")));
-        return sb.ToString();
-    }
-
+    /// 実験AI/プレイヤーへ渡す簡易JSON
     public string ToJsonPayload()
     {
-        return "{"
-            + "\"elementName\":\"" + Escape(element ? element.name : null) + "\","
-            + "\"toolName\":\"" + Escape(tool ? tool.name : null) + "\","
-            + "\"conditionName\":\"" + Escape(condition ? condition.name : null) + "\","
-            + "\"selectedElementIDs\":" + ToJsonArray(elementIDs, elementCount) + ","
-            + "\"selectedToolIDs\":" + ToJsonArray(toolIDs, toolCount) + ","
-            + "\"selectedConditionID\":\"" + Escape(conditionID) + "\""
-            + "}";
+        string json = "{";
+        json += "\"elements\":[";
+        for (int i = 0; i < elementCount; i++)
+        {
+            json += "\"" + Escape(elementIDs[i]) + "\"";
+            if (i < elementCount - 1) json += ",";
+        }
+        json += "],";
+
+        json += "\"tools\":[";
+        for (int i = 0; i < toolCount; i++)
+        {
+            json += "\"" + Escape(toolIDs[i]) + "\"";
+            if (i < toolCount - 1) json += ",";
+        }
+        json += "],";
+
+        string cond = !string.IsNullOrEmpty(conditionID) ? conditionID :
+                      (conditionObject != null ? conditionObject.name : "");
+        json += "\"condition\":\"" + Escape(cond) + "\"";
+        json += "}";
+        return json;
     }
 
-    // ==== ヘルパ ====
+    // ====== ユーティリティ ======
+
     private string Escape(string s)
     {
-        if (string.IsNullOrEmpty(s)) return "";
-        return s.Replace("\"", "\\\"");
+        if (s == null) return "";
+        return s.Replace("\\", "\\\\").Replace("\"", "\\\"");
     }
 
-    private string Join(string[] arr, int count)
+    private void RefreshUI()
     {
-        if (count <= 0) return "";
-        var sb = new StringBuilder(arr[0]);
-        for (int i = 1; i < count; i++) sb.Append(",").Append(arr[i]);
-        return sb.ToString();
+        if (statusText == null) return;
+        statusText.text =
+            $"Elements: {elementCount} / Tools: {toolCount} / Condition: {(string.IsNullOrEmpty(conditionID) && conditionObject == null ? "None" : "OK")}";
     }
 
-    private string ToJsonArray(string[] arr, int count)
-    {
-        var sb = new StringBuilder("[");
-        for (int i = 0; i < count; i++)
-        {
-            if (i > 0) sb.Append(",");
-            var s = arr[i]; if (string.IsNullOrEmpty(s)) s = "";
-            sb.Append("\"").Append(Escape(s)).Append("\"");
-        }
-        sb.Append("]");
-        return sb.ToString();
-    }
+    public int GetElementCount() { return elementCount; }
+    public int GetToolCount() { return toolCount; }
 }

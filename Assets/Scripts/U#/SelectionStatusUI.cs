@@ -1,31 +1,17 @@
-﻿using UdonSharp;
+﻿// Assets/Scripts/U#/SelectionStatusUI.cs
+using UdonSharp;
 using UnityEngine;
-using UnityEngine.UI;
+using TMPro;
 
+/// 任意。別UIに選択状況を出したい場合に使う（更新は外部から呼ぶ）
 public class SelectionStatusUI : UdonSharpBehaviour
 {
     public SelectedObjectHolder selected;
-    public Text text;
-    public bool liveUpdate = true;
-
-    private void OnEnable()
-    {
-        if (!liveUpdate) Refresh();
-    }
-
-    private void Update()
-    {
-        if (liveUpdate) Refresh();
-    }
+    public TextMeshProUGUI text;
 
     public void Refresh()
     {
-        if (!text || !selected) return;
-        text.text = selected.ToSummaryString();
-    }
-
-    public void Show(string t)
-    {
-        if (text) text.text = t;
+        if (selected == null || text == null) return;
+        text.text = $"Elements: {selected.GetElementCount()} / Tools: {selected.GetToolCount()} / Condition: {(string.IsNullOrEmpty(selected.conditionID) && selected.conditionObject == null ? "None" : "OK")}";
     }
 }

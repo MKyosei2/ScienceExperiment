@@ -1,30 +1,25 @@
-﻿using UdonSharp;
+﻿// Assets/Scripts/U#/ExperimentTableTrigger.cs
+using UdonSharp;
 using UnityEngine;
 
-[RequireComponent(typeof(Collider))]
+/// 机などのTriggerに置いた（入ってきた）オブジェクトを選択として取り込む。
 public class ExperimentTableTrigger : UdonSharpBehaviour
 {
     public SelectedObjectHolder selected;
-    public ESelectorCategory category = ESelectorCategory.Element;
-    public bool useObjectNameAsId = false;
+    public SelectionCategory category = SelectionCategory.Element;
+    public Transform zoneForThisCategory; // 置かれた物を自動でこの子にぶら下げたい場合
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!selected || other == null) return;
+        if (selected == null || other == null) return;
 
-        if (useObjectNameAsId)
+        GameObject go = other.gameObject;
+
+        if (zoneForThisCategory != null)
         {
-            var id = other.gameObject.name;
-            if (category == ESelectorCategory.Element) selected.AddElement(id);
-            else if (category == ESelectorCategory.Tool) selected.AddTool(id);
-            else selected.SetCondition(id);
+            go.transform.SetParent(zoneForThisCategory, true);
         }
-        else
-        {
-            var go = other.gameObject;
-            if (category == ESelectorCategory.Element) selected.SetElement(go);
-            else if (category == ESelectorCategory.Tool) selected.SetTool(go);
-            else selected.SetCondition(go);
-        }
+
+        selected.AddSelection(category, go, go.name);
     }
 }

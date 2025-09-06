@@ -1,119 +1,72 @@
-﻿using UdonSharp;
+﻿// Assets/Scripts/U#/ExperimentOrchestrator.cs
+using UdonSharp;
 using UnityEngine;
+using TMPro;
 
+/// 開始→AIへリクエスト→（JSON/テキスト）再生 の司令塔。
 public class ExperimentOrchestrator : UdonSharpBehaviour
 {
-    [Header("Selection")]
+    [Header("Wiring")]
     public SelectedObjectHolder selected;
-
-    // 旧: GenericSelector[] autoSpawnSelectors
-    [Header("Auto Spawn (optional)")]
-    public SpawnSelectorButton[] autoSpawnButtons; // ゾーンが空なら Press() して自動スポーン
-
-    [Header("I/O & Effects")]
-    public VRExperimentMonitor monitor;
-    public VisualExperimentPlayer visualPlayer;
-    public JsonReactionPlayer jsonPlayer;
     public AIRequestSender ai;
 
-    [Header("Options")]
-    public float fallbackDelay = 2f;
-    public bool playVisualOnStart = true;
+    [Header("Players (任意)")]
+    public VisualExperimentPlayer visualPlayer;
+    public JsonReactionPlayer jsonPlayer;
 
-    private bool _waiting;
-    private float _timer;
+    [Header("UI (任意)")]
+    public TextMeshProUGUI status;
+
+    private bool isRunning = false;
 
     public void StartExperiment()
     {
-        if (monitor != null) monitor.Log("Experiment: Start requested.");
-
-        // 自動スポーン（各ゾーンが空なら押す）
-        if (autoSpawnButtons != null)
-        {
-            for (int i = 0; i < autoSpawnButtons.Length; i++)
-            {
-                SpawnSelectorButton b = autoSpawnButtons[i];
-                if (b != null && b.zone != null)
-                {
-                    if (b.zone.childCount == 0) b.Press();
-                }
-            }
-        }
+        if (isRunning) return;
 
         if (selected == null || !selected.IsValid())
         {
-            if (monitor != null) monitor.LogWarning("Selection invalid. Aborting.");
+            ShowStatus("⚠️ 選択が足りません（元素2以上、器具1以上、環境1）。");
             return;
         }
 
-        if (playVisualOnStart && visualPlayer != null) visualPlayer.PlayStart(selected);
+        isRunning = true;
+        ShowStatus("⏳ 実験処理中... AIへ問い合わせ中");
 
         if (ai != null)
         {
-            _waiting = true;
-            _timer = 0f;
-
-            ai.orchestrator = this;
-            ai.Request(selected);
+            ai.RequestFromOrchestrator(this, selected.ToJsonPayload());
         }
         else
         {
-            if (monitor != null) monitor.LogWarning("AI sender missing. Fallback.");
-            if (visualPlayer != null) visualPlayer.PlayFallback();
+            // AIなしの場合はテキスト再生のみ
+            if (visualPlayer != null)
+            {
+                visualPlayer.PlayMessage("AI未接続のため、ダミー実験を再生します。");
+            }
+            isRunning = false;
+            ShowStatus("✅ 完了（AI未接続）");
         }
     }
 
-    private void Update()
+    // === AIRequestSender から呼ばれるコールバック ===
+    public void OnAIText(string text)
     {
-        if (_waiting)
-        {
-            _timer += Time.deltaTime;
-            if (_timer >= fallbackDelay)
-            {
-                _waiting = false;
-                if (monitor != null) monitor.LogWarning("AI no response. Playing fallback.");
-                if (visualPlayer != null) visualPlayer.PlayFallback();
-            }
-        }
+        if (visualPlayer != null) visualPlayer.PlayMessage(text);
+        isRunning = false;
+        ShowStatus("✅ 完了（テキスト応答）");
     }
 
-    // === AIRequestSender からの通知 ===
-    public void OnAIResponse()
+    public void OnAIJson(string json)
     {
-        _waiting = false;
+        if (jsonPlayer != null) jsonPlayer.PlayJson(json);
+        else if (visualPlayer != null) visualPlayer.PlayMessage("JSON応答を受信: " + json);
 
-        string resp = null;
-        if (ai != null) resp = ai.lastResponse;
-
-        if (monitor != null) monitor.Log("AI response received.");
-
-        if (!string.IsNullOrEmpty(resp))
-        {
-            string s = resp.TrimStart();
-            bool isJson = s.StartsWith("{") || s.StartsWith("[");
-            if (isJson)
-            {
-                if (jsonPlayer != null) jsonPlayer.Play(resp);
-            }
-            else
-            {
-                if (visualPlayer != null) visualPlayer.PlayMessage(resp);
-            }
-        }
-        else
-        {
-            if (visualPlayer != null) visualPlayer.PlayFallback();
-        }
+        isRunning = false;
+        ShowStatus("✅ 完了（JSON応答）");
     }
 
-    public void OnAIError()
+    private void ShowStatus(string s)
     {
-        _waiting = false;
-
-        string err = "(unknown)";
-        if (ai != null) err = ai.lastError;
-
-        if (monitor != null) monitor.LogError("AI error: " + err);
-        if (visualPlayer != null) visualPlayer.PlayFallback();
+        if (status != null) status.text = s;
     }
 }

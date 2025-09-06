@@ -1,40 +1,41 @@
-﻿using UdonSharp;
+﻿// Assets/Scripts/U#/AIRequestSender.cs
+using UdonSharp;
 using UnityEngine;
 
+/// 実際のAI接続の代わりに、遅延してOrchestratorへ応答を返すモック。
 public class AIRequestSender : UdonSharpBehaviour
 {
-    [Header("Wiring")]
-    public ExperimentOrchestrator orchestrator;
-
     [Header("Mock Settings")]
-    public bool returnJson = true;
-    public float responseDelay = 1.0f;
-    [TextArea] public string mockJson = "{\"effects\":[{\"type\":\"bubble\",\"color\":\"blue\",\"intensity\":0.7}]}";
-    [TextArea] public string mockText = "うん、反応が起きたみたい！液体が青くなっているよ。";
+    public bool returnJson = false;
+    [TextArea] public string mockText = "混合後、白色沈殿が生成し、温度が上昇します。";
+    [TextArea] public string mockJson = "{\"steps\":[{\"action\":\"mix\",\"intensity\":0.7},{\"action\":\"heat\",\"deltaT\":10}],\"effects\":[\"precipitate:white\"]}";
+    public float responseDelay = 2.0f;
 
-    [HideInInspector] public string lastResponse;
-    [HideInInspector] public string lastError;
+    private ExperimentOrchestrator _target;
+    private string _payload;
 
-    private bool _pending;
-    private float _timer;
-
-    public void Request(SelectedObjectHolder selected)
+    public void RequestFromOrchestrator(ExperimentOrchestrator target, string payloadJson)
     {
-        _pending = true;
-        _timer = 0f;
-        lastResponse = null;
-        lastError = null;
+        _target = target;
+        _payload = payloadJson;
+        // ここで本来は外部AIに送る。今は遅延して自分に戻す。
+        SendCustomEventDelayedSeconds(nameof(_DoRespond), responseDelay);
     }
 
-    private void Update()
+    public void _DoRespond()
     {
-        if (!_pending) return;
-        _timer += Time.deltaTime;
-        if (_timer >= responseDelay)
+        if (_target == null) return;
+
+        if (returnJson)
         {
-            _pending = false;
-            lastResponse = returnJson ? mockJson : mockText;
-            if (orchestrator != null) orchestrator.SendCustomEvent("OnAIResponse");
+            _target.OnAIJson(mockJson);
         }
+        else
+        {
+            // payload を使ってメッセージを変えるなども可能
+            _target.OnAIText(mockText);
+        }
+        _target = null;
+        _payload = null;
     }
 }
