@@ -5,77 +5,40 @@ using VRC.SDKBase;
 [AddComponentMenu("VRC Lab/Mode/ModeActivation")]
 public class ModeActivation : UdonSharpBehaviour
 {
-    [Header("PCモードで ON / OFF にするオブジェクト")]
-    public GameObject[] pcOn;
-    public GameObject[] pcOff;
+    [Header("PCモードで ON / OFF")]
+    public GameObject[] pcOn, pcOff;
 
-    [Header("VRモードで ON / OFF にするオブジェクト")]
-    public GameObject[] vrOn;
-    public GameObject[] vrOff;
+    [Header("VRモードで ON / OFF")]
+    public GameObject[] vrOn, vrOff;
 
-    [Header("（任意）切替時に呼ぶ Udon イベント")]
-    public UdonSharpBehaviour[] notifyOnPC;   // OnModePC()
-    public UdonSharpBehaviour[] notifyOnVR;   // OnModeVR()
+    [Header("切替時通知（OnModePC / OnModeVR を実装しているU#へ送信）")]
+    public UdonSharpBehaviour[] notifyOnPC, notifyOnVR;
 
-    [Header("Router (Scene)")]
-    public ModeRouter router;                 // 空でOK（スポーン時に注入）
-
+    [Header("Router")]
+    public ModeRouter router;
     public bool applyOnEnable = true;
 
     private void OnEnable()
     {
-        if (router != null)
-        {
-            router.Register(this);
-            if (applyOnEnable) ApplyModeFromRouter(router, router.IsVR());
-        }
-        else
-        {
-            if (applyOnEnable) ApplyStandalone();
-        }
+        if (router != null) { router.Register(this); if (applyOnEnable) ApplyModeFromRouter(router, router.IsVR()); }
+        else if (applyOnEnable) ApplyStandalone();
     }
 
-    public void ApplyModeFromRouter(ModeRouter r, bool isVR)
-    {
-        router = r;
-        Apply(isVR);
-    }
-
+    public void ApplyModeFromRouter(ModeRouter r, bool isVR) { router = r; Apply(isVR); }
     public void ApplyStandalone()
     {
-        var lp = Networking.LocalPlayer;
-        bool isVR = lp != null && lp.IsUserInVR();
-        Apply(isVR);
+        var lp = Networking.LocalPlayer; bool isVR = (lp != null && lp.IsUserInVR()); Apply(isVR);
     }
 
     private void Apply(bool isVR)
     {
-        SetActiveArray(pcOn, !isVR);
-        SetActiveArray(pcOff, isVR);
-        SetActiveArray(vrOn, isVR);
-        SetActiveArray(vrOff, !isVR);
+        Set(pcOn, !isVR); Set(pcOff, isVR);
+        Set(vrOn, isVR); Set(vrOff, !isVR);
 
-        if (isVR) SendEvents(notifyOnVR, "OnModeVR");
-        else SendEvents(notifyOnPC, "OnModePC");
+        if (isVR) Send(notifyOnVR, "OnModeVR");
+        else Send(notifyOnPC, "OnModePC");
     }
 
-    private void SetActiveArray(GameObject[] arr, bool state)
-    {
-        if (arr == null) return;
-        for (int i = 0; i < arr.Length; i++)
-        {
-            var go = arr[i];
-            if (go != null) go.SetActive(state);
-        }
-    }
-
-    private void SendEvents(UdonSharpBehaviour[] arr, string ev)
-    {
-        if (arr == null) return;
-        for (int i = 0; i < arr.Length; i++)
-        {
-            var t = arr[i];
-            if (t != null) t.SendCustomEvent(ev);
-        }
-    }
+    private void Set(GameObject[] a, bool v) { if (a == null) return; for (int i = 0; i < a.Length; i++) { var go = a[i]; if (go != null) go.SetActive(v); } }
+    private void Send(UdonSharpBehaviour[] a, string ev) { if (a == null) return; for (int i = 0; i < a.Length; i++) { var t = a[i]; if (t != null) t.SendCustomEvent(ev); } }
 }

@@ -1,72 +1,28 @@
-﻿// Assets/Scripts/U#/ExperimentOrchestrator.cs
-using UdonSharp;
+﻿using UdonSharp;
 using UnityEngine;
 using TMPro;
 
-/// 開始→AIへリクエスト→（JSON/テキスト）再生 の司令塔。
+[AddComponentMenu("VRC Lab/ExperimentOrchestrator")]
 public class ExperimentOrchestrator : UdonSharpBehaviour
 {
-    [Header("Wiring")]
     public SelectedObjectHolder selected;
     public AIRequestSender ai;
-
-    [Header("Players (任意)")]
     public VisualExperimentPlayer visualPlayer;
     public JsonReactionPlayer jsonPlayer;
-
-    [Header("UI (任意)")]
     public TextMeshProUGUI status;
-
-    private bool isRunning = false;
 
     public void StartExperiment()
     {
-        if (isRunning) return;
-
-        if (selected == null || !selected.IsValid())
-        {
-            ShowStatus("⚠️ 選択が足りません（元素2以上、器具1以上、環境1）。");
-            return;
-        }
-
-        isRunning = true;
-        ShowStatus("⏳ 実験処理中... AIへ問い合わせ中");
-
-        if (ai != null)
-        {
-            ai.RequestFromOrchestrator(this, selected.ToJsonPayload());
-        }
-        else
-        {
-            // AIなしの場合はテキスト再生のみ
-            if (visualPlayer != null)
-            {
-                visualPlayer.PlayMessage("AI未接続のため、ダミー実験を再生します。");
-            }
-            isRunning = false;
-            ShowStatus("✅ 完了（AI未接続）");
-        }
+        if (selected == null) { SetStatus("No SelectedHolder."); return; }
+        if (!selected.IsValid()) { SetStatus("Select >=2 Elements, >=1 Tool, 1 Condition."); return; }
+        SetStatus("Running...");
+        if (ai != null) ai.Run(selected, this);
+        else if (visualPlayer != null) visualPlayer.Play("Experiment running (mock)...");
     }
 
-    // === AIRequestSender から呼ばれるコールバック ===
-    public void OnAIText(string text)
-    {
-        if (visualPlayer != null) visualPlayer.PlayMessage(text);
-        isRunning = false;
-        ShowStatus("✅ 完了（テキスト応答）");
-    }
+    public void OnAIVisual(string text) { if (visualPlayer != null) visualPlayer.Play(text); SetStatus("Done."); }
+    public void OnAIJson(string json) { if (jsonPlayer != null) jsonPlayer.Play(json); SetStatus("Done."); }
 
-    public void OnAIJson(string json)
-    {
-        if (jsonPlayer != null) jsonPlayer.PlayJson(json);
-        else if (visualPlayer != null) visualPlayer.PlayMessage("JSON応答を受信: " + json);
-
-        isRunning = false;
-        ShowStatus("✅ 完了（JSON応答）");
-    }
-
-    private void ShowStatus(string s)
-    {
-        if (status != null) status.text = s;
-    }
+    public void ResetAll() { if (selected != null) selected.ClearAll(); SetStatus("Ready."); }
+    private void SetStatus(string s) { if (status != null) status.text = s; }
 }

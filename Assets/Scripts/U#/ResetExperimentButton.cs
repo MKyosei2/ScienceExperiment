@@ -1,36 +1,25 @@
-﻿// Assets/Scripts/U#/ResetExperimentButton.cs
-using UdonSharp;
+﻿using UdonSharp;
 using UnityEngine;
 
+[AddComponentMenu("VRC Lab/ResetExperimentButton")]
 public class ResetExperimentButton : UdonSharpBehaviour
 {
     public SelectedObjectHolder selected;
-    public Transform elementZone;
-    public Transform toolZone;
-    public Transform conditionZone;
+    public Transform elementZone, toolZone, conditionZone;
 
-    public override void Interact()
+    public override void Interact() { ResetAll(); }
+
+    public void ResetAll()
     {
-        ResetAll();
-    }
-
-    public void Press() { ResetAll(); }
-
-    private void ResetAll()
-    {
-        ClearChildren(elementZone);
-        ClearChildren(toolZone);
-        ClearChildren(conditionZone);
-
+        DestroyChildren(elementZone);
+        DestroyChildren(toolZone);
+        DestroyChildren(conditionZone);
         if (selected != null) selected.ClearAll();
     }
 
-    private void ClearChildren(Transform t)
+    private void DestroyChildren(Transform t)
     {
         if (t == null) return;
-        for (int i = t.childCount - 1; i >= 0; i--)
-        {
-            GameObject.Destroy(t.GetChild(i).gameObject);
-        }
+        for (int i = t.childCount - 1; i >= 0; i--) GameObject.Destroy(t.GetChild(i).gameObject);
     }
 }
