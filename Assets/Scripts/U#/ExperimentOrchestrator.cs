@@ -15,6 +15,7 @@ public class ExperimentOrchestrator : UdonSharpBehaviour
     {
         if (selected == null) { SetStatus("No SelectedHolder."); return; }
         if (!selected.IsValid()) { SetStatus("Select >=2 Elements, >=1 Tool, 1 Condition."); return; }
+
         SetStatus("Running...");
         if (ai != null) ai.Run(selected, this);
         else if (visualPlayer != null) visualPlayer.Play("Experiment running (mock)...");

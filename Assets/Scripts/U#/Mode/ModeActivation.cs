@@ -40,5 +40,5 @@ public class ModeActivation : UdonSharpBehaviour
     }
 
     private void Set(GameObject[] a, bool v) { if (a == null) return; for (int i = 0; i < a.Length; i++) { var go = a[i]; if (go != null) go.SetActive(v); } }
-    private void Send(UdonSharpBehaviour[] a, string ev) { if (a == null) return; for (int i = 0; i < a.Length; i++) { var t = a[i]; if (t != null) t.SendCustomEvent(ev); } }
+    private void Send(UdonSharpBehaviour[] a, string ev) { if (a == null) return; for (int i = 0; i < a.Length; i++) if (a[i] != null) a[i].SendCustomEvent(ev); }
 }

@@ -2,9 +2,9 @@
 using UnityEngine;
 using TMPro;
 
-[AddComponentMenu("VRC Lab/VisualExperimentPlayer")]
-public class VisualExperimentPlayer : UdonSharpBehaviour
+[AddComponentMenu("VRC Lab/JsonReactionPlayer")]
+public class JsonReactionPlayer : UdonSharpBehaviour
 {
     public TextMeshProUGUI output;
-    public void Play(string text) { if (output != null) output.text = text; }
+    public void Play(string json) { if (output != null) output.text = json; }
 }

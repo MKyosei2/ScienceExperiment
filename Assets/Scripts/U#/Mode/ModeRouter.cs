@@ -8,7 +8,7 @@ public class ModeRouter : UdonSharpBehaviour
     public bool manualOverride = true;
     public bool currentIsVR = false;
 
-    public ModeActivation[] targets;  // 容量だけ確保（例: 256）
+    public ModeActivation[] targets;
     public int targetCount = 0;
 
     public bool IsVR()

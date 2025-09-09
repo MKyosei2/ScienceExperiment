@@ -167,7 +167,7 @@ MonoBehaviour:
       Data: 11|UnityEngine.HeaderAttribute, UnityEngine.CoreModule
     - Name: header
       Entry: 1
-      Data: Propagate to
+      Data: Propagate
     - Name: 
       Entry: 8
       Data: 
@@ -284,7 +284,7 @@ MonoBehaviour:
       Data: 18|UnityEngine.HeaderAttribute, UnityEngine.CoreModule
     - Name: header
       Entry: 1
-      Data: 'Optional: UI show/hide'
+      Data: Optional UI show/hide
     - Name: 
       Entry: 8
       Data: 
@@ -341,7 +341,7 @@ MonoBehaviour:
       Data: 21|UnityEngine.HeaderAttribute, UnityEngine.CoreModule
     - Name: header
       Entry: 1
-      Data: 'Optional: UI show/hide'
+      Data: Optional UI show/hide
     - Name: 
       Entry: 8
       Data: 
@@ -596,7 +596,7 @@ MonoBehaviour:
       Data: 33|UnityEngine.HeaderAttribute, UnityEngine.CoreModule
     - Name: header
       Entry: 1
-      Data: 'Optional: Label'
+      Data: Optional Label
     - Name: 
       Entry: 8
       Data: 
@@ -659,7 +659,7 @@ MonoBehaviour:
       Data: 37|UnityEngine.HeaderAttribute, UnityEngine.CoreModule
     - Name: header
       Entry: 1
-      Data: Notify listeners (SendCustomEvent "OnCategoryChanged")
+      Data: Listeners (SendCustomEvent "OnCategoryChanged")
     - Name: 
       Entry: 8
       Data: 
