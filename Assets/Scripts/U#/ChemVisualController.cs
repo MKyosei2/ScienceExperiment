@@ -33,12 +33,18 @@ public class ChemVisualController : MonoBehaviour
         }
     }
 
-    // 旧互換API
+    // 新API：フラスコ＋ラベルを必ず生成
     public void SetElementId(string symbol)
     {
         elementSymbol = symbol;
-        if (env != null) env.SetElementId(atomId, symbol);
+        if (env != null)
+        {
+            env.SetElementId(atomId, symbol);
+            env.SpawnFlaskLook(symbol);
+            env.SpawnOrUpdateLabel(symbol);
+        }
     }
+
     public void ApplyToShaders() { if (env != null) env.ApplyToShaders(); }
     public void SetIsotope(int mass) { isotopeMass = mass; if (env != null) env.SetIsotope(atomId, mass); }
     public void SetCharge(int q) { charge = q; if (env != null) env.SetCharge(atomId, q); }

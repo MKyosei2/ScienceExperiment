@@ -96,7 +96,7 @@ public class ChemEnvironmentManager : MonoBehaviour
     }
 
     // ====== ラベル生成 ======
-    private void SpawnOrUpdateLabel(string elementSym)
+    public void SpawnOrUpdateLabel(string elementSym)
     {
         if (elementLabelPrefab == null || labelParent == null) return;
 
@@ -207,16 +207,6 @@ public class ChemEnvironmentManager : MonoBehaviour
                 }
             }
         }
-    }
-
-    // ====== Commit系 ======
-    public string pendingAtomId;
-    public string pendingElement;
-
-    public void CommitAddAtom()
-    {
-        AddAtom(pendingAtomId, pendingElement, 0, 0);
-        Relayout("auto");
     }
 
     // ====== Reset ======
