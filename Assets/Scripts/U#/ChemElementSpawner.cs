@@ -1,5 +1,5 @@
 ﻿// ChemElementSpawner.cs
-// 元素ボタン用スパウナ：CONICAL_FLASK を ExperimentTable に複数生成し、元素IDと環境参照を付与
+// UdonSharp制約対応：Instantiate/AddComponent禁止。事前に用意したオブジェクト群を有効化するだけ。
 
 #if UNITY_EDITOR || UNITY_STANDALONE || UNITY_ANDROID
 #define CHEM_RUNTIME
@@ -16,35 +16,40 @@ public class ChemElementSpawner : UdonSharpBehaviour
 public class ChemElementSpawner : MonoBehaviour
 #endif
 {
-    [Header("生成プレハブ")]
-    public GameObject conicalFlaskPrefab;
+    [Header("Pool（事前にHierarchyへ配置し非表示）")]
+    public GameObject[] spawnPool;            // ここにChemVisualController付きのオブジェクトを並べておく
+    public ChemEnvironmentManager envManager; // Manager参照（必須）
+    public string elementId = "C";            // 追加時の初期元素
+    private int cursor = 0;
 
-    [Header("配置先（ExperimentTable）")]
-    public Transform experimentTable;
-
-    [Header("環境マネージャ参照（シーン上の1つ）")]
-    public ChemEnvironmentManager envManager;
-
-    [Header("配置オフセット")]
-    public Vector3 localPositionOffset = Vector3.zero;
-    public Vector3 localEulerOffset = Vector3.zero;
-
-    // Udon ボタン等から呼ぶ
-    public void SpawnElementWithId(string elementId)
+    public void SpawnOne()
     {
-        if (conicalFlaskPrefab == null || experimentTable == null) return;
+        int i = NextInactiveIndex();
+        if (i < 0) return; // プール満杯
 
-        var go = Instantiate(conicalFlaskPrefab);
-        go.transform.SetParent(experimentTable, false);
-        go.transform.localPosition = localPositionOffset;
-        go.transform.localEulerAngles = localEulerOffset;
+        GameObject go = spawnPool[i];
+        go.SetActive(true);
 
-        var ctrl = go.GetComponent<ChemVisualController>();
+        // 事前付与の ChemVisualController を利用（AddComponent禁止）
+        ChemVisualController ctrl = go.GetComponent<ChemVisualController>();
         if (ctrl != null)
         {
-            ctrl.env = envManager;          // マネージャを付与（static禁止対策）
-            ctrl.SetElementId(elementId);   // 記号を設定→即時シェーダ更新
-            ctrl.ApplyToShaders();
+            ctrl.env = envManager;
+            ctrl.SetElementId(elementId);
         }
+
+        if (envManager != null) envManager.Relayout("auto");
+    }
+
+    private int NextInactiveIndex()
+    {
+        int n = spawnPool != null ? spawnPool.Length : 0;
+        int k = 0;
+        for (k = 0; k < n; k++)
+        {
+            int idx = (cursor + k) % n;
+            if (spawnPool[idx] != null && !spawnPool[idx].activeSelf) { cursor = (idx + 1) % n; return idx; }
+        }
+        return -1;
     }
 }
