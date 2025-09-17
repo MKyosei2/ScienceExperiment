@@ -4,6 +4,9 @@
 // ・TextMeshProの font/alignment は Inspector で事前設定
 // ・公開API：AddAtom/RemoveAtom/SetElementId/SetIsotope/SetCharge/ApplyToShaders
 //             AddBond/UpdateBond/RemoveBond/Relayout
+// ・UIボタン連携（引数なし）：CommitAddAtom/CommitSetElement/CommitSetIsotope/CommitSetCharge/StartExperiment/ResetAll
+// ・フラスコ見た目切替：ApplyFlaskLookFrom
+// ・ワールドFX制御：ShowWorldFx/HideWorldFx/HideAllWorldFx
 
 #if UNITY_EDITOR || UNITY_STANDALONE || UNITY_ANDROID
 #define CHEM_RUNTIME
@@ -308,7 +311,7 @@ public class ChemEnvironmentManager : MonoBehaviour
 
         if (label != null)
         {
-            label.text = atomElements[i];           // どの元素記号でも表示可（任意文字列）
+            label.text = atomElements[i];           // 任意の元素記号を表示
             label.color = ElementColor(atomElements[i]);
         }
         if (aux != null)
@@ -489,5 +492,114 @@ public class ChemEnvironmentManager : MonoBehaviour
         if (el == "S") return new Color(.88f, .77f, .25f);
         if (el == "Cl") return new Color(.38f, .75f, .48f);
         return Color.white;
+    }
+
+    // ================== ここから追記：UIボタン連携用のバッファ＆ノー引数イベント ==================
+
+    [Header("UI Buffer (VRC_Trigger: Set Program Variable でセット)")]
+    public string pendingAtomId;     // 例: "H1"
+    public string pendingElement;    // 例: "H", "O", "C", …
+    public int pendingMassNumber; // 例: 0 (=未指定)
+    public int pendingCharge;     // 例: 0
+
+    // AddAtom の引数なし版（ボタンからはこれだけ呼ぶ）
+    public void CommitAddAtom()
+    {
+        if (string.IsNullOrEmpty(pendingAtomId) || string.IsNullOrEmpty(pendingElement)) return;
+        AddAtom(pendingAtomId, pendingElement, pendingMassNumber, pendingCharge);
+        Relayout("auto");
+        ApplyFlaskLookFrom(pendingElement);
+    }
+
+    // 既存原子の元素変更（引数なし）
+    public void CommitSetElement()
+    {
+        if (string.IsNullOrEmpty(pendingAtomId) || string.IsNullOrEmpty(pendingElement)) return;
+        SetElementId(pendingAtomId, pendingElement);
+        Relayout("auto");
+        ApplyFlaskLookFrom(pendingElement);
+    }
+
+    public void CommitSetIsotope()
+    {
+        if (string.IsNullOrEmpty(pendingAtomId)) return;
+        SetIsotope(pendingAtomId, pendingMassNumber);
+        Relayout("auto");
+    }
+
+    public void CommitSetCharge()
+    {
+        if (string.IsNullOrEmpty(pendingAtomId)) return;
+        SetCharge(pendingAtomId, pendingCharge);
+        Relayout("auto");
+    }
+
+    // ------------------ フラスコ内 見た目の切替（事前に用意したオブジェクトをON/OFF） ------------------
+    [Header("Flask Looks (elementKeysとflaskLooksは同じ長さ・同じ並び)")]
+    public string[] elementKeys;   // 例: ["H","O","C","Na","Cl"]
+    public GameObject[] flaskLooks;   // 例: [Liquid_H, Liquid_O, …] ※Prefabで非表示にしておく
+
+    public void ApplyFlaskLookFrom(string elementSym)
+    {
+        if (flaskLooks == null || elementKeys == null) return;
+        int n = flaskLooks.Length;
+        for (int i = 0; i < n; i++) if (flaskLooks[i] != null) flaskLooks[i].SetActive(false);
+        int idx = -1;
+        for (int i = 0; i < n; i++) { if (elementKeys[i] == elementSym) { idx = i; break; } }
+        if (idx >= 0 && flaskLooks[idx] != null) flaskLooks[idx].SetActive(true);
+    }
+
+    // ==== 実験開始（PCボタン用のダミー; ルールはワールドに合わせて編集） ====
+    public void StartExperiment()
+    {
+        // 例：環境値に応じた分岐で AddBond/UpdateBond などを呼ぶ
+        // if (hasCatalyst && temp > 60f) { AddBond("b1","C1","O1",2,"covalent"); }
+        Relayout("auto");
+    }
+
+    // ==== リセット（分子・フラスコ見た目・ワールドFXを初期化） ====
+    public void ResetAll()
+    {
+        // 分子表示オフ
+        for (int i = 0; i < atomRoots.Length; i++)
+        {
+            if (atomRoots[i] != null) atomRoots[i].SetActive(false);
+            atomIds[i] = null; atomElements[i] = null; atomMass[i] = 0; atomCharge[i] = 0; atomUsed[i] = false;
+        }
+        for (int b = 0; b < bondRoots.Length; b++)
+        {
+            if (bondRoots[b] != null) bondRoots[b].SetActive(false);
+            SetBondLineEnabled(bondLine0, b, false);
+            SetBondLineEnabled(bondLine1, b, false);
+            SetBondLineEnabled(bondLine2, b, false);
+            bondIds[b] = null; bondOrder[b] = 0; bondType[b] = 0; bondUsed[b] = false;
+        }
+        // フラスコ見た目OFF
+        if (flaskLooks != null) for (int i = 0; i < flaskLooks.Length; i++) if (flaskLooks[i] != null) flaskLooks[i].SetActive(false);
+        // ワールドFXOFF
+        HideAllWorldFx();
+    }
+
+    // ==== ワールド側FX（任意; シーンに置いたFXをON/OFF） ====
+    [Header("World FX Pool (optional)")]
+    public GameObject[] worldFxSlots;   // シーンに置いたFX群（非表示で用意）
+
+    public void ShowWorldFx(int index)
+    {
+        if (worldFxSlots == null) return;
+        if (index < 0 || index >= worldFxSlots.Length) return;
+        if (worldFxSlots[index] != null) worldFxSlots[index].SetActive(true);
+    }
+    public void HideWorldFx(int index)
+    {
+        if (worldFxSlots == null) return;
+        if (index < 0 || index >= worldFxSlots.Length) return;
+        if (worldFxSlots[index] != null) worldFxSlots[index].SetActive(false);
+    }
+    public void HideAllWorldFx()
+    {
+        if (worldFxSlots == null) return;
+        for (int i = 0; i < worldFxSlots.Length; i++)
+            if (worldFxSlots[i] != null) worldFxSlots[i].SetActive(false);
     }
 }
