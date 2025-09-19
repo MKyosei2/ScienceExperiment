@@ -92,7 +92,7 @@ MonoBehaviour:
       Data: 5|UnityEngine.HeaderAttribute, UnityEngine.CoreModule
     - Name: header
       Entry: 1
-      Data: Player View
+      Data: "Player View (MainCamera\u3092\u5272\u5F53)"
     - Name: 
       Entry: 8
       Data: 
@@ -155,7 +155,7 @@ MonoBehaviour:
       Data: 9|UnityEngine.HeaderAttribute, UnityEngine.CoreModule
     - Name: header
       Entry: 1
-      Data: Prefabs
+      Data: "Prefabs (Assets/Prefabs\u5185\u306E\u30A2\u30BB\u30C3\u30C8\u3092\u5272\u5F53)"
     - Name: 
       Entry: 8
       Data: 
@@ -464,7 +464,7 @@ MonoBehaviour:
       Data: 24|UnityEngine.HeaderAttribute, UnityEngine.CoreModule
     - Name: header
       Entry: 1
-      Data: Parents
+      Data: "Parents (Hierarchy\u4E0A\u306E\u7A7A\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u3092\u5272\u5F53)"
     - Name: 
       Entry: 8
       Data: 
@@ -671,7 +671,7 @@ MonoBehaviour:
       Data: 34|UnityEngine.HeaderAttribute, UnityEngine.CoreModule
     - Name: header
       Entry: 1
-      Data: "Max Counts (\u56FA\u5B9A)"
+      Data: Max Counts
     - Name: 
       Entry: 8
       Data: 

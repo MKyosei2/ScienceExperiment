@@ -1,9 +1,5 @@
 ﻿// ChemEnvironmentManager.cs
-// - UdonSharp対応版
-// - 元素ボタンでフラスコPrefabと空中ラベルを生成
-// - AtomPrefab/BondPrefabをInstantiateして増やせる
-// - 最大: 原子50個 / 結合100本
-// - 旧API互換を維持
+// 実験環境の中枢。フラスコ生成・ラベル生成・原子/結合管理を行う。
 
 #if UNITY_EDITOR || UNITY_STANDALONE || UNITY_ANDROID
 #define CHEM_RUNTIME
@@ -22,30 +18,29 @@ public class ChemEnvironmentManager : UdonSharpBehaviour
 public class ChemEnvironmentManager : MonoBehaviour
 #endif
 {
-    [Header("Player View")]
+    [Header("Player View (MainCameraを割当)")]
     public Transform playerView;
 
-    [Header("Prefabs")]
+    [Header("Prefabs (Assets/Prefabs内のアセットを割当)")]
     public string[] elementKeys;
     public GameObject[] flaskPrefabs;
     public GameObject defaultFlaskPrefab;
     public GameObject elementLabelPrefab;
-    public GameObject atomPrefab; // 小さなAtom(TextMeshProつき)
-    public GameObject bondPrefab; // Bond(LineRendererつき)
+    public GameObject atomPrefab;
+    public GameObject bondPrefab;
 
-    [Header("Parents")]
+    [Header("Parents (Hierarchy上の空オブジェクトを割当)")]
     public Transform flaskParent;
     public Transform labelParent;
     public Transform atomsParent;
     public Transform bondsParent;
 
-    [Header("Max Counts (固定)")]
+    [Header("Max Counts")]
     public int maxAtoms = 50;
     public int maxBonds = 100;
 
-    // 内部
+    // 内部管理
     private GameObject activeLabel;
-
     private string[] atomIds;
     private GameObject[] atomObjs;
     private int atomCount = 0;
@@ -59,7 +54,6 @@ public class ChemEnvironmentManager : MonoBehaviour
     {
         atomIds = new string[maxAtoms];
         atomObjs = new GameObject[maxAtoms];
-
         bondObjs = new GameObject[maxBonds];
         bondA = new string[maxBonds];
         bondB = new string[maxBonds];
@@ -69,54 +63,64 @@ public class ChemEnvironmentManager : MonoBehaviour
     {
         if (activeLabel != null && playerView != null)
         {
-            Vector3 forward = playerView.forward;
-            activeLabel.transform.rotation = Quaternion.LookRotation(forward, Vector3.up);
+            activeLabel.transform.rotation =
+                Quaternion.LookRotation(playerView.forward, Vector3.up);
         }
     }
 
     // ====== フラスコ生成 ======
     public void SpawnFlaskLook(string elementSym)
     {
-        int idx = -1;
+        GameObject prefab = defaultFlaskPrefab;
+
+        // elementKeys と flaskPrefabs が対応しているかチェック
         for (int i = 0; i < elementKeys.Length; i++)
         {
-            if (elementKeys[i] == elementSym) { idx = i; break; }
+            if (elementKeys[i] == elementSym && i < flaskPrefabs.Length)
+            {
+                prefab = flaskPrefabs[i];
+                break;
+            }
         }
 
-        GameObject prefab = null;
-        if (idx >= 0 && flaskPrefabs != null && idx < flaskPrefabs.Length)
-            prefab = flaskPrefabs[idx];
-        if (prefab == null) prefab = defaultFlaskPrefab;
-
-        if (prefab != null && flaskParent != null)
+        if (prefab == null || flaskParent == null)
         {
-            GameObject go = Instantiate(prefab, flaskParent);
-            go.SetActive(true);
+            Debug.LogWarning("[ChemEnvironmentManager] SpawnFlaskLook: prefab/parent missing");
+            return;
         }
+
+        GameObject go = Instantiate(prefab, flaskParent);
+        go.SetActive(true);
+        Debug.Log("[ChemEnvironmentManager] SpawnFlaskLook: spawned " + elementSym);
     }
 
     // ====== ラベル生成 ======
     public void SpawnOrUpdateLabel(string elementSym)
     {
-        if (elementLabelPrefab == null || labelParent == null) return;
+        if (elementLabelPrefab == null || labelParent == null)
+        {
+            Debug.LogWarning("[ChemEnvironmentManager] SpawnOrUpdateLabel: prefab/parent missing");
+            return;
+        }
 
         if (activeLabel == null)
         {
             activeLabel = Instantiate(elementLabelPrefab, labelParent);
+            Debug.Log("[ChemEnvironmentManager] SpawnOrUpdateLabel: new label created");
         }
 
         TextMeshPro tmp = activeLabel.GetComponent<TextMeshPro>();
         if (tmp != null) tmp.text = elementSym;
+
         activeLabel.SetActive(true);
+        Debug.Log("[ChemEnvironmentManager] SpawnOrUpdateLabel: updated label to " + elementSym);
     }
 
     // ====== Atom管理 ======
     private int FindAtomIndex(string id)
     {
         for (int i = 0; i < atomCount; i++)
-        {
             if (atomIds[i] == id) return i;
-        }
         return -1;
     }
 
@@ -137,6 +141,7 @@ public class ChemEnvironmentManager : MonoBehaviour
         atomObjs[atomCount] = atomObj;
         atomCount++;
 
+        Debug.Log("[ChemEnvironmentManager] AddAtom: " + id + " (" + element + ")");
         SpawnFlaskLook(element);
         SpawnOrUpdateLabel(element);
     }
@@ -145,8 +150,11 @@ public class ChemEnvironmentManager : MonoBehaviour
     {
         int idx = FindAtomIndex(id);
         if (idx < 0) return;
+
         TextMeshPro tmp = atomObjs[idx].GetComponentInChildren<TextMeshPro>();
         if (tmp != null) tmp.text = element;
+
+        Debug.Log("[ChemEnvironmentManager] SetElementId: " + id + " -> " + element);
         SpawnOrUpdateLabel(element);
     }
 
@@ -180,6 +188,8 @@ public class ChemEnvironmentManager : MonoBehaviour
         bondA[bondCount] = idA;
         bondB[bondCount] = idB;
         bondCount++;
+
+        Debug.Log("[ChemEnvironmentManager] AddBond: " + idA + " - " + idB);
     }
 
     public void Relayout(string hint)
@@ -213,9 +223,8 @@ public class ChemEnvironmentManager : MonoBehaviour
     public void ResetAll()
     {
         if (flaskParent != null)
-        {
             foreach (Transform c in flaskParent) Destroy(c.gameObject);
-        }
+
         if (activeLabel != null) Destroy(activeLabel);
 
         for (int i = 0; i < atomCount; i++) Destroy(atomObjs[i]);
@@ -223,5 +232,7 @@ public class ChemEnvironmentManager : MonoBehaviour
 
         for (int i = 0; i < bondCount; i++) Destroy(bondObjs[i]);
         bondCount = 0;
+
+        Debug.Log("[ChemEnvironmentManager] ResetAll done");
     }
 }

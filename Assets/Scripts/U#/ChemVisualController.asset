@@ -98,7 +98,7 @@ MonoBehaviour:
       Data: 6|UnityEngine.HeaderAttribute, UnityEngine.CoreModule
     - Name: header
       Entry: 1
-      Data: "Manager (\u5FC5\u305AInspector\u3067\u6307\u5B9A)"
+      Data: "Manager (Inspector\u3067\u5FC5\u305A\u5272\u5F53)"
     - Name: 
       Entry: 8
       Data: 
