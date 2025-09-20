@@ -1,6 +1,6 @@
 ﻿// ChemVisualController.cs
-// 役割：元素ボタン/オブジェクトから呼ばれ、ChemEnvironmentManager に元素セットを伝える。
-// Udon準拠：FindObjectOfType は使用しない（Inspector で env を割り当てる）。
+// 元素Prefabにアタッチする制御。Elementが設定されたらChemEnvironmentManagerに通知して
+// フラスコ生成＋ラベル表示を行う。
 
 #if UNITY_EDITOR || UNITY_STANDALONE || UNITY_ANDROID
 #define CHEM_RUNTIME
@@ -17,48 +17,47 @@ public class ChemVisualController : UdonSharpBehaviour
 public class ChemVisualController : MonoBehaviour
 #endif
 {
-    [Header("Env")]
-    [Tooltip("シーン内の ChemEnvironmentManager を Inspector で割り当ててください")]
+    [Header("Manager (Inspectorで必ず割当)")]
     public ChemEnvironmentManager env;
 
-    [Header("State")]
-    [SerializeField] private string atomId = "A1";
-    [SerializeField] private string elementSymbol = "H";
+    [SerializeField] private string atomId = "";
+    [SerializeField] private string elementSymbol = "C";
     [SerializeField] private int isotopeMass = 0;
     [SerializeField] private int charge = 0;
 
     void Start()
     {
         if (string.IsNullOrEmpty(atomId)) atomId = gameObject.name;
+
+        if (env != null)
+        {
+            Debug.Log("[ChemVisualController] Start: AddAtom " + atomId + " (" + elementSymbol + ")");
+            env.AddAtom(atomId, elementSymbol, isotopeMass, charge);
+        }
+        else
+        {
+            Debug.LogWarning("[ChemVisualController] Start: env not assigned!");
+        }
     }
 
-    // UI（元素ボタン）から呼ぶ
+    // 元素をセット（ここでフラスコ＋ラベルも生成）
     public void SetElementId(string symbol)
     {
         elementSymbol = symbol;
-        if (env == null)
+        if (env != null)
         {
-            Debug.LogWarning("[ChemVisualController] env not assigned (Inspector で設定してください)");
-            return;
+            Debug.Log("[ChemVisualController] SetElementId called: " + atomId + " -> " + symbol);
+            env.SetElementId(atomId, symbol);
+            env.SpawnFlaskLook(symbol);
+            env.SpawnOrUpdateLabel(symbol);
         }
-
-        env.SetElementId(atomId, symbol); // フラスコ／液体／二枚目を更新
+        else
+        {
+            Debug.LogWarning("[ChemVisualController] SetElementId: env not assigned!");
+        }
     }
 
-    public void ApplyToShaders()
-    {
-        if (env != null) env.ApplyToShaders();
-    }
-
-    public void SetIsotope(int mass)
-    {
-        isotopeMass = mass;
-        if (env != null) env.SetIsotope(atomId, mass);
-    }
-
-    public void SetCharge(int q)
-    {
-        charge = q;
-        if (env != null) env.SetCharge(atomId, q);
-    }
+    public void ApplyToShaders() { if (env != null) env.ApplyToShaders(); }
+    public void SetIsotope(int mass) { isotopeMass = mass; if (env != null) env.SetIsotope(atomId, mass); }
+    public void SetCharge(int q) { charge = q; if (env != null) env.SetCharge(atomId, q); }
 }
