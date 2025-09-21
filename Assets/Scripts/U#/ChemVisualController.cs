@@ -1,63 +1,73 @@
-﻿// ChemVisualController.cs
-// 元素Prefabにアタッチする制御。Elementが設定されたらChemEnvironmentManagerに通知して
-// フラスコ生成＋ラベル表示を行う。
+﻿// ==================================
+// ChemVisualController.cs
+// UdonSharp で安全に動作するバージョン
+// Inspector に elementMaterials を割り当て、要素ごとに差し替える
+// ==================================
 
-#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_ANDROID
-#define CHEM_RUNTIME
-#endif
-
-using UnityEngine;
-#if CHEM_RUNTIME
 using UdonSharp;
-#endif
+using UnityEngine;
+using VRC.SDKBase;
+using VRC.Udon;
 
-#if CHEM_RUNTIME
 public class ChemVisualController : UdonSharpBehaviour
-#else
-public class ChemVisualController : MonoBehaviour
-#endif
 {
-    [Header("Manager (Inspectorで必ず割当)")]
-    public ChemEnvironmentManager env;
+    [Header("▼ 元素ごとのマテリアル (WireframeFX.shader を使ったものをアサイン)")]
+    [Tooltip("UIボタンの index に対応して割り当て。未設定 index は defaultMaterial を使用")]
+    public Material[] elementMaterials;
 
-    [SerializeField] private string atomId = "";
-    [SerializeField] private string elementSymbol = "C";
-    [SerializeField] private int isotopeMass = 0;
-    [SerializeField] private int charge = 0;
+    [Header("▼ デフォルトマテリアル")]
+    public Material defaultMaterial;
 
-    void Start()
+    /// <summary>
+    /// 指定のフラスコに、元素のマテリアルを適用する
+    /// </summary>
+    public void ApplyElementVisual(GameObject conicalFlaskRoot, int elementId)
     {
-        if (string.IsNullOrEmpty(atomId)) atomId = gameObject.name;
+        if (conicalFlaskRoot == null) return;
 
-        if (env != null)
+        Material mat = defaultMaterial;
+        if (elementId >= 0 && elementId < elementMaterials.Length && elementMaterials[elementId] != null)
         {
-            Debug.Log("[ChemVisualController] Start: AddAtom " + atomId + " (" + elementSymbol + ")");
-            env.AddAtom(atomId, elementSymbol, isotopeMass, charge);
+            mat = elementMaterials[elementId];
         }
-        else
+
+        MeshRenderer[] renders = conicalFlaskRoot.GetComponentsInChildren<MeshRenderer>(true);
+        if (renders == null || renders.Length == 0) return;
+
+        for (int r = 0; r < renders.Length; r++)
         {
-            Debug.LogWarning("[ChemVisualController] Start: env not assigned!");
+            MeshRenderer mr = renders[r];
+            if (mr == null) continue;
+
+            Material[] shared = mr.sharedMaterials;
+            for (int i = 0; i < shared.Length; i++)
+            {
+                shared[i] = mat;
+            }
+            mr.sharedMaterials = shared;
         }
     }
 
-    // 元素をセット（ここでフラスコ＋ラベルも生成）
-    public void SetElementId(string symbol)
+    /// <summary>
+    /// 液体を消す（リセット時に呼ぶ）
+    /// </summary>
+    public void ClearLiquid(GameObject conicalFlaskRoot)
     {
-        elementSymbol = symbol;
-        if (env != null)
+        if (conicalFlaskRoot == null) return;
+        MeshRenderer[] renders = conicalFlaskRoot.GetComponentsInChildren<MeshRenderer>(true);
+        if (renders == null) return;
+
+        for (int r = 0; r < renders.Length; r++)
         {
-            Debug.Log("[ChemVisualController] SetElementId called: " + atomId + " -> " + symbol);
-            env.SetElementId(atomId, symbol);
-            env.SpawnFlaskLook(symbol);
-            env.SpawnOrUpdateLabel(symbol);
-        }
-        else
-        {
-            Debug.LogWarning("[ChemVisualController] SetElementId: env not assigned!");
+            MeshRenderer mr = renders[r];
+            if (mr == null) continue;
+
+            Material[] mats = mr.sharedMaterials;
+            for (int i = 0; i < mats.Length; i++)
+            {
+                mats[i] = defaultMaterial;
+            }
+            mr.sharedMaterials = mats;
         }
     }
-
-    public void ApplyToShaders() { if (env != null) env.ApplyToShaders(); }
-    public void SetIsotope(int mass) { isotopeMass = mass; if (env != null) env.SetIsotope(atomId, mass); }
-    public void SetCharge(int q) { charge = q; if (env != null) env.SetCharge(atomId, q); }
 }

@@ -1,55 +1,85 @@
-﻿// ChemElementSpawner.cs
-// UdonSharp制約対応：Instantiate/AddComponent禁止。事前に用意したオブジェクト群を有効化するだけ。
+﻿// ===============================
+// ChemElementSpawner.cs
+// VRCSDK3 + UdonSharp 前提
+// ===============================
 
-#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_ANDROID
-#define CHEM_RUNTIME
-#endif
-
-using UnityEngine;
-#if CHEM_RUNTIME
 using UdonSharp;
-#endif
+using UnityEngine;
+using VRC.SDKBase;
+using VRC.Udon;
 
-#if CHEM_RUNTIME
 public class ChemElementSpawner : UdonSharpBehaviour
-#else
-public class ChemElementSpawner : MonoBehaviour
-#endif
 {
-    [Header("Pool（事前にHierarchyへ配置し非表示）")]
-    public GameObject[] spawnPool;            // ここにChemVisualController付きのオブジェクトを並べておく
-    public ChemEnvironmentManager envManager; // Manager参照（必須）
-    public string elementId = "C";            // 追加時の初期元素
-    private int cursor = 0;
+    [Header("▼ 生成するフラスコ（CONICAL_FLASK）")]
+    public GameObject conicalFlaskPrefab;
 
-    public void SpawnOne()
+    [Header("▼ 生成位置/親")]
+    public Transform spawnPoint;
+    public Transform parentRoot;
+
+    [Header("▼ 見た目適用（別スクリプト）")]
+    public ChemVisualController visualController;
+
+    [Header("▼ オプション")]
+    public bool replaceIfExists = true;
+
+    private GameObject _currentFlask;
+
+    public void SpawnElement(int elementId)
     {
-        int i = NextInactiveIndex();
-        if (i < 0) return; // プール満杯
-
-        GameObject go = spawnPool[i];
-        go.SetActive(true);
-
-        // 事前付与の ChemVisualController を利用（AddComponent禁止）
-        ChemVisualController ctrl = go.GetComponent<ChemVisualController>();
-        if (ctrl != null)
+        if (_currentFlask != null)
         {
-            ctrl.env = envManager;
-            ctrl.SetElementId(elementId);
+            if (!replaceIfExists) return;
+
+            if (!Networking.IsOwner(_currentFlask))
+            {
+                var lp = Networking.LocalPlayer;
+                if (lp != null) Networking.SetOwner(lp, _currentFlask);
+            }
+            Networking.Destroy(_currentFlask);
+            _currentFlask = null;
         }
 
-        if (envManager != null) envManager.Relayout("auto");
+        Transform baseTf = (spawnPoint != null) ? spawnPoint : this.transform;
+        Vector3 pos = baseTf.position;
+        Quaternion rot = baseTf.rotation;
+        Transform parent = (parentRoot != null) ? parentRoot : null;
+
+        if (conicalFlaskPrefab == null)
+        {
+            Debug.LogError("[ChemElementSpawner] conicalFlaskPrefab が未設定です。");
+            return;
+        }
+
+        _currentFlask = VRCInstantiate(conicalFlaskPrefab);
+        if (_currentFlask == null)
+        {
+            Debug.LogError("[ChemElementSpawner] フラスコ生成に失敗しました。");
+            return;
+        }
+
+        _currentFlask.transform.SetPositionAndRotation(pos, rot);
+        if (parent != null) _currentFlask.transform.SetParent(parent, true);
+
+        if (visualController != null)
+        {
+            visualController.ApplyElementVisual(_currentFlask, elementId);
+        }
     }
 
-    private int NextInactiveIndex()
+    public void ResetExperiment()
     {
-        int n = spawnPool != null ? spawnPool.Length : 0;
-        int k = 0;
-        for (k = 0; k < n; k++)
+        if (_currentFlask != null)
         {
-            int idx = (cursor + k) % n;
-            if (spawnPool[idx] != null && !spawnPool[idx].activeSelf) { cursor = (idx + 1) % n; return idx; }
+            if (visualController != null) visualController.ClearLiquid(_currentFlask);
+
+            if (!Networking.IsOwner(_currentFlask))
+            {
+                var lp = Networking.LocalPlayer;
+                if (lp != null) Networking.SetOwner(lp, _currentFlask);
+            }
+            Networking.Destroy(_currentFlask);
+            _currentFlask = null;
         }
-        return -1;
     }
 }
