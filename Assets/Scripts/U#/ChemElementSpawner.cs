@@ -1,85 +1,36 @@
-﻿// ===============================
-// ChemElementSpawner.cs
-// VRCSDK3 + UdonSharp 前提
-// ===============================
-
-using UdonSharp;
+﻿using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
 
 public class ChemElementSpawner : UdonSharpBehaviour
 {
-    [Header("▼ 生成するフラスコ（CONICAL_FLASK）")]
-    public GameObject conicalFlaskPrefab;
+    [Header("▼ 生成するフラスコ（複数登録可）")]
+    public GameObject[] flaskPrefabs;
 
     [Header("▼ 生成位置/親")]
     public Transform spawnPoint;
     public Transform parentRoot;
 
-    [Header("▼ 見た目適用（別スクリプト）")]
+    [Header("▼ 共通見た目制御")]
     public ChemVisualController visualController;
 
-    [Header("▼ オプション")]
-    public bool replaceIfExists = true;
-
-    private GameObject _currentFlask;
-
-    public void SpawnElement(int elementId)
+    public void SpawnElement(int prefabId, int elementId)
     {
-        if (_currentFlask != null)
-        {
-            if (!replaceIfExists) return;
+        if (prefabId < 0 || prefabId >= flaskPrefabs.Length) return;
+        GameObject prefab = flaskPrefabs[prefabId];
+        if (prefab == null) return;
 
-            if (!Networking.IsOwner(_currentFlask))
-            {
-                var lp = Networking.LocalPlayer;
-                if (lp != null) Networking.SetOwner(lp, _currentFlask);
-            }
-            Networking.Destroy(_currentFlask);
-            _currentFlask = null;
-        }
+        GameObject flask = VRCInstantiate(prefab);
+        if (flask == null) return;
 
         Transform baseTf = (spawnPoint != null) ? spawnPoint : this.transform;
-        Vector3 pos = baseTf.position;
-        Quaternion rot = baseTf.rotation;
-        Transform parent = (parentRoot != null) ? parentRoot : null;
-
-        if (conicalFlaskPrefab == null)
-        {
-            Debug.LogError("[ChemElementSpawner] conicalFlaskPrefab が未設定です。");
-            return;
-        }
-
-        _currentFlask = VRCInstantiate(conicalFlaskPrefab);
-        if (_currentFlask == null)
-        {
-            Debug.LogError("[ChemElementSpawner] フラスコ生成に失敗しました。");
-            return;
-        }
-
-        _currentFlask.transform.SetPositionAndRotation(pos, rot);
-        if (parent != null) _currentFlask.transform.SetParent(parent, true);
+        flask.transform.SetPositionAndRotation(baseTf.position, baseTf.rotation);
+        if (parentRoot != null) flask.transform.SetParent(parentRoot, true);
 
         if (visualController != null)
         {
-            visualController.ApplyElementVisual(_currentFlask, elementId);
-        }
-    }
-
-    public void ResetExperiment()
-    {
-        if (_currentFlask != null)
-        {
-            if (visualController != null) visualController.ClearLiquid(_currentFlask);
-
-            if (!Networking.IsOwner(_currentFlask))
-            {
-                var lp = Networking.LocalPlayer;
-                if (lp != null) Networking.SetOwner(lp, _currentFlask);
-            }
-            Networking.Destroy(_currentFlask);
-            _currentFlask = null;
+            visualController.ApplyElementVisual(flask, elementId, 0.98f, 1.0f);
         }
     }
 }

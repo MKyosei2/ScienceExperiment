@@ -1,73 +1,62 @@
-﻿// ==================================
-// ChemVisualController.cs
-// UdonSharp で安全に動作するバージョン
-// Inspector に elementMaterials を割り当て、要素ごとに差し替える
-// ==================================
-
-using UdonSharp;
+﻿using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
 
 public class ChemVisualController : UdonSharpBehaviour
 {
-    [Header("▼ 元素ごとのマテリアル (WireframeFX.shader を使ったものをアサイン)")]
-    [Tooltip("UIボタンの index に対応して割り当て。未設定 index は defaultMaterial を使用")]
-    public Material[] elementMaterials;
+    [Header("▼ 共通ベースマテリアル (WireframeFX.shader をアサイン)")]
+    public Material sharedLiquidMaterial;
 
-    [Header("▼ デフォルトマテリアル")]
-    public Material defaultMaterial;
+    [Header("▼ 元素ごとの色")]
+    public Color[] elementColors;
+    public Color defaultElementColor = Color.white;
 
-    /// <summary>
-    /// 指定のフラスコに、元素のマテリアルを適用する
-    /// </summary>
-    public void ApplyElementVisual(GameObject conicalFlaskRoot, int elementId)
+    [Header("▼ 液体の共通パラメータ")]
+    public float baseFoamWidth = 0.02f;
+    public float baseTurbidity = 0.1f;
+    public float baseHeatAmount = 0.0f;
+
+    public void ApplyElementVisual(GameObject flaskRoot, int elementId, float fill, float alpha)
     {
-        if (conicalFlaskRoot == null) return;
+        if (flaskRoot == null || sharedLiquidMaterial == null) return;
 
-        Material mat = defaultMaterial;
-        if (elementId >= 0 && elementId < elementMaterials.Length && elementMaterials[elementId] != null)
-        {
-            mat = elementMaterials[elementId];
-        }
+        // 元素の色
+        Color liquid = defaultElementColor;
+        if (elementId >= 0 && elementId < elementColors.Length)
+            liquid = elementColors[elementId];
 
-        MeshRenderer[] renders = conicalFlaskRoot.GetComponentsInChildren<MeshRenderer>(true);
-        if (renders == null || renders.Length == 0) return;
-
-        for (int r = 0; r < renders.Length; r++)
-        {
-            MeshRenderer mr = renders[r];
-            if (mr == null) continue;
-
-            Material[] shared = mr.sharedMaterials;
-            for (int i = 0; i < shared.Length; i++)
-            {
-                shared[i] = mat;
-            }
-            mr.sharedMaterials = shared;
-        }
-    }
-
-    /// <summary>
-    /// 液体を消す（リセット時に呼ぶ）
-    /// </summary>
-    public void ClearLiquid(GameObject conicalFlaskRoot)
-    {
-        if (conicalFlaskRoot == null) return;
-        MeshRenderer[] renders = conicalFlaskRoot.GetComponentsInChildren<MeshRenderer>(true);
+        MeshRenderer[] renders = flaskRoot.GetComponentsInChildren<MeshRenderer>(true);
         if (renders == null) return;
 
+        // 共通PropertyBlock設定
+        MaterialPropertyBlock mpb = new MaterialPropertyBlock();
+        mpb.SetColor("_LiquidColor", liquid);
+        mpb.SetFloat("_LiquidAlpha", Mathf.Clamp01(alpha));
+        mpb.SetFloat("_FillLevel", Mathf.Clamp01(fill));
+        mpb.SetFloat("_FoamWidth", baseFoamWidth);
+        mpb.SetFloat("_Turbidity", baseTurbidity);
+        mpb.SetFloat("_HeatAmount", baseHeatAmount);
+
         for (int r = 0; r < renders.Length; r++)
         {
             MeshRenderer mr = renders[r];
             if (mr == null) continue;
+            mr.sharedMaterial = sharedLiquidMaterial;
+            mr.SetPropertyBlock(mpb);
+        }
 
-            Material[] mats = mr.sharedMaterials;
-            for (int i = 0; i < mats.Length; i++)
+        // 複数の挙動スクリプトに通知
+        FlaskBehaviour[] behaviours = flaskRoot.GetComponentsInChildren<FlaskBehaviour>(true);
+        if (behaviours != null)
+        {
+            for (int i = 0; i < behaviours.Length; i++)
             {
-                mats[i] = defaultMaterial;
+                if (behaviours[i] != null)
+                {
+                    behaviours[i].OnElementApplied(elementId);
+                }
             }
-            mr.sharedMaterials = mats;
         }
     }
 }
