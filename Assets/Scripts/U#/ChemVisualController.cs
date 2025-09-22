@@ -59,4 +59,21 @@ public class ChemVisualController : UdonSharpBehaviour
             }
         }
     }
+
+    // PCモードで実験開始ボタンから呼ぶ
+    public void ActivateBehaviours(GameObject flaskRoot)
+    {
+        if (flaskRoot == null) return;
+        FlaskBehaviour[] behaviours = flaskRoot.GetComponentsInChildren<FlaskBehaviour>(true);
+        if (behaviours != null)
+        {
+            for (int i = 0; i < behaviours.Length; i++)
+            {
+                if (behaviours[i] != null)
+                {
+                    behaviours[i].Activate();
+                }
+            }
+        }
+    }
 }

@@ -15,6 +15,8 @@ public class ChemElementSpawner : UdonSharpBehaviour
     [Header("▼ 共通見た目制御")]
     public ChemVisualController visualController;
 
+    private GameObject lastFlask; // 実験開始ボタン用に保持
+
     public void SpawnElement(int prefabId, int elementId)
     {
         if (prefabId < 0 || prefabId >= flaskPrefabs.Length) return;
@@ -28,9 +30,20 @@ public class ChemElementSpawner : UdonSharpBehaviour
         flask.transform.SetPositionAndRotation(baseTf.position, baseTf.rotation);
         if (parentRoot != null) flask.transform.SetParent(parentRoot, true);
 
+        lastFlask = flask;
+
         if (visualController != null)
         {
             visualController.ApplyElementVisual(flask, elementId, 0.98f, 1.0f);
+        }
+    }
+
+    // 実験開始ボタンから呼ぶ
+    public void StartExperiment()
+    {
+        if (lastFlask != null && visualController != null)
+        {
+            visualController.ActivateBehaviours(lastFlask);
         }
     }
 }

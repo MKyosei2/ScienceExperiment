@@ -4,16 +4,16 @@ using UnityEngine;
 public class MixingBehaviour : FlaskBehaviour
 {
     public Transform liquidSurface;
-    private bool isActive = false;
 
     public override void OnElementApplied(int elementId)
     {
-        isActive = true;
+        base.OnElementApplied(elementId);
     }
 
     public override void Update()
     {
-        if (isActive && liquidSurface != null)
+        if (!isActive) return;
+        if (liquidSurface != null)
         {
             float angle = Mathf.Sin(Time.time * 2f) * 10f;
             liquidSurface.localRotation = Quaternion.Euler(0, 0, angle);
