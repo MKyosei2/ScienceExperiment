@@ -21,7 +21,6 @@ public class ChemVisualController : UdonSharpBehaviour
     {
         if (flaskRoot == null || sharedLiquidMaterial == null) return;
 
-        // 元素の色
         Color liquid = defaultElementColor;
         if (elementId >= 0 && elementId < elementColors.Length)
             liquid = elementColors[elementId];
@@ -29,7 +28,6 @@ public class ChemVisualController : UdonSharpBehaviour
         MeshRenderer[] renders = flaskRoot.GetComponentsInChildren<MeshRenderer>(true);
         if (renders == null) return;
 
-        // 共通PropertyBlock設定
         MaterialPropertyBlock mpb = new MaterialPropertyBlock();
         mpb.SetColor("_LiquidColor", liquid);
         mpb.SetFloat("_LiquidAlpha", Mathf.Clamp01(alpha));
@@ -60,7 +58,7 @@ public class ChemVisualController : UdonSharpBehaviour
         }
     }
 
-    // PCモードで実験開始ボタンから呼ぶ
+    // PCモードで実験開始時に呼ばれる
     public void ActivateBehaviours(GameObject flaskRoot)
     {
         if (flaskRoot == null) return;

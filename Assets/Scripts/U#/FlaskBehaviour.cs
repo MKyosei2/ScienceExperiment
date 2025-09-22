@@ -4,19 +4,18 @@ using VRC.SDKBase;
 
 public class FlaskBehaviour : UdonSharpBehaviour
 {
-    protected bool isActive = false; // Update実行フラグ
+    protected bool isActive = false;
 
     // 元素が適用された瞬間に呼ばれる
     public virtual void OnElementApplied(int elementId)
     {
-        // VRモードなら即アクティブ化
         if (Networking.LocalPlayer != null && Networking.LocalPlayer.IsUserInVR())
         {
-            isActive = true;
+            isActive = true; // VRは即開始
         }
     }
 
-    // PCモードで実験開始ボタンから呼ばれる
+    // PCモードで共通ボタンから有効化
     public void Activate()
     {
         isActive = true;

@@ -419,11 +419,12 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 130639183}
-  env: {fileID: 1736823508}
-  atomId: 
-  elementSymbol: C
-  isotopeMass: 0
-  charge: 0
+  sharedLiquidMaterial: {fileID: 0}
+  elementColors: []
+  defaultElementColor: {r: 1, g: 1, b: 1, a: 1}
+  baseFoamWidth: 0.02
+  baseTurbidity: 0.1
+  baseHeatAmount: 0
 --- !u!114 &130639183
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -1274,8 +1275,6 @@ GameObject:
   - component: {fileID: 310333462}
   - component: {fileID: 310333461}
   - component: {fileID: 310333465}
-  - component: {fileID: 310333467}
-  - component: {fileID: 310333464}
   - component: {fileID: 310333466}
   m_Layer: 5
   m_Name: StartButton
@@ -1370,32 +1369,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 310333459}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &310333464
-MonoBehaviour:
-  m_ObjectHideFlags: 2
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 310333459}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45115577ef41a5b4ca741ed302693907, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  interactTextPlacement: {fileID: 0}
-  interactText: Use
-  interactTextGO: {fileID: 0}
-  proximity: 2
-  SynchronizePosition: 0
-  AllowCollisionOwnershipTransfer: 0
-  Reliable: 0
-  _syncMethod: 2
-  serializedProgramAsset: {fileID: 11400000, guid: 2077a72c6015cab449a1945840ba021c,
-    type: 2}
-  programSource: {fileID: 11400000, guid: 0e8581ee9c326564c90d2a46448b7f39, type: 2}
-  serializedPublicVariablesBytesString: Ai8AAAAAATIAAABWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgAuAFUAZABvAG4AVgBhAHIAaQBhAGIAbABlAFQAYQBiAGwAZQAsACAAVgBSAEMALgBVAGQAbwBuAC4AQwBvAG0AbQBvAG4AAAAAAAYBAAAAAAAAACcBBAAAAHQAeQBwAGUAAWgAAABTAHkAcwB0AGUAbQAuAEMAbwBsAGwAZQBjAHQAaQBvAG4AcwAuAEcAZQBuAGUAcgBpAGMALgBMAGkAcwB0AGAAMQBbAFsAVgBSAEMALgBVAGQAbwBuAC4AQwBvAG0AbQBvAG4ALgBJAG4AdABlAHIAZgBhAGMAZQBzAC4ASQBVAGQAbwBuAFYAYQByAGkAYQBiAGwAZQAsACAAVgBSAEMALgBVAGQAbwBuAC4AQwBvAG0AbQBvAG4AXQBdACwAIABtAHMAYwBvAHIAbABpAGIAAQEJAAAAVgBhAHIAaQBhAGIAbABlAHMALwEAAAABaAAAAFMAeQBzAHQAZQBtAC4AQwBvAGwAbABlAGMAdABpAG8AbgBzAC4ARwBlAG4AZQByAGkAYwAuAEwAaQBzAHQAYAAxAFsAWwBWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgAuAEkAbgB0AGUAcgBmAGEAYwBlAHMALgBJAFUAZABvAG4AVgBhAHIAaQBhAGIAbABlACwAIABWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgBdAF0ALAAgAG0AcwBjAG8AcgBsAGkAYgABAAAABgEAAAAAAAAAAi8CAAAAAUkAAABWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgAuAFUAZABvAG4AVgBhAHIAaQBhAGIAbABlAGAAMQBbAFsAUwB5AHMAdABlAG0ALgBJAG4AdAAzADIALAAgAG0AcwBjAG8AcgBsAGkAYgBdAF0ALAAgAFYAUgBDAC4AVQBkAG8AbgAuAEMAbwBtAG0AbwBuAAIAAAAGAgAAAAAAAAAnAQQAAAB0AHkAcABlAAEXAAAAUwB5AHMAdABlAG0ALgBTAHQAcgBpAG4AZwAsACAAbQBzAGMAbwByAGwAaQBiACcBCgAAAFMAeQBtAGIAbwBsAE4AYQBtAGUAAR8AAABfAF8AXwBVAGQAbwBuAFMAaABhAHIAcABCAGUAaABhAHYAaQBvAHUAcgBWAGUAcgBzAGkAbwBuAF8AXwBfACcBBAAAAHQAeQBwAGUAARYAAABTAHkAcwB0AGUAbQAuAEkAbgB0ADMAMgAsACAAbQBzAGMAbwByAGwAaQBiABcBBQAAAFYAYQBsAHUAZQACAAAABwUHBQcF
-  publicVariablesUnityEngineObjects: []
-  publicVariablesSerializationDataFormat: 0
 --- !u!114 &310333465
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1445,29 +1418,6 @@ MonoBehaviour:
   serializedPublicVariablesBytesString: Ai8AAAAAATIAAABWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgAuAFUAZABvAG4AVgBhAHIAaQBhAGIAbABlAFQAYQBiAGwAZQAsACAAVgBSAEMALgBVAGQAbwBuAC4AQwBvAG0AbQBvAG4AAAAAAAYBAAAAAAAAACcBBAAAAHQAeQBwAGUAAWgAAABTAHkAcwB0AGUAbQAuAEMAbwBsAGwAZQBjAHQAaQBvAG4AcwAuAEcAZQBuAGUAcgBpAGMALgBMAGkAcwB0AGAAMQBbAFsAVgBSAEMALgBVAGQAbwBuAC4AQwBvAG0AbQBvAG4ALgBJAG4AdABlAHIAZgBhAGMAZQBzAC4ASQBVAGQAbwBuAFYAYQByAGkAYQBiAGwAZQAsACAAVgBSAEMALgBVAGQAbwBuAC4AQwBvAG0AbQBvAG4AXQBdACwAIABtAHMAYwBvAHIAbABpAGIAAQEJAAAAVgBhAHIAaQBhAGIAbABlAHMALwEAAAABaAAAAFMAeQBzAHQAZQBtAC4AQwBvAGwAbABlAGMAdABpAG8AbgBzAC4ARwBlAG4AZQByAGkAYwAuAEwAaQBzAHQAYAAxAFsAWwBWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgAuAEkAbgB0AGUAcgBmAGEAYwBlAHMALgBJAFUAZABvAG4AVgBhAHIAaQBhAGIAbABlACwAIABWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgBdAF0ALAAgAG0AcwBjAG8AcgBsAGkAYgABAAAABgEAAAAAAAAAAi8CAAAAAUkAAABWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgAuAFUAZABvAG4AVgBhAHIAaQBhAGIAbABlAGAAMQBbAFsAUwB5AHMAdABlAG0ALgBJAG4AdAAzADIALAAgAG0AcwBjAG8AcgBsAGkAYgBdAF0ALAAgAFYAUgBDAC4AVQBkAG8AbgAuAEMAbwBtAG0AbwBuAAIAAAAGAgAAAAAAAAAnAQQAAAB0AHkAcABlAAEXAAAAUwB5AHMAdABlAG0ALgBTAHQAcgBpAG4AZwAsACAAbQBzAGMAbwByAGwAaQBiACcBCgAAAFMAeQBtAGIAbwBsAE4AYQBtAGUAAR8AAABfAF8AXwBVAGQAbwBuAFMAaABhAHIAcABCAGUAaABhAHYAaQBvAHUAcgBWAGUAcgBzAGkAbwBuAF8AXwBfACcBBAAAAHQAeQBwAGUAARYAAABTAHkAcwB0AGUAbQAuAEkAbgB0ADMAMgAsACAAbQBzAGMAbwByAGwAaQBiABcBBQAAAFYAYQBsAHUAZQACAAAABwUHBQcF
   publicVariablesUnityEngineObjects: []
   publicVariablesSerializationDataFormat: 0
---- !u!114 &310333467
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 310333459}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 14b3ae2e80c790d4daf3569349928890, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  serializationData:
-    SerializedFormat: 2
-    SerializedBytes: 
-    ReferencedUnityObjects: []
-    SerializedBytesString: 
-    Prefab: {fileID: 0}
-    PrefabModificationsReferencedUnityObjects: []
-    PrefabModifications: []
-    SerializationNodes: []
-  _udonSharpBackingUdonBehaviour: {fileID: 310333464}
-  orchestrator: {fileID: 0}
 --- !u!1 &403665265
 GameObject:
   m_ObjectHideFlags: 0
@@ -1866,11 +1816,12 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 582782476}
-  env: {fileID: 1736823508}
-  atomId: 
-  elementSymbol: C
-  isotopeMass: 0
-  charge: 0
+  sharedLiquidMaterial: {fileID: 0}
+  elementColors: []
+  defaultElementColor: {r: 1, g: 1, b: 1, a: 1}
+  baseFoamWidth: 0.02
+  baseTurbidity: 0.1
+  baseHeatAmount: 0
 --- !u!114 &582782476
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -2382,11 +2333,12 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 655071415}
-  env: {fileID: 1736823508}
-  atomId: 
-  elementSymbol: C
-  isotopeMass: 0
-  charge: 0
+  sharedLiquidMaterial: {fileID: 0}
+  elementColors: []
+  defaultElementColor: {r: 1, g: 1, b: 1, a: 1}
+  baseFoamWidth: 0.02
+  baseTurbidity: 0.1
+  baseHeatAmount: 0
 --- !u!114 &655071415
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -3376,11 +3328,12 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 988082356}
-  env: {fileID: 1736823508}
-  atomId: 
-  elementSymbol: C
-  isotopeMass: 0
-  charge: 0
+  sharedLiquidMaterial: {fileID: 0}
+  elementColors: []
+  defaultElementColor: {r: 1, g: 1, b: 1, a: 1}
+  baseFoamWidth: 0.02
+  baseTurbidity: 0.1
+  baseHeatAmount: 0
 --- !u!114 &988082356
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -4473,11 +4426,12 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1456703505}
-  env: {fileID: 1736823508}
-  atomId: 
-  elementSymbol: C
-  isotopeMass: 0
-  charge: 0
+  sharedLiquidMaterial: {fileID: 0}
+  elementColors: []
+  defaultElementColor: {r: 1, g: 1, b: 1, a: 1}
+  baseFoamWidth: 0.02
+  baseTurbidity: 0.1
+  baseHeatAmount: 0
 --- !u!114 &1456703505
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -4624,14 +4578,10 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1547665053}
-  spawnPool:
-  - {fileID: 130639180}
-  - {fileID: 1456703502}
-  - {fileID: 988082353}
-  - {fileID: 582782473}
-  - {fileID: 655071412}
-  envManager: {fileID: 1736823508}
-  elementId: C
+  instrumentPrefabs: []
+  spawnPoint: {fileID: 0}
+  parentRoot: {fileID: 0}
+  visualController: {fileID: 0}
 --- !u!1 &1643151928
 GameObject:
   m_ObjectHideFlags: 0
@@ -5801,11 +5751,12 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1938266825}
-  env: {fileID: 1736823508}
-  atomId: 
-  elementSymbol: C
-  isotopeMass: 0
-  charge: 0
+  sharedLiquidMaterial: {fileID: 0}
+  elementColors: []
+  defaultElementColor: {r: 1, g: 1, b: 1, a: 1}
+  baseFoamWidth: 0.02
+  baseTurbidity: 0.1
+  baseHeatAmount: 0
 --- !u!1 &1995492018
 GameObject:
   m_ObjectHideFlags: 0
@@ -16743,9 +16694,10 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5048810974434459419}
-  spawnPool: []
-  envManager: {fileID: 1736823508}
-  elementId: C
+  instrumentPrefabs: []
+  spawnPoint: {fileID: 0}
+  parentRoot: {fileID: 0}
+  visualController: {fileID: 0}
 --- !u!23 &5074351435831980590
 MeshRenderer:
   m_ObjectHideFlags: 0
