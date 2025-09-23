@@ -1,25 +1,22 @@
 ﻿using UdonSharp;
 using UnityEngine;
+using VRC.SDKBase;
+using VRC.Udon;
 
-[AddComponentMenu("VRC Lab/ResetExperimentButton")]
+/// <summary>
+/// 実験リセットボタン。物理的に押すと Orchestrator の ResetExperiment() を呼ぶ。
+/// </summary>
 public class ResetExperimentButton : UdonSharpBehaviour
 {
-    public SelectedObjectHolder selected;
-    public Transform elementZone, toolZone, conditionZone;
+    [Header("▼ Orchestrator参照")]
+    public ExperimentOrchestrator orchestrator;
 
-    public override void Interact() { ResetAll(); }
-
-    public void ResetAll()
+    public override void Interact()
     {
-        DestroyChildren(elementZone);
-        DestroyChildren(toolZone);
-        DestroyChildren(conditionZone);
-        if (selected != null) selected.ClearAll();
-    }
-
-    private void DestroyChildren(Transform t)
-    {
-        if (t == null) return;
-        for (int i = t.childCount - 1; i >= 0; i--) GameObject.Destroy(t.GetChild(i).gameObject);
+        if (orchestrator != null)
+        {
+            Debug.Log("[ResetExperimentButton] ResetExperiment triggered");
+            orchestrator.ResetExperiment();
+        }
     }
 }

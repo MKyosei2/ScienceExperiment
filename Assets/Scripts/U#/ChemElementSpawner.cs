@@ -2,88 +2,260 @@
 using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
+using TMPro;
 
+/// <summary>
+/// 元素を押したときにフラスコ・ラベルを生成し、結合情報を管理する
+/// </summary>
 public class ChemElementSpawner : UdonSharpBehaviour
 {
-    [Header("▼ 生成する実験器具（複数登録可）")]
+    [Header("▼ 実験器具Prefab（フラスコ等）")]
     public GameObject[] instrumentPrefabs;
 
-    [Header("▼ 生成位置/親")]
-    public Transform spawnPoint;
-    public Transform parentRoot;
+    [Header("▼ ラベルPrefab (TextMeshPro)")]
+    public GameObject labelPrefab;
+    public Transform labelParent;
+
+    [Header("▼ 結合Prefab")]
+    public GameObject singleBondPrefab;
+    public GameObject doubleBondPrefab;
+    public GameObject tripleBondPrefab;
+    public Transform bondParent;
 
     [Header("▼ 共通見た目制御")]
     public ChemVisualController visualController;
 
-    // 動的に増える管理用配列
-    private GameObject[] activeInstruments = new GameObject[8];
-    private int instrumentCount = 0;
+    [Header("▼ AI連携")]
+    public AIRequestSender aiSender;
 
-    public void SpawnElement(int prefabId, int elementId)
+    private GameObject[] activeInstruments = new GameObject[8];
+    private GameObject[] activeLabels = new GameObject[32];
+    private GameObject[] activeBonds = new GameObject[64];
+    private int elementCount = 0;
+    private int bondCount = 0;
+
+    private float spacing = 1.2f;
+    private Vector2[] directions = new Vector2[]
+    {
+        Vector2.up, Vector2.down, Vector2.left, Vector2.right
+    };
+
+    public void SpawnElementWithButton(GameObject elementButton, int prefabId)
+    {
+        if (elementButton == null) return;
+        string elementName = elementButton.name;
+
+        SpawnElement(prefabId, elementName);
+
+        if (aiSender != null)
+        {
+            string json = BuildMoleculeJson();
+            aiSender.SendMoleculeRequest(json, this);
+        }
+    }
+
+    private void SpawnElement(int prefabId, string elementLabel)
     {
         if (prefabId < 0 || prefabId >= instrumentPrefabs.Length) return;
         GameObject prefab = instrumentPrefabs[prefabId];
         if (prefab == null) return;
 
-        GameObject instrument = VRCInstantiate(prefab);
-        if (instrument == null) return;
+        Vector3 pos = Vector3.zero;
+        int baseIndex = -1;
 
-        Transform baseTf = (spawnPoint != null) ? spawnPoint : this.transform;
-        instrument.transform.SetPositionAndRotation(baseTf.position, baseTf.rotation);
-        if (parentRoot != null) instrument.transform.SetParent(parentRoot, true);
-
-        RegisterInstrument(instrument);
-
-        if (visualController != null)
+        if (elementCount > 0)
         {
-            visualController.ApplyElementVisual(instrument, elementId, 0.98f, 1.0f);
+            bool placed = false;
+            int safety = 100;
+            while (!placed && safety-- > 0)
+            {
+                baseIndex = Random.Range(0, elementCount);
+                GameObject baseLabel = activeLabels[baseIndex];
+                if (baseLabel == null) continue;
+
+                Vector2 dir = directions[Random.Range(0, directions.Length)];
+                pos = baseLabel.transform.localPosition + new Vector3(dir.x, dir.y, 0) * spacing;
+
+                if (!IsPositionOccupied(pos)) placed = true;
+            }
         }
+
+        // ラベル生成
+        GameObject label = null;
+        if (labelPrefab != null)
+        {
+            label = VRCInstantiate(labelPrefab);
+            if (labelParent != null) label.transform.SetParent(labelParent, false);
+            label.transform.localPosition = pos;
+
+            TextMeshPro tmp = label.GetComponent<TextMeshPro>();
+            if (tmp != null) tmp.text = elementLabel;
+
+            RegisterLabel(label, elementCount);
+
+            if (baseIndex >= 0)
+            {
+                GameObject bond = VRCInstantiate(singleBondPrefab);
+                if (bondParent != null) bond.transform.SetParent(bondParent, false);
+                UpdateBond(bond, activeLabels[baseIndex].transform, label.transform);
+                RegisterBond(bond);
+            }
+        }
+
+        // フラスコ生成
+        GameObject instrument = VRCInstantiate(prefab);
+        if (instrument != null)
+        {
+            Vector3 basePos = (labelParent != null) ? labelParent.position : Vector3.zero;
+            instrument.transform.position = basePos + new Vector3(0, -2.5f, 0);
+
+            RegisterInstrument(instrument, elementCount);
+
+            if (visualController != null)
+            {
+                visualController.ApplyElementVisual(instrument, 0, 0.98f, 1.0f);
+            }
+        }
+
+        elementCount++;
     }
 
-    // 配列に追加（必要なら拡張）
-    private void RegisterInstrument(GameObject obj)
+    public void ApplyBondUpdate(int atomA, int atomB, int bondType)
     {
-        if (instrumentCount >= activeInstruments.Length)
+        if (atomA < 0 || atomA >= elementCount) return;
+        if (atomB < 0 || atomB >= elementCount) return;
+
+        GameObject prefab = singleBondPrefab;
+        if (bondType == 2) prefab = doubleBondPrefab;
+        else if (bondType == 3) prefab = tripleBondPrefab;
+
+        GameObject bond = VRCInstantiate(prefab);
+        if (bondParent != null) bond.transform.SetParent(bondParent, false);
+        UpdateBond(bond, activeLabels[atomA].transform, activeLabels[atomB].transform);
+        RegisterBond(bond);
+    }
+
+    private void UpdateBond(GameObject bond, Transform a, Transform b)
+    {
+        Vector3 mid = (a.localPosition + b.localPosition) / 2f;
+        Vector3 dir = b.localPosition - a.localPosition;
+        float dist = dir.magnitude;
+
+        bond.transform.localPosition = mid;
+        bond.transform.localRotation = Quaternion.FromToRotation(Vector3.up, dir.normalized);
+        bond.transform.localScale = new Vector3(0.1f, dist * 0.5f, 0.1f);
+    }
+
+    private bool IsPositionOccupied(Vector3 pos)
+    {
+        for (int i = 0; i < elementCount; i++)
         {
-            GameObject[] newArray = new GameObject[activeInstruments.Length * 2];
+            if (activeLabels[i] != null)
+            {
+                float dist = Vector3.Distance(activeLabels[i].transform.localPosition, pos);
+                if (dist < spacing * 0.5f) return true;
+            }
+        }
+        return false;
+    }
+
+    private void RegisterInstrument(GameObject obj, int index)
+    {
+        EnsureCapacity(index);
+        activeInstruments[index] = obj;
+    }
+
+    private void RegisterLabel(GameObject obj, int index)
+    {
+        EnsureCapacity(index);
+        activeLabels[index] = obj;
+    }
+
+    private void RegisterBond(GameObject obj)
+    {
+        if (bondCount >= activeBonds.Length)
+        {
+            GameObject[] newBonds = new GameObject[activeBonds.Length * 2];
+            for (int i = 0; i < activeBonds.Length; i++) newBonds[i] = activeBonds[i];
+            activeBonds = newBonds;
+        }
+        activeBonds[bondCount++] = obj;
+    }
+
+    private void EnsureCapacity(int index)
+    {
+        if (index >= activeInstruments.Length)
+        {
+            int newSize = activeInstruments.Length * 2;
+            GameObject[] newInst = new GameObject[newSize];
+            GameObject[] newLbl = new GameObject[newSize];
             for (int i = 0; i < activeInstruments.Length; i++)
             {
-                newArray[i] = activeInstruments[i];
+                newInst[i] = activeInstruments[i];
+                newLbl[i] = activeLabels[i];
             }
-            activeInstruments = newArray;
+            activeInstruments = newInst;
+            activeLabels = newLbl;
         }
-
-        activeInstruments[instrumentCount] = obj;
-        instrumentCount++;
     }
 
-    // 共通「実験開始ボタン」から呼ばれる
+    private string BuildMoleculeJson()
+    {
+        string json = "{ \"atoms\":[";
+        for (int i = 0; i < elementCount; i++)
+        {
+            if (activeLabels[i] != null)
+            {
+                string name = activeLabels[i].GetComponent<TextMeshPro>().text;
+                json += "\"" + name + "\"";
+                if (i < elementCount - 1) json += ",";
+            }
+        }
+        json += "], \"bonds\":[] }";
+        return json;
+    }
+
+    public string SendMoleculeJson()
+    {
+        return BuildMoleculeJson();
+    }
+
     public void StartExperiment()
     {
         if (visualController == null) return;
-
-        for (int i = 0; i < instrumentCount; i++)
+        for (int i = 0; i < elementCount; i++)
         {
-            GameObject inst = activeInstruments[i];
-            if (inst != null)
+            if (activeInstruments[i] != null)
             {
-                visualController.ActivateBehaviours(inst);
+                visualController.ActivateBehaviours(activeInstruments[i]);
             }
         }
     }
 
-    // 共通「リセットボタン」から呼ばれる
     public void ResetExperiment()
     {
-        for (int i = 0; i < instrumentCount; i++)
+        for (int i = 0; i < elementCount; i++)
         {
-            GameObject inst = activeInstruments[i];
-            if (inst != null)
+            if (activeInstruments[i] != null)
             {
-                Destroy(inst);
+                Destroy(activeInstruments[i]);
                 activeInstruments[i] = null;
             }
+            if (activeLabels[i] != null)
+            {
+                Destroy(activeLabels[i]);
+                activeLabels[i] = null;
+            }
         }
-        instrumentCount = 0;
+        for (int j = 0; j < bondCount; j++)
+        {
+            if (activeBonds[j] != null)
+            {
+                Destroy(activeBonds[j]);
+                activeBonds[j] = null;
+            }
+        }
+        elementCount = 0;
+        bondCount = 0;
     }
 }

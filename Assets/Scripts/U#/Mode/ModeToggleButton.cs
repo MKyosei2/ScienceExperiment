@@ -1,14 +1,22 @@
 ﻿using UdonSharp;
 using UnityEngine;
-using TMPro;
+using VRC.SDKBase;
+using VRC.Udon;
 
-[AddComponentMenu("VRC Lab/Mode/ModeToggleButton")]
+/// <summary>
+/// PCモード／VRモード切替ボタン。物理的に押すと Orchestrator の ToggleMode() を呼ぶ。
+/// </summary>
 public class ModeToggleButton : UdonSharpBehaviour
 {
-    public ModeRouter router;
-    public TextMeshProUGUI label;
+    [Header("▼ Orchestrator参照")]
+    public ExperimentOrchestrator orchestrator;
 
-    public override void Interact() { if (router == null) return; router.Toggle(); UpdateLabel(); }
-    private void OnEnable() { UpdateLabel(); }
-    private void UpdateLabel() { if (label == null || router == null) return; label.text = router.IsVR() ? "Mode: VR" : "Mode: PC"; }
+    public override void Interact()
+    {
+        if (orchestrator != null)
+        {
+            orchestrator.ToggleMode();
+            Debug.Log("[ModeToggleButton] Mode changed: " + (orchestrator.isPCMode ? "PC Mode" : "VR Mode"));
+        }
+    }
 }
