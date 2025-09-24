@@ -4628,7 +4628,8 @@ MonoBehaviour:
     type: 3}
   atomPrefab: {fileID: 6254404509377364804, guid: e331a4c58681f5e41b0e0b921849dba8,
     type: 3}
-  bondPrefab: {fileID: 2145836921}
+  bondPrefab: {fileID: 3237113221362319385, guid: 5783123b61e0fa54588255f2e00d9139,
+    type: 3}
   flaskParent: {fileID: 1909120480}
   labelParent: {fileID: 1798061923}
   atomsParent: {fileID: 1088004954}
