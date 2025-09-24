@@ -1810,8 +1810,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 622968850}
-  router: {fileID: 727190511}
-  label: {fileID: 1848105860}
+  orchestrator: {fileID: 1643151937}
 --- !u!65 &622968852
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3195,9 +3194,18 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1051910569}
   instrumentPrefabs: []
-  spawnPoint: {fileID: 1094938491}
-  parentRoot: {fileID: 1909120480}
+  labelPrefab: {fileID: 3542206001891662832, guid: d3dbd444f4b55df4ca3f196feed3a449,
+    type: 3}
+  labelParent: {fileID: 1798061923}
+  singleBondPrefab: {fileID: 2659994487067948019, guid: 56419db52900adc44802b2b08296f136,
+    type: 3}
+  doubleBondPrefab: {fileID: 8801268427845913849, guid: 1473d4fc497d07944b2162b1be034bb9,
+    type: 3}
+  tripleBondPrefab: {fileID: 588438016400453414, guid: 298b1b1c5dfa38949b7e2088262d2d78,
+    type: 3}
+  bondParent: {fileID: 2145836922}
   visualController: {fileID: 1938266826}
+  aiSender: {fileID: 515541113}
 --- !u!1 &1088004953
 GameObject:
   m_ObjectHideFlags: 0
@@ -4227,11 +4235,9 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1643151938}
-  selected: {fileID: 1995492021}
-  ai: {fileID: 515541113}
-  visualPlayer: {fileID: 1121002400}
-  jsonPlayer: {fileID: 1816473597}
-  status: {fileID: 751382543}
+  elementSpawner: {fileID: 1051910570}
+  aiRequestSender: {fileID: 515541113}
+  isPCMode: 1
 --- !u!114 &1643151938
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -4622,8 +4628,7 @@ MonoBehaviour:
     type: 3}
   atomPrefab: {fileID: 6254404509377364804, guid: e331a4c58681f5e41b0e0b921849dba8,
     type: 3}
-  bondPrefab: {fileID: 3237113221362319385, guid: 5783123b61e0fa54588255f2e00d9139,
-    type: 3}
+  bondPrefab: {fileID: 2145836921}
   flaskParent: {fileID: 1909120480}
   labelParent: {fileID: 1798061923}
   atomsParent: {fileID: 1088004954}
@@ -4794,7 +4799,7 @@ Transform:
   m_GameObject: {fileID: 1798061922}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 2, z: 0}
+  m_LocalPosition: {x: -5, y: 2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5152,10 +5157,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1863452156}
-  selected: {fileID: 1995492021}
-  elementZone: {fileID: 2478369089057579867}
-  toolZone: {fileID: 1655153491828425540}
-  conditionZone: {fileID: 2117007362281109946}
+  orchestrator: {fileID: 1643151937}
 --- !u!65 &1863452158
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -16269,9 +16271,14 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5048810974434459419}
   instrumentPrefabs: []
-  spawnPoint: {fileID: 0}
-  parentRoot: {fileID: 0}
+  labelPrefab: {fileID: 0}
+  labelParent: {fileID: 0}
+  singleBondPrefab: {fileID: 0}
+  doubleBondPrefab: {fileID: 0}
+  tripleBondPrefab: {fileID: 0}
+  bondParent: {fileID: 0}
   visualController: {fileID: 0}
+  aiSender: {fileID: 0}
 --- !u!23 &5074351435831980590
 MeshRenderer:
   m_ObjectHideFlags: 0
