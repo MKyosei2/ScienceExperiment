@@ -1,38 +1,25 @@
 ﻿using UdonSharp;
 using UnityEngine;
-using VRC.SDKBase;
 
-[AddComponentMenu("VRC Lab/Mode/ModeRouter")]
 public class ModeRouter : UdonSharpBehaviour
 {
-    public bool manualOverride = true;
-    public bool currentIsVR = false;
+    private bool _isVR = false;
 
-    public ModeActivation[] targets;
-    public int targetCount = 0;
+    // 旧コード互換: 引数つき Register を残す
+    public void Register(object target = null)
+    {
+        Debug.Log("[ModeRouter] Register called (target=" + (target != null ? target.ToString() : "null") + ")");
+    }
 
+    // ★メソッド形式の判定だけを提供（プロパティは置かない）
     public bool IsVR()
     {
-        if (manualOverride) return currentIsVR;
-        var lp = Networking.LocalPlayer; return (lp != null && lp.IsUserInVR());
+        return _isVR;
     }
 
-    public void Toggle() { manualOverride = true; currentIsVR = !currentIsVR; ApplyToAll(); }
-    public void ForcePC() { manualOverride = true; currentIsVR = false; ApplyToAll(); }
-    public void ForceVR() { manualOverride = true; currentIsVR = true; ApplyToAll(); }
-    public void SetAuto() { manualOverride = false; ApplyToAll(); }
-
-    public void ApplyToAll()
+    public void Toggle()
     {
-        bool isVR = IsVR();
-        for (int i = 0; i < targetCount; i++) { var t = targets[i]; if (t != null) t.ApplyModeFromRouter(this, isVR); }
-    }
-
-    public void Register(ModeActivation m)
-    {
-        if (m == null) return;
-        for (int i = 0; i < targetCount; i++) if (targets[i] == m) return;
-        if (targets == null || targetCount >= targets.Length) return;
-        targets[targetCount] = m; targetCount++;
+        _isVR = !_isVR;
+        Debug.Log("[ModeRouter] モード切替: " + (_isVR ? "VR" : "PC"));
     }
 }
