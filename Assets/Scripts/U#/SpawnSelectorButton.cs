@@ -3,18 +3,28 @@ using UnityEngine;
 
 public class SpawnSelectorButton : UdonSharpBehaviour
 {
-    public SelectionCategory category;     // ← string ではなく SelectionCategory 型
+    public SelectionCategory category;   // Element / Compound / Equipment
     public ChemElementSpawner elementSpawner;
+    public ChemEnvironmentManager environmentManager;
     public int elementIndex;
     public bool isCompound;
+    public int equipmentIndex; // 器具選択用
 
     public void Press()
     {
-        if (elementSpawner != null)
+        if (category == SelectionCategory.Equipment)
         {
-            elementSpawner.elementIndex = elementIndex;
-            elementSpawner.isCompound = isCompound;
-            elementSpawner.Spawn();
+            if (environmentManager != null)
+                environmentManager.SetEquipment(equipmentIndex);
+        }
+        else
+        {
+            if (elementSpawner != null)
+            {
+                elementSpawner.elementIndex = elementIndex;
+                elementSpawner.isCompound = isCompound;
+                elementSpawner.Spawn();
+            }
         }
     }
 }

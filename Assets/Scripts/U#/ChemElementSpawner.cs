@@ -5,7 +5,7 @@ public class ChemElementSpawner : UdonSharpBehaviour
 {
     public ChemEnvironmentManager environmentManager;
     public int elementIndex;
-    public bool isCompound;  // 元素か化合物か
+    public bool isCompound;
 
     public void Spawn()
     {

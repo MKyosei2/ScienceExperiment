@@ -1,22 +1,13 @@
 ﻿using UdonSharp;
 using UnityEngine;
-using VRC.SDKBase;
-using VRC.Udon;
 
-/// <summary>
-/// 実験開始ボタン。物理的に押すと Orchestrator の StartExperiment() を呼ぶ。
-/// </summary>
 public class StartExperimentButton : UdonSharpBehaviour
 {
-    [Header("▼ Orchestrator参照")]
-    public ExperimentOrchestrator orchestrator;
+    public ChemElementSpawner elementSpawner;
 
-    public override void Interact()
+    public void Press()
     {
-        if (orchestrator != null)
-        {
-            Debug.Log("[StartExperimentButton] StartExperiment triggered");
-            orchestrator.StartExperiment();
-        }
+        if (elementSpawner != null)
+            elementSpawner.StartExperiment();
     }
 }
