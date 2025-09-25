@@ -5,23 +5,19 @@ public class ChemElementSpawner : UdonSharpBehaviour
 {
     public ChemEnvironmentManager environmentManager;
     public int elementIndex;
+    public bool isCompound;  // 元素か化合物か
 
     public void Spawn()
     {
-        environmentManager.SpawnElement(elementIndex);
+        environmentManager.SpawnElement(elementIndex, isCompound);
     }
 
     public void StartExperiment()
     {
-        environmentManager.SpawnElement(elementIndex);
+        environmentManager.SpawnElement(elementIndex, isCompound);
     }
 
-    public string SendMoleculeJson()
-    {
-        return SendMoleculeJson("");
-    }
-
-    public string SendMoleculeJson(string json)
+    public string SendMoleculeJson(string json = "")
     {
         Debug.Log($"[ChemElementSpawner] Molecule JSON received: {json}");
         return json;
@@ -34,16 +30,16 @@ public class ChemElementSpawner : UdonSharpBehaviour
 
     public void ApplyBondUpdate(string updateJson)
     {
-        Debug.Log($"[ChemElementSpawner] Bond update (1 arg): {updateJson}");
+        Debug.Log($"[ChemElementSpawner] Bond update (JSON): {updateJson}");
     }
 
     public void ApplyBondUpdate(string atomA, string atomB, string bondType)
     {
-        Debug.Log($"[ChemElementSpawner] Bond update (3 args string): {atomA}-{atomB} ({bondType})");
+        Debug.Log($"[ChemElementSpawner] Bond update: {atomA}-{atomB} ({bondType})");
     }
 
     public void ApplyBondUpdate(int atomA, int atomB, int bondType)
     {
-        Debug.Log($"[ChemElementSpawner] Bond update (3 args int): {atomA}-{atomB} ({bondType})");
+        Debug.Log($"[ChemElementSpawner] Bond update (int): {atomA}-{atomB} ({bondType})");
     }
 }
