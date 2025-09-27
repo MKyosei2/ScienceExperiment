@@ -4,18 +4,19 @@ using TMPro;
 
 public class ChemEnvironmentManager : UdonSharpBehaviour
 {
-    [Header("必須プレハブ（統一してここだけに割当）")]
-    public GameObject conicalFlaskPrefab;       // ← 必ず CONICAL_FLASK を割当
-    public Transform formulaTextParent;         // 空の親（ラベル表示位置）
-    public GameObject formulaTextPrefab;        // TMP テキストのプレハブ
+    [Header("必須プレハブ")]
+    public GameObject conicalFlaskPrefab;
+    public Transform formulaTextParent;
+    public GameObject formulaTextPrefab;
 
     [Header("元素データ")]
-    public string[] elementKeys;                // 例: H, O, Na...
-    public string[] elementFormulas;            // 例: H₂, O₂, Na, ...
-    public Color[] elementColors;               // 実在色 or 指定色
+    public string[] elementKeys;
+    public string[] elementFormulas;
+    public Color[] elementColors;
 
-    [Header("環境パラメータ")]
+    [Header("環境パラメータ（デフォルト=現実世界）")]
     public float temperature = 20f;
+    public float humidity = 0.5f;
     public float pressure = 1f;
 
     private GameObject currentFlask;
@@ -24,49 +25,24 @@ public class ChemEnvironmentManager : UdonSharpBehaviour
     public void SpawnElement(int index)
     {
         if (index < 0 || index >= elementKeys.Length) return;
-        if (conicalFlaskPrefab == null)
-        {
-            Debug.LogError("[ChemEnvironmentManager] conicalFlaskPrefab 未設定");
-            return;
-        }
+        if (conicalFlaskPrefab == null) return;
 
-        // 既存を破棄
         if (currentFlask != null) Destroy(currentFlask);
 
-        // 常に CONICAL_FLASK だけを生成
         currentFlask = VRCInstantiate(conicalFlaskPrefab);
         currentFlask.transform.position = transform.position;
 
-        // Prefab に必ず ChemVisualController をアタッチしておくこと！
         currentVisual = currentFlask.GetComponent<ChemVisualController>();
         if (currentVisual == null)
         {
-            Debug.LogError("[ChemEnvironmentManager] Prefab に ChemVisualController が付いていません！");
+            Debug.LogError("[ChemEnvironmentManager] Prefab に ChemVisualController が必要です");
             return;
         }
 
-        // 見た目・環境反映
+        ElementState state = DetermineState(elementKeys[index], temperature);
         var col = (index < elementColors.Length) ? elementColors[index] : Color.white;
-        currentVisual.SetElementAppearance(col);
-        currentVisual.UpdateEnvironment(temperature, pressure);
-
-        // 化学式を表示
-        if (formulaTextPrefab != null && formulaTextParent != null)
-        {
-            // 既存の式を全消し
-            for (int i = formulaTextParent.childCount - 1; i >= 0; i--)
-                Destroy(formulaTextParent.GetChild(i).gameObject);
-
-            var textObj = VRCInstantiate(formulaTextPrefab);
-            textObj.transform.SetParent(formulaTextParent, false);
-
-            var tmp = textObj.GetComponent<TMP_Text>();
-            if (tmp != null)
-            {
-                string formula = (index < elementFormulas.Length) ? elementFormulas[index] : elementKeys[index];
-                tmp.text = formula;
-            }
-        }
+        currentVisual.SetElementAppearance(col, state);
+        currentVisual.UpdateEnvironment(temperature, humidity, pressure);
     }
 
     public void ResetExperiment()
@@ -77,22 +53,45 @@ public class ChemEnvironmentManager : UdonSharpBehaviour
             currentFlask = null;
             currentVisual = null;
         }
-        if (formulaTextParent != null)
-        {
-            for (int i = formulaTextParent.childCount - 1; i >= 0; i--)
-                Destroy(formulaTextParent.GetChild(i).gameObject);
-        }
     }
 
     public void AdjustTemperature(float delta)
     {
         temperature += delta;
-        if (currentVisual != null) currentVisual.UpdateEnvironment(temperature, pressure);
+        if (currentVisual != null) currentVisual.UpdateEnvironment(temperature, humidity, pressure);
+    }
+
+    public void AdjustHumidity(float delta)
+    {
+        humidity = Mathf.Clamp01(humidity + delta);
+        if (currentVisual != null) currentVisual.UpdateEnvironment(temperature, humidity, pressure);
     }
 
     public void AdjustPressure(float delta)
     {
-        pressure += delta;
-        if (currentVisual != null) currentVisual.UpdateEnvironment(temperature, pressure);
+        pressure = Mathf.Max(0.1f, pressure + delta);
+        if (currentVisual != null) currentVisual.UpdateEnvironment(temperature, humidity, pressure);
+    }
+
+    // --- 器具切替用（CategoryController 互換）---
+    public void SetEquipment(int index)
+    {
+        Debug.Log("[ChemEnvironmentManager] 器具切替: index=" + index);
+        // 今は ConicalFlask 固定。将来の拡張用
+    }
+
+    private ElementState DetermineState(string key, float temp)
+    {
+        key = key.ToLower();
+        if (key == "h2o")
+        {
+            if (temp <= 0) return ElementState.Solid;
+            if (temp >= 100) return ElementState.Gas;
+            return ElementState.Liquid;
+        }
+        if (key == "o2" || key == "n2" || key == "co2") return ElementState.Gas;
+        if (key == "nacl") return (temp >= 800) ? ElementState.Liquid : ElementState.Solid;
+        if (key == "cuso4") return ElementState.Solid;
+        return ElementState.Liquid;
     }
 }

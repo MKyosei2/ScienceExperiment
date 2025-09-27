@@ -1,7 +1,6 @@
 ﻿using UdonSharp;
 using UnityEngine;
 
-// 既存コードが参照するグローバル enum
 public enum SelectionCategory
 {
     Element,
@@ -9,10 +8,17 @@ public enum SelectionCategory
     Equipment,
     Tool,
     Condition,
-    Other
+    TemperatureUp,
+    TemperatureDown,
+    HumidityUp,
+    HumidityDown,
+    PressureUp,
+    PressureDown,
+    StartExperiment,
+    ModeToggle,
+    Reset
 }
 
-// UdonSharpProgramAsset が割り当てられても問題ないように
 [AddComponentMenu("VRC Lab/SelectorCategory")]
 public class SelectorCategory : UdonSharpBehaviour
 {

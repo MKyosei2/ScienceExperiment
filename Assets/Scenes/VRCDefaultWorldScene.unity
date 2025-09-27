@@ -1304,7 +1304,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 310333466}
-  orchestrator: {fileID: 1643151937}
+  spawner: {fileID: 0}
 --- !u!114 &310333466
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -1810,7 +1810,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 622968850}
-  orchestrator: {fileID: 1643151937}
+  modeRouter: {fileID: 0}
 --- !u!65 &622968852
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2455,10 +2455,6 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 727190510}
-  manualOverride: 1
-  currentIsVR: 0
-  targets: []
-  targetCount: 0
 --- !u!1 &751382541
 GameObject:
   m_ObjectHideFlags: 0
@@ -4734,9 +4730,9 @@ MonoBehaviour:
   - {r: 0.8, g: 0.8, b: 0.85, a: 1}
   - {r: 0.8, g: 0.8, b: 0.85, a: 1}
   - {r: 0.8, g: 0.8, b: 0.85, a: 1}
-  compoundKeys: []
-  compoundFormulas: []
-  compoundColors: []
+  temperature: 20
+  humidity: 0.5
+  pressure: 1
 --- !u!1 &1757845513
 GameObject:
   m_ObjectHideFlags: 0
@@ -5259,7 +5255,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1863452156}
-  orchestrator: {fileID: 1643151937}
+  spawner: {fileID: 0}
 --- !u!65 &1863452158
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5443,6 +5439,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1938266825}
+  currentState: 1
+  steamPrefab: {fileID: 0}
+  bubblePrefab: {fileID: 0}
+  mistPrefab: {fileID: 0}
+  dropletPrefab: {fileID: 0}
 --- !u!1 &1995492018
 GameObject:
   m_ObjectHideFlags: 0
@@ -11143,8 +11144,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 2852219638814583677}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!4 &2854541290156302677
 Transform:
   m_ObjectHideFlags: 0
@@ -11756,8 +11757,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 3164646082921691997}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!33 &3182828635985039273
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -13949,8 +13950,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 3891714517485923031}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!4 &3901889581242636149
 Transform:
   m_ObjectHideFlags: 0
@@ -14330,8 +14331,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 4178724726400125189}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!1 &4190557855272403726
 GameObject:
   m_ObjectHideFlags: 0
@@ -14566,8 +14567,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 4288267423663428089}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!23 &4288646086655877664
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -14751,10 +14752,10 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4299137227372267776}
-  category: 1
+  category: 2
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!1 &4316104654164404575
 GameObject:
   m_ObjectHideFlags: 0
@@ -14860,10 +14861,10 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4406972957729836033}
-  category: 1
+  category: 2
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!65 &4409701957736109847
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -15245,8 +15246,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 4650570778397916089}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!65 &4675774392745205859
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -15404,8 +15405,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 4692397505056685168}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!4 &4701222473918529538
 Transform:
   m_ObjectHideFlags: 0
@@ -15529,8 +15530,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 4800191965182096577}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!33 &4808193797631940588
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -15711,8 +15712,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 4886662974653763259}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!23 &4902558491584411282
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -15967,8 +15968,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 4963462307229479005}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!4 &4969286435179587009
 Transform:
   m_ObjectHideFlags: 0
@@ -16034,8 +16035,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 4969286435179587010}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!65 &4986898732440054923
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -16927,8 +16928,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 5394132675163300229}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!23 &5403560308074418784
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -17115,8 +17116,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 5447168413633408353}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!65 &5467424248215194889
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -17740,10 +17741,10 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5865041930325873285}
-  category: 1
+  category: 2
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!23 &5880116501522270568
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -17984,8 +17985,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 6001861481431650208}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!65 &6007404394187039721
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -18237,8 +18238,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 6064572196719329452}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!4 &6076700871835934144
 Transform:
   m_ObjectHideFlags: 0
@@ -18528,8 +18529,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 6140082593096026944}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!23 &6140441619781493042
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -18723,8 +18724,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 6205344867602917210}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!33 &6213289628401865704
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -18867,8 +18868,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 6231299026418483217}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!4 &6233663628983236979
 Transform:
   m_ObjectHideFlags: 0
@@ -18976,8 +18977,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 6249235194121646168}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!1 &6281371875813979309
 GameObject:
   m_ObjectHideFlags: 0
@@ -19049,8 +19050,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 6281371875813979310}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!65 &6314394603049242630
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -19223,8 +19224,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 6336026800609442268}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!33 &6373513882725836133
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -19367,8 +19368,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 6430366141153731985}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!65 &6460580648495663473
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -19549,8 +19550,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 6476481098072106097}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!23 &6490785885611840472
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -19778,8 +19779,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 6542394489380862929}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!23 &6556342311415624804
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -19922,8 +19923,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 6600275904284278362}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!23 &6611703797179636917
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -20016,8 +20017,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 6611703797179636918}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!65 &6657626995896467775
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -20089,8 +20090,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 6657626995896467776}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!23 &6663570769051362990
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -20225,8 +20226,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 6670710135414587255}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!33 &6687065465699298672
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -20358,8 +20359,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 6735796106627057622}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!33 &6736589185190757132
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -20460,8 +20461,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 6748414299647929662}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!4 &6762901385240396763
 Transform:
   m_ObjectHideFlags: 0
@@ -20689,8 +20690,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 6875860933694161062}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!65 &6879353243997458758
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -20762,8 +20763,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 6879353243997458759}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!65 &6908581210937107482
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -20898,8 +20899,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 6939095568655327894}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!23 &6978455822002011190
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -21227,8 +21228,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 7101420923700303156}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!23 &7103068938423556187
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -21319,10 +21320,10 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7103068938423556188}
-  category: 1
+  category: 2
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!23 &7104094445319203303
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -21449,8 +21450,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 7127511957883874861}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!4 &7131432093619289128
 Transform:
   m_ObjectHideFlags: 0
@@ -21545,8 +21546,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 7153150999164301606}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!4 &7167512924135652879
 Transform:
   m_ObjectHideFlags: 0
@@ -21620,8 +21621,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 7167604643102938686}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!23 &7179867954078098933
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -21763,8 +21764,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 7198041289520214758}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!23 &7200242352847357946
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -21857,8 +21858,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 7200242352847357947}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!23 &7224124648338955339
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -21993,8 +21994,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 7244347170262662096}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!23 &7257806654119097858
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -22087,8 +22088,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 7257806654119097859}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!4 &7258342583726405733
 Transform:
   m_ObjectHideFlags: 0
@@ -22169,8 +22170,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 7289860672397075391}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!4 &7294062577712362448
 Transform:
   m_ObjectHideFlags: 0
@@ -22244,8 +22245,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 7296245317341204778}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!1 &7309720250033221268
 GameObject:
   m_ObjectHideFlags: 0
@@ -22315,10 +22316,10 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7309720250033221269}
-  category: 1
+  category: 2
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!4 &7321790397059223067
 Transform:
   m_ObjectHideFlags: 0
@@ -22384,8 +22385,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 7321790397059223068}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!23 &7336176982509286332
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -22499,8 +22500,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 7344607451996236587}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!65 &7378418255705138319
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -22593,8 +22594,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 7396142512619680836}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!33 &7410293507741695020
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -22676,8 +22677,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 7413234922502724549}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!65 &7417161720295532544
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -22770,8 +22771,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 7419076719671514208}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!4 &7424826315575283341
 Transform:
   m_ObjectHideFlags: 0
@@ -22835,10 +22836,10 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7424826315575283342}
-  category: 1
+  category: 2
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!4 &7435660078447622438
 Transform:
   m_ObjectHideFlags: 0
@@ -22962,8 +22963,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 7493331948076568097}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!65 &7525973313893907730
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -23068,8 +23069,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 7557000235408385325}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!1 &7558182803072057011
 GameObject:
   m_ObjectHideFlags: 0
@@ -23181,8 +23182,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 7567972042086888130}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!1 &7587409936646223787
 GameObject:
   m_ObjectHideFlags: 0
@@ -23408,10 +23409,10 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7672045739599424145}
-  category: 1
+  category: 2
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!4 &7686791978725911745
 Transform:
   m_ObjectHideFlags: 0
@@ -23483,10 +23484,10 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7701055920414416340}
-  category: 1
+  category: 2
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!4 &7711998248180692229
 Transform:
   m_ObjectHideFlags: 0
@@ -23552,8 +23553,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 7711998248180692230}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!1 &7760560465721281629
 GameObject:
   m_ObjectHideFlags: 0
@@ -23633,8 +23634,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 7763885260617515108}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!33 &7786136867569397515
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -23750,8 +23751,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 7820111450149046607}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!1 &7826501397319202034
 GameObject:
   m_ObjectHideFlags: 0
@@ -23844,8 +23845,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 7865632229934435344}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!4 &7865993850838117682
 Transform:
   m_ObjectHideFlags: 0
@@ -23911,8 +23912,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 7865993850838117683}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!1 &7873266962290109543
 GameObject:
   m_ObjectHideFlags: 0
@@ -24150,8 +24151,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 7881169228365219830}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!1 &7907410755688578240
 GameObject:
   m_ObjectHideFlags: 0
@@ -24223,8 +24224,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 7907410755688578241}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!65 &7911657481371440568
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -24296,8 +24297,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 7911657481371440569}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!1 &7931805303239585743
 GameObject:
   m_ObjectHideFlags: 0
@@ -24369,8 +24370,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 7931805303239585744}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!33 &7953243070872691058
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -24429,8 +24430,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 7953243070872691059}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!23 &7977640048992222373
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -24523,8 +24524,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 7977640048992222374}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!65 &7993809125724472840
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -24596,8 +24597,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 7993809125724472841}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!33 &8014379500077689824
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -24656,8 +24657,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8014379500077689825}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!23 &8018677651340693070
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -24792,8 +24793,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8024760476888125144}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!4 &8053312613954825660
 Transform:
   m_ObjectHideFlags: 0
@@ -24859,8 +24860,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8053312613954825661}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!65 &8061048017564188401
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -24930,10 +24931,10 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8061048017564188402}
-  category: 1
+  category: 2
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!23 &8091824632908192368
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -25060,8 +25061,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8096255392358870291}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!4 &8120530056085383582
 Transform:
   m_ObjectHideFlags: 0
@@ -25127,8 +25128,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8120530056085383583}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!1 &8127525441820320036
 GameObject:
   m_ObjectHideFlags: 0
@@ -25200,8 +25201,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8127525441820320037}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!23 &8179124481473162945
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -25294,8 +25295,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8179124481473162946}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!33 &8186349975967596619
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -25473,8 +25474,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8232050387331376472}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!23 &8236982866881145141
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -25565,10 +25566,10 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8236982866881145142}
-  category: 1
+  category: 2
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!65 &8238287103295509272
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -25640,8 +25641,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8238287103295509273}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!33 &8239321884413468847
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -25700,8 +25701,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8239321884413468848}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!65 &8239452869344492263
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -25781,8 +25782,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8301879889902856031}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!1 &8309075559679384673
 GameObject:
   m_ObjectHideFlags: 0
@@ -25884,8 +25885,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8339768874379943801}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!4 &8349864840124956901
 Transform:
   m_ObjectHideFlags: 0
@@ -26023,8 +26024,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8354899142841511209}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!4 &8375236632628210904
 Transform:
   m_ObjectHideFlags: 0
@@ -26156,8 +26157,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8383273723948427955}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!33 &8417368482257863390
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -26224,8 +26225,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8425727661973989634}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!1 &8436444007674591525
 GameObject:
   m_ObjectHideFlags: 0
@@ -26333,8 +26334,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8477714810806872388}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!33 &8493912676268181635
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -26393,8 +26394,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8493912676268181636}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!33 &8511925976718649421
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -26453,8 +26454,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8511925976718649422}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!33 &8518635257192859040
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -26513,8 +26514,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8518635257192859041}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!1 &8552022017141588815
 GameObject:
   m_ObjectHideFlags: 0
@@ -26635,8 +26636,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8586035499879421315}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!1 &8616068271712477271
 GameObject:
   m_ObjectHideFlags: 0
@@ -26708,8 +26709,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8616068271712477272}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!1 &8618344705177353353
 GameObject:
   m_ObjectHideFlags: 0
@@ -26885,8 +26886,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8629501747536118094}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!33 &8635683886716879988
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -26945,8 +26946,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8635683886716879989}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!65 &8649502684045382742
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -27018,8 +27019,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8649502684045382743}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!33 &8654507835874483141
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -27078,8 +27079,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8654507835874483142}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!65 &8660686015195189799
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -27151,8 +27152,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8660686015195189800}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!4 &8675154557376199179
 Transform:
   m_ObjectHideFlags: 0
@@ -27226,8 +27227,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8679119600780853443}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!4 &8684392275408237361
 Transform:
   m_ObjectHideFlags: 0
@@ -27301,8 +27302,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8697215596810605448}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!4 &8704529172017535912
 Transform:
   m_ObjectHideFlags: 0
@@ -27366,10 +27367,10 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8704529172017535913}
-  category: 1
+  category: 2
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!33 &8711092091959117963
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -27428,8 +27429,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8711092091959117964}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!65 &8717338291179142153
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -27501,8 +27502,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8717338291179142154}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!1 &8720354484697860157
 GameObject:
   m_ObjectHideFlags: 0
@@ -27574,8 +27575,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8720354484697860158}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!33 &8752090976384514673
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -27634,8 +27635,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8752090976384514674}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!4 &8771363143010010531
 Transform:
   m_ObjectHideFlags: 0
@@ -27728,8 +27729,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8797597108110194465}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!33 &8810201001974987033
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -27809,8 +27810,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8814431745249821105}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!23 &8819917447171024976
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -27903,8 +27904,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8819917447171024977}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!4 &8821268519162897979
 Transform:
   m_ObjectHideFlags: 0
@@ -27970,8 +27971,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8821268519162897980}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!1 &8840584095107178053
 GameObject:
   m_ObjectHideFlags: 0
@@ -28120,8 +28121,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8848600636143419243}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!65 &8879958032631216586
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -28214,8 +28215,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8892351910440679974}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!4 &8917125961080149832
 Transform:
   m_ObjectHideFlags: 0
@@ -28281,8 +28282,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8917125961080149833}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!23 &8933759919803331481
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -28375,8 +28376,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8933759919803331482}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!4 &8949146574550714926
 Transform:
   m_ObjectHideFlags: 0
@@ -28450,8 +28451,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8981687782572572959}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!65 &8985218751590408251
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -28531,8 +28532,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8988829451152951534}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!65 &8989272650700413154
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -28604,8 +28605,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8989272650700413155}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!23 &8993122355162591359
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -28698,8 +28699,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8993122355162591360}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!4 &9003117111153366032
 Transform:
   m_ObjectHideFlags: 0
@@ -28765,8 +28766,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 9003117111153366033}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!23 &9011134102634506621
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -28859,8 +28860,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 9011134102634506622}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!1 &9018472652340264892
 GameObject:
   m_ObjectHideFlags: 0
@@ -28930,10 +28931,10 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 9018472652340264893}
-  category: 1
+  category: 2
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!1 &9026447138657659275
 GameObject:
   m_ObjectHideFlags: 0
@@ -29005,8 +29006,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 9026447138657659276}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!33 &9041751693169008598
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -29065,8 +29066,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 9041751693169008599}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!4 &9057039808757364715
 Transform:
   m_ObjectHideFlags: 0
@@ -29132,8 +29133,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 9057039808757364716}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!33 &9083746869735169974
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -29192,8 +29193,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 9083746869735169975}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!33 &9107069654159349886
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -29252,8 +29253,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 9107069654159349887}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!65 &9107907266567923396
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -29325,8 +29326,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 9107907266567923397}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!4 &9135520318624021019
 Transform:
   m_ObjectHideFlags: 0
@@ -29390,10 +29391,10 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 9135520318624021020}
-  category: 1
+  category: 2
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!65 &9181039752928294824
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -29465,8 +29466,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 9181039752928294825}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!1 &9181421484701878938
 GameObject:
   m_ObjectHideFlags: 0
@@ -29538,8 +29539,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 9181421484701878939}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!33 &9183402662744119835
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -29596,10 +29597,10 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 9183402662744119836}
-  category: 1
+  category: 2
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!33 &9198800344221487084
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -29658,8 +29659,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 9198800344221487085}
   category: 0
   elementSpawner: {fileID: 1051910570}
-  elementIndex: 0
-  isCompound: 0
+  environmentManager: {fileID: 1736823508}
+  modeRouter: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

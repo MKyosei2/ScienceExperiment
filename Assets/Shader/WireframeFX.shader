@@ -9,6 +9,7 @@
         _BoilAmount("Boil Amount", Range(0,1)) = 0
         _Evaporation("Evaporation", Range(0,1)) = 0
         _ColorShift("Color Shift", Range(-1,1)) = 0
+        _Humidity("Humidity", Range(0,1)) = 0.5
     }
 
     SubShader
@@ -40,10 +41,10 @@
             float4 _BaseColor;
             float4 _WireColor;
             float _GlowIntensity;
-
             float _BoilAmount;
             float _Evaporation;
             float _ColorShift;
+            float _Humidity;
 
             v2f vert (appdata v)
             {
@@ -59,15 +60,18 @@
                 // 基本色
                 float3 col = _BaseColor.rgb;
 
-                // 圧力による色変化 (-1=赤, 0=通常, +1=青)
+                // 圧力による色変化
                 col = lerp(float3(1,0,0), col, saturate(1.0 - abs(_ColorShift)));
                 col = lerp(col, float3(0,0,1), saturate(_ColorShift));
 
-                // 沸騰: 泡ノイズ（worldPosを利用）
+                // 沸騰ノイズ
                 float noise = frac(sin(dot(i.worldPos * 10.0, float3(12.9898,78.233,45.164))) * 43758.5453);
                 float boil = noise * _BoilAmount;
 
-                // 蒸発: alphaを下げる
+                // 湿度による曇り（白く濁る）
+                col = lerp(col, float3(0.85,0.85,0.85), _Humidity * 0.6);
+
+                // 蒸発: alpha減少
                 float alpha = saturate(1.0 - _Evaporation);
 
                 // 発光: 温度依存
