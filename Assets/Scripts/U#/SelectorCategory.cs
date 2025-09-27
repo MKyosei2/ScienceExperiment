@@ -1,7 +1,7 @@
 ﻿using UdonSharp;
 using UnityEngine;
 
-// グローバル enum (既存コードが参照するもの)
+// 既存コードが参照するグローバル enum
 public enum SelectionCategory
 {
     Element,
@@ -12,7 +12,7 @@ public enum SelectionCategory
     Other
 }
 
-// UdonSharpBehaviour を持つダミークラス (Unity の U# Program Asset が参照する用)
+// UdonSharpProgramAsset が割り当てられても問題ないように
 [AddComponentMenu("VRC Lab/SelectorCategory")]
 public class SelectorCategory : UdonSharpBehaviour
 {

@@ -4,27 +4,23 @@ using UnityEngine;
 public class ChemElementSpawner : UdonSharpBehaviour
 {
     public ChemEnvironmentManager environmentManager;
-    public int elementIndex;
-    public bool isCompound;
+    public int elementIndex = 0;  // ボタンから渡される
+    public bool isCompound = false; // 互換フィールド（今回は未使用）
 
+    // 3DボタンからもUIからも呼べる共通口
     public void Spawn()
     {
-        Debug.Log("[ChemElementSpawner] Spawn (Index=" + elementIndex + ", Compound=" + isCompound + ")");
+        if (environmentManager == null) { Debug.LogError("[ChemElementSpawner] EnvironmentManager 未設定"); return; }
+        environmentManager.SpawnElement(elementIndex);
     }
 
-    public void StartExperiment()
-    {
-        Debug.Log("[ChemElementSpawner] StartExperiment");
-        Spawn();
-    }
-
-    public void ResetExperiment()
-    {
-        Debug.Log("[ChemElementSpawner] ResetExperiment");
-    }
+    // 互換API
+    public void StartExperiment() { Spawn(); }
+    public void ResetExperiment() { if (environmentManager != null) environmentManager.ResetExperiment(); }
 
     public string SendMoleculeJson(string json = "")
     {
+        // 将来のAI連携用：今は受け取りだけ
         Debug.Log("[ChemElementSpawner] SendMoleculeJson: " + json);
         return json;
     }
@@ -33,12 +29,10 @@ public class ChemElementSpawner : UdonSharpBehaviour
     {
         Debug.Log("[ChemElementSpawner] ApplyBondUpdate(JSON): " + updateJson);
     }
-
     public void ApplyBondUpdate(string atomA, string atomB, string bondType)
     {
         Debug.Log("[ChemElementSpawner] ApplyBondUpdate: " + atomA + "-" + atomB + " (" + bondType + ")");
     }
-
     public void ApplyBondUpdate(int atomA, int atomB, int bondType)
     {
         Debug.Log("[ChemElementSpawner] ApplyBondUpdate(int): " + atomA + "-" + atomB + " (" + bondType + ")");

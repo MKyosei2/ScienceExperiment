@@ -3,11 +3,11 @@ using UnityEngine;
 
 public class StartExperimentButton : UdonSharpBehaviour
 {
-    public ChemElementSpawner elementSpawner;
+    public ChemElementSpawner spawner;
 
+    public override void Interact() { Press(); }
     public void Press()
     {
-        if (elementSpawner != null)
-            elementSpawner.StartExperiment();
+        if (spawner != null) spawner.StartExperiment();
     }
 }
