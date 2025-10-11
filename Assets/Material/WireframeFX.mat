@@ -67,10 +67,12 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _BoilAmount: 0
     - _BubbleInt: 0
     - _BubbleSize: 2
     - _BubbleSpeed: 1.2
     - _BumpScale: 1
+    - _ColorShift: 0
     - _Cull: 0
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
@@ -79,6 +81,7 @@ Material:
     - _DissolveOn: 0
     - _DstBlend: 0
     - _Emission: 0
+    - _Evaporation: 0
     - _Fill: 0
     - _FillLevel: 0.5
     - _FoamWidth: 0.02
@@ -86,12 +89,14 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
+    - _GlowIntensity: 1
     - _GridScale: 8
     - _GridSharp: 2
     - _HeatAmount: 0
     - _HeatHeight: 0.25
     - _HeightMax: 0.5
     - _HeightMin: -0.5
+    - _Humidity: 0.5
     - _IOR: 1.33
     - _LineWidth: 1.2
     - _LiquidAlpha: 0.35
