@@ -1,105 +1,122 @@
 ﻿using UdonSharp;
 using UnityEngine;
-using VRC.SDKBase;
-using VRC.Udon;
 using TMPro;
 
 public class ChemElementSpawner : UdonSharpBehaviour
 {
-    [Header("外部参照")]
+    [Header("参照")]
     public ChemEnvironmentManager environmentManager;
-    public GameObject conicalFlaskPrefab;     // 共通フラスコPrefab
-    public GameObject formulaTextPrefab;      // 共通ラベルPrefab
-    public Transform spawnPoint;              // フラスコ生成位置
-    public Transform labelParent;             // ラベル生成位置
+    public GameObject conicalFlaskPrefab;
+    public GameObject formulaTextPrefab;
+    public Transform spawnPoint;
+    public Transform labelParent;
 
     [Header("元素情報")]
-    public string[] elementSymbols;           // H, Li, Na ...
-    public Color[] elementColors;             // 元素ごとの色
-    private int currentElementIndex = -1;     // 現在選択中の元素
+    public string[] elementSymbols; // 例: H, Li, Na
+    public Color[] elementColors;   // 各元素の色
+    private int currentIndex = -1;
 
     private GameObject currentFlask;
     private GameObject currentLabel;
 
-    // ==========================
-    // 元素選択呼び出し
-    // ==========================
+    // =========================
+    // 元素選択（ボタンから呼び出し）
+    // =========================
     public void SelectElement(int index)
     {
-        if (index < 0 || index >= elementSymbols.Length)
-        {
-            Debug.LogWarning("[ChemElementSpawner] 無効な元素ID: " + index);
-            return;
-        }
-
-        currentElementIndex = index;
-        Debug.Log($"[ChemElementSpawner] 元素選択: {elementSymbols[index]}");
+        currentIndex = index;
+        Debug.Log("[ChemElementSpawner] 元素選択: " + elementSymbols[index]);
+        Spawn();
     }
 
-    // ==========================
-    // 元素生成（ボタン押下時）
-    // ==========================
+    // =========================
+    // フラスコ＋ラベル生成
+    // =========================
     public void Spawn()
     {
-        if (conicalFlaskPrefab == null || formulaTextPrefab == null)
+        if (conicalFlaskPrefab == null)
         {
-            Debug.LogError("[ChemElementSpawner] Prefabが設定されていません。");
+            Debug.LogError("[ChemElementSpawner] conicalFlaskPrefabが未設定");
+            return;
+        }
+        if (formulaTextPrefab == null)
+        {
+            Debug.LogError("[ChemElementSpawner] formulaTextPrefabが未設定");
+            return;
+        }
+        if (currentIndex < 0)
+        {
+            Debug.LogWarning("[ChemElementSpawner] 元素未選択");
             return;
         }
 
-        if (currentElementIndex < 0)
+        // 古い生成物を削除
+        if (currentFlask != null)
         {
-            Debug.LogWarning("[ChemElementSpawner] 元素が選択されていません。");
-            return;
+            Destroy(currentFlask);
+            currentFlask = null;
+        }
+        if (currentLabel != null)
+        {
+            Destroy(currentLabel);
+            currentLabel = null;
         }
 
-        string symbol = elementSymbols[currentElementIndex];
-        Color color = (currentElementIndex < elementColors.Length)
-            ? elementColors[currentElementIndex]
-            : Color.white;
-
-        // 既存オブジェクト削除
-        if (currentFlask != null) Destroy(currentFlask);
-        if (currentLabel != null) Destroy(currentLabel);
+        string symbol = elementSymbols[currentIndex];
+        Color color = Color.white;
+        if (currentIndex < elementColors.Length)
+        {
+            color = elementColors[currentIndex];
+        }
 
         // フラスコ生成
-        currentFlask = Instantiate(conicalFlaskPrefab, spawnPoint.position, Quaternion.identity);
+        currentFlask = VRCInstantiate(conicalFlaskPrefab);
+        currentFlask.transform.position = spawnPoint.position;
         currentFlask.name = "CONICAL_FLASK_" + symbol;
 
-        // 液体の色変更
-        var visual = currentFlask.GetComponent<ChemVisualController>();
-        if (visual != null)
+        // 液体色変更
+        if (environmentManager != null)
         {
-            visual.SetElementAppearance(color, ElementState.Liquid);
-            visual.UpdateEnvironment(environmentManager.temperature, environmentManager.humidity, environmentManager.pressure);
+            ChemVisualController visual = currentFlask.GetComponent<ChemVisualController>();
+            if (visual != null)
+            {
+                visual.SetElementAppearance(color, ElementState.Liquid);
+                visual.UpdateEnvironment(environmentManager.temperature, environmentManager.humidity, environmentManager.pressure);
+            }
         }
 
         // ラベル生成
-        currentLabel = Instantiate(formulaTextPrefab, labelParent);
+        currentLabel = VRCInstantiate(formulaTextPrefab);
+        currentLabel.transform.SetParent(labelParent, false);
         currentLabel.name = "Label_" + symbol;
 
-        var text = currentLabel.GetComponentInChildren<TextMeshProUGUI>();
-        if (text == null) text = currentLabel.GetComponent<TextMeshProUGUI>();
-        if (text != null) text.text = symbol;
+        TextMeshProUGUI text = currentLabel.GetComponentInChildren<TextMeshProUGUI>();
+        if (text != null)
+        {
+            text.text = symbol;
+        }
 
-        Debug.Log($"[ChemElementSpawner] 生成: {symbol} 色={color}");
+        Debug.Log("[ChemElementSpawner] 生成完了: " + symbol);
     }
 
-    // ==========================
+    // =========================
     // 実験開始
-    // ==========================
+    // =========================
     public void StartExperiment()
     {
         if (environmentManager != null)
         {
             environmentManager.BeginReaction();
-            Debug.Log("[ChemElementSpawner] 実験開始");
+        }
+        else
+        {
+            Debug.LogWarning("[ChemElementSpawner] EnvironmentManagerが未設定");
         }
     }
 
-    // ==========================
+    // =========================
     // 実験リセット
-    // ==========================
+    // =========================
     public void ResetExperiment()
     {
         if (environmentManager != null)
@@ -107,17 +124,24 @@ public class ChemElementSpawner : UdonSharpBehaviour
             environmentManager.ResetEnvironment();
         }
 
-        if (currentFlask != null) Destroy(currentFlask);
-        if (currentLabel != null) Destroy(currentLabel);
+        if (currentFlask != null)
+        {
+            Destroy(currentFlask);
+            currentFlask = null;
+        }
+        if (currentLabel != null)
+        {
+            Destroy(currentLabel);
+            currentLabel = null;
+        }
 
-        currentElementIndex = -1;
-
+        currentIndex = -1;
         Debug.Log("[ChemElementSpawner] 実験リセット完了");
     }
 
-    // ==========================
-    // AI通信・Bond更新
-    // ==========================
+    // =========================
+    // AI通信（デフォルト引数を追加！）
+    // =========================
     public string SendMoleculeJson(string json = "{}")
     {
         if (environmentManager != null)
@@ -129,10 +153,15 @@ public class ChemElementSpawner : UdonSharpBehaviour
         return "{}";
     }
 
-    public void ApplyBondUpdate(int atomIdA, int atomIdB, bool isBonded)
+    // =========================
+    // 化学結合制御
+    // =========================
+    public void ApplyBondUpdate(int atomIdA, int atomIdB, bool bonded)
     {
         if (environmentManager != null)
-            environmentManager.ApplyBondState(atomIdA, atomIdB, isBonded);
+        {
+            environmentManager.ApplyBondState(atomIdA, atomIdB, bonded);
+        }
     }
 
     public void ApplyBondUpdate(int atomIdA, int atomIdB, int numericState)
