@@ -451,7 +451,7 @@ MonoBehaviour:
   toolHide: []
   conditionShow: []
   conditionHide: []
-  selectorToSet: {fileID: 0}
+  selectorToSet: {fileID: 310333468}
 --- !u!1 &170702498
 GameObject:
   m_ObjectHideFlags: 0
@@ -987,15 +987,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3183b187450ebe44a49a854a5ffbaf4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tempPlus: {fileID: 0}
-  tempMinus: {fileID: 0}
-  humPlus: {fileID: 0}
-  humMinus: {fileID: 0}
-  presPlus: {fileID: 0}
-  presMinus: {fileID: 0}
+  tempPlus: {fileID: 666362348}
+  tempMinus: {fileID: 1026968726}
+  humPlus: {fileID: 1181307758}
+  humMinus: {fileID: 2096035942}
+  presPlus: {fileID: 1323482136}
+  presMinus: {fileID: 1762554539}
   editorAutoAddBoxCollider: 1
-  tempInput: {fileID: 891341473}
-  humInput: {fileID: 227189537}
+  tempInput: {fileID: 0}
+  humInput: {fileID: 0}
   presInput: {fileID: 633438159}
   temperature: 20
   humidity: 50
@@ -1866,7 +1866,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 622968850}
-  modeRouter: {fileID: 0}
+  modeRouter: {fileID: 727190511}
 --- !u!65 &622968852
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2109,7 +2109,19 @@ MonoBehaviour:
       m_Calls: []
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1736823508}
+        m_TargetAssemblyTypeName: ChemEnvironmentManager, Assembly-CSharp
+        m_MethodName: OnPressureInputChanged
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_OnTouchScreenKeyboardStatusChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -2369,7 +2381,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 666362352}
   environmentManager: {fileID: 1736823508}
-  adjustTemperature: 0
+  adjustTemperature: 1
+  adjustHumidity: 0
+  adjustPressure: 0
   step: 1
 --- !u!114 &666362354
 MonoBehaviour:
@@ -3376,7 +3390,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1026968730}
   environmentManager: {fileID: 1736823508}
-  adjustTemperature: 0
+  adjustTemperature: 1
+  adjustHumidity: 0
+  adjustPressure: 0
   step: -1
 --- !u!114 &1026968732
 MonoBehaviour:
@@ -3518,8 +3534,20 @@ MonoBehaviour:
     type: 3}
   spawnPoint: {fileID: 1094938491}
   labelParent: {fileID: 1798061923}
-  elementSymbols: []
-  elementColors: []
+  elementSymbols:
+  - H
+  - Li
+  - Na
+  - K
+  - Rb
+  - Cs
+  elementColors:
+  - {r: 1, g: 0, b: 0, a: 1}
+  - {r: 0, g: 1, b: 1, a: 1}
+  - {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  - {r: 0, g: 1, b: 0, a: 1}
+  - {r: 0.5, g: 0, b: 1, a: 1}
+  - {r: 1, g: 0.5, b: 0, a: 1}
 --- !u!1 &1088004953
 GameObject:
   m_ObjectHideFlags: 0
@@ -4204,6 +4232,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 1181307762}
   environmentManager: {fileID: 1736823508}
   adjustTemperature: 0
+  adjustHumidity: 1
+  adjustPressure: 0
   step: 1
 --- !u!114 &1181307764
 MonoBehaviour:
@@ -4451,7 +4481,9 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 1323482140}
   environmentManager: {fileID: 1736823508}
   adjustTemperature: 0
-  step: 1
+  adjustHumidity: 0
+  adjustPressure: 1
+  step: 0.1
 --- !u!114 &1323482142
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -4916,6 +4948,11 @@ MonoBehaviour:
   temperature: 20
   humidity: 0.5
   pressure: 1
+  tempInput: {fileID: 0}
+  humInput: {fileID: 0}
+  presInput: {fileID: 633438159}
+  isReacting: 0
+  currentEquipment: {fileID: 0}
 --- !u!114 &1736823509
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4939,7 +4976,7 @@ MonoBehaviour:
   humInput: {fileID: 227189537}
   presInput: {fileID: 633438159}
   temperature: 20
-  humidity: 50
+  humidity: 0.5
   pressureAtm: 1
   tempStep: 1
   humStep: 1
@@ -5154,7 +5191,9 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 1762554543}
   environmentManager: {fileID: 1736823508}
   adjustTemperature: 0
-  step: -1
+  adjustHumidity: 0
+  adjustPressure: 1
+  step: -0.1
 --- !u!114 &1762554545
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -5828,11 +5867,6 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1938266825}
-  currentState: 1
-  steamPrefab: {fileID: 0}
-  bubblePrefab: {fileID: 0}
-  mistPrefab: {fileID: 0}
-  dropletPrefab: {fileID: 0}
 --- !u!1 &1995492018
 GameObject:
   m_ObjectHideFlags: 0
@@ -6115,6 +6149,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 2096035946}
   environmentManager: {fileID: 1736823508}
   adjustTemperature: 0
+  adjustHumidity: 1
+  adjustPressure: 0
   step: -1
 --- !u!114 &2096035948
 MonoBehaviour:
@@ -13079,16 +13115,6 @@ MonoBehaviour:
     ID: 208
     SerializedTypeNames:
     - VRC.Udon.UdonBehaviour
-  - gameObject: {fileID: 0}
-    ID: 26
-    SerializedTypeNames:
-    - VRC.Udon.UdonBehaviour
-    - VRC.Udon.UdonBehaviour
-  - gameObject: {fileID: 0}
-    ID: 28
-    SerializedTypeNames:
-    - VRC.Udon.UdonBehaviour
-    - VRC.Udon.UdonBehaviour
   - gameObject: {fileID: 5446485861257311852}
     ID: 195
     SerializedTypeNames:
@@ -13650,14 +13676,6 @@ MonoBehaviour:
     ID: 218
     SerializedTypeNames:
     - VRC.Udon.UdonBehaviour
-  - gameObject: {fileID: 622968848}
-    ID: 219
-    SerializedTypeNames:
-    - VRC.Udon.UdonBehaviour
-  - gameObject: {fileID: 1863452154}
-    ID: 220
-    SerializedTypeNames:
-    - VRC.Udon.UdonBehaviour
   - gameObject: {fileID: 158121510}
     ID: 222
     SerializedTypeNames:
@@ -13698,37 +13716,54 @@ MonoBehaviour:
     ID: 228
     SerializedTypeNames:
     - VRC.Udon.UdonBehaviour
+  - gameObject: {fileID: 2129633254}
+    ID: 229
+    SerializedTypeNames:
+    - VRC.Udon.UdonBehaviour
+  - gameObject: {fileID: 622968848}
+    ID: 219
+    SerializedTypeNames:
+    - VRC.Udon.UdonBehaviour
+    - VRC.Udon.UdonBehaviour
+  - gameObject: {fileID: 1863452154}
+    ID: 220
+    SerializedTypeNames:
+    - VRC.Udon.UdonBehaviour
+    - VRC.Udon.UdonBehaviour
   - gameObject: {fileID: 310333459}
     ID: 221
     SerializedTypeNames:
     - VRC.Udon.UdonBehaviour
-  - gameObject: {fileID: 2129633254}
-    ID: 229
-    SerializedTypeNames:
     - VRC.Udon.UdonBehaviour
   - gameObject: {fileID: 2096035941}
     ID: 230
     SerializedTypeNames:
     - VRC.Udon.UdonBehaviour
+    - VRC.Udon.UdonBehaviour
   - gameObject: {fileID: 1181307757}
     ID: 231
     SerializedTypeNames:
+    - VRC.Udon.UdonBehaviour
     - VRC.Udon.UdonBehaviour
   - gameObject: {fileID: 1762554538}
     ID: 232
     SerializedTypeNames:
     - VRC.Udon.UdonBehaviour
+    - VRC.Udon.UdonBehaviour
   - gameObject: {fileID: 1323482135}
     ID: 233
     SerializedTypeNames:
+    - VRC.Udon.UdonBehaviour
     - VRC.Udon.UdonBehaviour
   - gameObject: {fileID: 1026968725}
     ID: 234
     SerializedTypeNames:
     - VRC.Udon.UdonBehaviour
+    - VRC.Udon.UdonBehaviour
   - gameObject: {fileID: 666362347}
     ID: 235
     SerializedTypeNames:
+    - VRC.Udon.UdonBehaviour
     - VRC.Udon.UdonBehaviour
   portraitCameraPositionOffset: {x: 0, y: 0, z: 0}
   portraitCameraRotationOffset: {x: 0, y: 1, z: 0, w: -0.00000004371139}
@@ -18367,8 +18402,6 @@ GameObject:
   - component: {fileID: 8217680982775237741}
   - component: {fileID: 1466591294205224516}
   - component: {fileID: 8214574565415706430}
-  - component: {fileID: 8573032773789886019}
-  - component: {fileID: 7121969604233004968}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -19968,7 +20001,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6470460139256604245}
-  mode: 1
+  mode: 0
   spawnButton: {fileID: 0}
   zone: {fileID: 0}
   fixedPrefab: {fileID: 0}
@@ -21834,32 +21867,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &7121969604233004968
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5913811887306861194}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45115577ef41a5b4ca741ed302693907, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  interactTextPlacement: {fileID: 0}
-  interactText: Use
-  interactTextGO: {fileID: 0}
-  proximity: 2
-  SynchronizePosition: 0
-  AllowCollisionOwnershipTransfer: 0
-  Reliable: 0
-  _syncMethod: 2
-  serializedProgramAsset: {fileID: 11400000, guid: 868a355cf9d211f4e882892847639c6a,
-    type: 2}
-  programSource: {fileID: 11400000, guid: 13b180545987df9438abc3245407c912, type: 2}
-  serializedPublicVariablesBytesString: Ai8AAAAAATIAAABWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgAuAFUAZABvAG4AVgBhAHIAaQBhAGIAbABlAFQAYQBiAGwAZQAsACAAVgBSAEMALgBVAGQAbwBuAC4AQwBvAG0AbQBvAG4AAAAAAAYBAAAAAAAAACcBBAAAAHQAeQBwAGUAAWgAAABTAHkAcwB0AGUAbQAuAEMAbwBsAGwAZQBjAHQAaQBvAG4AcwAuAEcAZQBuAGUAcgBpAGMALgBMAGkAcwB0AGAAMQBbAFsAVgBSAEMALgBVAGQAbwBuAC4AQwBvAG0AbQBvAG4ALgBJAG4AdABlAHIAZgBhAGMAZQBzAC4ASQBVAGQAbwBuAFYAYQByAGkAYQBiAGwAZQAsACAAVgBSAEMALgBVAGQAbwBuAC4AQwBvAG0AbQBvAG4AXQBdACwAIABtAHMAYwBvAHIAbABpAGIAAQEJAAAAVgBhAHIAaQBhAGIAbABlAHMALwEAAAABaAAAAFMAeQBzAHQAZQBtAC4AQwBvAGwAbABlAGMAdABpAG8AbgBzAC4ARwBlAG4AZQByAGkAYwAuAEwAaQBzAHQAYAAxAFsAWwBWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgAuAEkAbgB0AGUAcgBmAGEAYwBlAHMALgBJAFUAZABvAG4AVgBhAHIAaQBhAGIAbABlACwAIABWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgBdAF0ALAAgAG0AcwBjAG8AcgBsAGkAYgABAAAABgEAAAAAAAAAAi8CAAAAAUkAAABWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgAuAFUAZABvAG4AVgBhAHIAaQBhAGIAbABlAGAAMQBbAFsAUwB5AHMAdABlAG0ALgBJAG4AdAAzADIALAAgAG0AcwBjAG8AcgBsAGkAYgBdAF0ALAAgAFYAUgBDAC4AVQBkAG8AbgAuAEMAbwBtAG0AbwBuAAIAAAAGAgAAAAAAAAAnAQQAAAB0AHkAcABlAAEXAAAAUwB5AHMAdABlAG0ALgBTAHQAcgBpAG4AZwAsACAAbQBzAGMAbwByAGwAaQBiACcBCgAAAFMAeQBtAGIAbwBsAE4AYQBtAGUAAR8AAABfAF8AXwBVAGQAbwBuAFMAaABhAHIAcABCAGUAaABhAHYAaQBvAHUAcgBWAGUAcgBzAGkAbwBuAF8AXwBfACcBBAAAAHQAeQBwAGUAARYAAABTAHkAcwB0AGUAbQAuAEkAbgB0ADMAMgAsACAAbQBzAGMAbwByAGwAaQBiABcBBQAAAFYAYQBsAHUAZQACAAAABwUHBQcF
-  publicVariablesUnityEngineObjects: []
-  publicVariablesSerializationDataFormat: 0
 --- !u!33 &7127511957883874860
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -24542,7 +24549,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7878264435898845041}
-  mode: 1
+  mode: 0
   spawnButton: {fileID: 0}
   zone: {fileID: 0}
   fixedPrefab: {fileID: 0}
@@ -26420,7 +26427,7 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8350237311547169919}
   selected: {fileID: 1995492021}
   category: 0
-  zoneForThisCategory: {fileID: 0}
+  zoneForThisCategory: {fileID: 8375236632628210904}
 --- !u!65 &8354899142841511208
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -27002,18 +27009,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &8573032773789886019
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5913811887306861194}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 205606f8260bbcf4a9e7de2b49a8b3ac, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &8581048633471040907
 GameObject:
   m_ObjectHideFlags: 0
@@ -27280,7 +27275,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8628554083469097366}
-  mode: 1
+  mode: 0
   spawnButton: {fileID: 0}
   zone: {fileID: 0}
   fixedPrefab: {fileID: 0}

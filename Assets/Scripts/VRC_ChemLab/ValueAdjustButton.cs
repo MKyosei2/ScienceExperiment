@@ -3,17 +3,26 @@ using UnityEngine;
 
 public class ValueAdjustButton : UdonSharpBehaviour
 {
+    [Header("参照設定")]
     public ChemEnvironmentManager environmentManager;
-    public bool adjustTemperature; // true = 温度, false = 圧力
+
+    [Header("調整パラメータ")]
+    public bool adjustTemperature;
+    public bool adjustHumidity;
+    public bool adjustPressure;
     public float step = 1f;
 
-    public void Press()
+    public override void Interact()
     {
         if (environmentManager == null) return;
 
         if (adjustTemperature)
             environmentManager.AdjustTemperature(step);
-        else
+
+        if (adjustHumidity)
+            environmentManager.AdjustHumidity(step);
+
+        if (adjustPressure)
             environmentManager.AdjustPressure(step);
     }
 }
