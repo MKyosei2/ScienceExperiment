@@ -1,91 +1,93 @@
-﻿Shader "Custom/WireframeFX"
+﻿Shader "VRC Lab/WireframeFX"
 {
     Properties
     {
-        _WireColor("Wire Color", Color) = (1,1,1,1)
-        _GridScale("Grid Scale", Float) = 0.25
-        _LineWidth("Line Width", Range(0.001,0.1)) = 0.02
-        _GlowIntensity("Glow Intensity", Range(0,5)) = 0
-        _BoilAmount("Boil Amount", Range(0,1)) = 0
-        _Humidity("Humidity", Range(0,1)) = 0.5
+        _WireColor("Wire Color", Color) = (0,1,1,1)
+        _WireThickness("Wire Thickness", Range(0.1, 3.0)) = 1.0
+        _Alpha("Surface Alpha", Range(0,1)) = 0.0
     }
+
     SubShader
     {
-        Tags { "Queue"="Transparent" "RenderType"="Transparent" }
-        LOD 200
+        Tags { "RenderType"="Transparent" "Queue"="Transparent" }
         Blend SrcAlpha OneMinusSrcAlpha
         ZWrite Off
-        Cull Back
+        Cull Off
 
         Pass
         {
+            Name "Wireframe"
             CGPROGRAM
+            #pragma target 4.0
             #pragma vertex vert
+            #pragma geometry geom
             #pragma fragment frag
             #include "UnityCG.cginc"
 
-            float4 _WireColor;
-            float  _GridScale;
-            float  _LineWidth;
-            float  _GlowIntensity;
-            float  _BoilAmount;
-            float  _Humidity;
+            fixed4 _WireColor;
+            float _WireThickness;
+            float _Alpha;
 
             struct appdata
             {
                 float4 vertex : POSITION;
-                float3 normal : NORMAL;
             };
 
-            struct v2f
+            struct v2g
+            {
+                float4 pos : POSITION;
+            };
+
+            struct g2f
             {
                 float4 pos : SV_POSITION;
-                float3 wPos : TEXCOORD0;
-                float3 nrm  : TEXCOORD1;
+                float3 bary : TEXCOORD0;
             };
 
-            v2f vert(appdata v)
+            v2g vert(appdata v)
             {
-                v2f o;
-                o.pos  = UnityObjectToClipPos(v.vertex);
-                o.wPos = mul(unity_ObjectToWorld, v.vertex).xyz;
-                o.nrm  = normalize(mul((float3x3)unity_ObjectToWorld, v.normal));
+                v2g o;
+                o.pos = UnityObjectToClipPos(v.vertex);
                 return o;
             }
 
-            // 線パターンの生成
-            float lineMask(float2 uv, float width)
+            [maxvertexcount(3)]
+            void geom(triangle v2g input[3], inout TriangleStream<g2f> triStream)
             {
-                float2 g = abs(frac(uv) - 0.5);
-                float d = min(g.x, g.y);
-                float m = step(d, width * 0.5); // 線の内側のみ1
-                return m;
+                g2f o;
+                float3 bary[3] = {
+                    float3(1,0,0),
+                    float3(0,1,0),
+                    float3(0,0,1)
+                };
+
+                for (int i = 0; i < 3; i++)
+                {
+                    o.pos = input[i].pos;
+                    o.bary = bary[i];
+                    triStream.Append(o);
+                }
             }
 
-            fixed4 frag(v2f i) : SV_Target
+            fixed4 frag(g2f i) : SV_Target
             {
-                // 法線によるトライプラナー投影
-                float3 n = abs(normalize(i.nrm)) + 1e-5;
-                n /= (n.x + n.y + n.z);
+                // 各ピクセルの三角形内での位置から線を算出
+                float3 d = fwidth(i.bary);
+                float3 a3 = smoothstep(float3(0.0,0.0,0.0), d * _WireThickness, i.bary);
+                float wireMask = min(min(a3.x, a3.y), a3.z);
 
-                float s = max(_GridScale, 1e-4);
-                float mx = lineMask(i.wPos.yz * s, _LineWidth);
-                float my = lineMask(i.wPos.zx * s, _LineWidth);
-                float mz = lineMask(i.wPos.xy * s, _LineWidth);
-
-                float wire = saturate(mx * n.x + my * n.y + mz * n.z);
-
-                // 面が透明なので、線がない部分は完全に破棄
-                if (wire <= 0.001)
+                // ワイヤー部分だけを描画
+                float wireAlpha = 1.0 - wireMask;
+                if (wireAlpha <= 0.01)
                     discard;
 
-                float glow = 1 + _GlowIntensity * (_BoilAmount + _Humidity * 0.2);
-                float3 col = _WireColor.rgb * glow;
-
-                return float4(col, 1.0); // 線は不透明に出す
+                fixed4 col = _WireColor;
+                col.a = wireAlpha * _WireColor.a * (1.0 - _Alpha);
+                return col;
             }
             ENDCG
         }
     }
+
     FallBack Off
 }
