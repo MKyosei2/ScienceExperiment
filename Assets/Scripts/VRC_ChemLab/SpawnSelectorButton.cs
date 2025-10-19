@@ -1,71 +1,47 @@
 ﻿using UdonSharp;
 using UnityEngine;
+using VRC.Udon;
 
 public class SpawnSelectorButton : UdonSharpBehaviour
 {
-    [Header("カテゴリ設定 (Inspector でプルダウン)")]
-    public SelectionCategory category = SelectionCategory.Element;
-
-    [Header("参照")]
+    public ExperimentOrchestrator orchestrator;
     public ChemElementSpawner elementSpawner;
-    public ChemEnvironmentManager environmentManager;
-    public ModeRouter modeRouter;
+
+    [Header("ボタン設定")]
+    public string elementSymbol;
+    public bool isEquipmentButton;
+    public bool isStartButton;
+    public bool isResetButton;
+
+    // ← CategoryControllerが参照しているフィールドを追加
+    [Header("カテゴリ設定")]
+    public SelectionCategory category; // CategoryControllerで利用されるenum型
+
+    public void Press() => Interact();
 
     public override void Interact()
     {
-        Press();
-    }
-
-    public void Press()
-    {
-        switch (category)
+        if (isStartButton && orchestrator)
         {
-            case SelectionCategory.Element:
-                if (elementSpawner != null) elementSpawner.Spawn();
-                break;
+            orchestrator.StartExperiment();
+            return;
+        }
 
-            case SelectionCategory.Equipment:
-                if (environmentManager != null) environmentManager.SetEquipment(0); // 今は単一
-                break;
+        if (isResetButton && orchestrator)
+        {
+            orchestrator.ResetExperiment();
+            return;
+        }
 
-            case SelectionCategory.TemperatureUp:
-                if (environmentManager != null) environmentManager.AdjustTemperature(+1f);
-                break;
+        if (isEquipmentButton && elementSpawner)
+        {
+            elementSpawner.SelectEquipment();
+            return;
+        }
 
-            case SelectionCategory.TemperatureDown:
-                if (environmentManager != null) environmentManager.AdjustTemperature(-1f);
-                break;
-
-            case SelectionCategory.HumidityUp:
-                Debug.Log("[SpawnSelectorButton] 湿度＋ 未実装");
-                break;
-
-            case SelectionCategory.HumidityDown:
-                Debug.Log("[SpawnSelectorButton] 湿度－ 未実装");
-                break;
-
-            case SelectionCategory.PressureUp:
-                if (environmentManager != null) environmentManager.AdjustPressure(+1f);
-                break;
-
-            case SelectionCategory.PressureDown:
-                if (environmentManager != null) environmentManager.AdjustPressure(-1f);
-                break;
-
-            case SelectionCategory.StartExperiment:
-                if (modeRouter != null && !modeRouter.IsVR())
-                {
-                    if (elementSpawner != null) elementSpawner.StartExperiment();
-                }
-                break;
-
-            case SelectionCategory.ModeToggle:
-                if (modeRouter != null) modeRouter.Toggle();
-                break;
-
-            case SelectionCategory.Reset:
-                if (elementSpawner != null) elementSpawner.ResetExperiment();
-                break;
+        if (!string.IsNullOrEmpty(elementSymbol) && elementSpawner)
+        {
+            elementSpawner.SelectElement(elementSymbol);
         }
     }
 }

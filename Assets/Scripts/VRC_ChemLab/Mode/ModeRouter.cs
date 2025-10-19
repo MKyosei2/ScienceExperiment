@@ -1,24 +1,31 @@
 ﻿using UdonSharp;
 using UnityEngine;
+using VRC.SDKBase;
 
 public class ModeRouter : UdonSharpBehaviour
 {
-    private bool _isVR = false;
+    private bool forcePC = false;
+    private bool registered = false;
 
+    // ← ModeActivationが呼び出す想定のRegister()を復活
     public void Register(object target = null)
     {
+        if (registered) return;
+        registered = true;
         Debug.Log("[ModeRouter] Register called (target=" + (target != null ? target.ToString() : "null") + ")");
     }
 
-    // 旧コードが IsVR() とメソッド呼出するためこちらだけ提供（プロパティは置かない）
     public bool IsVR()
     {
-        return _isVR;
+        if (forcePC) return false;
+        var lp = Networking.LocalPlayer;
+        if (lp == null) return false;
+        return lp.IsUserInVR();
     }
 
     public void Toggle()
     {
-        _isVR = !_isVR;
-        Debug.Log("[ModeRouter] モード切替: " + (_isVR ? "VR" : "PC"));
+        forcePC = !forcePC;
+        Debug.Log("[ModeRouter] Mode: " + (forcePC ? "PC" : "VR"));
     }
 }

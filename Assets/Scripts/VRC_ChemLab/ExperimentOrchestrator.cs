@@ -3,53 +3,56 @@ using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
 
-/// <summary>
-/// 実験全体の進行を管理する
-/// </summary>
 public class ExperimentOrchestrator : UdonSharpBehaviour
 {
-    [Header("▼ 各コンポーネント参照")]
     public ChemElementSpawner elementSpawner;
-    public AIRequestSender aiRequestSender;
+    public ChemEnvironmentManager environmentManager;
+    public ModeRouter modeRouter;
+    public VRExperimentMonitor monitor;
 
-    [Header("▼ 実験状態フラグ")]
-    public bool isPCMode = true;
+    private bool running = false;
 
-    /// <summary>
-    /// 実験開始ボタンが押されたとき
-    /// </summary>
     public void StartExperiment()
     {
-        if (elementSpawner == null) return;
+        if (running) return;
 
-        // 見た目や液体の挙動を開始
-        elementSpawner.StartExperiment();
-
-        // 分子構造をJSONにまとめてAIに送信
-        if (aiRequestSender != null)
+        if (modeRouter && modeRouter.IsVR())
         {
-            string moleculeJson = elementSpawner.SendMoleculeJson();
-            aiRequestSender.Run(moleculeJson, elementSpawner);
+            running = true;
+            if (monitor) monitor.Log("VRモード: 手動操作で開始してください。");
+            return;
+        }
+
+        if (elementSpawner)
+        {
+            elementSpawner.StartExperiment();
+            running = true;
+            if (monitor) monitor.Log("PCモード: 実験開始。");
         }
     }
 
-    /// <summary>
-    /// リセットボタンが押されたとき
-    /// </summary>
+    public void OnVRGestureStart()
+    {
+        if (!modeRouter || !modeRouter.IsVR() || running) return;
+
+        if (elementSpawner)
+        {
+            elementSpawner.StartExperiment();
+            running = true;
+            if (monitor) monitor.Log("VRモード: ジェスチャーで実験開始。");
+        }
+    }
+
     public void ResetExperiment()
     {
-        if (elementSpawner != null)
-        {
-            elementSpawner.ResetExperiment();
-        }
+        running = false;
+        if (elementSpawner) elementSpawner.ResetExperiment();
+        if (environmentManager) environmentManager.ResetToDefaultsAndSync();
+        if (monitor) monitor.Log("リセット完了。");
     }
 
-    /// <summary>
-    /// PCモードとVRモードの切り替え
-    /// </summary>
     public void ToggleMode()
     {
-        isPCMode = !isPCMode;
-        Debug.Log("[ExperimentOrchestrator] Mode switched: " + (isPCMode ? "PC" : "VR"));
+        if (modeRouter) modeRouter.Toggle();
     }
 }

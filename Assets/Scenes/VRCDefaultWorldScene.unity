@@ -4948,8 +4948,8 @@ MonoBehaviour:
   temperature: 20
   humidity: 0.5
   pressure: 1
-  tempInput: {fileID: 0}
-  humInput: {fileID: 0}
+  tempInput: {fileID: 891341473}
+  humInput: {fileID: 227189537}
   presInput: {fileID: 633438159}
   isReacting: 0
   currentEquipment: {fileID: 0}
