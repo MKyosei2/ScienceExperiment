@@ -1,99 +1,140 @@
 ﻿using UdonSharp;
 using UnityEngine;
+using VRC.SDKBase;
+using VRC.Udon;
 
+[AddComponentMenu("VRC Lab/ChemElementSpawner")]
 public class ChemElementSpawner : UdonSharpBehaviour
 {
-    public ChemEnvironmentManager environmentManager;
+    [Header("Spawn Settings")]
+    public Transform spawnParent;
     public GameObject conicalFlaskPrefab;
-    public Transform spawnPoint;
+    public GameObject beakerPrefab;
+    public Material wireMaterial;
+    public GameObject[] elementPrefabs;
+    public JsonReactionPlayer reactionPlayer;
 
-    public string[] elementSymbols;
-    public Color[] elementColors;
+    [HideInInspector] public string bondData = "";
 
-    private int elementCount = 0;
-    private string elemA = "";
-    private string elemB = "";
-    private bool equipmentSelected = false;
-    private GameObject currentFlask;
+    // 選択された装置名・元素名（外部アクセス許可）
+    [HideInInspector] public string selectedEquipmentName = "";
+    [HideInInspector] public string selectedElementName = "";
 
-    public void SelectElement(string symbol)
+    private GameObject selectedEquipment;
+    private GameObject selectedElement;
+    private GameObject[] spawnedObjects = new GameObject[32];
+    private int spawnCount = 0;
+
+    // ===================== 旧互換メソッド（他スクリプト呼び出し用） =====================
+    public void StartExperiment() { SendCustomEvent("_StartExperiment"); }
+    public void ResetExperiment() { SendCustomEvent("_ResetExperiment"); }
+    public void SelectEquipment(string n)
     {
-        if (string.IsNullOrEmpty(symbol)) return;
+        selectedEquipmentName = n;
+        SendCustomEvent("_SelectEquipment");
+    }
+    public void SelectElement(string n)
+    {
+        selectedElementName = n;
+        SendCustomEvent("_SelectElement");
+    }
+    public void SpawnSelectedVesselAndStart() { SendCustomEvent("_StartExperiment"); }
 
-        if (elementCount == 0) elemA = symbol;
-        else if (elementCount == 1) elemB = symbol;
-        elementCount = Mathf.Min(2, elementCount + 1);
+    // ===================== UdonSharp実装 =====================
 
-        if (currentFlask == null) SpawnFlask();
-        ApplyElementColor(symbol);
-        Debug.Log("[ChemElementSpawner] Element selected: " + symbol);
+    // 器具選択
+    public void _SelectEquipment()
+    {
+        string name = selectedEquipmentName;
+        if (name == "ConicalFlask") selectedEquipment = conicalFlaskPrefab;
+        else if (name == "Beaker") selectedEquipment = beakerPrefab;
+        else selectedEquipment = conicalFlaskPrefab;
+        Debug.Log($"[Spawner] 器具 '{name}' 選択");
     }
 
-    public void SelectEquipment()
+    // 元素選択
+    public void _SelectElement()
     {
-        equipmentSelected = true;
-        Debug.Log("[ChemElementSpawner] Equipment selected");
-    }
-
-    public void StartExperiment()
-    {
-        if (currentFlask == null) SpawnFlask();
-
-        var r = currentFlask ? currentFlask.GetComponentInChildren<Renderer>() : null;
-        if (r && r.material)
+        string name = selectedElementName;
+        foreach (GameObject g in elementPrefabs)
         {
-            float temp = environmentManager ? environmentManager.GetTemperature() : 20f;
-            float hum = environmentManager ? environmentManager.GetHumidity() : 0.5f;
-
-            if (r.material.HasProperty("_GlowIntensity"))
-                r.material.SetFloat("_GlowIntensity", 2.0f);
-            if (r.material.HasProperty("_BoilAmount"))
-                r.material.SetFloat("_BoilAmount", Mathf.InverseLerp(20f, 100f, temp));
-            if (r.material.HasProperty("_Humidity"))
-                r.material.SetFloat("_Humidity", hum);
+            if (g != null && g.name == name)
+            {
+                selectedElement = g;
+                Debug.Log($"[Spawner] 元素 '{name}' 選択");
+                return;
+            }
         }
+        Debug.LogWarning($"[Spawner] 元素 '{name}' が見つかりません");
     }
 
-    public void ResetExperiment()
+    // 実験開始
+    public void _StartExperiment()
     {
-        if (currentFlask) Destroy(currentFlask);
-        currentFlask = null;
-        elementCount = 0;
-        elemA = elemB = "";
-        equipmentSelected = false;
-    }
-
-    private void SpawnFlask()
-    {
-        if (!conicalFlaskPrefab || !spawnPoint)
+        if (selectedEquipment == null || selectedElement == null)
         {
-            Debug.LogError("[ChemElementSpawner] Prefab or SpawnPoint missing");
+            Debug.LogWarning("[Spawner] 器具または元素が未選択");
             return;
         }
 
-        currentFlask = Instantiate(conicalFlaskPrefab, spawnPoint.position, spawnPoint.rotation, spawnPoint.parent);
-        Debug.Log("[ChemElementSpawner] Flask spawned at: " + spawnPoint.position);
+        GameObject vessel = VRCInstantiate(selectedEquipment);
+        vessel.transform.SetParent(spawnParent);
+        vessel.transform.localPosition = Vector3.zero;
+        AddSpawn(vessel);
+
+        GameObject elem = VRCInstantiate(selectedElement);
+        elem.transform.SetParent(vessel.transform);
+        elem.transform.localPosition = new Vector3(0, 0.05f, 0);
+        AddSpawn(elem);
+
+        ApplyWireframe(vessel);
+        ApplyWireframe(elem);
+
+        Debug.Log($"[Spawner] 実験開始: {selectedElement.name} × {selectedEquipment.name}");
     }
 
-    private void ApplyElementColor(string symbol)
+    // 実験リセット
+    public void _ResetExperiment()
     {
-        if (!currentFlask || elementColors == null || elementSymbols == null) return;
-        int idx = -1;
-        for (int i = 0; i < elementSymbols.Length; i++)
+        for (int i = 0; i < spawnCount; i++)
         {
-            if (elementSymbols[i] == symbol) { idx = i; break; }
+            if (spawnedObjects[i] != null)
+                Destroy(spawnedObjects[i]);
         }
-        if (idx < 0 || idx >= elementColors.Length) return;
-
-        var r = currentFlask.GetComponentInChildren<Renderer>();
-        if (r && r.material.HasProperty("_WireColor"))
-            r.material.SetColor("_WireColor", elementColors[idx]);
+        spawnCount = 0;
+        selectedElement = null;
+        Debug.Log("[Spawner] 実験リセット完了");
     }
 
-    public void ApplyBondUpdate(int atomIdA, int atomIdB, int bondedState)
+    // ワイヤーフレーム適用
+    private void ApplyWireframe(GameObject obj)
     {
-        bool bonded = bondedState != 0;
-        if (environmentManager)
-            environmentManager.ApplyBondState(atomIdA, atomIdB, bonded);
+        Renderer r = obj.GetComponent<Renderer>();
+        if (r != null && wireMaterial != null)
+        {
+            r.material = wireMaterial;
+        }
+    }
+
+    private void AddSpawn(GameObject obj)
+    {
+        if (spawnCount >= spawnedObjects.Length) return;
+        spawnedObjects[spawnCount++] = obj;
+    }
+
+    // ==== AI応答（結合情報）適用 ====
+    public void _ApplyBondUpdate()
+    {
+        if (string.IsNullOrEmpty(bondData))
+        {
+            Debug.LogWarning("[Spawner] bondData が空");
+            return;
+        }
+        Debug.Log($"[Spawner] AI反応を適用: {bondData}");
+
+        if (reactionPlayer != null)
+        {
+            reactionPlayer.Play(bondData);
+        }
     }
 }

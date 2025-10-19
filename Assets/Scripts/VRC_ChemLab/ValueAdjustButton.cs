@@ -1,28 +1,23 @@
 ﻿using UdonSharp;
 using UnityEngine;
+using VRC.Udon;
 
+[AddComponentMenu("VRC Lab/ValueAdjustButton")]
 public class ValueAdjustButton : UdonSharpBehaviour
 {
-    [Header("参照設定")]
-    public ChemEnvironmentManager environmentManager;
-
-    [Header("調整パラメータ")]
-    public bool adjustTemperature;
-    public bool adjustHumidity;
-    public bool adjustPressure;
+    public ChemEnvironmentManager envManager;
+    public string type; // "Temperature", "Pressure", "Humidity"
     public float step = 1f;
 
-    public override void Interact()
+    public void _OnClick()
     {
-        if (environmentManager == null) return;
+        if (envManager == null) return;
 
-        if (adjustTemperature)
-            environmentManager.AdjustTemperature(step);
-
-        if (adjustHumidity)
-            environmentManager.AdjustHumidity(step);
-
-        if (adjustPressure)
-            environmentManager.AdjustPressure(step);
+        if (type == "Temperature")
+            envManager.SendCustomEvent("_AdjustTemperature");
+        else if (type == "Pressure")
+            envManager.SendCustomEvent("_AdjustPressure");
+        else if (type == "Humidity")
+            envManager.SendCustomEvent("_AdjustHumidity");
     }
 }

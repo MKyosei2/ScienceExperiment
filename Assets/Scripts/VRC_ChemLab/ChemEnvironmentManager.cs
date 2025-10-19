@@ -1,32 +1,31 @@
 ﻿using UdonSharp;
 using UnityEngine;
 
+[AddComponentMenu("VRC Lab/ChemEnvironmentManager")]
 public class ChemEnvironmentManager : UdonSharpBehaviour
 {
-    public float defaultTemperature = 20f;
-    public float defaultHumidity = 0.5f;
-    public float defaultPressure = 1f;
+    [UdonSynced] public float Temperature = 25f;
+    [UdonSynced] public float Pressure = 1f;
+    [UdonSynced] public float Humidity = 50f;
 
-    public float temperature;
-    public float humidity;
-    public float pressure;
+    // ==== 旧呼び出し互換 ====
+    public void AdjustTemperature(float d) { _AdjustTemperature(d); }
+    public void AdjustPressure(float d) { _AdjustPressure(d); }
+    public void AdjustHumidity(float d) { _AdjustHumidity(d); }
 
-    private void Start() => ResetToDefaultsAndSync();
-
-    public void AdjustTemperature(float delta) => temperature = Mathf.Clamp(temperature + delta, -273f, 2000f);
-    public void AdjustHumidity(float delta) => humidity = Mathf.Clamp01(humidity + delta);
-    public void AdjustPressure(float delta) => pressure = Mathf.Max(0f, pressure + delta);
-
-    public void ResetToDefaultsAndSync()
+    public void _ResetToDefaults()
     {
-        temperature = defaultTemperature;
-        humidity = defaultHumidity;
-        pressure = defaultPressure;
+        Temperature = 25f;
+        Pressure = 1f;
+        Humidity = 50f;
+        Debug.Log("[EnvManager] ResetToDefaults()");
     }
 
-    public float GetTemperature() => temperature;
-    public float GetHumidity() => humidity;
-    public float GetPressure() => pressure;
+    public void _SetTemperature(float v) { Temperature = v; }
+    public void _SetPressure(float v) { Pressure = v; }
+    public void _SetHumidity(float v) { Humidity = Mathf.Clamp(v, 0f, 100f); }
 
-    public void ApplyBondState(int atomIdA, int atomIdB, bool bonded) { }
+    public void _AdjustTemperature(float delta) { Temperature += delta; }
+    public void _AdjustPressure(float delta) { Pressure += delta; }
+    public void _AdjustHumidity(float delta) { Humidity = Mathf.Clamp(Humidity + delta, 0f, 100f); }
 }

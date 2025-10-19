@@ -1,13 +1,15 @@
 ﻿using UdonSharp;
 using UnityEngine;
+using VRC.Udon;
 
+[AddComponentMenu("VRC Lab/ResetExperimentButton")]
 public class ResetExperimentButton : UdonSharpBehaviour
 {
     public ChemElementSpawner spawner;
 
-    public override void Interact() { Press(); }
-    public void Press()
+    public void _OnClick()
     {
-        if (spawner != null) spawner.ResetExperiment();
+        if (spawner != null)
+            spawner.SendCustomEvent("_ResetExperiment");
     }
 }

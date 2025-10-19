@@ -2,46 +2,50 @@
 using UnityEngine;
 using VRC.Udon;
 
+[AddComponentMenu("VRC Lab/SpawnSelectorButton")]
 public class SpawnSelectorButton : UdonSharpBehaviour
 {
-    public ExperimentOrchestrator orchestrator;
-    public ChemElementSpawner elementSpawner;
+    public ChemElementSpawner spawner;
 
-    [Header("ボタン設定")]
-    public string elementSymbol;
-    public bool isEquipmentButton;
-    public bool isStartButton;
-    public bool isResetButton;
+    [Header("ボタンタイプ設定")]
+    [Tooltip("Button Type: Equipment / Element")]
+    public string type; // "Equipment" or "Element"
 
-    // ← CategoryControllerが参照しているフィールドを追加
+    [Tooltip("このボタンが対応する対象名 (例: 'Hydrogen' or 'ConicalFlask')")]
+    public string targetName;
+
     [Header("カテゴリ設定")]
-    public SelectionCategory category; // CategoryControllerで利用されるenum型
+    [Tooltip("このボタンが属するカテゴリ (SelectionCategory列挙型)")]
+    public SelectionCategory category;
 
-    public void Press() => Interact();
-
-    public override void Interact()
+    // --- ボタン押下時に呼ばれる処理 ---
+    public void _OnClick()
     {
-        if (isStartButton && orchestrator)
+        if (spawner == null)
         {
-            orchestrator.StartExperiment();
+            Debug.LogWarning("[SpawnSelectorButton] Spawnerが設定されていません。");
             return;
         }
 
-        if (isResetButton && orchestrator)
+        if (type == "Equipment")
         {
-            orchestrator.ResetExperiment();
-            return;
+            spawner.selectedEquipmentName = targetName; // ← public化済み
+            spawner.SendCustomEvent("_SelectEquipment");
+            Debug.Log($"[SpawnSelectorButton] 器具 '{targetName}' を選択 (カテゴリ: {category})");
         }
+        else if (type == "Element")
+        {
+            spawner.selectedElementName = targetName; // ← public化済み
+            spawner.SendCustomEvent("_SelectElement");
+            Debug.Log($"[SpawnSelectorButton] 元素 '{targetName}' を選択 (カテゴリ: {category})");
+        }
+    }
 
-        if (isEquipmentButton && elementSpawner)
-        {
-            elementSpawner.SelectEquipment();
-            return;
-        }
-
-        if (!string.IsNullOrEmpty(elementSymbol) && elementSpawner)
-        {
-            elementSpawner.SelectElement(elementSymbol);
-        }
+    /// <summary>
+    /// 他スクリプトからボタン押下を再現する用（SelectionActionController互換）
+    /// </summary>
+    public void Press()
+    {
+        _OnClick();
     }
 }

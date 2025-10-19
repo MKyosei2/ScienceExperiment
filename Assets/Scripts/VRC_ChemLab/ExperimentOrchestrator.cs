@@ -1,58 +1,35 @@
 ﻿using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
-using VRC.Udon;
 
+[AddComponentMenu("VRC Lab/ExperimentOrchestrator")]
 public class ExperimentOrchestrator : UdonSharpBehaviour
 {
-    public ChemElementSpawner elementSpawner;
+    public ChemElementSpawner spawner;
     public ChemEnvironmentManager environmentManager;
-    public ModeRouter modeRouter;
-    public VRExperimentMonitor monitor;
+    public EnvUISyncBridge uiSync;
 
-    private bool running = false;
+    private bool isVR;
 
-    public void StartExperiment()
+    void Start()
     {
-        if (running) return;
-
-        if (modeRouter && modeRouter.IsVR())
-        {
-            running = true;
-            if (monitor) monitor.Log("VRモード: 手動操作で開始してください。");
-            return;
-        }
-
-        if (elementSpawner)
-        {
-            elementSpawner.StartExperiment();
-            running = true;
-            if (monitor) monitor.Log("PCモード: 実験開始。");
-        }
+        isVR = Networking.LocalPlayer != null && Networking.LocalPlayer.IsUserInVR();
+        Debug.Log($"[Orchestrator] モード: {(isVR ? "VR" : "PC")}");
     }
 
-    public void OnVRGestureStart()
+    public void _StartExperiment()
     {
-        if (!modeRouter || !modeRouter.IsVR() || running) return;
-
-        if (elementSpawner)
-        {
-            elementSpawner.StartExperiment();
-            running = true;
-            if (monitor) monitor.Log("VRモード: ジェスチャーで実験開始。");
-        }
+        if (isVR)
+            Debug.Log("[Orchestrator] VRモード: 手動操作で開始");
+        else
+            spawner.SendCustomEvent("_StartExperiment");
     }
 
-    public void ResetExperiment()
+    public void _ResetExperiment()
     {
-        running = false;
-        if (elementSpawner) elementSpawner.ResetExperiment();
-        if (environmentManager) environmentManager.ResetToDefaultsAndSync();
-        if (monitor) monitor.Log("リセット完了。");
-    }
-
-    public void ToggleMode()
-    {
-        if (modeRouter) modeRouter.Toggle();
+        spawner.SendCustomEvent("_ResetExperiment");
+        environmentManager.SendCustomEvent("_ResetToDefaults");
+        uiSync.SendCustomEvent("_RefreshAllDisplays");
+        Debug.Log("[Orchestrator] 実験リセット完了");
     }
 }
