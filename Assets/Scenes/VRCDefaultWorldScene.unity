@@ -3721,16 +3721,30 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1051910571}
   spawnParent: {fileID: 1547665052}
-  conicalFlaskPrefab: {fileID: 1661290437352326324, guid: c5c6b63c54ea90840b2922df9b2ad640,
-    type: 3}
-  beakerPrefab: {fileID: 4090574030381887731, guid: cafaa3710958faa45bbf439a80d64e1e,
-    type: 3}
   wireMaterial: {fileID: 2100000, guid: ad8572d586a7d2b459adc91e56dcd3e4, type: 2}
-  elementPrefabs: []
+  elementVisualMaterial: {fileID: 0}
+  defaultElementVesselPrefab: {fileID: 1661290437352326324, guid: c5c6b63c54ea90840b2922df9b2ad640,
+    type: 3}
+  equipmentPrefabs:
+  - {fileID: 4090574030381887731, guid: cafaa3710958faa45bbf439a80d64e1e, type: 3}
+  - {fileID: 2910533902891775054, guid: b97df90dc8e5f464dae3f777bbf6ba48, type: 3}
+  - {fileID: 1661290437352326324, guid: 6d6fc21eb1c0fbc4f846fcd61fcc6a61, type: 3}
+  - {fileID: 7201520947891470761, guid: fa11e782b42b4e34da7cbb83c4dcfe37, type: 3}
+  - {fileID: 3325130906403560304, guid: 7a2b8a48ced703a4bae2c3a102cf1832, type: 3}
+  - {fileID: 8681810241418991810, guid: e6639dfe28cb0b248aa7ca5063a270b1, type: 3}
+  - {fileID: 8675461835311268847, guid: 3ae2ddec665a21a4f91164ce767d5ce2, type: 3}
+  - {fileID: 8459279897271910465, guid: 9cba1e3b3aefbe349a58554c9051588d, type: 3}
+  - {fileID: 3664802908990552422, guid: 736dfe91bedddbe4ea3fd9b26653d989, type: 3}
+  - {fileID: 8544109681286976384, guid: e868831ce9ceb8d4d97ee55322d95c8d, type: 3}
+  - {fileID: 840203293340832546, guid: 7b80e52f1f970b842b2a3687d2b9a71c, type: 3}
+  - {fileID: 2446668973225092625, guid: 72223587a00a91848a01674ca38e2cc9, type: 3}
+  - {fileID: 7807122375084689788, guid: 5e1fdc4d88a7b6b4b82e01a740ab8f4e, type: 3}
+  - {fileID: 3822769561105784349, guid: 89d7a135f9b4d1a4babf2e648c73dc7a, type: 3}
+  elementVisualChildName: ElementVisual
   reactionPlayer: {fileID: 1816473597}
-  bondData: 
   selectedEquipmentName: 
   selectedElementName: 
+  bondData: 
 --- !u!114 &1051910571
 MonoBehaviour:
   m_ObjectHideFlags: 2
