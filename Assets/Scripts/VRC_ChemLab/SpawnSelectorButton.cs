@@ -1,51 +1,56 @@
 ﻿using UdonSharp;
 using UnityEngine;
-using VRC.Udon;
 
 [AddComponentMenu("VRC Lab/SpawnSelectorButton")]
 public class SpawnSelectorButton : UdonSharpBehaviour
 {
     public ChemElementSpawner spawner;
-
-    [Header("ボタンタイプ設定")]
-    [Tooltip("Button Type: Equipment / Element")]
-    public string type; // "Equipment" or "Element"
-
-    [Tooltip("このボタンが対応する対象名 (例: 'Hydrogen' or 'ConicalFlask')")]
-    public string targetName;
-
-    [Header("カテゴリ設定")]
-    [Tooltip("このボタンが属するカテゴリ (SelectionCategory列挙型)")]
+    public string type;        // "Element" or "Equipment"
+    public string targetName;  // 押したときに spawner に渡す名前
     public SelectionCategory category;
 
-    // --- ボタン押下時に呼ばれる処理 ---
+    // 3Dモデルをプレイヤーが押したとき（Eキー・トリガー）
+    public override void Interact()
+    {
+        _OnClick();
+    }
+
+    // ← SelectionActionController がここを呼んでくるので残す
+    public void Press()
+    {
+        _OnClick();
+    }
+
+    // 旧UI系や他のスクリプトから呼べるようにもしておく
+    public void OnClick()
+    {
+        _OnClick();
+    }
+
+    // 実際の処理はここだけ
     public void _OnClick()
     {
         if (spawner == null)
         {
-            Debug.LogWarning("[SpawnSelectorButton] Spawnerが設定されていません。");
+            Debug.LogWarning("[SpawnSelectorButton] spawner 未設定");
             return;
         }
 
-        if (type == "Equipment")
+        if (type == "Element")
         {
-            spawner.selectedEquipmentName = targetName; // ← public化済み
-            spawner.SendCustomEvent("_SelectEquipment");
-            Debug.Log($"[SpawnSelectorButton] 器具 '{targetName}' を選択 (カテゴリ: {category})");
-        }
-        else if (type == "Element")
-        {
-            spawner.selectedElementName = targetName; // ← public化済み
+            spawner.selectedElementName = targetName;
             spawner.SendCustomEvent("_SelectElement");
-            Debug.Log($"[SpawnSelectorButton] 元素 '{targetName}' を選択 (カテゴリ: {category})");
+            // Debug.Log($"[SpawnSelectorButton] 元素 '{targetName}' を選択しました。");
         }
-    }
-
-    /// <summary>
-    /// 他スクリプトからボタン押下を再現する用（SelectionActionController互換）
-    /// </summary>
-    public void Press()
-    {
-        _OnClick();
+        else if (type == "Equipment")
+        {
+            spawner.selectedEquipmentName = targetName;
+            spawner.SendCustomEvent("_SelectEquipment");
+            // Debug.Log($"[SpawnSelectorButton] 器具 '{targetName}' を選択しました。");
+        }
+        else
+        {
+            Debug.LogWarning("[SpawnSelectorButton] type が Element / Equipment ではありません");
+        }
     }
 }

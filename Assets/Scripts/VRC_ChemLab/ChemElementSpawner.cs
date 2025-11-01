@@ -2,54 +2,47 @@
 using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
-using System.Collections.Generic;
 
 [AddComponentMenu("VRC Lab/ChemElementSpawner")]
 public class ChemElementSpawner : UdonSharpBehaviour
 {
-    [Header("Spawn Roots")]
-    public Transform spawnParent;                     // 生成の親 (例: Systems/Spawner)
+    [Header("Spawn Root (生成先)")]
+    public Transform spawnParent;  // Systems/Spawner 推奨
 
-    [Header("Materials")]
-    public Material wireMaterial;                     // 器具に適用するワイヤーフレーム用
-    public Material elementVisualMaterial;            // 元素見た目用（共通Shader。_Color を使う想定）
+    [Header("Prefab設定")]
+    [Tooltip("元素ボタンを押したときに使う共通器具Prefab（例：CONICAL_FLASK）")]
+    public GameObject defaultElementVesselPrefab;
 
-    [Header("Common Prefabs")]
-    [Tooltip("元素ボタンを押した際に使う共通器具（例: CONICAL_FLASK）")]
-    public GameObject defaultElementVesselPrefab;     // 元素プレビュー用・共通器具
+    [Tooltip("器具ボタンで選択できる実験器具Prefab。名前一致で選択される。")]
+    public GameObject[] equipmentPrefabs;
 
-    [Tooltip("実験器具ボタンから選ばれる実験器具の候補（自由に拡張可能）")]
-    public GameObject[] equipmentPrefabs;             // 実験用器具はここから名称一致で選ぶ
-
-    [Header("Element Visual Hook")]
-    [Tooltip("共通器具Prefabの子階層にある、元素の見た目を描画する子の名前（Renderer を持つ）。例: \"ElementVisual\"")]
+    [Header("マテリアル設定")]
+    public Material wireMaterial;           // ワイヤーフレーム用
+    public Material elementVisualMaterial;  // 元素の見た目用 (_Colorを持つこと)
     public string elementVisualChildName = "ElementVisual";
 
-    [Header("Reaction System")]
+    [Header("反応システム")]
     public JsonReactionPlayer reactionPlayer;
 
-    // ==== 外部連携（他スクリプト互換） ====
-    [HideInInspector] public string selectedEquipmentName = "";  // Tool ボタンでセット
-    [HideInInspector] public string selectedElementName = "";  // Element ボタンでセット
-    [HideInInspector] public string bondData = "";               // AI 応答
+    // 状態保持（他スクリプトとやりとりする用）
+    [HideInInspector] public string selectedEquipmentName = "";
+    [HideInInspector] public string selectedElementName = "";
+    [HideInInspector] public string bondData = "";
 
-    // 内部管理
-    private GameObject currentElementPreview;                    // 元素ボタンで生成された共通器具（プレビュー）
-    private GameObject[] spawnedExperimentObjects = new GameObject[32];
-    private int spawnedCount = 0;
+    // いまシーンに出ている実体
+    private GameObject currentVessel;
+    private bool hasElementSelected = false;
 
-    // ===================== 旧互換メソッド（他スクリプトからの呼び出し互換） =====================
+    // ========== 互換メソッド（既存スクリプトが呼んでも動くように） ==========
     public void StartExperiment() { SendCustomEvent("_StartExperiment"); }
     public void ResetExperiment() { SendCustomEvent("_ResetExperiment"); }
-    public void SelectEquipment(string n) { selectedEquipmentName = n; SendCustomEvent("_SelectEquipment"); }
-    public void SelectElement(string n) { selectedElementName = n; SendCustomEvent("_SelectElement"); }
+    public void SelectEquipment(string name) { selectedEquipmentName = name; SendCustomEvent("_SelectEquipment"); }
+    public void SelectElement(string name) { selectedElementName = name; SendCustomEvent("_SelectElement"); }
     public void SpawnSelectedVesselAndStart() { SendCustomEvent("_StartExperiment"); }
 
-    // ===================== 選択・生成ロジック =====================
-
-    /// <summary>
-    /// Tool ボタンで器具名を選んだとき：名称だけ保持（生成は StartExperiment で行う）
-    /// </summary>
+    // =====================================================
+    // 器具ボタンを押したとき
+    // =====================================================
     public void _SelectEquipment()
     {
         if (string.IsNullOrEmpty(selectedEquipmentName))
@@ -58,20 +51,43 @@ public class ChemElementSpawner : UdonSharpBehaviour
             return;
         }
 
-        var prefab = FindPrefabByName(equipmentPrefabs, selectedEquipmentName);
-        if (prefab != null)
+        GameObject prefab = FindPrefabByName(equipmentPrefabs, selectedEquipmentName);
+        if (prefab == null)
         {
-            Debug.Log($"[Spawner] 器具 '{selectedEquipmentName}' を選択（実生成は開始時）。");
+            Debug.LogWarning($"[Spawner] 器具 '{selectedEquipmentName}' が見つかりませんでした。");
+            return;
         }
-        else
+
+        // すでに何か出ていたら消す
+        if (currentVessel != null)
         {
-            Debug.LogWarning($"[Spawner] 器具 '{selectedEquipmentName}' が equipmentPrefabs に見つかりません。");
+            Destroy(currentVessel);
+            currentVessel = null;
         }
+
+        // Prefabを生成（UdonSharp対応版）
+        currentVessel = SafeInstantiate(prefab);
+        if (currentVessel == null)
+        {
+            Debug.LogError("[Spawner] 器具Prefabの生成に失敗しました。Prefab参照またはspawnParentを確認してください。");
+            return;
+        }
+
+        PlaceUnderSpawnParent(currentVessel);
+        ApplyWireframe(currentVessel);
+
+        // 先に元素が選ばれていたら表示を載せる
+        if (hasElementSelected && !string.IsNullOrEmpty(selectedElementName))
+        {
+            ApplyElementVisual(currentVessel, selectedElementName);
+        }
+
+        Debug.Log($"[Spawner] 器具 '{selectedEquipmentName}' を生成しました。");
     }
 
-    /// <summary>
-    /// Element ボタンで元素名を選んだとき：共通器具をその場で1つ生成し、Shader パラメータで元素見た目を表現
-    /// </summary>
+    // =====================================================
+    // 元素ボタンを押したとき
+    // =====================================================
     public void _SelectElement()
     {
         if (string.IsNullOrEmpty(selectedElementName))
@@ -80,128 +96,121 @@ public class ChemElementSpawner : UdonSharpBehaviour
             return;
         }
 
-        // 既存のプレビューを消して作り直す
-        if (currentElementPreview != null)
+        hasElementSelected = true;
+
+        // 器具がまだ出ていないなら、共通器具を生成
+        if (currentVessel == null)
         {
-            Destroy(currentElementPreview);
-            currentElementPreview = null;
+            if (defaultElementVesselPrefab == null)
+            {
+                Debug.LogError("[Spawner] defaultElementVesselPrefab が未設定です。");
+                return;
+            }
+
+            currentVessel = SafeInstantiate(defaultElementVesselPrefab);
+            if (currentVessel == null)
+            {
+                Debug.LogError("[Spawner] 共通器具Prefabの生成に失敗しました。");
+                return;
+            }
+
+            PlaceUnderSpawnParent(currentVessel);
+            ApplyWireframe(currentVessel);
+
+            Debug.Log("[Spawner] 器具がなかったので共通器具Prefabを生成しました。");
         }
 
-        if (defaultElementVesselPrefab == null)
+        // 器具の中に元素の見た目を出す
+        ApplyElementVisual(currentVessel, selectedElementName);
+        Debug.Log($"[Spawner] 元素 '{selectedElementName}' を現在の器具に表示しました。");
+    }
+
+    // =====================================================
+    // PCモードのStartボタン
+    // =====================================================
+    public void _StartExperiment()
+    {
+        if (currentVessel == null)
         {
-            Debug.LogError("[Spawner] defaultElementVesselPrefab が未設定です。");
+            Debug.LogWarning("[Spawner] 実験を開始できません：器具が存在しません（元素か器具ボタンを先に押してください）");
             return;
         }
 
-        // 共通器具（例えば CONICAL_FLASK）を生成
-        currentElementPreview = VRCInstantiate(defaultElementVesselPrefab);
-        if (spawnParent != null)
+        if (!string.IsNullOrEmpty(bondData) && reactionPlayer != null)
         {
-            currentElementPreview.transform.SetParent(spawnParent);
-            currentElementPreview.transform.localPosition = Vector3.zero;
-            currentElementPreview.transform.localRotation = Quaternion.identity;
-            currentElementPreview.transform.localScale = Vector3.one;
+            reactionPlayer.Play(bondData);
+            Debug.Log("[Spawner] 実験を実行（AI反応を適用）");
         }
-
-        // 器具本体にワイヤーフレーム適用
-        ApplyWireframe(currentElementPreview);
-
-        // 元素見た目（共通Shader）を適用：指定名の子を探して色などを設定
-        ApplyElementVisual(currentElementPreview, selectedElementName);
-
-        Debug.Log($"[Spawner] 元素 '{selectedElementName}' を選択 → 共通器具でプレビュー生成。");
-    }
-
-    /// <summary>
-    /// 実験開始：
-    /// - 器具ボタンで選ばれた器具を生成（未選択なら defaultElementVesselPrefab を使用）
-    /// - 実験時は器具のみ生成（元素表現は Shader に委譲）
-    /// </summary>
-    public void _StartExperiment()
-    {
-        var vesselPrefab = FindPrefabByName(equipmentPrefabs, selectedEquipmentName);
-        if (vesselPrefab == null)
+        else
         {
-            // 未選択なら共通器具を使う
-            vesselPrefab = defaultElementVesselPrefab;
-            if (vesselPrefab == null)
-            {
-                Debug.LogError("[Spawner] 実験開始できません：器具が未選択で、defaultElementVesselPrefab も未設定です。");
-                return;
-            }
-            if (!string.IsNullOrEmpty(selectedEquipmentName))
-                Debug.LogWarning($"[Spawner] 器具 '{selectedEquipmentName}' が見つからないため、共通器具で代用します。");
-        }
-
-        // 実験用の器具を生成
-        GameObject vessel = VRCInstantiate(vesselPrefab);
-        if (spawnParent != null)
-        {
-            vessel.transform.SetParent(spawnParent);
-            vessel.transform.localPosition = Vector3.zero;
-            vessel.transform.localRotation = Quaternion.identity;
-            vessel.transform.localScale = Vector3.one;
-        }
-        TrackSpawn(vessel);
-
-        // 実験中は「器具生成物」で反応を行う → 器具にワイヤー適用（見やすさ向上）
-        ApplyWireframe(vessel);
-
-        Debug.Log($"[Spawner] 実験開始：器具 = {(vesselPrefab != null ? vesselPrefab.name : "null")}, 元素 = {selectedElementName}");
-
-        // プレビューは役目終了なので片付け（見せたいなら残しても良い）
-        if (currentElementPreview != null)
-        {
-            Destroy(currentElementPreview);
-            currentElementPreview = null;
+            Debug.Log("[Spawner] 実験を実行しました（AIデータなし）");
         }
     }
 
-    /// <summary>
-    /// 実験リセット：生成物はすべて削除、環境側は Orchestrator がリセット
-    /// </summary>
+    // =====================================================
+    // リセット
+    // =====================================================
     public void _ResetExperiment()
     {
-        // 実験用生成物を破棄
-        for (int i = 0; i < spawnedCount; i++)
+        if (currentVessel != null)
         {
-            if (spawnedExperimentObjects[i] != null)
-                Destroy(spawnedExperimentObjects[i]);
-        }
-        spawnedCount = 0;
-
-        // プレビューも破棄
-        if (currentElementPreview != null)
-        {
-            Destroy(currentElementPreview);
-            currentElementPreview = null;
+            Destroy(currentVessel);
+            currentVessel = null;
         }
 
-        // 選択状態は維持しても良いが、誤操作防止でクリア
-        // （必要ならコメントアウト）
         selectedElementName = "";
         selectedEquipmentName = "";
+        hasElementSelected = false;
 
-        Debug.Log("[Spawner] 実験リセット完了（生成物・プレビューを全削除）。");
+        Debug.Log("[Spawner] 実験リセット完了（生成した器具を削除）");
     }
 
-    /// <summary>
-    /// AI応答（化学結合等）を適用：JsonReactionPlayerへ転送
-    /// </summary>
+    // =====================================================
+    // AI反応の適用
+    // =====================================================
     public void _ApplyBondUpdate()
     {
         if (string.IsNullOrEmpty(bondData))
         {
-            Debug.LogWarning("[Spawner] bondData が空のため適用をスキップ。");
+            Debug.LogWarning("[Spawner] bondData が空のため適用スキップ");
             return;
         }
 
-        Debug.Log($"[Spawner] AI反応を適用: {bondData}");
         if (reactionPlayer != null)
             reactionPlayer.Play(bondData);
+
+        Debug.Log($"[Spawner] AI反応を適用: {bondData}");
     }
 
-    // ===================== 内部補助 =====================
+    // =====================================================
+    // 内部補助
+    // =====================================================
+
+    // UdonSharpで使えるフォールバック版：例外は使わない
+    private GameObject SafeInstantiate(GameObject prefab)
+    {
+        if (prefab == null) return null;
+
+        // まずはVRChat側の生成を試す
+        GameObject obj = VRCInstantiate(prefab);
+        if (obj != null) return obj;
+
+        // Editor などで VRCInstantiate が null だった場合に普通の Instantiate で代わりに生成
+        obj = Object.Instantiate(prefab);
+        return obj;
+    }
+
+    private void PlaceUnderSpawnParent(GameObject obj)
+    {
+        if (obj == null) return;
+        if (spawnParent != null)
+        {
+            obj.transform.SetParent(spawnParent);
+            obj.transform.localPosition = Vector3.zero;
+            obj.transform.localRotation = Quaternion.identity;
+            obj.transform.localScale = Vector3.one;
+        }
+    }
 
     private GameObject FindPrefabByName(GameObject[] list, string name)
     {
@@ -209,51 +218,33 @@ public class ChemElementSpawner : UdonSharpBehaviour
         for (int i = 0; i < list.Length; i++)
         {
             var g = list[i];
-            if (g != null && g.name == name) return g;
+            if (g != null && g.name == name)
+                return g;
         }
         return null;
-    }
-
-    private void TrackSpawn(GameObject obj)
-    {
-        if (obj == null) return;
-        if (spawnedCount >= spawnedExperimentObjects.Length) return;
-        spawnedExperimentObjects[spawnedCount++] = obj;
     }
 
     private void ApplyWireframe(GameObject root)
     {
         if (wireMaterial == null || root == null) return;
-
         var renderers = root.GetComponentsInChildren<Renderer>(true);
         for (int i = 0; i < renderers.Length; i++)
-        {
-            // 子の ElementVisual にまでワイヤーを当てたくない場合はフィルタ可能
             renderers[i].material = wireMaterial;
-        }
     }
 
-    /// <summary>
-    /// 共通器具の子 "ElementVisual" に、元素名から決めた色等を適用（Shader で見た目表現）
-    /// </summary>
     private void ApplyElementVisual(GameObject vessel, string elementName)
     {
         if (vessel == null) return;
 
-        // ElementVisual を探す（名前一致）
-        Transform visualT = null;
-        if (!string.IsNullOrEmpty(elementVisualChildName))
-            visualT = vessel.transform.Find(elementVisualChildName);
-
+        Transform visualT = vessel.transform.Find(elementVisualChildName);
         if (visualT == null)
         {
-            // 子孫から名前一致で探索（階層が深い場合）
-            var allChildren = vessel.GetComponentsInChildren<Transform>(true);
-            for (int i = 0; i < allChildren.Length; i++)
+            var all = vessel.GetComponentsInChildren<Transform>(true);
+            for (int i = 0; i < all.Length; i++)
             {
-                if (allChildren[i].name == elementVisualChildName)
+                if (all[i].name == elementVisualChildName)
                 {
-                    visualT = allChildren[i];
+                    visualT = all[i];
                     break;
                 }
             }
@@ -261,7 +252,7 @@ public class ChemElementSpawner : UdonSharpBehaviour
 
         if (visualT == null)
         {
-            Debug.LogWarning($"[Spawner] ElementVisual 子 '{elementVisualChildName}' が見つかりませんでした。");
+            Debug.LogWarning($"[Spawner] ElementVisual '{elementVisualChildName}' が見つかりません。");
             return;
         }
 
@@ -278,35 +269,22 @@ public class ChemElementSpawner : UdonSharpBehaviour
             return;
         }
 
-        // Renderer.material はランタイムでインスタンス化される（Udon実行可）
         rend.material = elementVisualMaterial;
 
-        // 元素名から安定した色を決定（簡易ハッシュ）
-        Color tint = ComputeElementColor(elementName);
-
-        // 共通Shader側で _Color がある前提（なければプロパティ名を合わせてください）
+        Color c = ComputeElementColor(elementName);
         if (rend.material.HasProperty("_Color"))
-            rend.material.SetColor("_Color", tint);
-
-        // 必要なら発光
+            rend.material.SetColor("_Color", c);
         if (rend.material.HasProperty("_EmissionColor"))
-            rend.material.SetColor("_EmissionColor", tint * 0.5f);
+            rend.material.SetColor("_EmissionColor", c * 0.5f);
     }
 
-    /// <summary>
-    /// 元素名から安定した色を作る（シンプルハッシュ → HSV）
-    /// </summary>
     private Color ComputeElementColor(string name)
     {
         if (string.IsNullOrEmpty(name)) return Color.white;
-
-        // 文字列ハッシュ → 0..1
         int h = 0;
-        for (int i = 0; i < name.Length; i++) h = (h * 131) ^ name[i];
-        float hue = (h & 0xFFFF) / 65535.0f;
-
-        float s = 0.85f;
-        float v = 0.95f;
-        return Color.HSVToRGB(hue, s, v);
+        for (int i = 0; i < name.Length; i++)
+            h = (h * 131) ^ name[i];
+        float hue = (h & 0xFFFF) / 65535f;
+        return Color.HSVToRGB(hue, 0.85f, 0.95f);
     }
 }
