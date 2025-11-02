@@ -5,29 +5,37 @@ using UnityEngine;
 public class SpawnSelectorButton : UdonSharpBehaviour
 {
     public ChemElementSpawner spawner;
-    public string type;        // "Element" or "Equipment"
-    public string targetName;  // 押したときに spawner に渡す名前
-    public SelectionCategory category;
 
-    // 3Dモデルをプレイヤーが押したとき（Eキー・トリガー）
+    // "Element" or "Equipment"
+    public string type;
+
+    // 押したときにSpawnerに渡す名前（元素名とか、器具名とか）
+    public string targetName;
+
+    // ← これが CategoryController から参照されてる
+    public SelectionCategory category;   // enum でカテゴリを管理してる場合はこちらを使う
+
+    // ← もし文字列で見に来てるならこっちを使ってもらう
+    public string categoryName;
+
+    // 3Dボタンをプレイヤーが押したとき
     public override void Interact()
     {
-        _OnClick();
+        Press();
     }
 
-    // ← SelectionActionController がここを呼んでくるので残す
+    // SelectionActionController がここを呼んでくるので必ず残す
     public void Press()
     {
         _OnClick();
     }
 
-    // 旧UI系や他のスクリプトから呼べるようにもしておく
+    // 旧式のUIボタンから呼びたい場合用
     public void OnClick()
     {
         _OnClick();
     }
 
-    // 実際の処理はここだけ
     public void _OnClick()
     {
         if (spawner == null)
@@ -40,13 +48,11 @@ public class SpawnSelectorButton : UdonSharpBehaviour
         {
             spawner.selectedElementName = targetName;
             spawner.SendCustomEvent("_SelectElement");
-            // Debug.Log($"[SpawnSelectorButton] 元素 '{targetName}' を選択しました。");
         }
         else if (type == "Equipment")
         {
             spawner.selectedEquipmentName = targetName;
             spawner.SendCustomEvent("_SelectEquipment");
-            // Debug.Log($"[SpawnSelectorButton] 器具 '{targetName}' を選択しました。");
         }
         else
         {

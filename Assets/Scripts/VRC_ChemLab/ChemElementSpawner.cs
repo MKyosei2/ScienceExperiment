@@ -6,232 +6,152 @@ using VRC.Udon;
 [AddComponentMenu("VRC Lab/ChemElementSpawner")]
 public class ChemElementSpawner : UdonSharpBehaviour
 {
-    [Header("Spawn Root (生成先)")]
-    public Transform spawnParent;  // Systems/Spawner 推奨
+    [Header("生成先")]
+    public Transform spawnParent;
 
-    [Header("Prefab設定")]
-    [Tooltip("元素ボタンを押したときに使う共通器具Prefab（例：CONICAL_FLASK）")]
-    public GameObject defaultElementVesselPrefab;
+    [Header("生成元 (シーンに1個だけ置く。非アクティブでもOK)")]
+    [Tooltip("CONICAL_FLASKなど、シーンに1つだけ置いておく元オブジェクト。非アクティブでもOK。")]
+    public GameObject sourceVessel;
 
-    [Tooltip("器具ボタンで選択できる実験器具Prefab。名前一致で選択される。")]
-    public GameObject[] equipmentPrefabs;
-
-    [Header("マテリアル設定")]
-    public Material wireMaterial;           // ワイヤーフレーム用
-    public Material elementVisualMaterial;  // 元素の見た目用 (_Colorを持つこと)
+    [Header("見た目まわり")]
+    public Material wireMaterial;
+    public Material elementVisualMaterial;
     public string elementVisualChildName = "ElementVisual";
 
-    [Header("反応システム")]
+    [Header("反応システム(任意)")]
     public JsonReactionPlayer reactionPlayer;
 
-    // 状態保持（他スクリプトとやりとりする用）
     [HideInInspector] public string selectedEquipmentName = "";
     [HideInInspector] public string selectedElementName = "";
     [HideInInspector] public string bondData = "";
 
-    // いまシーンに出ている実体
-    private GameObject currentVessel;
+    private GameObject[] spawned = new GameObject[128];
+    private int spawnedCount = 0;
     private bool hasElementSelected = false;
 
-    // ========== 互換メソッド（既存スクリプトが呼んでも動くように） ==========
+    // ---------------------- 外部呼び出し互換 ----------------------
     public void StartExperiment() { SendCustomEvent("_StartExperiment"); }
     public void ResetExperiment() { SendCustomEvent("_ResetExperiment"); }
     public void SelectEquipment(string name) { selectedEquipmentName = name; SendCustomEvent("_SelectEquipment"); }
     public void SelectElement(string name) { selectedElementName = name; SendCustomEvent("_SelectElement"); }
     public void SpawnSelectedVesselAndStart() { SendCustomEvent("_StartExperiment"); }
 
-    // =====================================================
+    // ===============================================================
     // 器具ボタンを押したとき
-    // =====================================================
+    // ===============================================================
     public void _SelectEquipment()
     {
-        if (string.IsNullOrEmpty(selectedEquipmentName))
-        {
-            Debug.LogWarning("[Spawner] 器具名が空です。");
-            return;
-        }
+        GameObject g = SpawnOne();
+        if (g == null) return;
 
-        GameObject prefab = FindPrefabByName(equipmentPrefabs, selectedEquipmentName);
-        if (prefab == null)
-        {
-            Debug.LogWarning($"[Spawner] 器具 '{selectedEquipmentName}' が見つかりませんでした。");
-            return;
-        }
+        ApplyWireframe(g);
 
-        // すでに何か出ていたら消す
-        if (currentVessel != null)
-        {
-            Destroy(currentVessel);
-            currentVessel = null;
-        }
-
-        // Prefabを生成（UdonSharp対応版）
-        currentVessel = SafeInstantiate(prefab);
-        if (currentVessel == null)
-        {
-            Debug.LogError("[Spawner] 器具Prefabの生成に失敗しました。Prefab参照またはspawnParentを確認してください。");
-            return;
-        }
-
-        PlaceUnderSpawnParent(currentVessel);
-        ApplyWireframe(currentVessel);
-
-        // 先に元素が選ばれていたら表示を載せる
         if (hasElementSelected && !string.IsNullOrEmpty(selectedElementName))
-        {
-            ApplyElementVisual(currentVessel, selectedElementName);
-        }
+            ApplyElementVisual(g, selectedElementName);
 
-        Debug.Log($"[Spawner] 器具 '{selectedEquipmentName}' を生成しました。");
+        Debug.Log($"[Spawner] 器具ボタンで1つ生成（{selectedEquipmentName}）");
     }
 
-    // =====================================================
+    // ===============================================================
     // 元素ボタンを押したとき
-    // =====================================================
+    // ===============================================================
     public void _SelectElement()
     {
-        if (string.IsNullOrEmpty(selectedElementName))
-        {
-            Debug.LogWarning("[Spawner] 元素名が空です。");
-            return;
-        }
-
         hasElementSelected = true;
 
-        // 器具がまだ出ていないなら、共通器具を生成
-        if (currentVessel == null)
-        {
-            if (defaultElementVesselPrefab == null)
-            {
-                Debug.LogError("[Spawner] defaultElementVesselPrefab が未設定です。");
-                return;
-            }
+        GameObject g = SpawnOne();
+        if (g == null) return;
 
-            currentVessel = SafeInstantiate(defaultElementVesselPrefab);
-            if (currentVessel == null)
-            {
-                Debug.LogError("[Spawner] 共通器具Prefabの生成に失敗しました。");
-                return;
-            }
-
-            PlaceUnderSpawnParent(currentVessel);
-            ApplyWireframe(currentVessel);
-
-            Debug.Log("[Spawner] 器具がなかったので共通器具Prefabを生成しました。");
-        }
-
-        // 器具の中に元素の見た目を出す
-        ApplyElementVisual(currentVessel, selectedElementName);
-        Debug.Log($"[Spawner] 元素 '{selectedElementName}' を現在の器具に表示しました。");
+        ApplyElementVisual(g, selectedElementName);
+        Debug.Log($"[Spawner] 元素 '{selectedElementName}' で1つ生成");
     }
 
-    // =====================================================
-    // PCモードのStartボタン
-    // =====================================================
+    // ===============================================================
+    // 実験開始（PCモード専用）
+    // ===============================================================
     public void _StartExperiment()
     {
-        if (currentVessel == null)
-        {
-            Debug.LogWarning("[Spawner] 実験を開始できません：器具が存在しません（元素か器具ボタンを先に押してください）");
-            return;
-        }
-
         if (!string.IsNullOrEmpty(bondData) && reactionPlayer != null)
-        {
             reactionPlayer.Play(bondData);
-            Debug.Log("[Spawner] 実験を実行（AI反応を適用）");
-        }
         else
-        {
             Debug.Log("[Spawner] 実験を実行しました（AIデータなし）");
-        }
     }
 
-    // =====================================================
-    // リセット
-    // =====================================================
+    // ===============================================================
+    // リセット（全削除）
+    // ===============================================================
     public void _ResetExperiment()
     {
-        if (currentVessel != null)
+        for (int i = 0; i < spawnedCount; i++)
         {
-            Destroy(currentVessel);
-            currentVessel = null;
+            if (spawned[i] != null)
+                Destroy(spawned[i]);
         }
+        spawnedCount = 0;
 
         selectedElementName = "";
         selectedEquipmentName = "";
         hasElementSelected = false;
 
-        Debug.Log("[Spawner] 実験リセット完了（生成した器具を削除）");
+        Debug.Log("[Spawner] リセット：生成したオブジェクトを全削除しました。");
     }
 
-    // =====================================================
-    // AI反応の適用
-    // =====================================================
-    public void _ApplyBondUpdate()
+    // ===============================================================
+    // 安全に生成（非アクティブな元でもOK）
+    // ===============================================================
+    private GameObject SpawnOne()
     {
-        if (string.IsNullOrEmpty(bondData))
+        if (sourceVessel == null)
         {
-            Debug.LogWarning("[Spawner] bondData が空のため適用スキップ");
-            return;
+            Debug.LogError("[Spawner] sourceVessel が設定されていません。");
+            return null;
         }
 
-        if (reactionPlayer != null)
-            reactionPlayer.Play(bondData);
+        bool wasActive = sourceVessel.activeSelf;
+        if (!wasActive) sourceVessel.SetActive(true);
 
-        Debug.Log($"[Spawner] AI反応を適用: {bondData}");
-    }
+        GameObject inst = VRCInstantiate(sourceVessel);
+        if (inst == null)
+        {
+            inst = Object.Instantiate(sourceVessel);
+        }
 
-    // =====================================================
-    // 内部補助
-    // =====================================================
+        if (!wasActive) sourceVessel.SetActive(false);
 
-    // UdonSharpで使えるフォールバック版：例外は使わない
-    private GameObject SafeInstantiate(GameObject prefab)
-    {
-        if (prefab == null) return null;
+        if (inst == null)
+        {
+            Debug.LogError("[Spawner] 生成に失敗しました。");
+            return null;
+        }
 
-        // まずはVRChat側の生成を試す
-        GameObject obj = VRCInstantiate(prefab);
-        if (obj != null) return obj;
-
-        // Editor などで VRCInstantiate が null だった場合に普通の Instantiate で代わりに生成
-        obj = Object.Instantiate(prefab);
-        return obj;
-    }
-
-    private void PlaceUnderSpawnParent(GameObject obj)
-    {
-        if (obj == null) return;
         if (spawnParent != null)
         {
-            obj.transform.SetParent(spawnParent);
-            obj.transform.localPosition = Vector3.zero;
-            obj.transform.localRotation = Quaternion.identity;
-            obj.transform.localScale = Vector3.one;
+            inst.transform.SetParent(spawnParent);
+            inst.transform.localPosition = Vector3.zero;
+            inst.transform.localRotation = Quaternion.identity;
+            inst.transform.localScale = Vector3.one;
         }
+
+        if (spawnedCount < spawned.Length)
+            spawned[spawnedCount++] = inst;
+
+        return inst;
     }
 
-    private GameObject FindPrefabByName(GameObject[] list, string name)
-    {
-        if (list == null || string.IsNullOrEmpty(name)) return null;
-        for (int i = 0; i < list.Length; i++)
-        {
-            var g = list[i];
-            if (g != null && g.name == name)
-                return g;
-        }
-        return null;
-    }
-
+    // ===============================================================
+    // ワイヤー表示
+    // ===============================================================
     private void ApplyWireframe(GameObject root)
     {
         if (wireMaterial == null || root == null) return;
-        var renderers = root.GetComponentsInChildren<Renderer>(true);
-        for (int i = 0; i < renderers.Length; i++)
-            renderers[i].material = wireMaterial;
+        var rends = root.GetComponentsInChildren<Renderer>(true);
+        for (int i = 0; i < rends.Length; i++)
+            rends[i].material = wireMaterial;
     }
 
+    // ===============================================================
+    // 元素見た目
+    // ===============================================================
     private void ApplyElementVisual(GameObject vessel, string elementName)
     {
         if (vessel == null) return;
