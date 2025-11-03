@@ -1344,6 +1344,7 @@ MonoBehaviour:
   type: 
   targetName: 
   category: 11
+  categoryName: 
 --- !u!114 &310333469
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -1973,6 +1974,7 @@ MonoBehaviour:
   type: 
   targetName: 
   category: 12
+  categoryName: 
 --- !u!114 &622968857
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -2388,10 +2390,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 666362356}
-  spawner: {fileID: 0}
-  type: 
-  targetName: 
-  category: 5
+  spawner: {fileID: 1051910570}
+  type: Condition
+  targetName: tempPlus
+  category: 4
+  categoryName: Condition
 --- !u!114 &666362356
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -3395,10 +3398,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1026968734}
-  spawner: {fileID: 0}
-  type: 
-  targetName: 
-  category: 6
+  spawner: {fileID: 1051910570}
+  type: Condition
+  targetName: tempMinus
+  category: 4
+  categoryName: Condition
 --- !u!114 &1026968734
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -3507,23 +3511,7 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1051910571}
   spawnParent: {fileID: 1547665052}
-  defaultElementVesselPrefab: {fileID: 1661290437352326324, guid: c5c6b63c54ea90840b2922df9b2ad640,
-    type: 3}
-  equipmentPrefabs:
-  - {fileID: 4090574030381887731, guid: cafaa3710958faa45bbf439a80d64e1e, type: 3}
-  - {fileID: 2910533902891775054, guid: b97df90dc8e5f464dae3f777bbf6ba48, type: 3}
-  - {fileID: 1661290437352326324, guid: 6d6fc21eb1c0fbc4f846fcd61fcc6a61, type: 3}
-  - {fileID: 7201520947891470761, guid: fa11e782b42b4e34da7cbb83c4dcfe37, type: 3}
-  - {fileID: 3325130906403560304, guid: 7a2b8a48ced703a4bae2c3a102cf1832, type: 3}
-  - {fileID: 8681810241418991810, guid: e6639dfe28cb0b248aa7ca5063a270b1, type: 3}
-  - {fileID: 8675461835311268847, guid: 3ae2ddec665a21a4f91164ce767d5ce2, type: 3}
-  - {fileID: 8459279897271910465, guid: 9cba1e3b3aefbe349a58554c9051588d, type: 3}
-  - {fileID: 3664802908990552422, guid: 736dfe91bedddbe4ea3fd9b26653d989, type: 3}
-  - {fileID: 8544109681286976384, guid: e868831ce9ceb8d4d97ee55322d95c8d, type: 3}
-  - {fileID: 840203293340832546, guid: 7b80e52f1f970b842b2a3687d2b9a71c, type: 3}
-  - {fileID: 2446668973225092625, guid: 72223587a00a91848a01674ca38e2cc9, type: 3}
-  - {fileID: 7807122375084689788, guid: 5e1fdc4d88a7b6b4b82e01a740ab8f4e, type: 3}
-  - {fileID: 3822769561105784349, guid: 89d7a135f9b4d1a4babf2e648c73dc7a, type: 3}
+  sourceVessel: {fileID: 3224094757376030152}
   wireMaterial: {fileID: 2100000, guid: ad8572d586a7d2b459adc91e56dcd3e4, type: 2}
   elementVisualMaterial: {fileID: 2100000, guid: ad8572d586a7d2b459adc91e56dcd3e4,
     type: 2}
@@ -4239,10 +4227,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1181307766}
-  spawner: {fileID: 0}
-  type: 
-  targetName: 
-  category: 7
+  spawner: {fileID: 1051910570}
+  type: Condition
+  targetName: humPlus
+  category: 4
+  categoryName: Condition
 --- !u!114 &1181307766
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -4486,10 +4475,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1323482144}
-  spawner: {fileID: 0}
-  type: 
-  targetName: 
-  category: 9
+  spawner: {fileID: 1051910570}
+  type: Condition
+  targetName: presPlus
+  category: 4
+  categoryName: Condition
 --- !u!114 &1323482144
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -5204,10 +5194,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1762554547}
-  spawner: {fileID: 0}
-  type: 
-  targetName: 
-  category: 10
+  spawner: {fileID: 1051910570}
+  type: Condition
+  targetName: presMinus
+  category: 4
+  categoryName: Condition
 --- !u!114 &1762554547
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -6108,10 +6099,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2096035950}
-  spawner: {fileID: 0}
-  type: 
-  targetName: 
-  category: 8
+  spawner: {fileID: 1051910570}
+  type: Condition
+  targetName: humMinus
+  category: 4
+  categoryName: Condition
 --- !u!114 &2096035950
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -11616,6 +11608,7 @@ MonoBehaviour:
   type: Element
   targetName: B
   category: 0
+  categoryName: Element
 --- !u!114 &2852219638814583679
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -12229,6 +12222,7 @@ MonoBehaviour:
   type: Element
   targetName: Pa
   category: 0
+  categoryName: Element
 --- !u!114 &3164646082921691999
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -14453,6 +14447,7 @@ MonoBehaviour:
   type: Element
   targetName: Db
   category: 0
+  categoryName: Element
 --- !u!114 &3891714517485923033
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -14834,6 +14829,7 @@ MonoBehaviour:
   type: Element
   targetName: Bi
   category: 0
+  categoryName: Element
 --- !u!114 &4178724726400125191
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -15070,6 +15066,7 @@ MonoBehaviour:
   type: Element
   targetName: Fm
   category: 0
+  categoryName: Element
 --- !u!114 &4288267423663428091
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -15282,7 +15279,8 @@ MonoBehaviour:
   spawner: {fileID: 1051910570}
   type: Equipment
   targetName: STRAUS_FLASK
-  category: 0
+  category: 3
+  categoryName: Tool
 --- !u!1 &4316104654164404575
 GameObject:
   m_ObjectHideFlags: 0
@@ -15391,7 +15389,8 @@ MonoBehaviour:
   spawner: {fileID: 1051910570}
   type: Equipment
   targetName: CLAISEN_FLASK
-  category: 0
+  category: 3
+  categoryName: Tool
 --- !u!65 &4409701957736109847
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -15732,6 +15731,7 @@ MonoBehaviour:
   type: Element
   targetName: Br
   category: 0
+  categoryName: Element
 --- !u!114 &4650570778397916091
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -15891,6 +15891,7 @@ MonoBehaviour:
   type: Element
   targetName: Mo
   category: 0
+  categoryName: Element
 --- !u!114 &4692397505056685170
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -16016,6 +16017,7 @@ MonoBehaviour:
   type: Element
   targetName: Sn
   category: 0
+  categoryName: Element
 --- !u!114 &4800191965182096579
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -16198,6 +16200,7 @@ MonoBehaviour:
   type: Element
   targetName: Pt
   category: 0
+  categoryName: Element
 --- !u!114 &4886662974653763261
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -16454,6 +16457,7 @@ MonoBehaviour:
   type: Element
   targetName: Ga
   category: 0
+  categoryName: Element
 --- !u!114 &4963462307229479007
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -16521,6 +16525,7 @@ MonoBehaviour:
   type: Element
   targetName: Ho
   category: 0
+  categoryName: Element
 --- !u!114 &4969286435179587012
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -17414,6 +17419,7 @@ MonoBehaviour:
   type: Element
   targetName: Ts
   category: 0
+  categoryName: Element
 --- !u!114 &5394132675163300231
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -17602,6 +17608,7 @@ MonoBehaviour:
   type: Element
   targetName: Lv
   category: 0
+  categoryName: Element
 --- !u!114 &5447168413633408355
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -18254,7 +18261,8 @@ MonoBehaviour:
   spawner: {fileID: 1051910570}
   type: Equipment
   targetName: CONICAL_FLASK
-  category: 0
+  category: 3
+  categoryName: Tool
 --- !u!23 &5880116501522270568
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -18469,6 +18477,7 @@ MonoBehaviour:
   type: Element
   targetName: In
   category: 0
+  categoryName: Element
 --- !u!114 &6001861481431650210
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -18705,6 +18714,7 @@ MonoBehaviour:
   type: Element
   targetName: Bk
   category: 0
+  categoryName: Element
 --- !u!114 &6064572196719329454
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -18996,6 +19006,7 @@ MonoBehaviour:
   type: Element
   targetName: N
   category: 0
+  categoryName: Element
 --- !u!114 &6140082593096026946
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -19191,6 +19202,7 @@ MonoBehaviour:
   type: Element
   targetName: Hs
   category: 0
+  categoryName: Element
 --- !u!114 &6205344867602917212
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -19335,6 +19347,7 @@ MonoBehaviour:
   type: Element
   targetName: Rh
   category: 0
+  categoryName: Element
 --- !u!114 &6231299026418483219
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -19444,6 +19457,7 @@ MonoBehaviour:
   type: Element
   targetName: Tb
   category: 0
+  categoryName: Element
 --- !u!114 &6249235194121646170
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -19517,6 +19531,7 @@ MonoBehaviour:
   type: Element
   targetName: Lu
   category: 0
+  categoryName: Element
 --- !u!114 &6281371875813979312
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -19691,6 +19706,7 @@ MonoBehaviour:
   type: Element
   targetName: Cd
   category: 0
+  categoryName: Element
 --- !u!114 &6336026800609442270
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -19835,6 +19851,7 @@ MonoBehaviour:
   type: Element
   targetName: At
   category: 0
+  categoryName: Element
 --- !u!114 &6430366141153731987
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -20017,6 +20034,7 @@ MonoBehaviour:
   type: Element
   targetName: Tc
   category: 0
+  categoryName: Element
 --- !u!114 &6476481098072106099
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -20246,6 +20264,7 @@ MonoBehaviour:
   type: Element
   targetName: Ni
   category: 0
+  categoryName: Element
 --- !u!114 &6542394489380862931
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -20390,6 +20409,7 @@ MonoBehaviour:
   type: Element
   targetName: Cu
   category: 0
+  categoryName: Element
 --- !u!114 &6600275904284278364
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -20484,6 +20504,7 @@ MonoBehaviour:
   type: Element
   targetName: Ne
   category: 0
+  categoryName: Element
 --- !u!114 &6611703797179636920
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -20557,6 +20578,7 @@ MonoBehaviour:
   type: Element
   targetName: Sm
   category: 0
+  categoryName: Element
 --- !u!114 &6657626995896467778
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -20693,6 +20715,7 @@ MonoBehaviour:
   type: Element
   targetName: Pm
   category: 0
+  categoryName: Element
 --- !u!114 &6670710135414587257
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -20826,6 +20849,7 @@ MonoBehaviour:
   type: Element
   targetName: As
   category: 0
+  categoryName: Element
 --- !u!114 &6735796106627057624
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -20928,6 +20952,7 @@ MonoBehaviour:
   type: Element
   targetName: Ir
   category: 0
+  categoryName: Element
 --- !u!114 &6748414299647929664
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -21157,6 +21182,7 @@ MonoBehaviour:
   type: Element
   targetName: Am
   category: 0
+  categoryName: Element
 --- !u!114 &6875860933694161064
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -21230,6 +21256,7 @@ MonoBehaviour:
   type: Element
   targetName: Co
   category: 0
+  categoryName: Element
 --- !u!114 &6879353243997458761
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -21345,6 +21372,7 @@ MonoBehaviour:
   type: Element
   targetName: Ag
   category: 0
+  categoryName: Element
 --- !u!114 &6939095568655327896
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -21674,6 +21702,7 @@ MonoBehaviour:
   type: Element
   targetName: Ds
   category: 0
+  categoryName: Element
 --- !u!114 &7101420923700303158
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -21793,7 +21822,8 @@ MonoBehaviour:
   spawner: {fileID: 1051910570}
   type: Equipment
   targetName: VOLUMETARIC_FLASK
-  category: 0
+  category: 3
+  categoryName: Tool
 --- !u!23 &7104094445319203303
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -21870,6 +21900,7 @@ MonoBehaviour:
   type: Element
   targetName: Al
   category: 0
+  categoryName: Element
 --- !u!114 &7127511957883874863
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -21966,6 +21997,7 @@ MonoBehaviour:
   type: Element
   targetName: Er
   category: 0
+  categoryName: Element
 --- !u!114 &7153150999164301608
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -22041,6 +22073,7 @@ MonoBehaviour:
   type: Element
   targetName: W
   category: 0
+  categoryName: Element
 --- !u!114 &7167604643102938688
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -22184,6 +22217,7 @@ MonoBehaviour:
   type: Element
   targetName: Fr
   category: 0
+  categoryName: Element
 --- !u!114 &7198041289520214760
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -22278,6 +22312,7 @@ MonoBehaviour:
   type: Element
   targetName: Cr
   category: 0
+  categoryName: Element
 --- !u!114 &7200242352847357949
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -22414,6 +22449,7 @@ MonoBehaviour:
   type: Element
   targetName: Cl
   category: 0
+  categoryName: Element
 --- !u!114 &7244347170262662098
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -22508,6 +22544,7 @@ MonoBehaviour:
   type: Element
   targetName: F
   category: 0
+  categoryName: Element
 --- !u!114 &7257806654119097861
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -22590,6 +22627,7 @@ MonoBehaviour:
   type: Element
   targetName: Mt
   category: 0
+  categoryName: Element
 --- !u!114 &7289860672397075393
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -22665,6 +22703,7 @@ MonoBehaviour:
   type: Element
   targetName: Rf
   category: 0
+  categoryName: Element
 --- !u!114 &7296245317341204780
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -22763,7 +22802,8 @@ MonoBehaviour:
   spawner: {fileID: 1051910570}
   type: Equipment
   targetName: EAR-SHAPED_FLASK
-  category: 0
+  category: 3
+  categoryName: Tool
 --- !u!4 &7321790397059223067
 Transform:
   m_ObjectHideFlags: 0
@@ -22805,6 +22845,7 @@ MonoBehaviour:
   type: Element
   targetName: Ra
   category: 0
+  categoryName: Element
 --- !u!114 &7321790397059223070
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -22920,6 +22961,7 @@ MonoBehaviour:
   type: Element
   targetName: Re
   category: 0
+  categoryName: Element
 --- !u!114 &7344607451996236589
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -23014,6 +23056,7 @@ MonoBehaviour:
   type: Element
   targetName: Ar
   category: 0
+  categoryName: Element
 --- !u!114 &7396142512619680838
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -23097,6 +23140,7 @@ MonoBehaviour:
   type: Element
   targetName: Fl
   category: 0
+  categoryName: Element
 --- !u!114 &7413234922502724551
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -23191,6 +23235,7 @@ MonoBehaviour:
   type: Element
   targetName: No
   category: 0
+  categoryName: Element
 --- !u!114 &7419076719671514210
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -23283,7 +23328,8 @@ MonoBehaviour:
   spawner: {fileID: 1051910570}
   type: Equipment
   targetName: KJELDAHL_FLASK
-  category: 0
+  category: 3
+  categoryName: Tool
 --- !u!4 &7435660078447622438
 Transform:
   m_ObjectHideFlags: 0
@@ -23383,6 +23429,7 @@ MonoBehaviour:
   type: Element
   targetName: C
   category: 0
+  categoryName: Element
 --- !u!114 &7493331948076568099
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -23489,6 +23536,7 @@ MonoBehaviour:
   type: Element
   targetName: Po
   category: 0
+  categoryName: Element
 --- !u!114 &7557000235408385327
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -23602,6 +23650,7 @@ MonoBehaviour:
   type: Element
   targetName: K
   category: 0
+  categoryName: Element
 --- !u!114 &7567972042086888132
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -23856,7 +23905,8 @@ MonoBehaviour:
   spawner: {fileID: 1051910570}
   type: Equipment
   targetName: RETORT_FLASK
-  category: 0
+  category: 3
+  categoryName: Tool
 --- !u!4 &7686791978725911745
 Transform:
   m_ObjectHideFlags: 0
@@ -23931,7 +23981,8 @@ MonoBehaviour:
   spawner: {fileID: 1051910570}
   type: Equipment
   targetName: Spoit
-  category: 0
+  category: 3
+  categoryName: Tool
 --- !u!4 &7711998248180692229
 Transform:
   m_ObjectHideFlags: 0
@@ -23973,6 +24024,7 @@ MonoBehaviour:
   type: Element
   targetName: Tm
   category: 0
+  categoryName: Element
 --- !u!114 &7711998248180692232
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -24054,6 +24106,7 @@ MonoBehaviour:
   type: Element
   targetName: Sb
   category: 0
+  categoryName: Element
 --- !u!114 &7763885260617515110
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -24171,6 +24224,7 @@ MonoBehaviour:
   type: Element
   targetName: Rn
   category: 0
+  categoryName: Element
 --- !u!114 &7820111450149046609
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -24265,6 +24319,7 @@ MonoBehaviour:
   type: Element
   targetName: Li
   category: 0
+  categoryName: Element
 --- !u!114 &7865632229934435346
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -24332,6 +24387,7 @@ MonoBehaviour:
   type: Element
   targetName: Ac
   category: 0
+  categoryName: Element
 --- !u!114 &7865993850838117685
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -24571,6 +24627,7 @@ MonoBehaviour:
   type: Element
   targetName: La
   category: 0
+  categoryName: Element
 --- !u!114 &7881169228365219832
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -24644,6 +24701,7 @@ MonoBehaviour:
   type: Element
   targetName: Au
   category: 0
+  categoryName: Element
 --- !u!114 &7907410755688578243
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -24717,6 +24775,7 @@ MonoBehaviour:
   type: Element
   targetName: Be
   category: 0
+  categoryName: Element
 --- !u!114 &7911657481371440571
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -24790,6 +24849,7 @@ MonoBehaviour:
   type: Element
   targetName: Nd
   category: 0
+  categoryName: Element
 --- !u!114 &7931805303239585746
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -24850,6 +24910,7 @@ MonoBehaviour:
   type: Element
   targetName: Gd
   category: 0
+  categoryName: Element
 --- !u!114 &7953243070872691061
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -24944,6 +25005,7 @@ MonoBehaviour:
   type: Element
   targetName: Hf
   category: 0
+  categoryName: Element
 --- !u!114 &7977640048992222376
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -25017,6 +25079,7 @@ MonoBehaviour:
   type: Element
   targetName: Ge
   category: 0
+  categoryName: Element
 --- !u!114 &7993809125724472843
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -25077,6 +25140,7 @@ MonoBehaviour:
   type: Element
   targetName: Xe
   category: 0
+  categoryName: Element
 --- !u!114 &8014379500077689827
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -25213,6 +25277,7 @@ MonoBehaviour:
   type: Element
   targetName: V
   category: 0
+  categoryName: Element
 --- !u!114 &8024760476888125146
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -25280,6 +25345,7 @@ MonoBehaviour:
   type: Element
   targetName: Rg
   category: 0
+  categoryName: Element
 --- !u!114 &8053312613954825663
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -25378,7 +25444,8 @@ MonoBehaviour:
   spawner: {fileID: 1051910570}
   type: Equipment
   targetName: ROUND-BOTTOM_FLASK
-  category: 0
+  category: 3
+  categoryName: Tool
 --- !u!23 &8091824632908192368
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -25481,6 +25548,7 @@ MonoBehaviour:
   type: Element
   targetName: Nh
   category: 0
+  categoryName: Element
 --- !u!114 &8096255392358870293
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -25548,6 +25616,7 @@ MonoBehaviour:
   type: Element
   targetName: U
   category: 0
+  categoryName: Element
 --- !u!114 &8120530056085383585
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -25621,6 +25690,7 @@ MonoBehaviour:
   type: Element
   targetName: Rb
   category: 0
+  categoryName: Element
 --- !u!114 &8127525441820320039
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -25715,6 +25785,7 @@ MonoBehaviour:
   type: Element
   targetName: Se
   category: 0
+  categoryName: Element
 --- !u!114 &8179124481473162948
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -25894,6 +25965,7 @@ MonoBehaviour:
   type: Element
   targetName: Si
   category: 0
+  categoryName: Element
 --- !u!114 &8232050387331376474
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -26013,7 +26085,8 @@ MonoBehaviour:
   spawner: {fileID: 1051910570}
   type: Equipment
   targetName: FLORENCE_FLASK
-  category: 0
+  category: 3
+  categoryName: Tool
 --- !u!65 &8238287103295509272
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -26061,6 +26134,7 @@ MonoBehaviour:
   type: Element
   targetName: He
   category: 0
+  categoryName: Element
 --- !u!114 &8238287103295509275
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -26121,6 +26195,7 @@ MonoBehaviour:
   type: Element
   targetName: Pd
   category: 0
+  categoryName: Element
 --- !u!114 &8239321884413468850
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -26202,6 +26277,7 @@ MonoBehaviour:
   type: Element
   targetName: P
   category: 0
+  categoryName: Element
 --- !u!114 &8301879889902856033
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -26305,6 +26381,7 @@ MonoBehaviour:
   type: Element
   targetName: Ba
   category: 0
+  categoryName: Element
 --- !u!114 &8339768874379943803
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -26443,6 +26520,7 @@ MonoBehaviour:
   type: Element
   targetName: Yb
   category: 0
+  categoryName: Element
 --- !u!114 &8354899142841511211
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -26573,6 +26651,7 @@ MonoBehaviour:
   type: Element
   targetName: Sg
   category: 0
+  categoryName: Element
 --- !u!114 &8383273723948427957
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -26641,6 +26720,7 @@ MonoBehaviour:
   type: Element
   targetName: Zr
   category: 0
+  categoryName: Element
 --- !u!114 &8425727661973989636
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -26750,6 +26830,7 @@ MonoBehaviour:
   type: Element
   targetName: Lr
   category: 0
+  categoryName: Element
 --- !u!114 &8477714810806872390
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -26810,6 +26891,7 @@ MonoBehaviour:
   type: Element
   targetName: H
   category: 0
+  categoryName: Element
 --- !u!114 &8493912676268181638
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -26870,6 +26952,7 @@ MonoBehaviour:
   type: Element
   targetName: Dy
   category: 0
+  categoryName: Element
 --- !u!114 &8511925976718649424
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -26930,6 +27013,7 @@ MonoBehaviour:
   type: Element
   targetName: Es
   category: 0
+  categoryName: Element
 --- !u!114 &8518635257192859043
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -27040,6 +27124,7 @@ MonoBehaviour:
   type: Element
   targetName: S
   category: 0
+  categoryName: Element
 --- !u!114 &8586035499879421317
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -27113,6 +27198,7 @@ MonoBehaviour:
   type: Element
   targetName: Os
   category: 0
+  categoryName: Element
 --- !u!114 &8616068271712477274
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -27290,6 +27376,7 @@ MonoBehaviour:
   type: Element
   targetName: Bh
   category: 0
+  categoryName: Element
 --- !u!114 &8629501747536118096
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -27350,6 +27437,7 @@ MonoBehaviour:
   type: Element
   targetName: Nb
   category: 0
+  categoryName: Element
 --- !u!114 &8635683886716879991
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -27423,6 +27511,7 @@ MonoBehaviour:
   type: Element
   targetName: Kr
   category: 0
+  categoryName: Element
 --- !u!114 &8649502684045382745
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -27483,6 +27572,7 @@ MonoBehaviour:
   type: Element
   targetName: Pr
   category: 0
+  categoryName: Element
 --- !u!114 &8654507835874483144
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -27556,6 +27646,7 @@ MonoBehaviour:
   type: Element
   targetName: Md
   category: 0
+  categoryName: Element
 --- !u!114 &8660686015195189802
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -27631,6 +27722,7 @@ MonoBehaviour:
   type: Element
   targetName: Sr
   category: 0
+  categoryName: Element
 --- !u!114 &8679119600780853445
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -27706,6 +27798,7 @@ MonoBehaviour:
   type: Element
   targetName: Th
   category: 0
+  categoryName: Element
 --- !u!114 &8697215596810605450
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -27798,7 +27891,8 @@ MonoBehaviour:
   spawner: {fileID: 1051910570}
   type: Equipment
   targetName: SCHLENK_FLASK
-  category: 0
+  category: 3
+  categoryName: Tool
 --- !u!33 &8711092091959117963
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -27833,6 +27927,7 @@ MonoBehaviour:
   type: Element
   targetName: Ce
   category: 0
+  categoryName: Element
 --- !u!114 &8711092091959117966
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -27906,6 +28001,7 @@ MonoBehaviour:
   type: Element
   targetName: Ti
   category: 0
+  categoryName: Element
 --- !u!114 &8717338291179142156
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -27979,6 +28075,7 @@ MonoBehaviour:
   type: Element
   targetName: Ta
   category: 0
+  categoryName: Element
 --- !u!114 &8720354484697860160
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -28039,6 +28136,7 @@ MonoBehaviour:
   type: Element
   targetName: Pb
   category: 0
+  categoryName: Element
 --- !u!114 &8752090976384514676
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -28133,6 +28231,7 @@ MonoBehaviour:
   type: Element
   targetName: Sc
   category: 0
+  categoryName: Element
 --- !u!114 &8797597108110194467
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -28214,6 +28313,7 @@ MonoBehaviour:
   type: Element
   targetName: Zn
   category: 0
+  categoryName: Element
 --- !u!114 &8814431745249821107
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -28308,6 +28408,7 @@ MonoBehaviour:
   type: Element
   targetName: Np
   category: 0
+  categoryName: Element
 --- !u!114 &8819917447171024979
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -28375,6 +28476,7 @@ MonoBehaviour:
   type: Element
   targetName: Te
   category: 0
+  categoryName: Element
 --- !u!114 &8821268519162897982
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -28547,6 +28649,7 @@ MonoBehaviour:
   type: Element
   targetName: Na
   category: 0
+  categoryName: Element
 --- !u!114 &8848600636143419245
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -28641,6 +28744,7 @@ MonoBehaviour:
   type: Element
   targetName: Cs
   category: 0
+  categoryName: Element
 --- !u!114 &8892351910440679976
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -28708,6 +28812,7 @@ MonoBehaviour:
   type: Element
   targetName: Mn
   category: 0
+  categoryName: Element
 --- !u!114 &8917125961080149835
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -28802,6 +28907,7 @@ MonoBehaviour:
   type: Element
   targetName: Mc
   category: 0
+  categoryName: Element
 --- !u!114 &8933759919803331484
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -28877,6 +28983,7 @@ MonoBehaviour:
   type: Element
   targetName: Mg
   category: 0
+  categoryName: Element
 --- !u!114 &8981687782572572961
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -28958,6 +29065,7 @@ MonoBehaviour:
   type: Element
   targetName: Fe
   category: 0
+  categoryName: Element
 --- !u!114 &8988829451152951536
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -29031,6 +29139,7 @@ MonoBehaviour:
   type: Element
   targetName: I
   category: 0
+  categoryName: Element
 --- !u!114 &8989272650700413157
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -29125,6 +29234,7 @@ MonoBehaviour:
   type: Element
   targetName: O
   category: 0
+  categoryName: Element
 --- !u!114 &8993122355162591362
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -29192,6 +29302,7 @@ MonoBehaviour:
   type: Element
   targetName: Cn
   category: 0
+  categoryName: Element
 --- !u!114 &9003117111153366035
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -29286,6 +29397,7 @@ MonoBehaviour:
   type: Element
   targetName: Og
   category: 0
+  categoryName: Element
 --- !u!114 &9011134102634506624
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -29384,7 +29496,8 @@ MonoBehaviour:
   spawner: {fileID: 1051910570}
   type: Equipment
   targetName: Test tube
-  category: 0
+  category: 3
+  categoryName: Tool
 --- !u!1 &9026447138657659275
 GameObject:
   m_ObjectHideFlags: 0
@@ -29432,6 +29545,7 @@ MonoBehaviour:
   type: Element
   targetName: Cm
   category: 0
+  categoryName: Element
 --- !u!114 &9026447138657659278
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -29492,6 +29606,7 @@ MonoBehaviour:
   type: Element
   targetName: Cf
   category: 0
+  categoryName: Element
 --- !u!114 &9041751693169008601
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -29559,6 +29674,7 @@ MonoBehaviour:
   type: Element
   targetName: Eu
   category: 0
+  categoryName: Element
 --- !u!114 &9057039808757364718
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -29619,6 +29735,7 @@ MonoBehaviour:
   type: Element
   targetName: Tl
   category: 0
+  categoryName: Element
 --- !u!114 &9083746869735169977
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -29679,6 +29796,7 @@ MonoBehaviour:
   type: Element
   targetName: Ru
   category: 0
+  categoryName: Element
 --- !u!114 &9107069654159349889
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -29752,6 +29870,7 @@ MonoBehaviour:
   type: Element
   targetName: Hg
   category: 0
+  categoryName: Element
 --- !u!114 &9107907266567923399
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -29844,7 +29963,8 @@ MonoBehaviour:
   spawner: {fileID: 1051910570}
   type: Equipment
   targetName: Gasburner
-  category: 0
+  category: 3
+  categoryName: Tool
 --- !u!65 &9181039752928294824
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -29892,6 +30012,7 @@ MonoBehaviour:
   type: Element
   targetName: Ca
   category: 0
+  categoryName: Element
 --- !u!114 &9181039752928294827
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -29965,6 +30086,7 @@ MonoBehaviour:
   type: Element
   targetName: Y
   category: 0
+  categoryName: Element
 --- !u!114 &9181421484701878941
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -30050,7 +30172,8 @@ MonoBehaviour:
   spawner: {fileID: 1051910570}
   type: Equipment
   targetName: BEAKER
-  category: 0
+  category: 3
+  categoryName: Tool
 --- !u!33 &9198800344221487084
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -30085,6 +30208,7 @@ MonoBehaviour:
   type: Element
   targetName: Pu
   category: 0
+  categoryName: Element
 --- !u!114 &9198800344221487087
 MonoBehaviour:
   m_ObjectHideFlags: 2

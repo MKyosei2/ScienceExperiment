@@ -1,0 +1,18 @@
+UI/Condition/temperature
+UI/Condition/temperature/temperature
+UI/Condition/temperature/temperature
+UI/Condition/temperature/temperature/Text Area
+UI/Condition/temperature/temperature/Text Area/Placeholder
+UI/Condition/temperature/temperature/Text Area/Text
+UI/Condition/humidity
+UI/Condition/humidity/humidity
+UI/Condition/humidity/humidity
+UI/Condition/humidity/humidity/Text Area
+UI/Condition/humidity/humidity/Text Area/Placeholder
+UI/Condition/humidity/humidity/Text Area/Text
+UI/Condition/pressure
+UI/Condition/pressure/pressure
+UI/Condition/pressure/pressure
+UI/Condition/pressure/pressure/Text Area
+UI/Condition/pressure/pressure/Text Area/Placeholder
+UI/Condition/pressure/pressure/Text Area/Text
