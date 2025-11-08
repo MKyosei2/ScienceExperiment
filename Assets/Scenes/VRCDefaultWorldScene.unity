@@ -1340,9 +1340,9 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 310333469}
-  spawner: {fileID: 0}
+  spawner: {fileID: 1051910570}
   type: 
-  targetName: 
+  targetName: StartButton
   category: 11
   categoryName: 
 --- !u!114 &310333469
@@ -1970,9 +1970,9 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 622968857}
-  spawner: {fileID: 0}
+  spawner: {fileID: 1051910570}
   type: 
-  targetName: 
+  targetName: ModeToggleButton
   category: 12
   categoryName: 
 --- !u!114 &622968857
@@ -5758,9 +5758,9 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1863452167}
-  spawner: {fileID: 0}
+  spawner: {fileID: 1051910570}
   type: 
-  targetName: 
+  targetName: ResetButton
   category: 0
   categoryName: 
 --- !u!1 &1909120479
