@@ -14,16 +14,17 @@ public class ChemElementSpawner : UdonSharpBehaviour
     [Tooltip("CONICAL_FLASK など、もとになる器具 (Prefab でもシーンオブジェクトでもOK)")]
     public GameObject sourceVessel;
 
-    [Header("=== 見た目 ===")]
-    [Tooltip("外側ワイヤーフレーム用マテリアル（器具ボタン用）")]
-    public Material wireMaterial;
-    [Tooltip("元素の色を表示するマテリアル（元素ボタン用）。未設定でも色は乗るようにしてあります。")]
+    [Header("=== 見た目（元素カラー適用） ===")]
+    [Tooltip("ElementVisual 用マテリアル（Unlit/Color など _Color を持つもの推奨。null なら元マテリアルを使用）")]
     public Material elementVisualMaterial;
+
+    [Tooltip("内側メッシュの子オブジェクト名。見つからなければフラスコ全体に色を塗る")]
+    public string elementVisualChildName = "ElementVisual";
 
     [Header("=== 反応再生 (任意) ===")]
     public JsonReactionPlayer reactionPlayer;
 
-    // ボタン側から渡される情報
+    // 他スクリプト（AIRequestSender / SpawnSelectorButton）から直接触られる想定の変数
     [HideInInspector] public string selectedEquipmentName = "";
     [HideInInspector] public string selectedElementName = "";
     [HideInInspector] public string bondData = "";
@@ -32,20 +33,29 @@ public class ChemElementSpawner : UdonSharpBehaviour
     private int spawnedCount = 0;
     private bool hasElementSelected = false;
 
-    // ---------- 他スクリプト互換用ラッパー ----------
+    // =========================================================
+    // 他スクリプト互換用のラッパー（あっても邪魔にならない安全な形）
+    // =========================================================
     public void StartExperiment() { SendCustomEvent("_StartExperiment"); }
     public void ResetExperiment() { SendCustomEvent("_ResetExperiment"); }
-    public void SelectEquipment(string name) { selectedEquipmentName = name; SendCustomEvent("_SelectEquipment"); }
-    public void SelectElement(string name) { selectedElementName = name; SendCustomEvent("_SelectElement"); }
-    public void SpawnSelectedVesselAndStart() { SendCustomEvent("_StartExperiment"); }
+    public void SelectEquipment(string name)
+    {
+        selectedEquipmentName = name;
+        SendCustomEvent("_SelectEquipment");
+    }
+    public void SelectElement(string name)
+    {
+        selectedElementName = name;
+        SendCustomEvent("_SelectElement");
+    }
     public void ApplyBondUpdate() { SendCustomEvent("_ApplyBondUpdate"); }
 
     // =========================================================
-    // 器具ボタンを押したとき（ワイヤーフレームで出す）
+    // 器具ボタンを押したとき
     // =========================================================
     public void _SelectEquipment()
     {
-        Debug.Log("[Spawner] _SelectEquipment 受信: equipment=" + selectedEquipmentName);
+        Debug.Log("[Spawner] _SelectEquipment: equipment=" + selectedEquipmentName);
 
         GameObject g = SpawnOne();
         if (g == null)
@@ -54,24 +64,21 @@ public class ChemElementSpawner : UdonSharpBehaviour
             return;
         }
 
-        // 器具はワイヤーフレームで表示
-        ApplyWireframe(g);
-
-        // 既に元素が選ばれていれば、その色もかぶせる
+        // 既に元素が選ばれていれば、その色で見た目を適用
         if (hasElementSelected && !string.IsNullOrEmpty(selectedElementName))
+        {
             ApplyElementVisual(g, selectedElementName);
+        }
 
         Debug.Log("[Spawner] 器具 '" + selectedEquipmentName + "' で1つ生成");
     }
 
     // =========================================================
-    // 元素ボタンを押したとき（色付きで出す）
+    // 元素ボタンを押したとき
     // =========================================================
     public void _SelectElement()
     {
-        Debug.Log("[Spawner] _SelectElement 受信: element=" + selectedElementName +
-                  ", source=" + (sourceVessel != null ? sourceVessel.name : "NULL") +
-                  ", parent=" + (spawnParent != null ? spawnParent.name : "NULL"));
+        Debug.Log("[Spawner] _SelectElement: element=" + selectedElementName);
 
         hasElementSelected = true;
 
@@ -82,18 +89,17 @@ public class ChemElementSpawner : UdonSharpBehaviour
             return;
         }
 
-        // 元素の見た目（色）を適用
         ApplyElementVisual(g, selectedElementName);
 
         Debug.Log("[Spawner] 元素 '" + selectedElementName + "' で1つ生成");
     }
 
     // =========================================================
-    // 実験開始（PCモード）
+    // 実験開始（PCモード用）
     // =========================================================
     public void _StartExperiment()
     {
-        Debug.Log("[Spawner] _StartExperiment 呼び出し");
+        Debug.Log("[Spawner] _StartExperiment");
 
         if (!string.IsNullOrEmpty(bondData) && reactionPlayer != null)
         {
@@ -107,11 +113,11 @@ public class ChemElementSpawner : UdonSharpBehaviour
     }
 
     // =========================================================
-    // リセット（生成したオブジェクト全削除）
+    // リセット（生成した器具と状態の初期化）
     // =========================================================
     public void _ResetExperiment()
     {
-        Debug.Log("[Spawner] _ResetExperiment 呼び出し");
+        Debug.Log("[Spawner] _ResetExperiment");
 
         for (int i = 0; i < spawnedCount; i++)
         {
@@ -122,17 +128,18 @@ public class ChemElementSpawner : UdonSharpBehaviour
 
         selectedElementName = "";
         selectedEquipmentName = "";
+        bondData = "";
         hasElementSelected = false;
 
-        Debug.Log("[Spawner] 生成オブジェクトを全削除しました");
+        Debug.Log("[Spawner] 生成オブジェクトと状態をリセットしました");
     }
 
     // =========================================================
-    // AI からの更新を適用
+    // AI から渡された結合情報を反映
     // =========================================================
     public void _ApplyBondUpdate()
     {
-        Debug.Log("[Spawner] _ApplyBondUpdate 呼び出し: " + bondData);
+        Debug.Log("[Spawner] _ApplyBondUpdate: " + bondData);
 
         if (string.IsNullOrEmpty(bondData))
         {
@@ -152,127 +159,123 @@ public class ChemElementSpawner : UdonSharpBehaviour
     }
 
     // =========================================================
-    // 内部：1個スポーン
+    // スポーン共通処理
     // =========================================================
     private GameObject SpawnOne()
     {
         if (sourceVessel == null)
         {
-            Debug.LogError("[Spawner] sourceVessel が Inspector で未設定です。");
+            Debug.LogError("[Spawner] sourceVessel が未設定です。CONICAL_FLASK をアサインしてください。");
             return null;
         }
-
-        Debug.Log("[Spawner] SpawnOne 開始: source=" + sourceVessel.name +
-                  ", activeSelf=" + sourceVessel.activeSelf);
 
         GameObject inst = VRCInstantiate(sourceVessel);
-
         if (inst == null)
         {
-            // Editor / ClientSim 用の保険
-            inst = (GameObject)Object.Instantiate(sourceVessel);
-            Debug.LogWarning("[Spawner] VRCInstantiate が null を返したため、Object.Instantiate で代用しました。");
+            // ClientSim / Editor 保険
+            inst = Object.Instantiate(sourceVessel);
+            Debug.LogWarning("[Spawner] VRCInstantiate が null を返したため、Instantiate で代用しました。");
         }
 
         if (inst == null)
         {
-            Debug.LogError("[Spawner] VRCInstantiate / Instantiate の両方で null が返されました。");
+            Debug.LogError("[Spawner] VRCInstantiate / Instantiate の両方が失敗しました。");
             return null;
         }
 
-        // 必ず有効化
-        if (!inst.activeSelf)
-            inst.SetActive(true);
-
-        // 親の下に入れる
         if (spawnParent != null)
-        {
             inst.transform.SetParent(spawnParent, false);
-        }
 
-        // 管理用配列に登録
         if (spawnedCount < spawned.Length)
         {
             spawned[spawnedCount] = inst;
             spawnedCount++;
         }
 
-        Debug.Log("[Spawner] SpawnOne 完了: 実体 " + inst.name +
-                  " / parent=" + (inst.transform.parent != null ? inst.transform.parent.name : "NULL"));
-
         return inst;
     }
 
     // =========================================================
-    // 見た目適用（ワイヤフレーム：全Rendererに wireMaterial）
-    // =========================================================
-    private void ApplyWireframe(GameObject root)
-    {
-        if (wireMaterial == null || root == null) return;
-
-        Renderer[] rends = root.GetComponentsInChildren<Renderer>(true);
-        for (int i = 0; i < rends.Length; i++)
-        {
-            rends[i].material = wireMaterial;
-        }
-    }
-
-    // =========================================================
-    // 見た目適用（元素カラー：全Rendererに elementVisualMaterial＋色）
+    // 見た目適用（元素カラー）
     // =========================================================
     private void ApplyElementVisual(GameObject vessel, string elementName)
     {
         if (vessel == null) return;
 
-        Renderer[] rends = vessel.GetComponentsInChildren<Renderer>(true);
+        // 1) 通常どおり、指定名の子を探す
+        Transform visualT = null;
+
+        if (!string.IsNullOrEmpty(elementVisualChildName))
+        {
+            visualT = vessel.transform.Find(elementVisualChildName);
+
+            if (visualT == null)
+            {
+                Transform[] all = vessel.GetComponentsInChildren<Transform>(true);
+                for (int i = 0; i < all.Length; i++)
+                {
+                    if (all[i].name == elementVisualChildName)
+                    {
+                        visualT = all[i];
+                        break;
+                    }
+                }
+            }
+        }
+
+        // 2) 見つからなかった場合は、フラスコ全体を対象にする（効率重視のフォールバック）
+        if (visualT == null)
+        {
+            Debug.LogWarning("[Spawner] 指定された ElementVisual が見つかりませんでした。" +
+                             "elementVisualChildName=" + elementVisualChildName +
+                             " / vessel=" + vessel.name +
+                             "  → フラスコ全体に色を適用します。");
+            visualT = vessel.transform;
+        }
+
+        Renderer[] rends = visualT.GetComponentsInChildren<Renderer>(true);
         if (rends == null || rends.Length == 0)
         {
-            Debug.LogWarning("[Spawner] ApplyElementVisual: Renderer が一つも見つかりませんでした。");
+            Debug.LogWarning("[Spawner] 対象 Transform に Renderer がありません。visualT=" + visualT.name);
             return;
         }
 
-        // 元素名から色を決める
         Color c = ComputeElementColor(elementName);
 
         for (int i = 0; i < rends.Length; i++)
         {
             Renderer r = rends[i];
+            if (r == null) continue;
 
-            // 1) マテリアルを差し替え（設定されていれば）
+            // ElementVisual 用マテリアルに差し替え（指定されていれば）
             if (elementVisualMaterial != null)
-            {
                 r.material = elementVisualMaterial;
-            }
 
-            // 2) そのマテリアルに対して、ありそうなカラー系プロパティを全部叩く
             Material m = r.material;
             if (m == null) continue;
 
-            // 標準的な _Color
+            // よくある色プロパティ群
             if (m.HasProperty("_Color"))
                 m.SetColor("_Color", c);
-
-            // HDRP / URP 系の _BaseColor
             if (m.HasProperty("_BaseColor"))
                 m.SetColor("_BaseColor", c);
-
-            // よくある _Tint
             if (m.HasProperty("_Tint"))
                 m.SetColor("_Tint", c);
-
-            // Emission
             if (m.HasProperty("_EmissionColor"))
             {
-                m.SetColor("_EmissionColor", c * 2.0f);
+                m.SetColor("_EmissionColor", c * 1.5f);
                 m.EnableKeyword("_EMISSION");
             }
+            // WireframeFX.shader 対応
+            if (m.HasProperty("_WireColor"))
+                m.SetColor("_WireColor", c);
         }
 
-        Debug.Log("[Spawner] ApplyElementVisual: Renderer数=" + rends.Length + " に色を適用 element=" + elementName);
+        Debug.Log("[Spawner] ApplyElementVisual: element=" + elementName + " を適用");
     }
 
     // =========================================================
-    // 元素名から色を決める簡易ハッシュ
+    // 元素名から色を決める（簡易ハッシュ）
     // =========================================================
     private Color ComputeElementColor(string name)
     {
