@@ -4,11 +4,13 @@ using VRC.SDKBase;
 using VRC.Udon;
 
 /// <summary>
-/// 元素/器具ボタンでフラスコ等をスポーンし、
-/// その子に付いている全ての ParticleSystem を有効化＆色変更する汎用スクリプト。
-/// 階層名やオブジェクト名に依存しないよう、子孫を総当たりで処理する。
+/// 元素/器具ボタンで実験器具をスポーンし、
+/// その子に付いている全ての ParticleSystem を
+/// その器具のメッシュ形状に合わせて「位置・大きさ・色」を自動調整する。
+/// 元の ParticleSystem の配置は一切信用せず、実験器具側の Renderer から
+/// Bounds を計算して自動でフィットさせる。
 /// </summary>
-[AddComponentMenu("VRC Lab/ChemElementSpawner (Particle Auto Simple)")]
+[AddComponentMenu("VRC Lab/ChemElementSpawner (Auto Fit Particles)")]
 public class ChemElementSpawner : UdonSharpBehaviour
 {
     [Header("=== 生成先 ===")]
@@ -55,32 +57,32 @@ public class ChemElementSpawner : UdonSharpBehaviour
     public void ApplyBondUpdate() { SendCustomEvent("_ApplyBondUpdate"); }
 
     // =========================================================
-    // 元素ボタン（UI から呼ばれる）
+    // 元素ボタン
     // =========================================================
     public void _SelectElement()
     {
         hasElementSelected = true;
         Debug.Log("[Spawner] _SelectElement: element=" + selectedElementName);
 
-        GameObject flask = SpawnFlask();
+        GameObject flask = SpawnVessel();
         if (flask == null) return;
 
-        ApplyParticlesToAllChildren(flask, selectedElementName);
+        ApplyParticlesAutoFit(flask, selectedElementName);
     }
 
     // =========================================================
-    // 器具ボタン（UI から呼ばれる）
+    // 器具ボタン
     // =========================================================
     public void _SelectEquipment()
     {
         Debug.Log("[Spawner] _SelectEquipment: equipment=" + selectedEquipmentName);
 
-        GameObject flask = SpawnFlask();
+        GameObject flask = SpawnVessel();
         if (flask == null) return;
 
         if (hasElementSelected && !string.IsNullOrEmpty(selectedElementName))
         {
-            ApplyParticlesToAllChildren(flask, selectedElementName);
+            ApplyParticlesAutoFit(flask, selectedElementName);
         }
     }
 
@@ -121,7 +123,7 @@ public class ChemElementSpawner : UdonSharpBehaviour
     // =========================================================
     // 器具本体をスポーン
     // =========================================================
-    private GameObject SpawnFlask()
+    private GameObject SpawnVessel()
     {
         if (sourceVessel == null)
         {
@@ -137,7 +139,7 @@ public class ChemElementSpawner : UdonSharpBehaviour
         }
         if (inst == null)
         {
-            Debug.LogError("[Spawner] SpawnFlask に失敗しました。");
+            Debug.LogError("[Spawner] SpawnVessel に失敗しました。");
             return null;
         }
 
@@ -147,19 +149,67 @@ public class ChemElementSpawner : UdonSharpBehaviour
         if (spawnedCount < spawned.Length)
             spawned[spawnedCount++] = inst;
 
-        Debug.Log("[Spawner] SpawnFlask: " + inst.name);
+        Debug.Log("[Spawner] SpawnVessel: " + inst.name);
         return inst;
     }
 
     // =========================================================
-    // ★ コア：生成したフラスコの子孫の全 ParticleSystem を
-    //    強制的に Active & Play し、物質名に応じた色を付ける
+    // ★ コア：実験器具の形からパーティクル位置・形状を自動フィット ★
     // =========================================================
-    private void ApplyParticlesToAllChildren(GameObject root, string substanceName)
+    private void ApplyParticlesAutoFit(GameObject root, string substanceName)
     {
         if (root == null) return;
 
-        // 1) 子孫から全 ParticleSystem を取得（非アクティブも対象）
+        // --- 1) 子孫から全 Renderer を取得（ParticleSystemRenderer は除外） ---
+        Renderer[] renderers = root.GetComponentsInChildren<Renderer>(true);
+        if (renderers == null || renderers.Length == 0)
+        {
+            Debug.LogWarning("[Spawner] Renderer が見つかりません: root=" + root.name);
+            return;
+        }
+
+        bool boundsInit = false;
+        Bounds bounds = new Bounds(Vector3.zero, Vector3.zero);
+
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            Renderer r = renderers[i];
+            if (r == null) continue;
+            if (r.GetComponent<ParticleSystemRenderer>() != null) continue; // 中身の粒は除外
+
+            if (!boundsInit)
+            {
+                bounds = r.bounds;
+                boundsInit = true;
+            }
+            else
+            {
+                bounds.Encapsulate(r.bounds);
+            }
+        }
+
+        if (!boundsInit)
+        {
+            Debug.LogWarning("[Spawner] メッシュ用 Renderer が見つかりません（全て PSRenderer？）: root=" + root.name);
+            return;
+        }
+
+        // 器具全体の中心と大きさ（ワールド）
+        Vector3 worldCenter = bounds.center;
+        Vector3 worldExtents = bounds.extents;
+
+        // ルートのローカル座標系に変換
+        Transform rootT = root.transform;
+        Vector3 localCenter = rootT.InverseTransformPoint(worldCenter);
+
+        // 器具の横幅・高さをざっくり取得
+        float radius = Mathf.Max(worldExtents.x, worldExtents.z) * 0.6f; // ちょい内側に
+        float height = worldExtents.y * 1.2f;                            // 少し余裕を持たせる
+
+        if (radius <= 0f) radius = 0.1f;
+        if (height <= 0f) height = 0.2f;
+
+        // --- 2) 子孫から全 ParticleSystem を取得 ---
         ParticleSystem[] psList = root.GetComponentsInChildren<ParticleSystem>(true);
         if (psList == null || psList.Length == 0)
         {
@@ -167,29 +217,58 @@ public class ChemElementSpawner : UdonSharpBehaviour
             return;
         }
 
-        // 2) 物質名から色を決める（118元素＋未知化合物対応）
+        // --- 3) 色決定 ---
         Color col = GetColorForSubstance(substanceName);
 
-        // 3) 各パーティクルに適用＆強制 ON
+        // --- 4) 各 ParticleSystem にフィット処理＋色適用 ---
         for (int i = 0; i < psList.Length; i++)
         {
             ParticleSystem ps = psList[i];
             if (ps == null) continue;
 
-            // GameObject が非アクティブなら、強制的に ON
             GameObject go = ps.gameObject;
-            if (!go.activeSelf || !go.activeInHierarchy)
-                go.SetActive(true);
+            if (!go.activeSelf) go.SetActive(true);
+
+            Transform t = ps.transform;
+
+            // 位置は器具の中心（やや下寄りにしたければ localCenter.y を少し下げる）
+            t.localPosition = localCenter;
+            t.localRotation = Quaternion.identity;
+            t.localScale = Vector3.one;
 
             var main = ps.main;
             main.startColor = col;
             main.loop = true;
             main.playOnAwake = true;
+            main.simulationSpace = ParticleSystemSimulationSpace.Local;
+
+            // 粒の基本パラメータ（とりあえず見えるように）
+            float size = main.startSize.constant;
+            if (size < 0.02f) size = 0.02f;
+            main.startSize = size;
+
+            float life = main.startLifetime.constant;
+            if (life < 1f) life = 1.5f;
+            main.startLifetime = life;
+
+            main.startSpeed = 0.0f;
 
             var emission = ps.emission;
             emission.enabled = true;
+            if (emission.rateOverTime.constant < 15f)
+                emission.rateOverTime = 20f;
 
-            // Renderer も確実に ON
+            // 形状モジュールを器具にフィットさせる
+            var shape = ps.shape;
+            shape.enabled = true;
+            shape.shapeType = ParticleSystemShapeType.Cone; // おおまかにフラスコ／ビーカー向け
+            shape.radius = radius;
+            shape.angle = 10f;
+            shape.length = height;
+            shape.position = Vector3.zero;
+            shape.rotation = Vector3.zero;
+            shape.scale = Vector3.one;
+
             var r = ps.GetComponent<ParticleSystemRenderer>();
             if (r != null) r.enabled = true;
 
@@ -197,7 +276,8 @@ public class ChemElementSpawner : UdonSharpBehaviour
             ps.Play();
         }
 
-        Debug.Log("[Spawner] ApplyParticlesToAllChildren: '" + substanceName + "' → 色 " + col + " / PS 数=" + psList.Length);
+        Debug.Log("[Spawner] AutoFitParticles: '" + substanceName + "' center=" + localCenter +
+                  " radius=" + radius + " height=" + height + " / PS 数=" + psList.Length);
     }
 
     // =========================================================
@@ -208,7 +288,7 @@ public class ChemElementSpawner : UdonSharpBehaviour
         if (string.IsNullOrEmpty(name))
             return Color.white;
 
-        // 1. オーバーライド（Rh など手で指定したい場合）
+        // 1. オーバーライド（Rh など）
         Color col;
         if (TryOverride(name, out col))
             return col;
@@ -216,7 +296,7 @@ public class ChemElementSpawner : UdonSharpBehaviour
         // 2. 元素記号っぽいかどうか
         bool isElement = IsElementSymbol(name);
 
-        // 3. 名前からハッシュして色相を決定（未知化合物でも安定）
+        // 3. 名前からハッシュして色相を決定
         float hue = HashHue(name);
         float val = isElement ? elementValue : compoundValue;
 
@@ -245,7 +325,6 @@ public class ChemElementSpawner : UdonSharpBehaviour
         return false;
     }
 
-    // 「1〜3文字・先頭大文字・残り小文字」のものを元素記号とみなす
     private bool IsElementSymbol(string name)
     {
         int len = name.Length;
@@ -259,7 +338,6 @@ public class ChemElementSpawner : UdonSharpBehaviour
         return true;
     }
 
-    // 名前から 0〜1 の Hue を作る（同じ名前なら常に同じ色）
     private float HashHue(string s)
     {
         int h = 0;
