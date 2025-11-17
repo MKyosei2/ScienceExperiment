@@ -3,347 +3,342 @@ using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
 
-/// <summary>
-/// 元素/器具ボタンで実験器具をスポーンし、
-/// その子に付いている全ての ParticleSystem を
-/// その器具のメッシュ形状に合わせて「位置・大きさ・色」を自動調整する。
-/// 元の ParticleSystem の配置は一切信用せず、実験器具側の Renderer から
-/// Bounds を計算して自動でフィットさせる。
-/// </summary>
-[AddComponentMenu("VRC Lab/ChemElementSpawner (Auto Fit Particles)")]
 public class ChemElementSpawner : UdonSharpBehaviour
 {
-    [Header("=== 生成先 ===")]
-    [Tooltip("生成した器具をぶら下げる親 (例: Systems/Spawner)")]
-    public Transform spawnParent;
-
-    [Header("=== 器具本体 ===")]
-    [Tooltip("Tool/CONICAL_FLASK など、元になる器具オブジェクト（子に Particle System が入っているもの）")]
-    public GameObject sourceVessel;
-
-    [Header("=== 色の汎用設定 ===")]
-    [Tooltip("元素(H, He, Li...)の明るさ")]
-    [Range(0f, 1f)] public float elementValue = 0.9f;
-
-    [Tooltip("化合物(H2O, NaCl...)の明るさ")]
-    [Range(0f, 1f)] public float compoundValue = 0.85f;
-
-    [Tooltip("パーティクル色の彩度")]
-    [Range(0f, 1f)] public float colorSaturation = 0.8f;
-
-    [Header("=== 個別オーバーライド（任意） ===")]
-    [Tooltip("特別な色を付けたい物質名（Rh, Au, H2O など）")]
-    public string[] overrideNames;
-    [Tooltip("overrideNames と同じ長さの色配列")]
-    public Color[] overrideColors;
-
-    [Header("=== 反応再生（既存） ===")]
-    public JsonReactionPlayer reactionPlayer;
-
-    // ==== 他スクリプトから参照されるフィールド（互換用） ====
-    [HideInInspector] public string selectedEquipmentName = "";
     [HideInInspector] public string selectedElementName = "";
+    [HideInInspector] public string selectedEquipmentName = "";
     [HideInInspector] public string bondData = "";
 
-    private GameObject[] spawned = new GameObject[256];
-    private int spawnedCount = 0;
+    [Header("=== Spawn Settings ===")]
+    public Transform spawnParent;
+    public GameObject sourceVessel;
+
+    [Header("=== Shader Template ===")]
+    public Material insideMaterialBase;
+
+    private Material insideMatInstance;
+    private GameObject currentInstance;
+
+    private float fillAmount = 0f;
+    private float maxFill = 0.8f;
+    private bool liquidMode = true;
+
+    [Header("=== Overflow Particles ===")]
+    public GameObject overflowParticlePrefab;
+    public int overflowPoolSize = 10;
+
+    private ParticleSystem[] overflowPool;
+    private Vector3 overflowOffset = new Vector3(0f, 0.02f, 0f);
+
     private bool hasElementSelected = false;
 
-    // ---------- ラッパー（既存スクリプト用） ----------
-    public void StartExperiment() { SendCustomEvent("_StartExperiment"); }
-    public void ResetExperiment() { SendCustomEvent("_ResetExperiment"); }
-    public void SelectElement(string n) { selectedElementName = n; SendCustomEvent("_SelectElement"); }
-    public void SelectEquipment(string n) { selectedEquipmentName = n; SendCustomEvent("_SelectEquipment"); }
-    public void ApplyBondUpdate() { SendCustomEvent("_ApplyBondUpdate"); }
-
-    // =========================================================
-    // 元素ボタン
-    // =========================================================
-    public void _SelectElement()
+    void Start()
     {
-        hasElementSelected = true;
-        Debug.Log("[Spawner] _SelectElement: element=" + selectedElementName);
+        overflowPool = new ParticleSystem[overflowPoolSize];
 
-        GameObject flask = SpawnVessel();
-        if (flask == null) return;
-
-        ApplyParticlesAutoFit(flask, selectedElementName);
-    }
-
-    // =========================================================
-    // 器具ボタン
-    // =========================================================
-    public void _SelectEquipment()
-    {
-        Debug.Log("[Spawner] _SelectEquipment: equipment=" + selectedEquipmentName);
-
-        GameObject flask = SpawnVessel();
-        if (flask == null) return;
-
-        if (hasElementSelected && !string.IsNullOrEmpty(selectedElementName))
+        for (int i = 0; i < overflowPoolSize; i++)
         {
-            ApplyParticlesAutoFit(flask, selectedElementName);
+            GameObject p = VRCInstantiate(overflowParticlePrefab);
+            p.transform.SetParent(spawnParent, false);
+            p.SetActive(false);
+            overflowPool[i] = p.GetComponent<ParticleSystem>();
         }
     }
 
-    // =========================================================
-    // 実験開始 / AI 更新 / リセット
-    // =========================================================
-    public void _StartExperiment()
+    // ===========================================================
+    // 外部互換API
+    // ===========================================================
+    public void SelectElement(string n)
     {
-        Debug.Log("[Spawner] _StartExperiment");
-        if (reactionPlayer != null && !string.IsNullOrEmpty(bondData))
-            reactionPlayer.Play(bondData);
+        selectedElementName = n;
+        SendCustomEvent("_SelectElement");
     }
 
-    public void _ApplyBondUpdate()
+    public void SelectEquipment(string n)
     {
-        Debug.Log("[Spawner] _ApplyBondUpdate: " + bondData);
-        if (reactionPlayer != null && !string.IsNullOrEmpty(bondData))
-            reactionPlayer.Play(bondData);
+        selectedEquipmentName = n;
+        SendCustomEvent("_SelectEquipment");
+    }
+
+    public void StartExperiment() { SendCustomEvent("_StartExperiment"); }
+    public void ResetExperiment() { SendCustomEvent("_ResetExperiment"); }
+    public void ApplyBondUpdate() { SendCustomEvent("_ApplyBondUpdate"); }
+
+
+    // ===========================================================
+    // UI event
+    // ===========================================================
+    public void _SelectElement()
+    {
+        hasElementSelected = true;
+        SpawnFlask();
+        ApplyElementShaderColor();
+        UpdateInsideShader();
+    }
+
+    public void _SelectEquipment()
+    {
+        SpawnFlask();
+        if (hasElementSelected)
+        {
+            ApplyElementShaderColor();
+            UpdateInsideShader();
+        }
     }
 
     public void _ResetExperiment()
     {
-        Debug.Log("[Spawner] _ResetExperiment");
+        if (currentInstance != null)
+            Destroy(currentInstance);
 
-        for (int i = 0; i < spawnedCount; i++)
-        {
-            if (spawned[i] != null)
-                Destroy(spawned[i]);
-        }
-
-        spawnedCount = 0;
+        fillAmount = 0;
+        hasElementSelected = false;
         selectedElementName = "";
         selectedEquipmentName = "";
         bondData = "";
-        hasElementSelected = false;
     }
 
-    // =========================================================
-    // 器具本体をスポーン
-    // =========================================================
-    private GameObject SpawnVessel()
+
+    // ===========================================================
+    // Flask Spawn
+    // ===========================================================
+    private void SpawnFlask()
     {
-        if (sourceVessel == null)
-        {
-            Debug.LogError("[Spawner] sourceVessel が未設定です。");
-            return null;
-        }
+        if (currentInstance != null)
+            Destroy(currentInstance);
 
-        GameObject inst = VRCInstantiate(sourceVessel);
-        if (inst == null)
-        {
-            inst = Object.Instantiate(sourceVessel);
-            Debug.LogWarning("[Spawner] VRCInstantiate が null → Instantiate で代用");
-        }
-        if (inst == null)
-        {
-            Debug.LogError("[Spawner] SpawnVessel に失敗しました。");
-            return null;
-        }
+        currentInstance = VRCInstantiate(sourceVessel);
+        currentInstance.transform.SetParent(spawnParent, true);
 
-        if (spawnParent != null)
-            inst.transform.SetParent(spawnParent, true);
-
-        if (spawnedCount < spawned.Length)
-            spawned[spawnedCount++] = inst;
-
-        Debug.Log("[Spawner] SpawnVessel: " + inst.name);
-        return inst;
+        SetupInsideShader(currentInstance);
     }
 
-    // =========================================================
-    // ★ コア：実験器具の形からパーティクル位置・形状を自動フィット ★
-    // =========================================================
-    private void ApplyParticlesAutoFit(GameObject root, string substanceName)
+    private void SetupInsideShader(GameObject flask)
     {
-        if (root == null) return;
+        MeshRenderer mr = flask.GetComponentInChildren<MeshRenderer>();
 
-        // --- 1) 子孫から全 Renderer を取得（ParticleSystemRenderer は除外） ---
-        Renderer[] renderers = root.GetComponentsInChildren<Renderer>(true);
-        if (renderers == null || renderers.Length == 0)
+        // 内部材質をコピー（renderer.material）
+        mr.material = insideMaterialBase;
+        insideMatInstance = mr.material;
+
+        UpdateInsideShader();
+    }
+
+    // ===========================================================
+    // Shader update
+    // ===========================================================
+    private void ApplyElementShaderColor()
+    {
+        if (insideMatInstance == null) return;
+
+        insideMatInstance.SetColor("_InsideColor", GetColorFromElement(selectedElementName));
+    }
+
+    private void UpdateInsideShader()
+    {
+        if (insideMatInstance == null || currentInstance == null) return;
+
+        insideMatInstance.SetColor("_InsideColor", GetColorFromElement(selectedElementName));
+        insideMatInstance.SetFloat("_FillAmount", fillAmount);
+        insideMatInstance.SetFloat("_MaxFill", maxFill);
+        insideMatInstance.SetFloat("_Liquid", liquidMode ? 1f : 0f);
+
+        MeshRenderer mr = currentInstance.GetComponentInChildren<MeshRenderer>();
+        Bounds b = mr.bounds;
+
+        insideMatInstance.SetVector("boundsCenter", b.center);
+        insideMatInstance.SetVector("boundsSize", b.extents * 2f);
+    }
+
+    // ===========================================================
+    // Fill Amount
+    // ===========================================================
+    public void AddAmount(float amt)
+    {
+        fillAmount += amt;
+        UpdateInsideShader();
+
+        if (fillAmount > maxFill)
         {
-            Debug.LogWarning("[Spawner] Renderer が見つかりません: root=" + root.name);
-            return;
+            float overflow = fillAmount - maxFill;
+            PlayOverflow(overflow);
         }
+    }
 
-        bool boundsInit = false;
-        Bounds bounds = new Bounds(Vector3.zero, Vector3.zero);
-
-        for (int i = 0; i < renderers.Length; i++)
+    // ===========================================================
+    // Overflow Particle
+    // ===========================================================
+    private void PlayOverflow(float strength)
+    {
+        foreach (var ps in overflowPool)
         {
-            Renderer r = renderers[i];
-            if (r == null) continue;
-            if (r.GetComponent<ParticleSystemRenderer>() != null) continue; // 中身の粒は除外
-
-            if (!boundsInit)
+            if (!ps.gameObject.activeSelf)
             {
-                bounds = r.bounds;
-                boundsInit = true;
-            }
-            else
-            {
-                bounds.Encapsulate(r.bounds);
-            }
-        }
+                ps.gameObject.SetActive(true);
 
-        if (!boundsInit)
-        {
-            Debug.LogWarning("[Spawner] メッシュ用 Renderer が見つかりません（全て PSRenderer？）: root=" + root.name);
-            return;
-        }
+                // Udon対応：main.startColor を使用
+                var main = ps.main;
+                main.startColor = insideMatInstance.GetColor("_InsideColor");
 
-        // 器具全体の中心と大きさ（ワールド）
-        Vector3 worldCenter = bounds.center;
-        Vector3 worldExtents = bounds.extents;
+                MeshRenderer mr = currentInstance.GetComponentInChildren<MeshRenderer>();
+                Bounds b = mr.bounds;
 
-        // ルートのローカル座標系に変換
-        Transform rootT = root.transform;
-        Vector3 localCenter = rootT.InverseTransformPoint(worldCenter);
+                Vector3 pos = b.center;
+                pos.y = b.max.y + overflowOffset.y;
 
-        // 器具の横幅・高さをざっくり取得
-        float radius = Mathf.Max(worldExtents.x, worldExtents.z) * 0.6f; // ちょい内側に
-        float height = worldExtents.y * 1.2f;                            // 少し余裕を持たせる
+                ps.transform.position = pos;
 
-        if (radius <= 0f) radius = 0.1f;
-        if (height <= 0f) height = 0.2f;
+                var em = ps.emission;
+                em.rateOverTime = 6f * strength;
 
-        // --- 2) 子孫から全 ParticleSystem を取得 ---
-        ParticleSystem[] psList = root.GetComponentsInChildren<ParticleSystem>(true);
-        if (psList == null || psList.Length == 0)
-        {
-            Debug.LogWarning("[Spawner] ParticleSystem が見つかりません: root=" + root.name);
-            return;
-        }
-
-        // --- 3) 色決定 ---
-        Color col = GetColorForSubstance(substanceName);
-
-        // --- 4) 各 ParticleSystem にフィット処理＋色適用 ---
-        for (int i = 0; i < psList.Length; i++)
-        {
-            ParticleSystem ps = psList[i];
-            if (ps == null) continue;
-
-            GameObject go = ps.gameObject;
-            if (!go.activeSelf) go.SetActive(true);
-
-            Transform t = ps.transform;
-
-            // 位置は器具の中心（やや下寄りにしたければ localCenter.y を少し下げる）
-            t.localPosition = localCenter;
-            t.localRotation = Quaternion.identity;
-            t.localScale = Vector3.one;
-
-            var main = ps.main;
-            main.startColor = col;
-            main.loop = true;
-            main.playOnAwake = true;
-            main.simulationSpace = ParticleSystemSimulationSpace.Local;
-
-            // 粒の基本パラメータ（とりあえず見えるように）
-            float size = main.startSize.constant;
-            if (size < 0.02f) size = 0.02f;
-            main.startSize = size;
-
-            float life = main.startLifetime.constant;
-            if (life < 1f) life = 1.5f;
-            main.startLifetime = life;
-
-            main.startSpeed = 0.0f;
-
-            var emission = ps.emission;
-            emission.enabled = true;
-            if (emission.rateOverTime.constant < 15f)
-                emission.rateOverTime = 20f;
-
-            // 形状モジュールを器具にフィットさせる
-            var shape = ps.shape;
-            shape.enabled = true;
-            shape.shapeType = ParticleSystemShapeType.Cone; // おおまかにフラスコ／ビーカー向け
-            shape.radius = radius;
-            shape.angle = 10f;
-            shape.length = height;
-            shape.position = Vector3.zero;
-            shape.rotation = Vector3.zero;
-            shape.scale = Vector3.one;
-
-            var r = ps.GetComponent<ParticleSystemRenderer>();
-            if (r != null) r.enabled = true;
-
-            ps.Clear();
-            ps.Play();
-        }
-
-        Debug.Log("[Spawner] AutoFitParticles: '" + substanceName + "' center=" + localCenter +
-                  " radius=" + radius + " height=" + height + " / PS 数=" + psList.Length);
-    }
-
-    // =========================================================
-    // 物質名 → 色（118元素＋未知化合物＋オーバーライド）
-    // =========================================================
-    private Color GetColorForSubstance(string name)
-    {
-        if (string.IsNullOrEmpty(name))
-            return Color.white;
-
-        // 1. オーバーライド（Rh など）
-        Color col;
-        if (TryOverride(name, out col))
-            return col;
-
-        // 2. 元素記号っぽいかどうか
-        bool isElement = IsElementSymbol(name);
-
-        // 3. 名前からハッシュして色相を決定
-        float hue = HashHue(name);
-        float val = isElement ? elementValue : compoundValue;
-
-        return Color.HSVToRGB(hue, colorSaturation, val);
-    }
-
-    private bool TryOverride(string name, out Color col)
-    {
-        col = Color.white;
-
-        if (overrideNames == null || overrideColors == null)
-            return false;
-
-        int len = overrideNames.Length;
-        if (overrideColors.Length < len)
-            len = overrideColors.Length;
-
-        for (int i = 0; i < len; i++)
-        {
-            if (overrideNames[i] == name)
-            {
-                col = overrideColors[i];
-                return true;
+                ps.Play();
+                return;
             }
         }
-        return false;
     }
 
-    private bool IsElementSymbol(string name)
+    // ===========================================================
+    // 118元素 → 色
+    // ===========================================================
+    private Color GetColorFromElement(string e)
     {
-        int len = name.Length;
-        if (len < 1 || len > 3) return false;
-        if (!char.IsUpper(name[0])) return false;
-
-        for (int i = 1; i < len; i++)
+        switch (e)
         {
-            if (!char.IsLower(name[i])) return false;
+            case "H": return RGB(240, 240, 240);
+            case "He": return RGB(235, 245, 255);
+
+            case "Li": return RGB(180, 180, 190);
+            case "Be": return RGB(196, 201, 206);
+            case "B": return RGB(80, 80, 80);
+            case "C": return RGB(30, 30, 30);
+            case "N": return RGB(220, 230, 255);
+            case "O": return RGB(180, 210, 255);
+            case "F": return RGB(202, 255, 112);
+            case "Ne": return RGB(255, 90, 60);
+
+            case "Na": return RGB(250, 230, 130);
+            case "Mg": return RGB(190, 190, 195);
+            case "Al": return RGB(210, 210, 215);
+            case "Si": return RGB(90, 90, 95);
+            case "P": return RGB(255, 255, 255);
+            case "S": return RGB(255, 240, 70);
+            case "Cl": return RGB(205, 255, 112);
+            case "Ar": return RGB(210, 230, 255);
+
+            case "K": return RGB(160, 140, 115);
+            case "Ca": return RGB(200, 200, 200);
+            case "Sc": return RGB(190, 190, 200);
+            case "Ti": return RGB(185, 190, 195);
+            case "V": return RGB(170, 175, 180);
+            case "Cr": return RGB(200, 200, 205);
+            case "Mn": return RGB(180, 180, 185);
+            case "Fe": return RGB(170, 170, 170);
+            case "Co": return RGB(170, 175, 185);
+            case "Ni": return RGB(185, 185, 190);
+            case "Cu": return RGB(198, 120, 70);
+            case "Zn": return RGB(200, 200, 205);
+            case "Ga": return RGB(210, 210, 220);
+            case "Ge": return RGB(105, 105, 110);
+            case "As": return RGB(145, 140, 150);
+            case "Se": return RGB(150, 40, 40);
+            case "Br": return RGB(150, 40, 0);
+            case "Kr": return RGB(220, 235, 255);
+
+            case "Rb": return RGB(170, 145, 125);
+            case "Sr": return RGB(220, 220, 230);
+            case "Y": return RGB(195, 200, 210);
+            case "Zr": return RGB(200, 200, 210);
+            case "Nb": return RGB(175, 180, 190);
+            case "Mo": return RGB(185, 190, 200);
+            case "Tc": return RGB(160, 165, 175);
+            case "Ru": return RGB(195, 200, 210);
+            case "Rh": return RGB(200, 205, 215);
+            case "Pd": return RGB(200, 205, 210);
+            case "Ag": return RGB(230, 230, 235);
+            case "Cd": return RGB(210, 210, 220);
+            case "In": return RGB(210, 215, 225);
+            case "Sn": return RGB(195, 200, 210);
+            case "Sb": return RGB(170, 175, 185);
+            case "Te": return RGB(95, 100, 110);
+            case "I": return RGB(80, 0, 120);
+            case "Xe": return RGB(200, 220, 255);
+
+            case "Cs": return RGB(170, 150, 120);
+            case "Ba": return RGB(210, 220, 230);
+            case "La": return RGB(200, 205, 215);
+            case "Ce": return RGB(190, 195, 205);
+            case "Pr": return RGB(190, 195, 205);
+            case "Nd": return RGB(185, 190, 200);
+            case "Pm": return RGB(180, 185, 195);
+            case "Sm": return RGB(190, 195, 205);
+            case "Eu": return RGB(245, 245, 255);
+            case "Gd": return RGB(190, 195, 205);
+            case "Tb": return RGB(190, 195, 205);
+            case "Dy": return RGB(190, 195, 205);
+            case "Ho": return RGB(190, 195, 205);
+            case "Er": return RGB(190, 195, 205);
+            case "Tm": return RGB(190, 195, 205);
+            case "Yb": return RGB(230, 235, 245);
+            case "Lu": return RGB(195, 200, 210);
+
+            case "Hf": return RGB(190, 195, 205);
+            case "Ta": return RGB(115, 120, 130);
+            case "W": return RGB(150, 150, 160);
+            case "Re": return RGB(140, 140, 150);
+            case "Os": return RGB(130, 135, 145);
+            case "Ir": return RGB(200, 205, 215);
+            case "Pt": return RGB(210, 210, 220);
+            case "Au": return RGB(212, 175, 55);
+            case "Hg": return RGB(210, 210, 220);
+
+            case "Tl": return RGB(160, 165, 175);
+            case "Pb": return RGB(125, 130, 140);
+            case "Bi": return RGB(190, 195, 210);
+            case "Po": return RGB(140, 140, 150);
+            case "At": return RGB(100, 90, 110);
+            case "Rn": return RGB(220, 230, 245);
+
+            case "Fr": return RGB(180, 170, 160);
+            case "Ra": return RGB(220, 230, 230);
+
+            case "Ac": return RGB(170, 175, 185);
+            case "Th": return RGB(180, 185, 195);
+            case "Pa": return RGB(90, 95, 105);
+            case "U": return RGB(70, 90, 40);
+            case "Np": return RGB(100, 105, 115);
+            case "Pu": return RGB(110, 115, 125);
+            case "Am": return RGB(130, 135, 145);
+            case "Cm": return RGB(150, 155, 165);
+            case "Bk": return RGB(160, 165, 175);
+            case "Cf": return RGB(170, 175, 185);
+            case "Es": return RGB(180, 185, 195);
+            case "Fm": return RGB(185, 190, 200);
+            case "Md": return RGB(190, 195, 205);
+            case "No": return RGB(195, 200, 210);
+            case "Lr": return RGB(200, 205, 215);
+
+            case "Rf": return RGB(180, 185, 195);
+            case "Db": return RGB(180, 185, 195);
+            case "Sg": return RGB(180, 185, 195);
+            case "Bh": return RGB(180, 185, 195);
+            case "Hs": return RGB(180, 185, 195);
+            case "Mt": return RGB(180, 185, 195);
+            case "Ds": return RGB(180, 185, 195);
+            case "Rg": return RGB(210, 190, 120);
+            case "Cn": return RGB(180, 185, 195);
+            case "Nh": return RGB(180, 185, 195);
+            case "Fl": return RGB(180, 185, 195);
+            case "Mc": return RGB(180, 185, 195);
+            case "Lv": return RGB(180, 185, 195);
+            case "Ts": return RGB(180, 185, 195);
+            case "Og": return RGB(220, 230, 245);
         }
-        return true;
+
+        return RGB(180, 180, 180);
     }
 
-    private float HashHue(string s)
+    private Color RGB(byte r, byte g, byte b)
     {
-        int h = 0;
-        for (int i = 0; i < s.Length; i++)
-            h = (h * 131) ^ s[i];
-
-        return (h & 0xFFFF) / 65535f;
+        return new Color32(r, g, b, 255);
     }
 }
