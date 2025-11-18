@@ -6,31 +6,26 @@ public class SpawnSelectorButton : UdonSharpBehaviour
 {
     public ChemElementSpawner spawner;
 
-    // "Element" or "Equipment"
+    // "Element" または "Equipment"
     public string type;
 
-    // 押したときにSpawnerに渡す名前（元素名とか、器具名とか）
+    // このボタンが担当する元素名 or 器具名
     public string targetName;
 
-    // ← これが CategoryController から参照されてる
-    public SelectionCategory category;   // enum でカテゴリを管理してる場合はこちらを使う
-
-    // ← もし文字列で見に来てるならこっちを使ってもらう
+    // カテゴリー情報（未使用でも残す）
+    public SelectionCategory category;
     public string categoryName;
 
-    // 3Dボタンをプレイヤーが押したとき
     public override void Interact()
     {
         Press();
     }
 
-    // SelectionActionController がここを呼んでくるので必ず残す
     public void Press()
     {
         _OnClick();
     }
 
-    // 旧式のUIボタンから呼びたい場合用
     public void OnClick()
     {
         _OnClick();
@@ -44,19 +39,35 @@ public class SpawnSelectorButton : UdonSharpBehaviour
             return;
         }
 
+        // ==============================
+        // ELEMENT
+        // ==============================
         if (type == "Element")
         {
             spawner.selectedElementName = targetName;
-            spawner.SendCustomEvent("_SelectElement");
+
+            // ★ 新仕様：引数付きゲートを呼ぶ
+            // これが最も確実に ChemElementSpawner を動作させる
+            spawner.SelectElement(targetName);
+
+            Debug.Log("[SpawnSelectorButton] Element Pressed: " + targetName);
+            return;
         }
-        else if (type == "Equipment")
+
+        // ==============================
+        // EQUIPMENT
+        // ==============================
+        if (type == "Equipment")
         {
             spawner.selectedEquipmentName = targetName;
-            spawner.SendCustomEvent("_SelectEquipment");
+
+            // ★ 新仕様：装置側の設定も正しく呼ぶ
+            spawner.SelectEquipment(targetName);
+
+            Debug.Log("[SpawnSelectorButton] Equipment Pressed: " + targetName);
+            return;
         }
-        else
-        {
-            Debug.LogWarning("[SpawnSelectorButton] type が Element / Equipment ではありません");
-        }
+
+        Debug.LogWarning("[SpawnSelectorButton] type が不正（Element / Equipment ではありません）");
     }
 }
