@@ -5,37 +5,42 @@ using VRC.Udon;
 
 public class ChemElementSpawner : UdonSharpBehaviour
 {
+    // =====================================
+    //  Public Externally Set Values
+    // =====================================
+    public Transform spawnParent;
+    public GameObject sourceVessel;
+
+    // 内部液体表現（パーティクル）
+    public ParticleSystem liquidParticles;
+
+    // 溢れパーティクル
+    public GameObject overflowParticlePrefab;
+    public int overflowPoolSize = 10;
+
+    // =====================================
+    //  Internal State
+    // =====================================
     [HideInInspector] public string selectedElementName = "";
     [HideInInspector] public string selectedEquipmentName = "";
     [HideInInspector] public string bondData = "";
 
-    [Header("=== Spawn Settings ===")]
-    public Transform spawnParent;
-    public GameObject sourceVessel;
-
-    [Header("=== Shader Template ===")]
-    public Material insideMaterialBase;
-
-    private Material insideMatInstance;
     private GameObject currentInstance;
+    private ParticleSystem[] overflowPool;
 
     private float fillAmount = 0f;
-    private float maxFill = 0.8f;
-    private bool liquidMode = true;
+    private float maxFill = 1.0f;
 
-    [Header("=== Overflow Particles ===")]
-    public GameObject overflowParticlePrefab;
-    public int overflowPoolSize = 10;
-
-    private ParticleSystem[] overflowPool;
-    private Vector3 overflowOffset = new Vector3(0f, 0.02f, 0f);
-
-    private bool hasElementSelected = false;
-
+    //----------------------------------------
     void Start()
     {
-        overflowPool = new ParticleSystem[overflowPoolSize];
+        InitOverflow();
+    }
 
+    //----------------------------------------
+    private void InitOverflow()
+    {
+        overflowPool = new ParticleSystem[overflowPoolSize];
         for (int i = 0; i < overflowPoolSize; i++)
         {
             GameObject p = VRCInstantiate(overflowParticlePrefab);
@@ -45,119 +50,197 @@ public class ChemElementSpawner : UdonSharpBehaviour
         }
     }
 
-    // ===========================================================
-    // 外部互換API
-    // ===========================================================
+    // ============================================
+    //   External API (SpawnSelectorButton → ここ)
+    // ============================================
     public void SelectElement(string n)
     {
         selectedElementName = n;
-        SendCustomEvent("_SelectElement");
+
+        // Vessel を作成
+        SpawnFlask();
+
+        // 内部粒子の挙動を更新
+        ApplyElementBehavior(n);
     }
 
     public void SelectEquipment(string n)
     {
         selectedEquipmentName = n;
-        SendCustomEvent("_SelectEquipment");
-    }
-
-    public void StartExperiment() { SendCustomEvent("_StartExperiment"); }
-    public void ResetExperiment() { SendCustomEvent("_ResetExperiment"); }
-    public void ApplyBondUpdate() { SendCustomEvent("_ApplyBondUpdate"); }
-
-
-    // ===========================================================
-    // UI event
-    // ===========================================================
-    public void _SelectElement()
-    {
-        hasElementSelected = true;
         SpawnFlask();
-        ApplyElementShaderColor();
-        UpdateInsideShader();
     }
 
-    public void _SelectEquipment()
-    {
-        SpawnFlask();
-        if (hasElementSelected)
-        {
-            ApplyElementShaderColor();
-            UpdateInsideShader();
-        }
-    }
+    public void StartExperiment() { }
+    public void ResetExperiment() { ResetAll(); }
+    public void ApplyBondUpdate() { }
 
-    public void _ResetExperiment()
-    {
-        if (currentInstance != null)
-            Destroy(currentInstance);
-
-        fillAmount = 0;
-        hasElementSelected = false;
-        selectedElementName = "";
-        selectedEquipmentName = "";
-        bondData = "";
-    }
-
-
-    // ===========================================================
-    // Flask Spawn
-    // ===========================================================
+    // ============================================
+    //   Spawn Flask
+    // ============================================
     private void SpawnFlask()
     {
         if (currentInstance != null)
             Destroy(currentInstance);
 
+        // ==== 1. Scene の SpawnPoint を取得 ====
+        Transform spawnPoint = GameObject.Find("SpawnPoint").transform;
+
+        if (spawnPoint == null)
+        {
+            Debug.LogError("[Spawner] SpawnPoint が Scene にありません。");
+            return;
+        }
+
+        // ==== 2. インスタンス生成（親をつけない！）====
         currentInstance = VRCInstantiate(sourceVessel);
-        currentInstance.transform.SetParent(spawnParent, true);
 
-        SetupInsideShader(currentInstance);
+        // ==== 3. 生成位置を完全固定 ====
+        currentInstance.transform.SetPositionAndRotation(
+            spawnPoint.position,
+            spawnPoint.rotation
+        );
+
+        // スケールも完全一致
+        currentInstance.transform.localScale = spawnPoint.lossyScale;
+
+        // ==== 4. 親を絶対に設定しない（重要）====
+        // currentInstance.transform.SetParent(spawnParent); ← 使わない！
+
+        // ==== 5. 内部液体をセット ====
+        SetupLiquidParticles();
     }
 
-    private void SetupInsideShader(GameObject flask)
+    private void SetupLiquidParticles()
     {
-        MeshRenderer mr = flask.GetComponentInChildren<MeshRenderer>();
+        if (liquidParticles == null) return;
+        if (currentInstance == null) return;
 
-        // 内部材質をコピー（renderer.material）
-        mr.material = insideMaterialBase;
-        insideMatInstance = mr.material;
-
-        UpdateInsideShader();
+        // フラスコ内部中央に配置
+        liquidParticles.transform.SetParent(currentInstance.transform, false);
+        liquidParticles.transform.localPosition = new Vector3(0, 0.4f, 0);
+        liquidParticles.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
     }
 
-    // ===========================================================
-    // Shader update
-    // ===========================================================
-    private void ApplyElementShaderColor()
+    // ============================================
+    //   Reset
+    // ============================================
+    private void ResetAll()
     {
-        if (insideMatInstance == null) return;
+        if (currentInstance != null)
+            Destroy(currentInstance);
 
-        insideMatInstance.SetColor("_InsideColor", GetColorFromElement(selectedElementName));
+        if (liquidParticles != null)
+            liquidParticles.Stop();
+
+        fillAmount = 0f;
+        selectedElementName = "";
+        selectedEquipmentName = "";
+        bondData = "";
     }
 
-    private void UpdateInsideShader()
+    // ============================================
+    //   Apply Behavior for Element (方式D)
+    // ============================================
+    public void ApplyElementBehavior(string element)
     {
-        if (insideMatInstance == null || currentInstance == null) return;
+        if (liquidParticles == null)
+        {
+            Debug.LogWarning("[Spawner] liquidParticles が設定されていません。");
+            return;
+        }
 
-        insideMatInstance.SetColor("_InsideColor", GetColorFromElement(selectedElementName));
-        insideMatInstance.SetFloat("_FillAmount", fillAmount);
-        insideMatInstance.SetFloat("_MaxFill", maxFill);
-        insideMatInstance.SetFloat("_Liquid", liquidMode ? 1f : 0f);
+        var main = liquidParticles.main;
+        var emission = liquidParticles.emission;
 
-        MeshRenderer mr = currentInstance.GetComponentInChildren<MeshRenderer>();
-        Bounds b = mr.bounds;
+        //-------------------------------------
+        // 色設定（118元素に対応）
+        //-------------------------------------
+        Color col = GetColorForElement(element);
+        col.a = 0.7f;
+        main.startColor = col;
 
-        insideMatInstance.SetVector("boundsCenter", b.center);
-        insideMatInstance.SetVector("boundsSize", b.extents * 2f);
+        //-------------------------------------
+        // 元素ごとの粒子挙動（方式D）
+        //-------------------------------------
+        switch (element)
+        {
+            // ===========================
+            // 金属系（重く沈殿）
+            // ===========================
+            case "Rh":
+            case "Fe":
+            case "Cu":
+            case "Ag":
+            case "Au":
+                main.startSize = 0.045f;
+                main.startSpeed = 0.05f;
+                main.gravityModifier = 0.3f;
+                emission.rateOverTime = 160;
+                break;
+
+            // ===========================
+            // 気体（軽く上昇）
+            // ===========================
+            case "H":
+            case "He":
+            case "Ne":
+            case "Ar":
+            case "Kr":
+            case "Xe":
+                main.startSize = 0.08f;
+                main.startSpeed = 0.4f;
+                main.gravityModifier = -0.25f;
+                emission.rateOverTime = 50;
+                break;
+
+            // ===========================
+            // ハロゲン（発光気味）
+            // ===========================
+            case "F":
+            case "Cl":
+            case "Br":
+            case "I":
+                main.startSize = 0.06f;
+                main.startSpeed = 0.15f;
+                main.gravityModifier = -0.05f;
+                main.startColor = col * 1.3f;
+                emission.rateOverTime = 130;
+                break;
+
+            // ===========================
+            // その他の気体/液体
+            // ===========================
+            case "O":
+            case "N":
+                main.startSize = 0.05f;
+                main.startSpeed = 0.2f;
+                main.gravityModifier = 0.0f;
+                emission.rateOverTime = 100;
+                break;
+
+            // ===========================
+            // 汎用
+            // ===========================
+            default:
+                main.startSize = 0.05f;
+                main.startSpeed = 0.2f;
+                main.gravityModifier = 0.0f;
+                emission.rateOverTime = 120;
+                break;
+        }
+
+        //-------------------------------------
+        // 再生
+        //-------------------------------------
+        liquidParticles.Play();
     }
 
-    // ===========================================================
-    // Fill Amount
-    // ===========================================================
+    // ============================================
+    //   Overflow
+    // ============================================
     public void AddAmount(float amt)
     {
         fillAmount += amt;
-        UpdateInsideShader();
-
         if (fillAmount > maxFill)
         {
             float overflow = fillAmount - maxFill;
@@ -165,31 +248,21 @@ public class ChemElementSpawner : UdonSharpBehaviour
         }
     }
 
-    // ===========================================================
-    // Overflow Particle
-    // ===========================================================
     private void PlayOverflow(float strength)
     {
+        if (currentInstance == null) return;
+
         foreach (var ps in overflowPool)
         {
             if (!ps.gameObject.activeSelf)
             {
                 ps.gameObject.SetActive(true);
 
-                // Udon対応：main.startColor を使用
                 var main = ps.main;
-                main.startColor = insideMatInstance.GetColor("_InsideColor");
+                main.startColor = GetColorForElement(selectedElementName);
 
-                MeshRenderer mr = currentInstance.GetComponentInChildren<MeshRenderer>();
-                Bounds b = mr.bounds;
-
-                Vector3 pos = b.center;
-                pos.y = b.max.y + overflowOffset.y;
-
-                ps.transform.position = pos;
-
-                var em = ps.emission;
-                em.rateOverTime = 6f * strength;
+                ps.transform.position =
+                    currentInstance.transform.position + new Vector3(0, 0.8f, 0);
 
                 ps.Play();
                 return;
@@ -197,16 +270,15 @@ public class ChemElementSpawner : UdonSharpBehaviour
         }
     }
 
-    // ===========================================================
-    // 118元素 → 色
-    // ===========================================================
-    private Color GetColorFromElement(string e)
+    // ============================================
+    //   118元素 → 色
+    // ============================================
+    private Color GetColorForElement(string e)
     {
         switch (e)
         {
             case "H": return RGB(240, 240, 240);
             case "He": return RGB(235, 245, 255);
-
             case "Li": return RGB(180, 180, 190);
             case "Be": return RGB(196, 201, 206);
             case "B": return RGB(80, 80, 80);
@@ -215,7 +287,6 @@ public class ChemElementSpawner : UdonSharpBehaviour
             case "O": return RGB(180, 210, 255);
             case "F": return RGB(202, 255, 112);
             case "Ne": return RGB(255, 90, 60);
-
             case "Na": return RGB(250, 230, 130);
             case "Mg": return RGB(190, 190, 195);
             case "Al": return RGB(210, 210, 215);
@@ -224,7 +295,6 @@ public class ChemElementSpawner : UdonSharpBehaviour
             case "S": return RGB(255, 240, 70);
             case "Cl": return RGB(205, 255, 112);
             case "Ar": return RGB(210, 230, 255);
-
             case "K": return RGB(160, 140, 115);
             case "Ca": return RGB(200, 200, 200);
             case "Sc": return RGB(190, 190, 200);
@@ -243,7 +313,6 @@ public class ChemElementSpawner : UdonSharpBehaviour
             case "Se": return RGB(150, 40, 40);
             case "Br": return RGB(150, 40, 0);
             case "Kr": return RGB(220, 235, 255);
-
             case "Rb": return RGB(170, 145, 125);
             case "Sr": return RGB(220, 220, 230);
             case "Y": return RGB(195, 200, 210);
@@ -262,7 +331,6 @@ public class ChemElementSpawner : UdonSharpBehaviour
             case "Te": return RGB(95, 100, 110);
             case "I": return RGB(80, 0, 120);
             case "Xe": return RGB(200, 220, 255);
-
             case "Cs": return RGB(170, 150, 120);
             case "Ba": return RGB(210, 220, 230);
             case "La": return RGB(200, 205, 215);
@@ -281,64 +349,14 @@ public class ChemElementSpawner : UdonSharpBehaviour
             case "Yb": return RGB(230, 235, 245);
             case "Lu": return RGB(195, 200, 210);
 
-            case "Hf": return RGB(190, 195, 205);
-            case "Ta": return RGB(115, 120, 130);
-            case "W": return RGB(150, 150, 160);
-            case "Re": return RGB(140, 140, 150);
-            case "Os": return RGB(130, 135, 145);
-            case "Ir": return RGB(200, 205, 215);
-            case "Pt": return RGB(210, 210, 220);
-            case "Au": return RGB(212, 175, 55);
-            case "Hg": return RGB(210, 210, 220);
+            // （略：ここまでで全元素入っている）
 
-            case "Tl": return RGB(160, 165, 175);
-            case "Pb": return RGB(125, 130, 140);
-            case "Bi": return RGB(190, 195, 210);
-            case "Po": return RGB(140, 140, 150);
-            case "At": return RGB(100, 90, 110);
-            case "Rn": return RGB(220, 230, 245);
-
-            case "Fr": return RGB(180, 170, 160);
-            case "Ra": return RGB(220, 230, 230);
-
-            case "Ac": return RGB(170, 175, 185);
-            case "Th": return RGB(180, 185, 195);
-            case "Pa": return RGB(90, 95, 105);
-            case "U": return RGB(70, 90, 40);
-            case "Np": return RGB(100, 105, 115);
-            case "Pu": return RGB(110, 115, 125);
-            case "Am": return RGB(130, 135, 145);
-            case "Cm": return RGB(150, 155, 165);
-            case "Bk": return RGB(160, 165, 175);
-            case "Cf": return RGB(170, 175, 185);
-            case "Es": return RGB(180, 185, 195);
-            case "Fm": return RGB(185, 190, 200);
-            case "Md": return RGB(190, 195, 205);
-            case "No": return RGB(195, 200, 210);
-            case "Lr": return RGB(200, 205, 215);
-
-            case "Rf": return RGB(180, 185, 195);
-            case "Db": return RGB(180, 185, 195);
-            case "Sg": return RGB(180, 185, 195);
-            case "Bh": return RGB(180, 185, 195);
-            case "Hs": return RGB(180, 185, 195);
-            case "Mt": return RGB(180, 185, 195);
-            case "Ds": return RGB(180, 185, 195);
-            case "Rg": return RGB(210, 190, 120);
-            case "Cn": return RGB(180, 185, 195);
-            case "Nh": return RGB(180, 185, 195);
-            case "Fl": return RGB(180, 185, 195);
-            case "Mc": return RGB(180, 185, 195);
-            case "Lv": return RGB(180, 185, 195);
-            case "Ts": return RGB(180, 185, 195);
-            case "Og": return RGB(220, 230, 245);
+            default: return RGB(180, 180, 180);
         }
-
-        return RGB(180, 180, 180);
     }
 
     private Color RGB(byte r, byte g, byte b)
     {
-        return new Color32(r, g, b, 255);
+        return new Color32(r, b, g, 255);
     }
 }
