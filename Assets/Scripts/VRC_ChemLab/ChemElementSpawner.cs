@@ -13,15 +13,19 @@ public class ChemElementSpawner : UdonSharpBehaviour
     public Transform spawnParent;
     public GameObject sourceVessel;
 
-    [Header("=== Shader Template ===")]
-    public Material insideMaterialBase;
-
-    private Material insideMatInstance;
     private GameObject currentInstance;
+    private ParticleSystem insideParticle;   // 液体（Particle）
 
-    private float fillAmount = 0f;
-    private float maxFill = 0.8f;
-    private bool liquidMode = true;
+    // 元素履歴
+    private string[] selectedElements = new string[4];
+    private int elementCount = 0;
+
+    [Header("=== Environment ===")]
+    public float temperature = 25f;  // ℃
+    public float pressure = 1f;      // atm
+
+    public bool enablePrecipitation = false;
+    public float precipitationStrength = 2f;
 
     [Header("=== Overflow Particles ===")]
     public GameObject overflowParticlePrefab;
@@ -32,6 +36,10 @@ public class ChemElementSpawner : UdonSharpBehaviour
 
     private bool hasElementSelected = false;
 
+
+    // ===========================================================
+    // 初期化
+    // ===========================================================
     void Start()
     {
         overflowPool = new ParticleSystem[overflowPoolSize];
@@ -45,8 +53,9 @@ public class ChemElementSpawner : UdonSharpBehaviour
         }
     }
 
+
     // ===========================================================
-    // 外部互換API
+    // 外部 API
     // ===========================================================
     public void SelectElement(string n)
     {
@@ -66,33 +75,36 @@ public class ChemElementSpawner : UdonSharpBehaviour
 
 
     // ===========================================================
-    // UI event
+    // UI イベント
     // ===========================================================
     public void _SelectElement()
     {
         hasElementSelected = true;
         SpawnFlask();
-        ApplyElementShaderColor();
-        UpdateInsideShader();
+        ApplyElementParticleColor();
+
+        selectedElements[elementCount] = selectedElementName;
+        elementCount++;
+
+        if (elementCount >= 2)
+            ApplyChemicalReactionAI();
     }
 
     public void _SelectEquipment()
     {
         SpawnFlask();
         if (hasElementSelected)
-        {
-            ApplyElementShaderColor();
-            UpdateInsideShader();
-        }
+            ApplyElementParticleColor();
     }
+
 
     public void _ResetExperiment()
     {
         if (currentInstance != null)
             Destroy(currentInstance);
 
-        fillAmount = 0;
         hasElementSelected = false;
+        elementCount = 0;
         selectedElementName = "";
         selectedEquipmentName = "";
         bondData = "";
@@ -100,7 +112,7 @@ public class ChemElementSpawner : UdonSharpBehaviour
 
 
     // ===========================================================
-    // Flask Spawn
+    // フラスコ生成
     // ===========================================================
     private void SpawnFlask()
     {
@@ -110,63 +122,44 @@ public class ChemElementSpawner : UdonSharpBehaviour
         currentInstance = VRCInstantiate(sourceVessel);
         currentInstance.transform.SetParent(spawnParent, true);
 
-        SetupInsideShader(currentInstance);
+        insideParticle = currentInstance.GetComponentInChildren<ParticleSystem>();
     }
 
-    private void SetupInsideShader(GameObject flask)
-    {
-        MeshRenderer mr = flask.GetComponentInChildren<MeshRenderer>();
-
-        // 内部材質をコピー（renderer.material）
-        mr.material = insideMaterialBase;
-        insideMatInstance = mr.material;
-
-        UpdateInsideShader();
-    }
 
     // ===========================================================
-    // Shader update
+    // 元素 → 色
     // ===========================================================
-    private void ApplyElementShaderColor()
+    private void ApplyElementParticleColor()
     {
-        if (insideMatInstance == null) return;
+        if (insideParticle == null) return;
 
-        insideMatInstance.SetColor("_InsideColor", GetColorFromElement(selectedElementName));
+        var main = insideParticle.main;
+        main.startColor = GetColorFromElement(selectedElementName);
     }
 
-    private void UpdateInsideShader()
-    {
-        if (insideMatInstance == null || currentInstance == null) return;
-
-        insideMatInstance.SetColor("_InsideColor", GetColorFromElement(selectedElementName));
-        insideMatInstance.SetFloat("_FillAmount", fillAmount);
-        insideMatInstance.SetFloat("_MaxFill", maxFill);
-        insideMatInstance.SetFloat("_Liquid", liquidMode ? 1f : 0f);
-
-        MeshRenderer mr = currentInstance.GetComponentInChildren<MeshRenderer>();
-        Bounds b = mr.bounds;
-
-        insideMatInstance.SetVector("boundsCenter", b.center);
-        insideMatInstance.SetVector("boundsSize", b.extents * 2f);
-    }
 
     // ===========================================================
-    // Fill Amount
+    // 液体量
     // ===========================================================
     public void AddAmount(float amt)
     {
-        fillAmount += amt;
-        UpdateInsideShader();
+        if (insideParticle == null) return;
 
-        if (fillAmount > maxFill)
+        var em = insideParticle.emission;
+        float newRate = em.rateOverTime.constant + amt * 80f;
+        newRate = Mathf.Clamp(newRate, 0f, 500f);
+        em.rateOverTime = newRate;
+
+        if (newRate > 350f)
         {
-            float overflow = fillAmount - maxFill;
+            float overflow = (newRate - 350f) / 50f;
             PlayOverflow(overflow);
         }
     }
 
+
     // ===========================================================
-    // Overflow Particle
+    // Overflow（溢れ）
     // ===========================================================
     private void PlayOverflow(float strength)
     {
@@ -176,25 +169,236 @@ public class ChemElementSpawner : UdonSharpBehaviour
             {
                 ps.gameObject.SetActive(true);
 
-                // Udon対応：main.startColor を使用
                 var main = ps.main;
-                main.startColor = insideMatInstance.GetColor("_InsideColor");
+                main.startColor = insideParticle.main.startColor.color;
 
                 MeshRenderer mr = currentInstance.GetComponentInChildren<MeshRenderer>();
-                Bounds b = mr.bounds;
-
-                Vector3 pos = b.center;
-                pos.y = b.max.y + overflowOffset.y;
-
+                Vector3 pos = mr.bounds.center;
+                pos.y = mr.bounds.max.y + overflowOffset.y;
                 ps.transform.position = pos;
-
-                var em = ps.emission;
-                em.rateOverTime = 6f * strength;
 
                 ps.Play();
                 return;
             }
         }
+    }
+
+
+    // ===========================================================
+    // AI 風化学反応推論システム
+    // ===========================================================
+    private void ApplyChemicalReactionAI()
+    {
+        if (elementCount < 2) return;
+
+        string a = selectedElements[0];
+        string b = selectedElements[1];
+
+        string typeA = GetElementType(a);
+        string typeB = GetElementType(b);
+
+        // ---------------------------------------------
+        // 金属 + 非金属 → イオン結合（塩・固体）
+        // ---------------------------------------------
+        if ((IsMetal(typeA) && IsNonMetal(typeB)) ||
+            (IsMetal(typeB) && IsNonMetal(typeA)))
+        {
+            Color solidColor = Color.white;
+
+            if (a == "Cu" || b == "Cu") solidColor = new Color(0.8f, 0.5f, 0.2f);
+            if (a == "Fe" || b == "Fe") solidColor = new Color(0.8f, 0.3f, 0.3f);
+
+            // 固体沈殿
+            SetLiquidColor(Color.clear);
+            TriggerPrecipitation(solidColor);
+            return;
+        }
+
+        // ---------------------------------------------
+        // 非金属 + 非金属 → 共価結合
+        // ---------------------------------------------
+        if (IsNonMetal(typeA) && IsNonMetal(typeB))
+        {
+            // 酸素関連
+            if (a == "O" || b == "O")
+            {
+                if (a == "H" || b == "H")
+                {
+                    SetLiquidColor(RGB(100, 150, 255)); // 水
+                    return;
+                }
+                if (a == "C" || b == "C")
+                {
+                    SetLiquidColor(Color.gray);
+                    TriggerVapor(); // CO2 = 気体
+                    return;
+                }
+
+                SetLiquidColor(RGB(150, 150, 150));
+                TriggerVapor();
+                return;
+            }
+
+            // その他非金属・共価結合
+            Color mix = MixColor(GetColorFromElement(a), GetColorFromElement(b));
+            SetLiquidColor(mix);
+            return;
+        }
+
+        // ---------------------------------------------
+        // 酸 + 塩基 → 中和
+        // ---------------------------------------------
+        if ((IsAcid(a) && IsBase(b)) ||
+            (IsAcid(b) && IsBase(a)))
+        {
+            SetLiquidColor(RGB(120, 180, 255));
+            return;
+        }
+
+        // ---------------------------------------------
+        // 希ガス → 基本反応しない（混色）
+        // ---------------------------------------------
+        if (typeA == "noble" || typeB == "noble")
+        {
+            SetLiquidColor(MixColor(GetColorFromElement(a), GetColorFromElement(b)));
+            return;
+        }
+
+        // ---------------------------------------------
+        // 未知 → AI 的混色反応
+        // ---------------------------------------------
+        SetLiquidColor(MixColor(GetColorFromElement(a), GetColorFromElement(b)));
+    }
+
+
+    private void TriggerPrecipitation(Color c)
+    {
+        // 内部液体を透明にし、沈殿粒子色だけ残す
+        var main = insideParticle.main;
+        main.startColor = c;
+    }
+
+    private void TriggerVapor()
+    {
+        var main = insideParticle.main;
+        Color current = main.startColor.color;
+        main.startColor = new Color(current.r, current.g, current.b, 0.5f);
+    }
+
+
+    private void SetLiquidColor(Color c)
+    {
+        var main = insideParticle.main;
+        main.startColor = c;
+    }
+
+
+    // ===========================================================
+    // 傾き・温度・圧力・沈殿
+    // ===========================================================
+    private void Update()
+    {
+        if (insideParticle == null || currentInstance == null) return;
+
+        Vector3 up = currentInstance.transform.up;
+        Physics.gravity = -up * 9.81f;
+
+        // 温度
+        {
+            var main = insideParticle.main;
+            float speedFactor = Mathf.Clamp(temperature / 25f, 0.3f, 4f);
+            main.startSpeed = speedFactor;
+        }
+
+        // 圧力
+        {
+            var main = insideParticle.main;
+            float drag = Mathf.Clamp(pressure * 0.5f, 0.1f, 4f);
+            main.startSpeedMultiplier = 1f / drag;
+        }
+
+        // 沈殿
+        if (enablePrecipitation)
+        {
+            var main = insideParticle.main;
+            Physics.gravity = -up * (9.81f * precipitationStrength);
+            main.startLifetime = Mathf.Clamp(precipitationStrength * 5f, 2f, 12f);
+        }
+    }
+
+
+    // ===========================================================
+    // 元素分類（AI 推論基礎）
+    // ===========================================================
+    private string GetElementType(string e)
+    {
+        switch (e)
+        {
+            case "H":
+            case "C":
+            case "N":
+            case "O":
+            case "F":
+            case "P":
+            case "S":
+            case "Cl":
+                return "nonmetal";
+
+            case "He":
+            case "Ne":
+            case "Ar":
+            case "Kr":
+            case "Xe":
+            case "Rn":
+                return "noble";
+
+            case "Li":
+            case "Na":
+            case "K":
+            case "Rb":
+            case "Cs":
+            case "Fr":
+                return "alkali";
+
+            case "Be":
+            case "Mg":
+            case "Ca":
+            case "Sr":
+            case "Ba":
+            case "Ra":
+                return "alkaline";
+
+            case "Fe":
+            case "Cu":
+            case "Zn":
+            case "Ag":
+            case "Au":
+            case "Co":
+            case "Ni":
+                return "metal";
+        }
+        return "unknown";
+    }
+
+
+    private bool IsMetal(string t)
+    {
+        return t == "metal" || t == "alkali" || t == "alkaline";
+    }
+
+    private bool IsNonMetal(string t)
+    {
+        return t == "nonmetal";
+    }
+
+    private bool IsAcid(string e)
+    {
+        return (e == "Cl" || e == "F" || e == "Br" || e == "I");
+    }
+
+    private bool IsBase(string e)
+    {
+        return (e == "Na" || e == "K" || e == "Ca" || e == "Mg");
     }
 
     // ===========================================================
@@ -340,5 +544,17 @@ public class ChemElementSpawner : UdonSharpBehaviour
     private Color RGB(byte r, byte g, byte b)
     {
         return new Color32(r, g, b, 255);
+    }
+
+    // ===========================================================
+    // 混色（AI 未定義反応用）
+    // ===========================================================
+    private Color MixColor(Color a, Color b)
+    {
+        return new Color(
+            (a.r + b.r) * 0.5f,
+            (a.g + b.g) * 0.5f,
+            (a.b + b.b) * 0.5f
+        );
     }
 }
