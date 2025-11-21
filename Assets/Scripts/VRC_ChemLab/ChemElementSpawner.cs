@@ -92,7 +92,41 @@ public class ChemElementSpawner : UdonSharpBehaviour
         currentInstance = VRCInstantiate(sourceVessel);
         currentInstance.transform.SetParent(spawnParent, true);
 
+        // 内部パーティクル取得
         insideParticle = currentInstance.transform.Find("Particle").GetComponent<ParticleSystem>();
+
+        // ==========================================
+        // ① WireframeFX（Model）の描画順を修正
+        // ==========================================
+        MeshRenderer wireMR = currentInstance.transform.Find("Model").GetComponent<MeshRenderer>();
+        if (wireMR != null)
+        {
+            Material wireMat = wireMR.material;
+            wireMat.renderQueue = 3100;  // 手前
+            wireMat.SetInt("_ZWrite", 0); // 深度を書かない
+        }
+
+        // ==========================================
+        // ② 液体 Particle の描画順を修正
+        // ==========================================
+        ParticleSystemRenderer pr = insideParticle.GetComponent<ParticleSystemRenderer>();
+        if (pr != null)
+        {
+            Material liquidMat = pr.material;
+            liquidMat.renderQueue = 3000;       // 透明
+            liquidMat.SetInt("_ZWrite", 0);     // 深度を書かない
+
+            pr.sortingOrder = 10;               // Wireframe より後ろ
+        }
+
+        // ==========================================
+        // ③ 遠距離カリングを防ぐ（Bounds拡大）
+        // ==========================================
+        MeshRenderer[] renderers = currentInstance.GetComponentsInChildren<MeshRenderer>();
+        foreach (var r in renderers)
+        {
+            r.localBounds = new Bounds(Vector3.zero, new Vector3(9999, 9999, 9999));
+        }
     }
 
     // ===========================================================
