@@ -5,48 +5,55 @@ using VRC.Udon;
 
 public class ChemElementSpawner : UdonSharpBehaviour
 {
+    // --- 外部参照 ---
     public ChemElementDatabase db;
     public ReactionPredictor predictor;
     public ChemReactionAnimator animator;
 
+    // --- プレハブ設定 ---
     public Transform spawnParent;
     public GameObject sourceVessel;
-    public GameObject overflowParticlePrefab;
 
+    // --- 液体水面（あっても無くても可） ---
+    public MeshRenderer liquidSurface;
+
+    // --- 環境値 ---
     public float temperature = 25f;
     public float humidity = 50f;
     public float pressure = 1f;
 
+    // --- 内部 ---
     private GameObject currentInstance;
     private ParticleSystem insideParticle;
-
-    private string lastElement = "";
 
     private Vector3 lastPos;
     private Quaternion lastRot;
 
-    // ---- 旧API互換用 ----
+    private string lastElement = "";
+
+    // --- 旧API互換 ---
     public string selectedElementName = "";
     public string selectedEquipmentName = "";
 
     // =========================================================
+    // 元素選択（UIや外部から呼び出されるメインAPI）
+    // =========================================================
     public void SelectElement(string symbol)
     {
         selectedElementName = symbol;
-
-        SpawnFlask();
-
         lastElement = symbol;
 
-        Color32 baseCol = db.GetColor(symbol);
-        ApplyAppearance(baseCol, symbol);
+        SpawnFlask();                // ← フラスコ生成
+        ApplyAppearanceFromDB(symbol); // ← 元素ごとの液体見た目
     }
 
     public void SelectEquipment(string name)
     {
-        selectedEquipmentName = name;
+        selectedEquipmentName = name; // 旧システム互換
     }
 
+    // =========================================================
+    // フラスコ生成
     // =========================================================
     private void SpawnFlask()
     {
@@ -56,53 +63,108 @@ public class ChemElementSpawner : UdonSharpBehaviour
         currentInstance = VRCInstantiate(sourceVessel);
         currentInstance.transform.SetParent(spawnParent, true);
 
+        // 中のパーティクル取得
         insideParticle = currentInstance.transform.Find("Particle").GetComponent<ParticleSystem>();
 
         FixRenderingOrder();
+        ConfigureParticleAsLiquid();     // ← 液体ボリューム初期化
 
         lastPos = currentInstance.transform.position;
         lastRot = currentInstance.transform.rotation;
     }
 
     // =========================================================
+    // レンダリング整列（ワイヤーフレーム → 液体）
+    // =========================================================
     private void FixRenderingOrder()
     {
+        // Wireframe モデル
         MeshRenderer wire = currentInstance.transform.Find("Model").GetComponent<MeshRenderer>();
         Material wireMat = wire.material;
         wireMat.renderQueue = 3100;
         wireMat.SetInt("_ZWrite", 0);
 
+        // 内部液体パーティクル
         ParticleSystemRenderer pr = insideParticle.GetComponent<ParticleSystemRenderer>();
-        Material liquid = pr.material;
-        liquid.renderQueue = 3000;
-        liquid.SetInt("_ZWrite", 0);
+        Material liquidMat = pr.material;
+        liquidMat.renderQueue = 3000;
+        liquidMat.SetInt("_ZWrite", 0);
 
         pr.sortingOrder = 10;
 
-        MeshRenderer[] mrs = currentInstance.GetComponentsInChildren<MeshRenderer>();
-        foreach (var r in mrs)
-            r.localBounds = new Bounds(Vector3.zero, Vector3.one * 9999f);
+        // Bounds拡大 → 遠距離でも見える
+        foreach (var r in currentInstance.GetComponentsInChildren<MeshRenderer>())
+            r.localBounds = new Bounds(Vector3.zero, Vector3.one * 5000f);
     }
 
     // =========================================================
-    private void ApplyAppearance(Color32 baseCol32, string element)
+    // パーティクルを“液体ボリューム”に初期化
+    // =========================================================
+    private void ConfigureParticleAsLiquid()
     {
-        Color col = (Color)baseCol32;
-
-        float t = Mathf.Lerp(0.8f, 1.2f, temperature / 100f);
-        col *= t;
-
-        col.a = Mathf.Lerp(0.4f, 1f, humidity / 100f);
+        if (insideParticle == null) return;
 
         var main = insideParticle.main;
-        main.startColor = col;
+        main.loop = true;
+        main.simulationSpace = ParticleSystemSimulationSpace.Local;
+        main.gravityModifier = 0f;
+        main.startSpeed = 0.00f;    // ← 外に飛ばないよう ZERO にする
+        main.startSize = 0.025f;
+        main.startLifetime = 6f;
 
-        float vis = db.GetViscosity(element);
-        main.startSpeed = Mathf.Clamp(1f / (vis * pressure), 0.1f, 1.2f);
+        // フラスコ内部に閉じ込めるための形状指定（最重要）
+        var shape = insideParticle.shape;
+        shape.enabled = true;
+        shape.shapeType = ParticleSystemShapeType.Box;
 
+        // ← 実際のフラスコモデルに完全一致させる
+        shape.scale = new Vector3(0.38f, 0.78f, 0.38f);
+
+        // Noise は流体感のために弱める（今は強すぎて外に飛ぶ）
         var noise = insideParticle.noise;
         noise.enabled = true;
-        noise.strength = db.GetDensity(element) * 0.2f;
+        noise.strength = 0.05f;        // ← ここを弱くする
+        noise.frequency = 0.4f;
+        noise.scrollSpeed = 0.1f;
+        noise.positionAmount = 0f;
+
+        // 外に飛ばす原因になる collision は OFF
+        var collision = insideParticle.collision;
+        collision.enabled = false;
+
+        var renderer = insideParticle.GetComponent<ParticleSystemRenderer>();
+        renderer.material.renderQueue = 3000;
+        renderer.material.SetInt("_ZWrite", 0);
+    }
+
+    // =========================================================
+    // 元素＋環境によって液体の見た目を変える（最終正解）
+    // =========================================================
+    private void ApplyAppearanceFromDB(string symbol)
+    {
+        if (insideParticle == null) return;
+
+        Color baseCol = (Color)db.GetColor(symbol);
+
+        float tempFactor = Mathf.Clamp(temperature / 50f, 0.5f, 1.4f);
+        float alpha = Mathf.Clamp(humidity / 100f, 0.2f, 1f);
+
+        Color final = baseCol * tempFactor;
+        final.a = alpha;
+
+        var main = insideParticle.main;
+        main.startColor = final;
+
+        // 粘度は強く適用（外に飛ばないよう抑制）
+        float visc = db.GetViscosity(symbol);
+        float density = db.GetDensity(symbol);
+
+        // 粘度で速度を調整（外に出ない）
+        main.startSpeed = Mathf.Clamp(0.015f / visc, 0.001f, 0.02f);
+
+        // ノイズ強度は密度に比例するが、外にあふれないよう制限する
+        var noise = insideParticle.noise;
+        noise.strength = Mathf.Clamp(density * 0.05f, 0.01f, 0.10f);
     }
 
     // =========================================================
@@ -113,37 +175,37 @@ public class ChemElementSpawner : UdonSharpBehaviour
         if (currentInstance == null || insideParticle == null) return;
 
         Vector3 pos = currentInstance.transform.position;
-        float move = (pos - lastPos).magnitude * 30f;
+        float move = (pos - lastPos).magnitude * 25f;
 
         Quaternion rot = currentInstance.transform.rotation;
-        float rotSpeed = Quaternion.Angle(rot, lastRot) * 0.2f;
+        float rotSpeed = Quaternion.Angle(rot, lastRot) * 0.15f;
 
-        float shake = Mathf.Clamp(move + rotSpeed, 0f, 3f);
+        float shake = Mathf.Clamp(move + rotSpeed, 0f, 2f);
 
-        // ノイズ揺れ適用
         var noise = insideParticle.noise;
-        noise.enabled = true;
 
-        // 旧 `/=` のエラー修正版
-        float rawStrength = 0.2f + shake * 0.4f;
-        float visc = db.GetViscosity(selectedElementName);
-        float finalStrength = rawStrength / Mathf.Clamp(visc, 0.5f, 2f);
+        float baseStrength = noise.strength.constant;
 
-        noise.strength = finalStrength;
-        noise.frequency = 0.5f + shake * 1.5f;
+        float newStrength = Mathf.Clamp(
+            baseStrength + (shake * 0.03f),
+            0.01f,
+            0.12f // ← 上限を設けて外に漏れないようにする
+        );
+
+        noise.strength = new ParticleSystem.MinMaxCurve(newStrength);
+
+        noise.frequency = 0.5f + shake * 0.8f;
 
         lastPos = pos;
         lastRot = rot;
     }
 
     // =========================================================
-    // 化学反応
+    // 化学反応（外部UIが呼ぶ）
     // =========================================================
     public void CombineWith(string next)
     {
         string reaction = predictor.Predict(lastElement, next);
-
-        Debug.Log("[ChemLab Reaction] " + reaction);
 
         if (reaction.Contains("塩")) animator.PlayFoam(insideParticle);
         if (reaction.Contains("酸化")) animator.PlayHeat(insideParticle);
