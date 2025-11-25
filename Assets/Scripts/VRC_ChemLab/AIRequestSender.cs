@@ -14,7 +14,6 @@ public class AIRequestSender : UdonSharpBehaviour
             return;
         }
 
-        spawner.bondData = bondInfo;
         spawner.SendCustomEvent("_ApplyBondUpdate");
         Debug.Log("[AIRequestSender] AI反応データをSpawnerへ送信");
     }
