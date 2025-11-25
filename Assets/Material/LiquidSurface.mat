@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Metal
-  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
+  m_Name: LiquidSurface
+  m_Shader: {fileID: 4800000, guid: 45a2efbc7748b7c4b9a56b5fe687b386, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -39,10 +39,6 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _DissolveTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _EmissionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -65,82 +61,26 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Alpha: 0
-    - _BoilAmount: 0
-    - _BubbleInt: 0
-    - _BubbleSize: 2
-    - _BubbleSpeed: 1.2
     - _BumpScale: 1
-    - _ColorShift: 0
-    - _Cull: 0
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
-    - _DissEdge: 0.05
-    - _Dissolve: 0
-    - _DissolveOn: 0
     - _DstBlend: 0
-    - _Emission: 0
-    - _Evaporation: 0
-    - _Fill: 0
-    - _FillLevel: 0.5
-    - _FoamWidth: 0.02
-    - _FresnelPow: 5
     - _GlossMapScale: 1
-    - _Glossiness: 0.8
+    - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _GlowIntensity: 1
-    - _GridScale: 8
-    - _GridSharp: 2
-    - _HeatAmount: 0
-    - _HeatHeight: 0.25
-    - _HeightMax: 0.5
-    - _HeightMin: -0.5
-    - _Humidity: 0.5
-    - _IOR: 1.33
-    - _LineWidth: 1.2
-    - _LiquidAlpha: 0.35
-    - _Metallic: 0.8
+    - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
-    - _Opacity: 0.08
     - _Parallax: 0.02
-    - _PulseOn: 0
-    - _PulseSpeed: 2
-    - _RefractScale: 0.006
-    - _RimBoost: 0.5
-    - _ScanOn: 0
-    - _ScanSpeed: 1
-    - _ScanWidth: 0.1
-    - _ShowBase: 1
+    - _Smoothness: 0.8
     - _SmoothnessTextureChannel: 0
-    - _SparkleInt: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _SurfaceSoft: 0.01
-    - _Turbidity: 0.2
     - _UVSec: 0
-    - _UseBary: 1
-    - _WireEnable: 1
-    - _WireFill: 0
-    - _WireOpacity: 1
-    - _WireThickness: 1
-    - _WireWidth: 0.3
-    - _WireWidthPx: 1
-    - _WireZWrite: 0
-    - _WobbleAmp: 0.01
-    - _WobbleFreq: 2
-    - _WobbleOn: 0
-    - _WobbleSpeed: 1.5
+    - _WaveSpeed: 1
+    - _WaveStrength: 0.1
     - _ZWrite: 1
     m_Colors:
-    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Color: {r: 0.381132, g: 0.381132, b: 0.381132, a: 1}
-    - _DissEdgeCol: {r: 1, g: 0.5, b: 0, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FillColor: {r: 0, g: 0, b: 0, a: 0}
-    - _GlassTint: {r: 0.75, g: 0.9, b: 1, a: 0.08}
-    - _LiquidColor: {r: 0.09999997, g: 0.5, b: 1, a: 0.15}
-    - _ScanColor: {r: 0.29999998, g: 0.7, b: 1, a: 1}
-    - _UpAxis: {r: 0, g: 1, b: 0, a: 0}
-    - _WireColor: {r: 0, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []

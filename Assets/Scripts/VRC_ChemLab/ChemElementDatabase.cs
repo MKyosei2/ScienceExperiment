@@ -6,7 +6,7 @@ public class ChemElementDatabase : UdonSharpBehaviour
     [Header("118 Element Symbols")]
     public string[] symbols = new string[118];
 
-    [Header("118 Element Colors")]
+    [Header("118 Element Colors (Base Color)")]
     public Color32[] colors = new Color32[118];
 
     [Header("118 Element Groups")]
@@ -21,7 +21,7 @@ public class ChemElementDatabase : UdonSharpBehaviour
     */
     public int[] groups = new int[118];
 
-    [Header("Element Densities")]
+    [Header("Element Density")]
     public float[] density = new float[118];
 
     [Header("Element Viscosity")]
@@ -30,13 +30,12 @@ public class ChemElementDatabase : UdonSharpBehaviour
     [Header("Element Luminescence")]
     public float[] luminescence = new float[118];
 
-    // -------------------------------
+    // --- API ---
     public int GetIndex(string symbol)
     {
         for (int i = 0; i < symbols.Length; i++)
-        {
             if (symbols[i] == symbol) return i;
-        }
+
         return -1;
     }
 

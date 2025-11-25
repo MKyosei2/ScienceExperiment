@@ -155,7 +155,7 @@ MonoBehaviour:
       Data: 9|UnityEngine.HeaderAttribute, UnityEngine.CoreModule
     - Name: header
       Entry: 1
-      Data: 118 Element Colors
+      Data: 118 Element Colors (Base Color)
     - Name: 
       Entry: 8
       Data: 
@@ -281,7 +281,7 @@ MonoBehaviour:
       Data: 17|UnityEngine.HeaderAttribute, UnityEngine.CoreModule
     - Name: header
       Entry: 1
-      Data: Element Densities
+      Data: Element Density
     - Name: 
       Entry: 8
       Data: 
