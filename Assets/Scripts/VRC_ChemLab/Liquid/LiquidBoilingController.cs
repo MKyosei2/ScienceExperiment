@@ -3,19 +3,17 @@ using UnityEngine;
 
 public class LiquidBoilingController : UdonSharpBehaviour
 {
-    public ParticleSystem bubbles;
+    public LiquidSurfaceController surface;
 
-    public void UpdateBoiling(float temp)
+    public void PlayBoil()
     {
-        var em = bubbles.emission;
+        if (surface != null)
+            surface.SetRipple(0.5f);
+    }
 
-        if (temp < 60f)
-        {
-            em.rateOverTime = 0;
-            return;
-        }
-
-        float rate = (temp - 60f) * 1.8f;
-        em.rateOverTime = Mathf.Clamp(rate, 0f, 60f);
+    public void PlayHeat()
+    {
+        if (surface != null)
+            surface.PulseColor(new Color(1f, 0.4f, 0f, 1f));
     }
 }
