@@ -1,18 +1,16 @@
-Shader "ChemLab/WaveShader"
+Shader "VRC_ChemLab/WaveEffect"
 {
     Properties
     {
-        _MainColor ("Base Color", Color) = (0.2, 0.5, 1, 1)
-        _WaveIntensity ("Wave Intensity", Range(0, 1)) = 0.2
-        _Speed ("Wave Speed", Range(0,5)) = 1
+        _Color("Color", Color) = (0.6,0.6,1,0.5)
+        _WaveStrength("Wave Strength", Range(0,1)) = 0.0
     }
 
     SubShader
     {
-        Tags { "Queue" = "3000" "RenderType"="Transparent" }
-        Blend SrcAlpha OneMinusSrcAlpha
+        Tags { "Queue"="Transparent" }
         ZWrite Off
-        Cull Off
+        Blend SrcAlpha OneMinusSrcAlpha
 
         Pass
         {
@@ -20,46 +18,26 @@ Shader "ChemLab/WaveShader"
             #pragma vertex vert
             #pragma fragment frag
 
-            float4 _MainColor;
-            float _WaveIntensity;
-            float _Speed;
+            float4 _Color;
+            float _WaveStrength;
+            float4 _Time;
 
-            struct appdata
-            {
-                float4 vertex : POSITION;
-                float2 uv : TEXCOORD0;
-            };
+            struct appdata { float4 v:POSITION; float2 uv:TEXCOORD0; };
+            struct v2f { float4 p:SV_POSITION; float2 uv:TEXCOORD0; };
 
-            struct v2f
-            {
-                float4 pos : SV_POSITION;
-                float2 uv : TEXCOORD0;
-            };
-
-            float random(float2 p)
-            {
-                return frac(sin(dot(p, float2(12.9898,78.233))) * 43758.5453);
-            }
-
-            v2f vert (appdata v)
+            v2f vert(appdata i)
             {
                 v2f o;
-                o.pos = UnityObjectToClipPos(v.vertex);
-                o.uv = v.uv;
+                float wave = sin((i.v.x*8 + i.v.z*8 + _Time.y*10)) * _WaveStrength * 0.03;
+                i.v.y += wave;
+                o.p = UnityObjectToClipPos(i.v);
+                o.uv = i.uv;
                 return o;
             }
 
-            float4 frag (v2f i) : SV_Target
+            float4 frag(v2f i):SV_Target
             {
-                float t = _Time.y * _Speed;
-
-                // sin-based ripple distortion
-                float distort = sin(i.uv.y * 20 + t * 5) * _WaveIntensity;
-                distort += sin(i.uv.x * 15 - t * 4) * _WaveIntensity * 0.6;
-
-                float2 uv2 = i.uv + distort;
-
-                return float4(_MainColor.rgb, 0.8);
+                return _Color;
             }
             ENDCG
         }
