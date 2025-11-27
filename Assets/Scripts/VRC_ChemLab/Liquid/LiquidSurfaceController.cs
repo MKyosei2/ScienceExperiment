@@ -10,13 +10,18 @@ public class LiquidSurfaceController : UdonSharpBehaviour
     private float rippleDuration = 0f;
     private float ripplePower = 0f;
 
-    // Glow pulse
+    // Glow / PulseColor
     private float glowTimer = 0f;
     private float glowDuration = 0f;
     private float glowPower = 0f;
+    private Color pulseColor = Color.clear;
 
+    // Wave
     private float waveLevel = 0f;
     private float viscosity = 1f;
+
+    // Tilt normal
+    private Vector3 liquidNormal = Vector3.up;
 
     private void Start()
     {
@@ -28,7 +33,7 @@ public class LiquidSurfaceController : UdonSharpBehaviour
     {
         Material m = surfaceRenderer.material;
 
-        // ---------- Ripple decay ----------
+        // ---------- Ripple ----------
         if (rippleTimer > 0f)
         {
             rippleTimer -= Time.deltaTime;
@@ -40,33 +45,31 @@ public class LiquidSurfaceController : UdonSharpBehaviour
             m.SetFloat("_RipplePower", 0f);
         }
 
-        // ---------- Glow decay ----------
+        // ---------- Glow Pulse ----------
         if (glowTimer > 0f)
         {
             glowTimer -= Time.deltaTime;
             float normalized = glowTimer / glowDuration;
             m.SetFloat("_Glow", glowPower * normalized);
+            m.SetColor("_PulseColor", pulseColor * normalized);
         }
         else
         {
             m.SetFloat("_Glow", 0f);
+            m.SetColor("_PulseColor", Color.clear);
         }
 
-        // ---------- Continuous properties ----------
+        // ---------- Continuous props ----------
         m.SetFloat("_WaveLevel", waveLevel);
         m.SetFloat("_Viscosity", viscosity);
+        m.SetVector("_LiquidNormal", liquidNormal);
     }
 
-    // ============================================================
-    // PUBLIC API - All overloads (for compatibility)
-    // ============================================================
+    // ------------------------------------------------------------------------
+    // PUBLIC API
+    // ------------------------------------------------------------------------
 
-    // --- SetRipple (波紋) ---
-    public void SetRipple()
-    {
-        SetRipple(0.2f, 0.4f);
-    }
-
+    // Ripple (波紋)
     public void SetRipple(float power)
     {
         SetRipple(power, 0.4f);
@@ -79,23 +82,33 @@ public class LiquidSurfaceController : UdonSharpBehaviour
         rippleTimer = duration;
     }
 
-    // --- Pulse (旧API互換) ---
-    public void Pulse()
+    // Wave
+    public void SetWave(float level)
     {
-        SetRipple(0.2f, 0.4f);
+        waveLevel = level;
     }
 
-    public void Pulse(float power)
+    // Viscosity
+    public void SetViscosity(float v)
     {
-        SetRipple(power, 0.4f);
+        viscosity = Mathf.Clamp(v, 0.05f, 10f);
     }
 
-    public void Pulse(float power, float duration)
+    public void SetColor(Color c)
     {
-        SetRipple(power, duration);
+        surfaceRenderer.material.SetColor("_Color", c);
     }
 
-    // --- PulseColor（発光） ---
+    // Tilt (液体の傾き)
+    public void ApplyTilt(Quaternion flaskRot)
+    {
+        liquidNormal = flaskRot * Vector3.up;
+    }
+
+    // ------------------------------------------------------------------------
+    // ★ PulseColor（復活！） LiquidReactionAnimator / LiquidBoilingController 用
+    // ------------------------------------------------------------------------
+
     public void PulseColor(Color color)
     {
         PulseColor(color, 0.5f, 0.5f);
@@ -108,29 +121,9 @@ public class LiquidSurfaceController : UdonSharpBehaviour
 
     public void PulseColor(Color color, float power, float duration)
     {
-        Material m = surfaceRenderer.material;
-        m.SetColor("_Color", color);
-
+        pulseColor = color;
         glowPower = power;
         glowDuration = duration;
         glowTimer = duration;
-    }
-
-    // --- 波（内部揺れ） ---
-    public void SetWave(float level)
-    {
-        waveLevel = level;
-    }
-
-    // --- 粘度設定 ---
-    public void SetViscosity(float v)
-    {
-        viscosity = Mathf.Clamp(v, 0.05f, 10f);
-    }
-
-    // --- 色設定 ---
-    public void SetColor(Color c)
-    {
-        surfaceRenderer.material.SetColor("_Color", c);
     }
 }

@@ -365,7 +365,8 @@ MonoBehaviour:
   heat: {fileID: 0}
   spark: {fileID: 0}
   glowRenderer: {fileID: 0}
-  liquidSurface: {fileID: 0}
+  liquidSurface: {fileID: 8664170460588894993, guid: c321b943e0a66784cb2d22b5dee14754,
+    type: 3}
 --- !u!1 &86809838
 GameObject:
   m_ObjectHideFlags: 0
@@ -7024,7 +7025,7 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1863452167}
   spawner: {fileID: 1051910570}
-  type: 
+  type: Element
   targetName: ResetButton
   category: 0
   categoryName: 
@@ -7190,46 +7191,18 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1995492020}
-  elementZone: {fileID: 8375236632628210904}
-  toolZone: {fileID: 8375236632628210904}
-  conditionZone: {fileID: 8375236632628210904}
-  statusText: {fileID: 751382543}
+  elementZone: {fileID: 0}
+  toolZone: {fileID: 0}
+  conditionZone: {fileID: 0}
+  statusText: {fileID: 59518512}
   elementObjects:
   - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   toolObjects:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   - {fileID: 0}
   conditionObject: {fileID: 296433992}
   elementIDs:
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
   toolIDs:
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
   - 
   conditionID: 
 --- !u!1 &2096035941

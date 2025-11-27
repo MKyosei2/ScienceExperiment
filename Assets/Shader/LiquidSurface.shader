@@ -5,6 +5,7 @@ Shader "ChemLab/LiquidSurface"
         _Color ("Color", Color) = (0, 0.5, 1, 0.7)
         _RipplePower ("Ripple Power", Float) = 0
         _PulseColor ("Pulse Color", Color) = (1,1,1,0)
+        _LiquidNormal ("Liquid Normal", Vector) = (0,1,0,0)
     }
 
     SubShader
@@ -23,6 +24,7 @@ Shader "ChemLab/LiquidSurface"
             float4 _Color;
             float _RipplePower;
             float4 _PulseColor;
+            float3 _LiquidNormal;
 
             struct v2f
             {
@@ -33,8 +35,19 @@ Shader "ChemLab/LiquidSurface"
             v2f vert(appdata_base v)
             {
                 v2f o;
+
                 float ripple = sin(v.vertex.x * 20 + _RipplePower * 10) * 0.002;
-                o.pos = UnityObjectToClipPos(v.vertex + float4(0, ripple, 0, 0));
+
+                float3 normal = normalize(_LiquidNormal);
+                float tilt = dot(normal, float3(0,1,0));
+
+                float3 offset = float3(
+                    normal.x * ripple,
+                    ripple * tilt,
+                    normal.z * ripple
+                );
+
+                o.pos = UnityObjectToClipPos(v.vertex + float4(offset, 0));
                 o.uv = v.texcoord;
                 return o;
             }
@@ -42,10 +55,7 @@ Shader "ChemLab/LiquidSurface"
             float4 frag(v2f i) : SV_Target
             {
                 float4 col = _Color;
-
-                // Pulse effect
                 col += _PulseColor * 0.5;
-
                 return col;
             }
             ENDCG
