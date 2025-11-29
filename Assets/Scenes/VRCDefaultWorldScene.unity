@@ -3679,17 +3679,13 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1051910571}
+  selectedElementName: 
+  selectedEquipmentName: 
   db: {fileID: 1481111298}
   predictor: {fileID: 282243115}
   animator: {fileID: 59563005}
   spawnParent: {fileID: 1094938491}
-  sourceVessel: {fileID: 8746406110628965935, guid: c321b943e0a66784cb2d22b5dee14754,
-    type: 3}
-  temperature: 25
-  humidity: 50
-  pressure: 1
-  selectedElementName: 
-  selectedEquipmentName: 
+  sourceVessel: {fileID: 0}
 --- !u!114 &1051910571
 MonoBehaviour:
   m_ObjectHideFlags: 2

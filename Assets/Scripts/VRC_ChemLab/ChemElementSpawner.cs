@@ -78,6 +78,42 @@ public class ChemElementSpawner : UdonSharpBehaviour
 
         lastPos = currentInstance.transform.position;
         lastRot = currentInstance.transform.rotation;
+        InjectSurfaceReferences();
+    }
+
+    private void InjectSurfaceReferences()
+    {
+        Transform container = currentInstance.transform.Find("LiquidContainer");
+        Transform ls = container.Find("LiquidSurface");
+        Transform lp = container.Find("LiquidParticle");
+        MeshRenderer surfaceRend = ls.GetComponent<MeshRenderer>();
+        ParticleSystem particle = lp.GetComponent<ParticleSystem>();
+
+        // ---- LiquidSurfaceController ----
+        var lsc = ls.GetComponent<UdonSharpBehaviour>();
+        if (lsc != null)
+        {
+            lsc.SetProgramVariable("surfaceRenderer", surfaceRend);
+        }
+
+        // ---- LiquidEffects 配下全入れ ----
+        Transform leRoot = container.Find("LiquidEffects");
+        var effects = leRoot.GetComponents<UdonSharpBehaviour>();
+        foreach (var ef in effects)
+        {
+            // Surface
+            ef.SetProgramVariable("Surface", ls.gameObject);
+
+            // Wave / Boil / ParticleEngine など存在する変数にだけ注入
+            if (ef.GetProgramVariable("Wave") != null)
+                ef.SetProgramVariable("Wave", ls.gameObject);
+
+            if (ef.GetProgramVariable("Boil") != null)
+                ef.SetProgramVariable("Boil", ls.gameObject);
+
+            if (ef.GetProgramVariable("ParticleEngine") != null)
+                ef.SetProgramVariable("ParticleEngine", particle);
+        }
     }
 
     // ============================================================
