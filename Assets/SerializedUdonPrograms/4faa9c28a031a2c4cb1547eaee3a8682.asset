@@ -16,4 +16,5 @@ MonoBehaviour:
   serializedProgramBytesString: 
   serializedSignature: 927d5221fb35b79f8302a9a927f3b887a5e0aa38aea1611251289c34ab1cf8e54e8ed4f9d8bb08c17df96306e16c13361cc2c02e6929a957beb9a2a58198980e
   programUnityEngineObjects: []
+  networkCallingEntrypointMetadata: []
   serializationDataFormat: 0

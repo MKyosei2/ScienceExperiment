@@ -43,66 +43,30 @@ public class ChemElementSpawner : UdonSharpBehaviour
     // ============================================================
     // FLASK を生成（Scale=42 + 構造復元 + 描画順固定）
     // ============================================================
+    //--------------------------------------
+    // Prefab instantiate
+    //--------------------------------------
     private void SpawnFlask()
     {
         if (currentInstance != null)
             Destroy(currentInstance);
 
         currentInstance = VRCInstantiate(sourceVessel);
+
         if (currentInstance == null)
         {
-            Debug.LogError("sourceVessel は必ず Prefab を設定してください");
+            Debug.LogError("sourceVessel は Prefab を設定してください");
             return;
         }
 
         currentInstance.transform.SetParent(spawnParent, false);
         currentInstance.transform.localPosition = Vector3.zero;
         currentInstance.transform.localRotation = Quaternion.identity;
-        currentInstance.transform.localScale = new Vector3(42f, 42f, 42f);
+        currentInstance.transform.localScale = new Vector3(42, 42, 42);
 
-        // -----------------------------
-        // LiquidContainer の探索（?. 禁止なので手動分岐）
-        // -----------------------------
-        Transform container = currentInstance.transform.Find("LiquidContainer");
-        if (container == null)
-        {
-            container = currentInstance.transform.Find("ModelRoot/LiquidContainer");
-        }
-        if (container == null)
-        {
-            Debug.LogError("LiquidContainer が Prefab 内にありません");
-            return;
-        }
-
-        // -----------------------------
-        // Particle
-        // -----------------------------
-        Transform lp = container.Find("LiquidParticle");
-        if (lp != null)
-        {
-            liquidParticle = lp.GetComponent<ParticleSystem>();
-        }
-        else
-        {
-            liquidParticle = null;
-        }
-
-        // -----------------------------
-        // LiquidSurface
-        // -----------------------------
-        Transform ls = container.Find("LiquidSurface");
-        if (ls != null)
-        {
-            liquidSurface = ls.GetComponent<Renderer>();
-        }
-        else
-        {
-            liquidSurface = null;
-        }
-
-        // -----------------------------
-        // Model の探索（?.禁止 → if文で分岐）
-        // -----------------------------
+        // -------------------------
+        // ModelRoot/Model
+        // -------------------------
         Transform modelRoot = currentInstance.transform.Find("ModelRoot");
         if (modelRoot == null)
         {
@@ -113,26 +77,44 @@ public class ChemElementSpawner : UdonSharpBehaviour
         Transform model = modelRoot.Find("Model");
         if (model == null)
         {
-            Debug.LogError("Model が ModelRoot 内にありません");
+            Debug.LogError("ModelRoot の中に Model がありません");
             return;
         }
 
         MeshFilter mf = model.GetComponent<MeshFilter>();
         if (mf == null)
         {
-            Debug.LogError("MeshFilter が Model にありません");
+            Debug.LogError("Model に MeshFilter がありません");
             return;
         }
 
-        // -----------------------------
-        // 通常処理
-        // -----------------------------
+        // -------------------------
+        // LiquidContainer
+        // -------------------------
+        Transform container = currentInstance.transform.Find("LiquidContainer");
+        if (container == null)
+        {
+            Debug.LogError("LiquidContainer が Prefab 内にありません");
+            return;
+        }
+
+        Transform lp = container.Find("LiquidParticle");
+        if (lp != null)
+            liquidParticle = lp.GetComponent<ParticleSystem>();
+        else
+            Debug.LogError("LiquidParticle がありません");
+
+        Transform ls = container.Find("LiquidSurface");
+        if (ls != null)
+            liquidSurface = ls.GetComponent<Renderer>();
+        else
+            Debug.LogError("LiquidSurface がありません");
+
         ConfigureLiquidParticle();
         FixRenderingOrder();
 
         lastPos = currentInstance.transform.position;
         lastRot = currentInstance.transform.rotation;
-        InjectSurfaceReferences();
     }
 
     private void InjectSurfaceReferences()
@@ -191,8 +173,19 @@ public class ChemElementSpawner : UdonSharpBehaviour
         shape.shapeType = ParticleSystemShapeType.Mesh;
         shape.meshShapeType = ParticleSystemMeshShapeType.Triangle;
 
-        MeshFilter mf = currentInstance.transform.Find("Model").GetComponent<MeshFilter>();
-        if (mf != null) shape.mesh = mf.sharedMesh;
+        Transform modelRoot = currentInstance.transform.Find("ModelRoot");
+        if (modelRoot != null)
+        {
+            Transform model = modelRoot.Find("Model");
+            if (model != null)
+            {
+                MeshFilter mf = model.GetComponent<MeshFilter>();
+                if (mf != null)
+                {
+                    shape.mesh = mf.sharedMesh;
+                }
+            }
+        }
 
         shape.normalOffset = -0.02f;
 
@@ -206,7 +199,27 @@ public class ChemElementSpawner : UdonSharpBehaviour
     // ============================================================
     private void FixRenderingOrder()
     {
-        MeshRenderer mr = currentInstance.transform.Find("Model").GetComponent<MeshRenderer>();
+        Transform modelRoot = currentInstance.transform.Find("ModelRoot");
+        if (modelRoot == null)
+        {
+            Debug.LogError("ModelRoot が見つかりません (FixRenderingOrder)");
+            return;
+        }
+
+        Transform model = modelRoot.Find("Model");
+        if (model == null)
+        {
+            Debug.LogError("Model が見つかりません (FixRenderingOrder)");
+            return;
+        }
+
+        MeshRenderer mr = model.GetComponent<MeshRenderer>();
+        if (mr == null)
+        {
+            Debug.LogError("Model に MeshRenderer がありません (FixRenderingOrder)");
+            return;
+        }
+
         Material wireMat = mr.material;
         wireMat.renderQueue = 2500;
         wireMat.SetInt("_ZWrite", 0);
