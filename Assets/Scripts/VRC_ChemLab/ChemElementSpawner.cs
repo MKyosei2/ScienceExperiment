@@ -110,6 +110,7 @@ public class ChemElementSpawner : UdonSharpBehaviour
         else
             Debug.LogError("LiquidSurface がありません");
 
+        // ---- 修正済み（引数なし） ----
         ConfigureLiquidParticle();
         FixRenderingOrder();
 
@@ -173,19 +174,8 @@ public class ChemElementSpawner : UdonSharpBehaviour
         shape.shapeType = ParticleSystemShapeType.Mesh;
         shape.meshShapeType = ParticleSystemMeshShapeType.Triangle;
 
-        Transform modelRoot = currentInstance.transform.Find("ModelRoot");
-        if (modelRoot != null)
-        {
-            Transform model = modelRoot.Find("Model");
-            if (model != null)
-            {
-                MeshFilter mf = model.GetComponent<MeshFilter>();
-                if (mf != null)
-                {
-                    shape.mesh = mf.sharedMesh;
-                }
-            }
-        }
+        MeshFilter mf = currentInstance.transform.Find("ModelRoot/Model").GetComponent<MeshFilter>();
+        if (mf != null) shape.mesh = mf.sharedMesh;
 
         shape.normalOffset = -0.02f;
 
@@ -199,30 +189,13 @@ public class ChemElementSpawner : UdonSharpBehaviour
     // ============================================================
     private void FixRenderingOrder()
     {
-        Transform modelRoot = currentInstance.transform.Find("ModelRoot");
-        if (modelRoot == null)
+        MeshRenderer mr = currentInstance.transform.Find("ModelRoot/Model").GetComponent<MeshRenderer>();
+        if (mr != null)
         {
-            Debug.LogError("ModelRoot が見つかりません (FixRenderingOrder)");
-            return;
+            Material wireMat = mr.material;
+            wireMat.renderQueue = 2500;
+            wireMat.SetInt("_ZWrite", 0);
         }
-
-        Transform model = modelRoot.Find("Model");
-        if (model == null)
-        {
-            Debug.LogError("Model が見つかりません (FixRenderingOrder)");
-            return;
-        }
-
-        MeshRenderer mr = model.GetComponent<MeshRenderer>();
-        if (mr == null)
-        {
-            Debug.LogError("Model に MeshRenderer がありません (FixRenderingOrder)");
-            return;
-        }
-
-        Material wireMat = mr.material;
-        wireMat.renderQueue = 2500;
-        wireMat.SetInt("_ZWrite", 0);
 
         if (liquidSurface != null)
         {

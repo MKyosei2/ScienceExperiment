@@ -252,7 +252,7 @@ ParticleSystem:
   emitterVelocityMode: 1
   looping: 1
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
   startDelay:
@@ -5244,9 +5244,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3671653982754824276}
   surface: {fileID: 8664170460588894993}
-  wave: {fileID: 0}
-  boil: {fileID: 0}
-  particleEngine: {fileID: 0}
+  wave: {fileID: 4183215950584035267}
+  boil: {fileID: 4536345958528871868}
+  particleEngine: {fileID: 1607468828367146859}
 --- !u!114 &3671653982754824276
 MonoBehaviour:
   m_ObjectHideFlags: 0
