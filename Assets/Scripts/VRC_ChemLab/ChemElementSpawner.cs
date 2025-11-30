@@ -1,0 +1,279 @@
+﻿using UdonSharp;
+using UnityEngine;
+using VRC.SDKBase;
+
+public class ChemElementSpawner : UdonSharpBehaviour
+{
+    public string selectedElementName = "";
+    public string selectedEquipmentName = "";
+
+    public ChemElementDatabase db;
+    public ReactionPredictor predictor;
+    public ChemReactionAnimator animator;
+
+    public Transform spawnParent;
+    public GameObject sourceVessel;
+
+    private GameObject currentInstance;
+    private ParticleSystem liquidParticle;
+    private Renderer liquidSurface;
+
+    private Vector3 lastPos;
+    private Quaternion lastRot;
+    private string lastElement = "";
+
+    // ============================================================
+    // ELEMENT 選択
+    // ============================================================
+    public void SelectElement(string symbol)
+    {
+        selectedElementName = symbol;
+        lastElement = symbol;
+
+        SpawnFlask();
+        ApplyAppearance(db.GetColor(symbol), symbol);
+    }
+
+    // EQUIPMENT（形式上必要）
+    public void SelectEquipment(string equip)
+    {
+        selectedEquipmentName = equip;
+    }
+
+    // ============================================================
+    // FLASK を生成（Scale=42 + 構造復元 + 描画順固定）
+    // ============================================================
+    //--------------------------------------
+    // Prefab instantiate
+    //--------------------------------------
+    private void SpawnFlask()
+    {
+        if (currentInstance != null)
+            Destroy(currentInstance);
+
+        currentInstance = VRCInstantiate(sourceVessel);
+
+        if (currentInstance == null)
+        {
+            Debug.LogError("sourceVessel は Prefab を設定してください");
+            return;
+        }
+
+        // 親・位置・回転・スケール適用
+        currentInstance.transform.SetParent(spawnParent, false);
+        currentInstance.transform.localPosition = Vector3.zero;
+        currentInstance.transform.localRotation = Quaternion.identity;
+        currentInstance.transform.localScale = new Vector3(42, 42, 42);
+
+        // ================================
+        // ModelRoot / Model の取得（重要）
+        // ================================
+        Transform modelRoot = currentInstance.transform.Find("ModelRoot");
+        if (modelRoot == null)
+        {
+            Debug.LogError("ModelRoot が見つかりません");
+            return;
+        }
+
+        Transform model = modelRoot.Find("Model");
+        if (model == null)
+        {
+            Debug.LogError("ModelRoot の中に Model がありません");
+            return;
+        }
+
+        MeshFilter mf = model.GetComponent<MeshFilter>();
+        MeshRenderer mr = model.GetComponent<MeshRenderer>();
+
+        if (mf == null || mr == null)
+        {
+            Debug.LogError("Model に MeshFilter / MeshRenderer がありません");
+            return;
+        }
+
+        // ================================
+        // LiquidContainer 系の取得
+        // ================================
+        Transform container = currentInstance.transform.Find("LiquidContainer");
+        if (container == null)
+        {
+            Debug.LogError("LiquidContainer が 見つかりません");
+            return;
+        }
+
+        Transform lp = container.Find("LiquidParticle");
+        Transform ls = container.Find("LiquidSurface");
+
+        if (lp != null)
+            liquidParticle = lp.GetComponent<ParticleSystem>();
+        else
+            Debug.LogError("LiquidParticle が 見つかりません");
+
+        if (ls != null)
+            liquidSurface = ls.GetComponent<Renderer>();
+        else
+            Debug.LogError("LiquidSurface が 見つかりません");
+
+        // ================================
+        // 各種セットアップ
+        // ================================
+        ConfigureLiquidParticle(mf);
+        FixRenderingOrder(mr);
+
+        lastPos = currentInstance.transform.position;
+        lastRot = currentInstance.transform.rotation;
+    }
+
+    private void InjectSurfaceReferences()
+    {
+        Transform container = currentInstance.transform.Find("LiquidContainer");
+        Transform ls = container.Find("LiquidSurface");
+        Transform lp = container.Find("LiquidParticle");
+        MeshRenderer surfaceRend = ls.GetComponent<MeshRenderer>();
+        ParticleSystem particle = lp.GetComponent<ParticleSystem>();
+
+        // ---- LiquidSurfaceController ----
+        var lsc = ls.GetComponent<UdonSharpBehaviour>();
+        if (lsc != null)
+        {
+            lsc.SetProgramVariable("surfaceRenderer", surfaceRend);
+        }
+
+        // ---- LiquidEffects 配下全入れ ----
+        Transform leRoot = container.Find("LiquidEffects");
+        var effects = leRoot.GetComponents<UdonSharpBehaviour>();
+        foreach (var ef in effects)
+        {
+            // Surface
+            ef.SetProgramVariable("Surface", ls.gameObject);
+
+            // Wave / Boil / ParticleEngine など存在する変数にだけ注入
+            if (ef.GetProgramVariable("Wave") != null)
+                ef.SetProgramVariable("Wave", ls.gameObject);
+
+            if (ef.GetProgramVariable("Boil") != null)
+                ef.SetProgramVariable("Boil", ls.gameObject);
+
+            if (ef.GetProgramVariable("ParticleEngine") != null)
+                ef.SetProgramVariable("ParticleEngine", particle);
+        }
+    }
+
+    // ============================================================
+    // Particle 設定（Mesh 内に閉じ込める & 初期非表示）
+    // ============================================================
+    private void ConfigureLiquidParticle(MeshFilter modelMesh)
+    {
+        if (liquidParticle == null) return;
+        if (modelMesh == null) return;
+
+        var emission = liquidParticle.emission;
+        emission.enabled = false;
+
+        var main = liquidParticle.main;
+        main.simulationSpace = ParticleSystemSimulationSpace.Local;
+        main.loop = true;
+        main.startLifetime = 3f;
+        main.startSize = 0.02f;
+
+        var shape = liquidParticle.shape;
+        shape.enabled = true;
+        shape.shapeType = ParticleSystemShapeType.Mesh;
+        shape.meshShapeType = ParticleSystemMeshShapeType.Triangle;
+
+        // Model の Mesh を渡す
+        shape.mesh = modelMesh.sharedMesh;
+
+        shape.normalOffset = -0.02f;
+
+        ParticleSystemRenderer pr = liquidParticle.GetComponent<ParticleSystemRenderer>();
+        pr.material.renderQueue = 2700;
+        pr.material.SetInt("_ZWrite", 0);
+    }
+
+    // ============================================================
+    // 描画順序：Wireframe → Surface → Particle
+    // ============================================================
+    private void FixRenderingOrder(MeshRenderer modelRenderer)
+    {
+        Material wireMat = modelRenderer.material;
+        wireMat.renderQueue = 2500;
+        wireMat.SetInt("_ZWrite", 0);
+
+        if (liquidSurface != null)
+        {
+            Material surfMat = liquidSurface.material;
+            surfMat.renderQueue = 2600;
+            surfMat.SetInt("_ZWrite", 0);
+        }
+
+        if (liquidParticle != null)
+        {
+            ParticleSystemRenderer pr = liquidParticle.GetComponent<ParticleSystemRenderer>();
+            Material liqMat = pr.material;
+            liqMat.renderQueue = 2700;
+            liqMat.SetInt("_ZWrite", 0);
+        }
+    }
+
+    // ============================================================
+    // 色の適用
+    // ============================================================
+    private void ApplyAppearance(Color col, string symbol)
+    {
+        if (liquidParticle != null)
+        {
+            var main = liquidParticle.main;
+            main.startColor = col;
+        }
+
+        if (liquidSurface != null)
+            liquidSurface.material.SetColor("_Color", col);
+    }
+
+    // ============================================================
+    // 振ったときの揺れ
+    // ============================================================
+    private void Update()
+    {
+        if (currentInstance == null || liquidParticle == null) return;
+
+        Vector3 pos = currentInstance.transform.position;
+        Quaternion rot = currentInstance.transform.rotation;
+
+        float move = (pos - lastPos).magnitude * 20f;
+        float spin = Quaternion.Angle(rot, lastRot) * 0.2f;
+        float shake = Mathf.Clamp01(move + spin);
+
+        var noise = liquidParticle.noise;
+        noise.enabled = true;
+        noise.strength = 0.02f + shake * 0.25f;
+
+        lastPos = pos;
+        lastRot = rot;
+    }
+
+    // ============================================================
+    // 化学反応
+    // ============================================================
+    public void CombineWith(string next)
+    {
+        string reaction = predictor.Predict(lastElement, next);
+
+        if (reaction.Contains("塩")) animator.PlayFoam(liquidParticle);
+        if (reaction.Contains("酸化")) animator.PlayHeat(liquidParticle);
+        if (reaction.Contains("金属")) animator.PlaySpark(liquidParticle);
+        if (reaction.Contains("発光")) animator.PlayGlow(currentInstance);
+        if (reaction.Contains("波")) animator.PlayWave(liquidParticle);
+
+        lastElement = next;
+    }
+
+    public void _ResetExperiment()
+    {
+        if (currentInstance != null)
+            Destroy(currentInstance);
+
+        lastElement = "";
+    }
+}
