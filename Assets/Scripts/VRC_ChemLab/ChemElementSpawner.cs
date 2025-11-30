@@ -60,19 +60,73 @@ public class ChemElementSpawner : UdonSharpBehaviour
         currentInstance.transform.localRotation = Quaternion.identity;
         currentInstance.transform.localScale = new Vector3(42f, 42f, 42f);
 
+        // -----------------------------
+        // LiquidContainer の探索（?. 禁止なので手動分岐）
+        // -----------------------------
         Transform container = currentInstance.transform.Find("LiquidContainer");
+        if (container == null)
+        {
+            container = currentInstance.transform.Find("ModelRoot/LiquidContainer");
+        }
         if (container == null)
         {
             Debug.LogError("LiquidContainer が Prefab 内にありません");
             return;
         }
 
+        // -----------------------------
+        // Particle
+        // -----------------------------
         Transform lp = container.Find("LiquidParticle");
-        if (lp != null) liquidParticle = lp.GetComponent<ParticleSystem>();
+        if (lp != null)
+        {
+            liquidParticle = lp.GetComponent<ParticleSystem>();
+        }
+        else
+        {
+            liquidParticle = null;
+        }
 
+        // -----------------------------
+        // LiquidSurface
+        // -----------------------------
         Transform ls = container.Find("LiquidSurface");
-        if (ls != null) liquidSurface = ls.GetComponent<Renderer>();
+        if (ls != null)
+        {
+            liquidSurface = ls.GetComponent<Renderer>();
+        }
+        else
+        {
+            liquidSurface = null;
+        }
 
+        // -----------------------------
+        // Model の探索（?.禁止 → if文で分岐）
+        // -----------------------------
+        Transform modelRoot = currentInstance.transform.Find("ModelRoot");
+        if (modelRoot == null)
+        {
+            Debug.LogError("ModelRoot が見つかりません");
+            return;
+        }
+
+        Transform model = modelRoot.Find("Model");
+        if (model == null)
+        {
+            Debug.LogError("Model が ModelRoot 内にありません");
+            return;
+        }
+
+        MeshFilter mf = model.GetComponent<MeshFilter>();
+        if (mf == null)
+        {
+            Debug.LogError("MeshFilter が Model にありません");
+            return;
+        }
+
+        // -----------------------------
+        // 通常処理
+        // -----------------------------
         ConfigureLiquidParticle();
         FixRenderingOrder();
 
