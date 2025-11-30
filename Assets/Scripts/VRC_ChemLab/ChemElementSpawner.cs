@@ -59,14 +59,15 @@ public class ChemElementSpawner : UdonSharpBehaviour
             return;
         }
 
+        // 親・位置・回転・スケール適用
         currentInstance.transform.SetParent(spawnParent, false);
         currentInstance.transform.localPosition = Vector3.zero;
         currentInstance.transform.localRotation = Quaternion.identity;
         currentInstance.transform.localScale = new Vector3(42, 42, 42);
 
-        // -------------------------
-        // ModelRoot/Model
-        // -------------------------
+        // ================================
+        // ModelRoot / Model の取得（重要）
+        // ================================
         Transform modelRoot = currentInstance.transform.Find("ModelRoot");
         if (modelRoot == null)
         {
@@ -82,37 +83,42 @@ public class ChemElementSpawner : UdonSharpBehaviour
         }
 
         MeshFilter mf = model.GetComponent<MeshFilter>();
-        if (mf == null)
+        MeshRenderer mr = model.GetComponent<MeshRenderer>();
+
+        if (mf == null || mr == null)
         {
-            Debug.LogError("Model に MeshFilter がありません");
+            Debug.LogError("Model に MeshFilter / MeshRenderer がありません");
             return;
         }
 
-        // -------------------------
-        // LiquidContainer
-        // -------------------------
+        // ================================
+        // LiquidContainer 系の取得
+        // ================================
         Transform container = currentInstance.transform.Find("LiquidContainer");
         if (container == null)
         {
-            Debug.LogError("LiquidContainer が Prefab 内にありません");
+            Debug.LogError("LiquidContainer が 見つかりません");
             return;
         }
 
         Transform lp = container.Find("LiquidParticle");
+        Transform ls = container.Find("LiquidSurface");
+
         if (lp != null)
             liquidParticle = lp.GetComponent<ParticleSystem>();
         else
-            Debug.LogError("LiquidParticle がありません");
+            Debug.LogError("LiquidParticle が 見つかりません");
 
-        Transform ls = container.Find("LiquidSurface");
         if (ls != null)
             liquidSurface = ls.GetComponent<Renderer>();
         else
-            Debug.LogError("LiquidSurface がありません");
+            Debug.LogError("LiquidSurface が 見つかりません");
 
-        // ---- 修正済み（引数なし） ----
-        ConfigureLiquidParticle();
-        FixRenderingOrder();
+        // ================================
+        // 各種セットアップ
+        // ================================
+        ConfigureLiquidParticle(mf);
+        FixRenderingOrder(mr);
 
         lastPos = currentInstance.transform.position;
         lastRot = currentInstance.transform.rotation;
@@ -156,9 +162,10 @@ public class ChemElementSpawner : UdonSharpBehaviour
     // ============================================================
     // Particle 設定（Mesh 内に閉じ込める & 初期非表示）
     // ============================================================
-    private void ConfigureLiquidParticle()
+    private void ConfigureLiquidParticle(MeshFilter modelMesh)
     {
         if (liquidParticle == null) return;
+        if (modelMesh == null) return;
 
         var emission = liquidParticle.emission;
         emission.enabled = false;
@@ -174,8 +181,8 @@ public class ChemElementSpawner : UdonSharpBehaviour
         shape.shapeType = ParticleSystemShapeType.Mesh;
         shape.meshShapeType = ParticleSystemMeshShapeType.Triangle;
 
-        MeshFilter mf = currentInstance.transform.Find("ModelRoot/Model").GetComponent<MeshFilter>();
-        if (mf != null) shape.mesh = mf.sharedMesh;
+        // Model の Mesh を渡す
+        shape.mesh = modelMesh.sharedMesh;
 
         shape.normalOffset = -0.02f;
 
@@ -187,15 +194,11 @@ public class ChemElementSpawner : UdonSharpBehaviour
     // ============================================================
     // 描画順序：Wireframe → Surface → Particle
     // ============================================================
-    private void FixRenderingOrder()
+    private void FixRenderingOrder(MeshRenderer modelRenderer)
     {
-        MeshRenderer mr = currentInstance.transform.Find("ModelRoot/Model").GetComponent<MeshRenderer>();
-        if (mr != null)
-        {
-            Material wireMat = mr.material;
-            wireMat.renderQueue = 2500;
-            wireMat.SetInt("_ZWrite", 0);
-        }
+        Material wireMat = modelRenderer.material;
+        wireMat.renderQueue = 2500;
+        wireMat.SetInt("_ZWrite", 0);
 
         if (liquidSurface != null)
         {
