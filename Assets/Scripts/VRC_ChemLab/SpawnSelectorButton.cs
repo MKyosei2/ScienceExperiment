@@ -1,20 +1,16 @@
 ﻿using UdonSharp;
 using UnityEngine;
+using VRC.SDKBase;
 
-[AddComponentMenu("VRC Lab/SpawnSelectorButton")]
 public class SpawnSelectorButton : UdonSharpBehaviour
 {
     public ChemElementSpawner spawner;
 
-    // "Element" または "Equipment"
-    public string type;
+    // ★ SelectionCategory.None は存在しないため Element を初期値に設定
+    public SelectionCategory category = SelectionCategory.Element;
 
-    // このボタンが担当する元素名 or 器具名
-    public string targetName;
-
-    // カテゴリー情報（未使用でも残す）
-    public SelectionCategory category;
-    public string categoryName;
+    public string elementSymbol = "";
+    public string equipmentName = "";
 
     public override void Interact()
     {
@@ -23,51 +19,28 @@ public class SpawnSelectorButton : UdonSharpBehaviour
 
     public void Press()
     {
-        _OnClick();
-    }
+        if (spawner == null) return;
 
-    public void OnClick()
-    {
-        _OnClick();
-    }
-
-    public void _OnClick()
-    {
-        if (spawner == null)
+        // ELEMENT ボタン
+        if (category == SelectionCategory.Element && elementSymbol != "")
         {
-            Debug.LogWarning("[SpawnSelectorButton] spawner 未設定");
+            spawner.selectedElementName = elementSymbol;
+            spawner.SelectElement(elementSymbol);
             return;
         }
 
-        // ==============================
-        // ELEMENT
-        // ==============================
-        if (type == "Element")
+        // TOOL ボタン
+        if (category == SelectionCategory.Tool && equipmentName != "")
         {
-            spawner.selectedElementName = targetName;
-
-            // ★ 新仕様：引数付きゲートを呼ぶ
-            // これが最も確実に ChemElementSpawner を動作させる
-            spawner.SelectElement(targetName);
-
-            Debug.Log("[SpawnSelectorButton] Element Pressed: " + targetName);
+            spawner.selectedEquipmentName = equipmentName;
+            spawner.SelectEquipment(equipmentName);
             return;
         }
 
-        // ==============================
-        // EQUIPMENT
-        // ==============================
-        if (type == "Equipment")
+        // CONDITION ボタン
+        if (category == SelectionCategory.Condition)
         {
-            spawner.selectedEquipmentName = targetName;
-
-            // ★ 新仕様：装置側の設定も正しく呼ぶ
-            spawner.SelectEquipment(targetName);
-
-            Debug.Log("[SpawnSelectorButton] Equipment Pressed: " + targetName);
-            return;
+            // 必要ならここに処理を書く
         }
-
-        Debug.LogWarning("[SpawnSelectorButton] type が不正（Element / Equipment ではありません）");
     }
 }

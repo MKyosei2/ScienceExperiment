@@ -148,10 +148,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1957513955779393419}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Nd
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &2322858190860179
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -175,10 +174,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5161528280249975656}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Sg
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!1 &2738154030739235
 GameObject:
   m_ObjectHideFlags: 0
@@ -338,10 +336,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1065525308614012054}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Ac
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &54995756944175676
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -657,10 +654,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7555177413069526110}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Ga
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!1 &146776003165416791
 GameObject:
   m_ObjectHideFlags: 0
@@ -876,10 +872,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3756296877486450784}
   spawner: {fileID: 3904655326436809056}
-  type: Condition
-  targetName: presMinus
   category: 4
-  categoryName: Condition
+  elementSymbol: 
+  equipmentName: 
 --- !u!23 &222654883192479256
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1086,10 +1081,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3384506237524917575}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: F
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!65 &281922843077947791
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1215,10 +1209,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3052644698512490334}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Ru
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &344667223659509017
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1233,6 +1226,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawns:
   - {fileID: 9184598700642753206}
+  spawnRadius: 0
   spawnOrder: 2
   spawnOrientation: 0
   ReferenceCamera: {fileID: 0}
@@ -2306,10 +2300,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 331500130292314583}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Zn
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &388190535881894470
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2333,10 +2326,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4263483162296609484}
   spawner: {fileID: 3904655326436809056}
-  type: Equipment
-  targetName: SCHLENK_FLASK
   category: 3
-  categoryName: Tool
+  elementSymbol: 
+  equipmentName: 
 --- !u!33 &394722273999677674
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -2570,10 +2562,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7621701360966972992}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Gd
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!65 &504638476072486745
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2597,7 +2588,7 @@ BoxCollider:
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &505589921589476758
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -2754,10 +2745,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2887033892656685961}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Np
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!33 &549883212821219667
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -2831,10 +2821,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2125829907921130825}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: S
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!4 &592601433896218696
 Transform:
   m_ObjectHideFlags: 0
@@ -2906,10 +2895,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6621209709786820390}
   spawner: {fileID: 3904655326436809056}
-  type: Condition
-  targetName: humPlus
   category: 4
-  categoryName: Condition
+  elementSymbol: 
+  equipmentName: 
 --- !u!65 &610353807249193967
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2954,10 +2942,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 920020035974613744}
   spawner: {fileID: 3904655326436809056}
-  type: Condition
-  targetName: humMinus
   category: 4
-  categoryName: Condition
+  elementSymbol: 
+  equipmentName: 
 --- !u!33 &613523740769232861
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -3008,10 +2995,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 9021961840797760300}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Yb
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!4 &649372392608554161
 Transform:
   m_ObjectHideFlags: 0
@@ -3143,10 +3129,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8550121759929620223}
   spawner: {fileID: 3904655326436809056}
-  type: Condition
-  targetName: presPlus
   category: 4
-  categoryName: Condition
+  elementSymbol: 
+  equipmentName: 
 --- !u!4 &684507976126965278
 Transform:
   m_ObjectHideFlags: 0
@@ -3583,10 +3568,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6389781751202260090}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: B
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!4 &866910222370449769
 Transform:
   m_ObjectHideFlags: 0
@@ -3705,10 +3689,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1708112255895361273}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Og
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!1 &896248372868613174
 GameObject:
   m_ObjectHideFlags: 0
@@ -4014,10 +3997,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3682430986986751772}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Cf
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &1035428546841863399
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4041,10 +4023,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3962805889069651061}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Hf
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!4 &1037885456063580190
 Transform:
   m_ObjectHideFlags: 0
@@ -4083,10 +4064,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 108117937186144575}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Ni
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!1 &1043329917959965371
 GameObject:
   m_ObjectHideFlags: 0
@@ -4221,10 +4201,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5331742704562094905}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Na
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!4 &1097721558732369620
 Transform:
   m_ObjectHideFlags: 0
@@ -4416,10 +4395,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1390405903587367226}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: As
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!23 &1142329831785730463
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -5010,10 +4988,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1090301999927853959}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Es
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!23 &1405803093577713791
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -5268,10 +5245,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 970021621949178503}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Hg
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!33 &1455610864049967777
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -5463,10 +5439,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1921557853664354454}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Sr
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!4 &1515997471876576417
 Transform:
   m_ObjectHideFlags: 0
@@ -5552,10 +5527,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3494411386822005635}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Se
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!1 &1543633562532757949
 GameObject:
   m_ObjectHideFlags: 0
@@ -5600,10 +5574,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2433715349115709266}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Os
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &1563882026090443310
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5809,10 +5782,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8232473507769370707}
   spawner: {fileID: 3904655326436809056}
-  type: Equipment
-  targetName: Test tube
   category: 3
-  categoryName: Tool
+  elementSymbol: 
+  equipmentName: 
 --- !u!1 &1632837944190886336
 GameObject:
   m_ObjectHideFlags: 0
@@ -5959,10 +5931,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6905188671581505292}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Zr
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!4 &1737913712329844232
 Transform:
   m_ObjectHideFlags: 0
@@ -6137,10 +6108,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5824442708862759731}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Cl
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!65 &1780582503648754365
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6242,10 +6212,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5578566226215167626}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Te
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &1821813245379913244
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6269,10 +6238,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8775459428506835251}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Cr
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!33 &1823964647315770814
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -7069,10 +7037,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1982409954508057172}
   spawner: {fileID: 3904655326436809056}
-  type: Equipment
-  targetName: FLORENCE_FLASK
   category: 3
-  categoryName: Tool
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &2047791875782028002
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7311,7 +7278,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2112494716103899524
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -8029,10 +7996,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1989159696746714137}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Lu
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!224 &2338997433803723986
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8077,7 +8043,7 @@ GameObject:
   m_IsActive: 1
 --- !u!114 &2350809681846847333
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -8196,7 +8162,7 @@ GameObject:
   m_IsActive: 1
 --- !u!114 &2409529444721785175
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -8269,10 +8235,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3378346541392256020}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: W
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!1 &2452025073675684304
 GameObject:
   m_ObjectHideFlags: 0
@@ -8541,10 +8506,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3197417755465983826}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Y
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &2496992469827011385
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8568,10 +8532,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1113342870858985879}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Fe
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!65 &2529367090372475300
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -8726,10 +8689,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2041937695690968593}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Tb
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!23 &2543948176863376741
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -8984,10 +8946,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4815806508702897716}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Mg
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!65 &2699051390574929115
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -9408,10 +9369,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6223687928988799038}
   spawner: {fileID: 3904655326436809056}
-  type: Condition
-  targetName: tempMinus
   category: 4
-  categoryName: Condition
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &2903468889180730208
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9435,10 +9395,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1425236723161581782}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: ResetButton
   category: 0
-  categoryName: 
+  elementSymbol: 
+  equipmentName: 
 --- !u!1 &2911017935786934289
 GameObject:
   m_ObjectHideFlags: 0
@@ -9637,10 +9596,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3822554301958818683}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Pd
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &2951736933480902893
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9664,10 +9622,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7207019024404728284}
   spawner: {fileID: 3904655326436809056}
-  type: Equipment
-  targetName: BEAKER
   category: 3
-  categoryName: Tool
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &2958029535178030733
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9960,10 +9917,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6066652912268973826}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Sn
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!33 &3000821288898595434
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -9995,10 +9951,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7704820866935018363}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Cd
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!65 &3008064917170226280
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -10274,10 +10229,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7257728210155732493}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: At
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!65 &3080670627228705172
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -10647,10 +10601,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1902576932931005492}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Cs
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!33 &3168167062039412358
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -11171,10 +11124,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2978023677682347758}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Mn
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!1 &3361267680577675596
 GameObject:
   m_ObjectHideFlags: 0
@@ -11325,10 +11277,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4536285741483301286}
   spawner: {fileID: 3904655326436809056}
-  type: Equipment
-  targetName: CONICAL_FLASK
   category: 3
-  categoryName: Tool
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &3392835014012472105
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11404,10 +11355,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 286784588841735792}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Ta
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &3412239212846943325
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11505,10 +11455,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6347176846420905652}
   spawner: {fileID: 3904655326436809056}
-  type: Equipment
-  targetName: STRAUS_FLASK
   category: 3
-  categoryName: Tool
+  elementSymbol: 
+  equipmentName: 
 --- !u!33 &3449688571721713506
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -11722,10 +11671,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 979373688431220428}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Fl
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!65 &3531576925351317870
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -12089,10 +12037,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 54995756944175676}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Br
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &3665889087476061398
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12116,10 +12063,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 397926797739608533}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Cu
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &3668009692096619383
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12143,10 +12089,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4420641248490924179}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Ne
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!1 &3670170289464486024
 GameObject:
   m_ObjectHideFlags: 0
@@ -12414,10 +12359,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8536665738059350234}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Rh
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &3756296877486450784
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12805,10 +12749,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8650842171192490670}
   spawner: {fileID: 3904655326436809056}
-  type: 
-  targetName: StartButton
   category: 11
-  categoryName: 
+  elementSymbol: 
+  equipmentName: 
 --- !u!23 &3886540305627655669
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -12873,14 +12816,13 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6020154472550214558}
-  selectedElementName: 
-  selectedEquipmentName: 
   db: {fileID: 8779673056929123580}
-  predictor: {fileID: 4000560409695440427}
-  animator: {fileID: 3971481031745522972}
+  environment: {fileID: 5676659891801965026}
   spawnParent: {fileID: 5487657345019125194}
   sourceVessel: {fileID: 8746406110628965935, guid: c321b943e0a66784cb2d22b5dee14754,
     type: 3}
+  selectedElementName: 
+  selectedEquipmentName: 
 --- !u!23 &3909573024584508172
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -13151,10 +13093,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7379084891360822790}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: K
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!4 &3982651394545451233
 Transform:
   m_ObjectHideFlags: 0
@@ -13229,10 +13170,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1753276578391117579}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Lr
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &4000560409695440427
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13284,7 +13224,7 @@ MonoBehaviour:
   publicVariablesSerializationDataFormat: 0
 --- !u!114 &4006987451013869479
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -13659,10 +13599,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1478298737356924251}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Rn
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!23 &4137255900848209261
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -13836,10 +13775,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 231070649814928683}
   spawner: {fileID: 3904655326436809056}
-  type: 
-  targetName: ModeToggleButton
   category: 12
-  categoryName: 
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &4205476528252385764
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13863,10 +13801,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2135273706182621831}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Md
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!1 &4209528769980716242
 GameObject:
   m_ObjectHideFlags: 0
@@ -14002,10 +13939,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1160520868354191768}
   spawner: {fileID: 3904655326436809056}
-  type: Equipment
-  targetName: ROUND-BOTTOM_FLASK
   category: 3
-  categoryName: Tool
+  elementSymbol: 
+  equipmentName: 
 --- !u!23 &4286302577890918582
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -14071,7 +14007,7 @@ GameObject:
   m_IsActive: 1
 --- !u!114 &4309477518460230341
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -14118,10 +14054,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3951165084457736900}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: V
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &4329912691242251102
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14319,10 +14254,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4158314398071789676}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Sm
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!4 &4362642515048308593
 Transform:
   m_ObjectHideFlags: 0
@@ -14390,10 +14324,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2958029535178030733}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Eu
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &4383239942157653829
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14417,10 +14350,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7477635746074717293}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Bk
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!33 &4385433349514556521
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -14578,10 +14510,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4000955062610354407}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Nh
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!33 &4414471382907893284
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -14896,10 +14827,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3815659129547214302}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Bh
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!1 &4493623273654317486
 GameObject:
   m_ObjectHideFlags: 0
@@ -15345,10 +15275,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4899106478506818629}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Lv
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!4 &4659629123373936214
 Transform:
   m_ObjectHideFlags: 0
@@ -15515,7 +15444,7 @@ MonoBehaviour:
   publicVariablesSerializationDataFormat: 0
 --- !u!114 &4755182513461018619
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -16056,10 +15985,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4385987572813169398}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Li
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!1 &4863737621349012573
 GameObject:
   m_ObjectHideFlags: 0
@@ -16104,10 +16032,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 790854199954707915}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: La
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &4873435540122213992
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16131,10 +16058,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3349862677565982904}
   spawner: {fileID: 3904655326436809056}
-  type: Equipment
-  targetName: Spoit
   category: 3
-  categoryName: Tool
+  elementSymbol: 
+  equipmentName: 
 --- !u!33 &4893520959146262448
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -16637,10 +16563,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3963010477975238489}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Bi
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!1 &5091190303928190059
 GameObject:
   m_ObjectHideFlags: 0
@@ -17188,10 +17113,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2725913979696810063}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Ti
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!4 &5192198283008611865
 Transform:
   m_ObjectHideFlags: 0
@@ -17316,10 +17240,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1156206989959726362}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Ar
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!222 &5237437483414041106
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -17557,10 +17480,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6529668715474781566}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Rg
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!65 &5312879011226656854
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -17793,10 +17715,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3716264655996648579}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Rb
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &5404871936872220609
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17820,10 +17741,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4352074241270387798}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Tc
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!222 &5407708041759694811
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -17884,10 +17804,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4200089436740219754}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Fm
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!33 &5422510903024793641
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -17935,10 +17854,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8886281018314273244}
   spawner: {fileID: 3904655326436809056}
-  type: Condition
-  targetName: tempPlus
   category: 4
-  categoryName: Condition
+  elementSymbol: 
+  equipmentName: 
 --- !u!1 &5439089732089734725
 GameObject:
   m_ObjectHideFlags: 0
@@ -17981,10 +17899,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3405560470594170634}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Pr
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!4 &5446048286267334084
 Transform:
   m_ObjectHideFlags: 0
@@ -18460,10 +18377,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2652927003947277644}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: P
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &5578566226215167626
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18640,10 +18556,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3694209943768623416}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Er
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &5638812354384914392
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18667,10 +18582,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8888087354976114140}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Sc
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!1 &5640334946582231697
 GameObject:
   m_ObjectHideFlags: 0
@@ -18871,7 +18785,7 @@ MonoBehaviour:
   Humidity: 50
 --- !u!114 &5678198872910061506
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -19014,10 +18928,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8408985778406586030}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Mt
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!1 &5731525424749250705
 GameObject:
   m_ObjectHideFlags: 0
@@ -19433,10 +19346,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 141173618177979867}
   spawner: {fileID: 3904655326436809056}
-  type: Equipment
-  targetName: CLAISEN_FLASK
   category: 3
-  categoryName: Tool
+  elementSymbol: 
+  equipmentName: 
 --- !u!23 &5860191270812253284
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -19654,10 +19566,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4943263380592242334}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: I
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!1 &5900190972333427982
 GameObject:
   m_ObjectHideFlags: 0
@@ -19864,7 +19775,7 @@ MeshRenderer:
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &6020154472550214558
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -19926,10 +19837,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4549592539855344266}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Sb
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &6025421221350061505
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19953,10 +19863,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1193842770697651206}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Tl
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!65 &6029093228244799740
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -20428,10 +20337,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8717544801372401032}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Po
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!23 &6199735057550435880
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -20518,10 +20426,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4341375077017237897}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: No
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!23 &6219847477427089450
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -20827,10 +20734,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8051310399476023453}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Ir
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &6344772005122841713
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20854,10 +20760,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 67257891548622604}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Ba
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!33 &6347008082327680722
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -20915,10 +20820,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2303271715692567559}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Nb
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &6362050099604175606
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20942,10 +20846,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 9119944457317828529}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Ag
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!4 &6374545207618782213
 Transform:
   m_ObjectHideFlags: 0
@@ -21147,10 +21050,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5724414455751828283}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Co
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!4 &6386305776865608838
 Transform:
   m_ObjectHideFlags: 0
@@ -21352,9 +21254,9 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4755182513461018619}
-  elementZone: {fileID: 0}
-  toolZone: {fileID: 0}
-  conditionZone: {fileID: 0}
+  elementZone: {fileID: 8973216173378138530}
+  toolZone: {fileID: 8973216173378138530}
+  conditionZone: {fileID: 8973216173378138530}
   statusText: {fileID: 202622199120072016}
   elementObjects:
   - {fileID: 0}
@@ -21655,13 +21557,12 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2047791875782028002}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Pu
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &6567522893880083475
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -21794,10 +21695,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3392835014012472105}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Mc
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!23 &6597487799103994734
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -22336,10 +22236,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7829137670836569148}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Al
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!65 &6772701458515473022
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -22492,10 +22391,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1876235901017547561}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Pt
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!65 &6810505203600254674
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -22960,10 +22858,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6912584098029008543}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Cn
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &6912584098029008543
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23078,10 +22975,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2569928985705648506}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Re
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &6929858645353877843
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23449,10 +23345,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5722246054129799056}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Hs
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!23 &7018663719232188898
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -23559,10 +23454,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3081713111038069491}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: U
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &7046698985140129042
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23586,10 +23480,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2626245539704898797}
   spawner: {fileID: 3904655326436809056}
-  type: Equipment
-  targetName: VOLUMETARIC_FLASK
   category: 3
-  categoryName: Tool
+  elementSymbol: 
+  equipmentName: 
 --- !u!1 &7048352583885390307
 GameObject:
   m_ObjectHideFlags: 0
@@ -23667,10 +23560,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 9028039499398209458}
   spawner: {fileID: 3904655326436809056}
-  type: Equipment
-  targetName: Gasburner
   category: 3
-  categoryName: Tool
+  elementSymbol: 
+  equipmentName: 
 --- !u!65 &7061505182091843393
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -24111,10 +24003,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2922236977981350087}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: N
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!33 &7250162899452975504
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -24785,10 +24676,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7430978678401350973}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Ho
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!4 &7459243951070661428
 Transform:
   m_ObjectHideFlags: 0
@@ -24868,10 +24758,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4943745642239429377}
   spawner: {fileID: 3904655326436809056}
-  type: Equipment
-  targetName: EAR-SHAPED_FLASK
   category: 3
-  categoryName: Tool
+  elementSymbol: 
+  equipmentName: 
 --- !u!65 &7501167432367475708
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -25127,10 +25016,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2060156124450056650}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Db
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &7555177413069526110
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25243,10 +25131,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3129677229054073920}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: O
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &7594560434610140871
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25474,10 +25361,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7244384533131503555}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Ra
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!4 &7665183786436390800
 Transform:
   m_ObjectHideFlags: 0
@@ -25613,10 +25499,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7544583564982859622}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Mo
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!1 &7716078755007260854
 GameObject:
   m_ObjectHideFlags: 0
@@ -25857,10 +25742,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1488023815570774156}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Am
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!1 &7770900525872062495
 GameObject:
   m_ObjectHideFlags: 0
@@ -26335,7 +26219,7 @@ BoxCollider:
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &7955809083179963949
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -26462,10 +26346,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5290180019175398356}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Kr
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!33 &8030133949021072980
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -26523,10 +26406,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3713615641252662975}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Cm
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &8043755240900685438
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26550,10 +26432,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1791614775247620274}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Ca
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &8047305782184865723
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26652,10 +26533,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4514512501464296573}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: C
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!1 &8069961716828678509
 GameObject:
   m_ObjectHideFlags: 0
@@ -26805,10 +26685,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4075673821311801767}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Pm
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &8128617072384547419
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26832,10 +26711,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5260029864333126565}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Pb
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!23 &8128791387053273523
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -26951,10 +26829,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2876912007179613739}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Ge
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!65 &8152125519223991186
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -27111,10 +26988,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8809173246449363259}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Au
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &8232473507769370707
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27248,10 +27124,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1563882026090443310}
   spawner: {fileID: 3904655326436809056}
-  type: Equipment
-  targetName: KJELDAHL_FLASK
   category: 3
-  categoryName: Tool
+  elementSymbol: 
+  equipmentName: 
 --- !u!65 &8270894952965361379
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -27727,10 +27602,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3360798919774493729}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Th
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!1 &8461397838788509204
 GameObject:
   m_ObjectHideFlags: 0
@@ -27895,10 +27769,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4041671322411695109}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Rf
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &8470685649638735323
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27922,10 +27795,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 9007529535614522700}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Ds
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &8472824256218896748
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27949,10 +27821,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2992435083457666438}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Dy
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!222 &8473458924460825769
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -28291,10 +28162,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 9187746723314533880}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: H
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &8607973348853450132
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -28509,10 +28379,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 34796448703442774}
   spawner: {fileID: 3904655326436809056}
-  type: Equipment
-  targetName: RETORT_FLASK
   category: 3
-  categoryName: Tool
+  elementSymbol: 
+  equipmentName: 
 --- !u!224 &8681171122333500165
 RectTransform:
   m_ObjectHideFlags: 0
@@ -28763,375 +28632,9 @@ MonoBehaviour:
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
-    SerializationNodes:
-    - Name: AllElementSymbols
-      Entry: 7
-      Data: 0|System.String[], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 118
-    - Name: 
-      Entry: 1
-      Data: H
-    - Name: 
-      Entry: 1
-      Data: He
-    - Name: 
-      Entry: 1
-      Data: Li
-    - Name: 
-      Entry: 1
-      Data: Be
-    - Name: 
-      Entry: 1
-      Data: B
-    - Name: 
-      Entry: 1
-      Data: C
-    - Name: 
-      Entry: 1
-      Data: N
-    - Name: 
-      Entry: 1
-      Data: O
-    - Name: 
-      Entry: 1
-      Data: F
-    - Name: 
-      Entry: 1
-      Data: Ne
-    - Name: 
-      Entry: 1
-      Data: Na
-    - Name: 
-      Entry: 1
-      Data: Mg
-    - Name: 
-      Entry: 1
-      Data: Al
-    - Name: 
-      Entry: 1
-      Data: Si
-    - Name: 
-      Entry: 1
-      Data: P
-    - Name: 
-      Entry: 1
-      Data: S
-    - Name: 
-      Entry: 1
-      Data: Cl
-    - Name: 
-      Entry: 1
-      Data: Ar
-    - Name: 
-      Entry: 1
-      Data: K
-    - Name: 
-      Entry: 1
-      Data: Ca
-    - Name: 
-      Entry: 1
-      Data: Sc
-    - Name: 
-      Entry: 1
-      Data: Ti
-    - Name: 
-      Entry: 1
-      Data: V
-    - Name: 
-      Entry: 1
-      Data: Cr
-    - Name: 
-      Entry: 1
-      Data: Mn
-    - Name: 
-      Entry: 1
-      Data: Fe
-    - Name: 
-      Entry: 1
-      Data: Co
-    - Name: 
-      Entry: 1
-      Data: Ni
-    - Name: 
-      Entry: 1
-      Data: Cu
-    - Name: 
-      Entry: 1
-      Data: Zn
-    - Name: 
-      Entry: 1
-      Data: Ga
-    - Name: 
-      Entry: 1
-      Data: Ge
-    - Name: 
-      Entry: 1
-      Data: As
-    - Name: 
-      Entry: 1
-      Data: Se
-    - Name: 
-      Entry: 1
-      Data: Br
-    - Name: 
-      Entry: 1
-      Data: Kr
-    - Name: 
-      Entry: 1
-      Data: Rb
-    - Name: 
-      Entry: 1
-      Data: Sr
-    - Name: 
-      Entry: 1
-      Data: Y
-    - Name: 
-      Entry: 1
-      Data: Zr
-    - Name: 
-      Entry: 1
-      Data: Nb
-    - Name: 
-      Entry: 1
-      Data: Mo
-    - Name: 
-      Entry: 1
-      Data: Tc
-    - Name: 
-      Entry: 1
-      Data: Ru
-    - Name: 
-      Entry: 1
-      Data: Rh
-    - Name: 
-      Entry: 1
-      Data: Pd
-    - Name: 
-      Entry: 1
-      Data: Ag
-    - Name: 
-      Entry: 1
-      Data: Cd
-    - Name: 
-      Entry: 1
-      Data: In
-    - Name: 
-      Entry: 1
-      Data: Sn
-    - Name: 
-      Entry: 1
-      Data: Sb
-    - Name: 
-      Entry: 1
-      Data: Te
-    - Name: 
-      Entry: 1
-      Data: I
-    - Name: 
-      Entry: 1
-      Data: Xe
-    - Name: 
-      Entry: 1
-      Data: Cs
-    - Name: 
-      Entry: 1
-      Data: Ba
-    - Name: 
-      Entry: 1
-      Data: La
-    - Name: 
-      Entry: 1
-      Data: Ce
-    - Name: 
-      Entry: 1
-      Data: Pr
-    - Name: 
-      Entry: 1
-      Data: Nd
-    - Name: 
-      Entry: 1
-      Data: Pm
-    - Name: 
-      Entry: 1
-      Data: Sm
-    - Name: 
-      Entry: 1
-      Data: Eu
-    - Name: 
-      Entry: 1
-      Data: Gd
-    - Name: 
-      Entry: 1
-      Data: Tb
-    - Name: 
-      Entry: 1
-      Data: Dy
-    - Name: 
-      Entry: 1
-      Data: Ho
-    - Name: 
-      Entry: 1
-      Data: Er
-    - Name: 
-      Entry: 1
-      Data: Tm
-    - Name: 
-      Entry: 1
-      Data: Yb
-    - Name: 
-      Entry: 1
-      Data: Lu
-    - Name: 
-      Entry: 1
-      Data: Hf
-    - Name: 
-      Entry: 1
-      Data: Ta
-    - Name: 
-      Entry: 1
-      Data: W
-    - Name: 
-      Entry: 1
-      Data: Re
-    - Name: 
-      Entry: 1
-      Data: Os
-    - Name: 
-      Entry: 1
-      Data: Ir
-    - Name: 
-      Entry: 1
-      Data: Pt
-    - Name: 
-      Entry: 1
-      Data: Au
-    - Name: 
-      Entry: 1
-      Data: Hg
-    - Name: 
-      Entry: 1
-      Data: Tl
-    - Name: 
-      Entry: 1
-      Data: Pb
-    - Name: 
-      Entry: 1
-      Data: Bi
-    - Name: 
-      Entry: 1
-      Data: Po
-    - Name: 
-      Entry: 1
-      Data: At
-    - Name: 
-      Entry: 1
-      Data: Rn
-    - Name: 
-      Entry: 1
-      Data: Fr
-    - Name: 
-      Entry: 1
-      Data: Ra
-    - Name: 
-      Entry: 1
-      Data: Ac
-    - Name: 
-      Entry: 1
-      Data: Th
-    - Name: 
-      Entry: 1
-      Data: Pa
-    - Name: 
-      Entry: 1
-      Data: U
-    - Name: 
-      Entry: 1
-      Data: Np
-    - Name: 
-      Entry: 1
-      Data: Pu
-    - Name: 
-      Entry: 1
-      Data: Am
-    - Name: 
-      Entry: 1
-      Data: Cm
-    - Name: 
-      Entry: 1
-      Data: Bk
-    - Name: 
-      Entry: 1
-      Data: Cf
-    - Name: 
-      Entry: 1
-      Data: Es
-    - Name: 
-      Entry: 1
-      Data: Fm
-    - Name: 
-      Entry: 1
-      Data: Md
-    - Name: 
-      Entry: 1
-      Data: No
-    - Name: 
-      Entry: 1
-      Data: Lr
-    - Name: 
-      Entry: 1
-      Data: Rf
-    - Name: 
-      Entry: 1
-      Data: Db
-    - Name: 
-      Entry: 1
-      Data: Sg
-    - Name: 
-      Entry: 1
-      Data: Bh
-    - Name: 
-      Entry: 1
-      Data: Hs
-    - Name: 
-      Entry: 1
-      Data: Mt
-    - Name: 
-      Entry: 1
-      Data: Ds
-    - Name: 
-      Entry: 1
-      Data: Rg
-    - Name: 
-      Entry: 1
-      Data: Cn
-    - Name: 
-      Entry: 1
-      Data: Nh
-    - Name: 
-      Entry: 1
-      Data: Fl
-    - Name: 
-      Entry: 1
-      Data: Mc
-    - Name: 
-      Entry: 1
-      Data: Lv
-    - Name: 
-      Entry: 1
-      Data: Ts
-    - Name: 
-      Entry: 1
-      Data: Og
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
+    SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7955809083179963949}
-  symbols:
+  Symbols:
   - H
   - He
   - Li
@@ -29250,601 +28753,482 @@ MonoBehaviour:
   - Lv
   - Ts
   - Og
-  colors:
-  - serializedVersion: 2
-    rgba: 4294953160
-  - serializedVersion: 2
-    rgba: 4290468804
-  - serializedVersion: 2
-    rgba: 4289509043
-  - serializedVersion: 2
-    rgba: 4284204374
-  - serializedVersion: 2
-    rgba: 4290802335
-  - serializedVersion: 2
-    rgba: 4280163870
-  - serializedVersion: 2
-    rgba: 4294958260
-  - serializedVersion: 2
-    rgba: 4294955680
-  - serializedVersion: 2
-    rgba: 4288313239
-  - serializedVersion: 2
-    rgba: 4288717932
-  - serializedVersion: 2
-    rgba: 4290493601
-  - serializedVersion: 2
-    rgba: 4286802772
-  - serializedVersion: 2
-    rgba: 4288698776
-  - serializedVersion: 2
-    rgba: 4287806591
-  - serializedVersion: 2
-    rgba: 4290099352
-  - serializedVersion: 2
-    rgba: 4281528575
-  - serializedVersion: 2
-    rgba: 4283498410
-  - serializedVersion: 2
-    rgba: 4285360312
-  - serializedVersion: 2
-    rgba: 4290359993
-  - serializedVersion: 2
-    rgba: 4285116095
-  - serializedVersion: 2
-    rgba: 4288380526
-  - serializedVersion: 2
-    rgba: 4289292139
-  - serializedVersion: 2
-    rgba: 4284126626
-  - serializedVersion: 2
-    rgba: 4286030227
-  - serializedVersion: 2
-    rgba: 4287998107
-  - serializedVersion: 2
-    rgba: 4290230936
-  - serializedVersion: 2
-    rgba: 4285110920
-  - serializedVersion: 2
-    rgba: 4287134151
-  - serializedVersion: 2
-    rgba: 4286018662
-  - serializedVersion: 2
-    rgba: 4289041573
-  - serializedVersion: 2
-    rgba: 4288782722
-  - serializedVersion: 2
-    rgba: 4287472837
-  - serializedVersion: 2
-    rgba: 4288768622
-  - serializedVersion: 2
-    rgba: 4288322219
-  - serializedVersion: 2
-    rgba: 4278200480
-  - serializedVersion: 2
-    rgba: 4287127934
-  - serializedVersion: 2
-    rgba: 4284646021
-  - serializedVersion: 2
-    rgba: 4283662436
-  - serializedVersion: 2
-    rgba: 4286602370
-  - serializedVersion: 2
-    rgba: 4289964224
-  - serializedVersion: 2
-    rgba: 4286744729
-  - serializedVersion: 2
-    rgba: 4284833117
-  - serializedVersion: 2
-    rgba: 4288194659
-  - serializedVersion: 2
-    rgba: 4287284304
-  - serializedVersion: 2
-    rgba: 4284970584
-  - serializedVersion: 2
-    rgba: 4285439079
-  - serializedVersion: 2
-    rgba: 4293977830
-  - serializedVersion: 2
-    rgba: 4288909667
-  - serializedVersion: 2
-    rgba: 4290156628
-  - serializedVersion: 2
-    rgba: 4291257005
-  - serializedVersion: 2
-    rgba: 4285096819
-  - serializedVersion: 2
-    rgba: 4289952391
-  - serializedVersion: 2
-    rgba: 4286054480
-  - serializedVersion: 2
-    rgba: 4283850334
-  - serializedVersion: 2
-    rgba: 4285252032
-  - serializedVersion: 2
-    rgba: 4286075515
-  - serializedVersion: 2
-    rgba: 4288779685
-  - serializedVersion: 2
-    rgba: 4283848844
-  - serializedVersion: 2
-    rgba: 4284135083
-  - serializedVersion: 2
-    rgba: 4287545954
-  - serializedVersion: 2
-    rgba: 4284066667
-  - serializedVersion: 2
-    rgba: 4287742401
-  - serializedVersion: 2
-    rgba: 4287600991
-  - serializedVersion: 2
-    rgba: 4288243799
-  - serializedVersion: 2
-    rgba: 4285769607
-  - serializedVersion: 2
-    rgba: 4289224880
-  - serializedVersion: 2
-    rgba: 4286292672
-  - serializedVersion: 2
-    rgba: 4283454145
-  - serializedVersion: 2
-    rgba: 4283677315
-  - serializedVersion: 2
-    rgba: 4290691717
-  - serializedVersion: 2
-    rgba: 4289297267
-  - serializedVersion: 2
-    rgba: 4288263288
-  - serializedVersion: 2
-    rgba: 4285695429
-  - serializedVersion: 2
-    rgba: 4284913585
-  - serializedVersion: 2
-    rgba: 4289162578
-  - serializedVersion: 2
-    rgba: 4284246979
-  - serializedVersion: 2
-    rgba: 4287022479
-  - serializedVersion: 2
-    rgba: 4285026399
-  - serializedVersion: 2
-    rgba: 4283488255
-  - serializedVersion: 2
-    rgba: 4285500830
-  - serializedVersion: 2
-    rgba: 4287067263
-  - serializedVersion: 2
-    rgba: 4287412397
-  - serializedVersion: 2
-    rgba: 4289707867
-  - serializedVersion: 2
-    rgba: 4289233301
-  - serializedVersion: 2
-    rgba: 4285643394
-  - serializedVersion: 2
-    rgba: 4286563955
-  - serializedVersion: 2
-    rgba: 4286600074
-  - serializedVersion: 2
-    rgba: 4290558394
-  - serializedVersion: 2
-    rgba: 4287193520
-  - serializedVersion: 2
-    rgba: 4287410563
-  - serializedVersion: 2
-    rgba: 4289175155
-  - serializedVersion: 2
-    rgba: 4288108425
-  - serializedVersion: 2
-    rgba: 4287789745
-  - serializedVersion: 2
-    rgba: 4290012044
-  - serializedVersion: 2
-    rgba: 4286357121
-  - serializedVersion: 2
-    rgba: 4287146605
-  - serializedVersion: 2
-    rgba: 4290540975
-  - serializedVersion: 2
-    rgba: 4289248606
-  - serializedVersion: 2
-    rgba: 4289507511
-  - serializedVersion: 2
-    rgba: 4287927726
-  - serializedVersion: 2
-    rgba: 4287072411
-  - serializedVersion: 2
-    rgba: 4289566369
-  - serializedVersion: 2
-    rgba: 4284985999
-  - serializedVersion: 2
-    rgba: 4291256174
-  - serializedVersion: 2
-    rgba: 4286999440
-  - serializedVersion: 2
-    rgba: 4283857275
-  - serializedVersion: 2
-    rgba: 4285579665
-  - serializedVersion: 2
-    rgba: 4285097614
-  - serializedVersion: 2
-    rgba: 4290030775
-  - serializedVersion: 2
-    rgba: 4289566142
-  - serializedVersion: 2
-    rgba: 4283742805
-  - serializedVersion: 2
-    rgba: 4285316218
-  - serializedVersion: 2
-    rgba: 4290289845
-  - serializedVersion: 2
-    rgba: 4285232468
-  - serializedVersion: 2
-    rgba: 4287864962
-  - serializedVersion: 2
-    rgba: 4284130138
-  - serializedVersion: 2
-    rgba: 4287796328
-  - serializedVersion: 2
-    rgba: 4284915317
-  groups: 03000000050000000100000002000000030000000300000003000000030000000400000005000000010000000200000003000000030000000300000003000000040000000500000001000000020000000300000003000000030000000300000003000000030000000300000003000000030000000300000003000000030000000300000003000000040000000500000001000000020000000300000003000000030000000300000003000000030000000300000003000000030000000300000003000000030000000300000003000000040000000500000001000000020000000300000003000000030000000300000003000000030000000300000003000000030000000300000003000000030000000300000003000000030000000300000003000000030000000300000003000000030000000300000003000000030000000300000003000000030000000300000004000000050000000100000002000000030000000300000003000000030000000300000003000000030000000300000003000000030000000300000003000000030000000300000003000000030000000300000003000000030000000300000003000000030000000300000003000000030000000300000003000000030000000400000005000000
-  density:
-  - 8.004372
-  - 5.031245
-  - 11.205556
-  - 5.655543
-  - 11.140673
-  - 14.192929
-  - 9.82826
-  - 3.2844672
-  - 2.2609057
-  - 18.699245
-  - 4.3580866
-  - 11.758113
-  - 9.126115
-  - 0.8485833
-  - 17.492079
-  - 9.413107
-  - 9.373827
-  - 13.864708
-  - 18.87477
-  - 15.808017
-  - 13.755014
-  - 9.791585
-  - 6.1845655
-  - 15.041986
-  - 9.609827
-  - 9.936702
-  - 2.986592
-  - 2.0799217
-  - 9.94062
-  - 6.981276
-  - 0.7915965
-  - 14.763983
-  - 5.388413
-  - 5.90653
-  - 13.605168
-  - 12.707485
-  - 5.5973234
-  - 3.8093657
-  - 1.0293753
-  - 11.951809
-  - 16.111261
-  - 8.876843
-  - 11.916585
-  - 12.152356
-  - 18.947811
-  - 11.293183
-  - 9.581457
-  - 11.971441
-  - 2.4553003
-  - 17.987213
-  - 4.2702374
-  - 18.114832
-  - 15.970955
-  - 3.02027
-  - 8.870203
-  - 16.460709
-  - 3.3262148
-  - 3.7028904
-  - 9.227574
-  - 3.65854
-  - 10.365692
-  - 18.615088
-  - 13.840724
-  - 4.388805
-  - 10.307731
-  - 15.038793
-  - 4.4330297
-  - 0.9726222
-  - 14.613161
-  - 2.762791
-  - 16.42777
-  - 0.762168
-  - 10.346814
-  - 13.341688
-  - 10.933169
-  - 11.506028
-  - 14.973325
-  - 15.426921
-  - 5.10307
-  - 9.287694
-  - 16.023504
-  - 5.3016496
-  - 7.4130125
-  - 5.309851
-  - 11.766468
-  - 10.112974
-  - 9.488302
-  - 5.388186
-  - 6.383552
-  - 18.828503
-  - 13.78799
-  - 18.42169
-  - 17.388212
-  - 4.5278625
-  - 18.831667
-  - 0.7118436
-  - 7.3286085
-  - 7.3956604
-  - 17.662333
-  - 16.153069
-  - 12.57972
-  - 2.5177565
-  - 15.261604
-  - 17.796589
-  - 13.73814
-  - 16.577776
-  - 3.8166234
-  - 14.283633
-  - 9.000045
-  - 17.79958
-  - 12.477696
-  - 6.0919795
-  - 13.96572
-  - 6.7213836
-  - 2.0011723
-  - 1.4098085
-  - 10.364694
-  - 0.6289084
-  viscosity:
-  - 1.2608789
-  - 0.72608674
-  - 1.0567054
-  - 0.7237107
-  - 0.7489274
-  - 1.036604
-  - 1.0533789
-  - 0.7154676
-  - 0.72541
-  - 1.4510257
-  - 0.2800411
-  - 0.6393956
-  - 0.3289612
-  - 0.74741316
-  - 0.6223687
-  - 0.44211614
-  - 0.8712651
-  - 0.48020077
-  - 0.31985015
-  - 0.74505645
-  - 0.79156697
-  - 0.5862926
-  - 0.9744128
-  - 1.0594567
-  - 1.0801041
-  - 1.16964
-  - 0.9494479
-  - 1.6621928
-  - 1.3720739
-  - 1.4331582
-  - 0.764228
-  - 1.4991052
-  - 0.27430192
-  - 1.3187573
-  - 0.3186661
-  - 1.5267196
-  - 0.38400018
-  - 1.4484274
-  - 0.5462109
-  - 1.154484
-  - 0.70419186
-  - 0.84424233
-  - 0.2959965
-  - 0.37802848
-  - 0.924165
-  - 0.5338733
-  - 1.7197793
-  - 0.66831464
-  - 1.0311999
-  - 0.28236598
-  - 1.086733
-  - 0.78185683
-  - 0.46527746
-  - 0.8531382
-  - 1.4722655
-  - 1.0436107
-  - 1.2137761
-  - 0.7657527
-  - 0.96038806
-  - 0.9637725
-  - 1.3656926
-  - 1.2861433
-  - 0.5773907
-  - 1.3651404
-  - 0.9760129
-  - 1.5048578
-  - 1.5670931
-  - 0.6185657
-  - 1.5444269
-  - 0.63154554
-  - 1.1974632
-  - 0.9738999
-  - 0.9929545
-  - 1.673408
-  - 1.5096362
-  - 0.4230129
-  - 1.7968528
-  - 1.469239
-  - 0.25269565
-  - 0.6241635
-  - 1.0329312
-  - 0.71815383
-  - 1.1136483
-  - 1.6248419
-  - 0.69682705
-  - 1.5393207
-  - 1.1726559
-  - 1.0235578
-  - 1.1664087
-  - 1.6418722
-  - 0.2849735
-  - 0.38999826
-  - 1.0225062
-  - 0.34075105
-  - 1.7496028
-  - 0.7127217
-  - 1.3940339
-  - 1.793989
-  - 0.75430536
-  - 1.2533426
-  - 0.35044956
-  - 0.68714553
-  - 0.7674535
-  - 1.4963417
-  - 1.2796352
-  - 1.1452991
-  - 1.2769321
-  - 1.3895
-  - 0.49422798
-  - 1.3916268
-  - 1.3069863
-  - 0.56434745
-  - 0.72539264
-  - 0.5197956
-  - 1.7079687
-  - 0.49910793
-  - 0.7493218
-  - 0.88066167
-  luminescence:
-  - 1
-  - 1
-  - 0.4
-  - 0.2
-  - 0.6
-  - 0.6
-  - 1
-  - 1
-  - 0.6
-  - 1
-  - 0.4
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.6
-  - 1
-  - 1
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.6
-  - 1
-  - 0.4
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.6
-  - 1
-  - 0.4
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.6
-  - 1
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 1
+  Groups:
+  - nonmetal
+  - noble
+  - metal
+  - metal
+  - metalloid
+  - nonmetal
+  - nonmetal
+  - nonmetal
+  - halogen
+  - noble
+  - metal
+  - metal
+  - metal
+  - metalloid
+  - nonmetal
+  - nonmetal
+  - halogen
+  - noble
+  - metal
+  - metal
+  - metal
+  - metal
+  - metal
+  - metal
+  - metal
+  - metal
+  - metal
+  - metal
+  - metal
+  - metal
+  - metal
+  - metalloid
+  - metalloid
+  - nonmetal
+  - halogen
+  - noble
+  - metal
+  - metal
+  - metal
+  - metal
+  - metal
+  - metal
+  - metal
+  - metal
+  - metal
+  - metal
+  - metal
+  - metal
+  - metal
+  - metal
+  - metalloid
+  - metalloid
+  - halogen
+  - noble
+  - metal
+  - metal
+  - lanact
+  - lanact
+  - lanact
+  - lanact
+  - lanact
+  - lanact
+  - lanact
+  - lanact
+  - lanact
+  - lanact
+  - lanact
+  - lanact
+  - lanact
+  - lanact
+  - lanact
+  - metal
+  - metal
+  - metal
+  - metal
+  - metal
+  - metal
+  - metal
+  - metal
+  - metal
+  - metal
+  - metal
+  - metal
+  - metal
+  - halogen
+  - noble
+  - metal
+  - metal
+  - lanact
+  - lanact
+  - lanact
+  - lanact
+  - lanact
+  - lanact
+  - lanact
+  - lanact
+  - lanact
+  - lanact
+  - lanact
+  - lanact
+  - lanact
+  - lanact
+  - lanact
+  - metal
+  - metal
+  - metal
+  - metal
+  - metal
+  - metal
+  - metal
+  - metal
+  - metal
+  - metal
+  - metal
+  - metal
+  - metal
+  - halogen
+  - noble
+  Colors:
+  - {r: 0.9, g: 0.9, b: 0.9, a: 1}
+  - {r: 0.8, g: 0.8, b: 1, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.5, g: 0.5, b: 0.6, a: 1}
+  - {r: 0.9, g: 0.9, b: 0.9, a: 1}
+  - {r: 0.9, g: 0.9, b: 0.9, a: 1}
+  - {r: 0.9, g: 0.9, b: 0.9, a: 1}
+  - {r: 0.9, g: 0.9, b: 0.3, a: 1}
+  - {r: 0.8, g: 0.8, b: 1, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.5, g: 0.5, b: 0.6, a: 1}
+  - {r: 0.9, g: 0.9, b: 0.9, a: 1}
+  - {r: 0.9, g: 0.9, b: 0.9, a: 1}
+  - {r: 0.9, g: 0.9, b: 0.3, a: 1}
+  - {r: 0.8, g: 0.8, b: 1, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.5, g: 0.5, b: 0.6, a: 1}
+  - {r: 0.5, g: 0.5, b: 0.6, a: 1}
+  - {r: 0.9, g: 0.9, b: 0.9, a: 1}
+  - {r: 0.9, g: 0.9, b: 0.3, a: 1}
+  - {r: 0.8, g: 0.8, b: 1, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.5, g: 0.5, b: 0.6, a: 1}
+  - {r: 0.5, g: 0.5, b: 0.6, a: 1}
+  - {r: 0.9, g: 0.9, b: 0.3, a: 1}
+  - {r: 0.8, g: 0.8, b: 1, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
+  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
+  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
+  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
+  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
+  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
+  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
+  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
+  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
+  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
+  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
+  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
+  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
+  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
+  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.9, g: 0.9, b: 0.3, a: 1}
+  - {r: 0.8, g: 0.8, b: 1, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
+  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
+  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
+  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
+  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
+  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
+  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
+  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
+  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
+  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
+  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
+  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
+  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
+  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
+  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
+  - {r: 0.9, g: 0.9, b: 0.3, a: 1}
+  - {r: 0.8, g: 0.8, b: 1, a: 1}
+  MeltingPoints:
+  - -50
+  - -200
+  - 400
+  - 400
+  - 600
+  - -50
+  - -50
+  - -50
+  - -100
+  - -200
+  - 400
+  - 400
+  - 400
+  - 600
+  - -50
+  - -50
+  - -100
+  - -200
+  - 400
+  - 400
+  - 400
+  - 400
+  - 400
+  - 400
+  - 400
+  - 400
+  - 400
+  - 400
+  - 400
+  - 400
+  - 400
+  - 600
+  - 600
+  - -50
+  - -100
+  - -200
+  - 400
+  - 400
+  - 400
+  - 400
+  - 400
+  - 400
+  - 400
+  - 400
+  - 400
+  - 400
+  - 400
+  - 400
+  - 400
+  - 400
+  - 600
+  - 600
+  - -100
+  - -200
+  - 400
+  - 400
+  - 900
+  - 900
+  - 900
+  - 900
+  - 900
+  - 900
+  - 900
+  - 900
+  - 900
+  - 900
+  - 900
+  - 900
+  - 900
+  - 900
+  - 900
+  - 400
+  - 400
+  - 400
+  - 400
+  - 400
+  - 400
+  - 400
+  - 400
+  - 400
+  - 400
+  - 400
+  - 400
+  - 400
+  - -100
+  - -200
+  - 400
+  - 400
+  - 900
+  - 900
+  - 900
+  - 900
+  - 900
+  - 900
+  - 900
+  - 900
+  - 900
+  - 900
+  - 900
+  - 900
+  - 900
+  - 900
+  - 900
+  - 400
+  - 400
+  - 400
+  - 400
+  - 400
+  - 400
+  - 400
+  - 400
+  - 400
+  - 400
+  - 400
+  - 400
+  - 400
+  - -100
+  - -200
+  BoilingPoints:
+  - 200
+  - -150
+  - 2500
+  - 2500
+  - 1800
+  - 200
+  - 200
+  - 200
+  - 60
+  - -150
+  - 2500
+  - 2500
+  - 2500
+  - 1800
+  - 200
+  - 200
+  - 60
+  - -150
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 1800
+  - 1800
+  - 200
+  - 60
+  - -150
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 1800
+  - 1800
+  - 60
+  - -150
+  - 2500
+  - 2500
+  - 3000
+  - 3000
+  - 3000
+  - 3000
+  - 3000
+  - 3000
+  - 3000
+  - 3000
+  - 3000
+  - 3000
+  - 3000
+  - 3000
+  - 3000
+  - 3000
+  - 3000
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 60
+  - -150
+  - 2500
+  - 2500
+  - 3000
+  - 3000
+  - 3000
+  - 3000
+  - 3000
+  - 3000
+  - 3000
+  - 3000
+  - 3000
+  - 3000
+  - 3000
+  - 3000
+  - 3000
+  - 3000
+  - 3000
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 2500
+  - 60
+  - -150
 --- !u!23 &8794427367480929940
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -29936,10 +29320,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3125365676986509907}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Ce
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!4 &8805287681345782510
 Transform:
   m_ObjectHideFlags: 0
@@ -30115,10 +29498,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3864268418273586}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Fr
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!1 &8835360685041602801
 GameObject:
   m_ObjectHideFlags: 0
@@ -30363,10 +29745,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8607973348853450132}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: He
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!1 &8907122850302244866
 GameObject:
   m_ObjectHideFlags: 0
@@ -30627,10 +30008,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5534725764774116232}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Ts
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!33 &8952234085893696715
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -30704,10 +30084,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8799712102827082974}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Pa
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!33 &8962386932639679798
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -30775,10 +30154,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3762374662189484729}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Be
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &9007529535614522700
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30836,10 +30214,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4419705941654621682}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Tm
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!23 &9017988288774254904
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -30957,10 +30334,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 722227340221263910}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Si
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!114 &9063978713380960018
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30984,10 +30360,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3412239212846943325}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: In
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!65 &9086975292516124965
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -31453,10 +30828,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4992998654939531618}
   spawner: {fileID: 3904655326436809056}
-  type: Element
-  targetName: Xe
   category: 0
-  categoryName: Element
+  elementSymbol: 
+  equipmentName: 
 --- !u!1 &9221143066544790067
 GameObject:
   m_ObjectHideFlags: 0

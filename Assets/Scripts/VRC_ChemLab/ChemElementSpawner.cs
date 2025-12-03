@@ -2,50 +2,53 @@
 using UnityEngine;
 using VRC.SDKBase;
 
+public enum MatterState
+{
+    Solid,
+    Liquid,
+    Gas
+}
+
 public class ChemElementSpawner : UdonSharpBehaviour
 {
-    public string selectedElementName = "";
-    public string selectedEquipmentName = "";
+    public ChemElementDatabase db;                    // 元素データ
+    public ChemEnvironmentManager environment;        // 温度などの環境
 
-    public ChemElementDatabase db;
-    public ReactionPredictor predictor;
-    public ChemReactionAnimator animator;
-
-    public Transform spawnParent;
-    public GameObject sourceVessel;
+    public Transform spawnParent;                     // 生成位置
+    public GameObject sourceVessel;                   // フラスコPrefab
 
     private GameObject currentInstance;
     private ParticleSystem liquidParticle;
     private Renderer liquidSurface;
+    private string lastElement = "";
 
     private Vector3 lastPos;
     private Quaternion lastRot;
-    private string lastElement = "";
+    public string selectedElementName = "";
+    public string selectedEquipmentName = "";
 
     // ============================================================
-    // ELEMENT 選択
+    // ELEMENT SELECT
     // ============================================================
     public void SelectElement(string symbol)
     {
-        selectedElementName = symbol;
         lastElement = symbol;
 
         SpawnFlask();
-        ApplyAppearance(db.GetColor(symbol), symbol);
+        ApplyMatterState(symbol);
     }
 
-    // EQUIPMENT（形式上必要）
+    // ============================================================
+    // EQUIPMENT (UIと互換保持のため空実装)
+    // ============================================================
     public void SelectEquipment(string equip)
     {
-        selectedEquipmentName = equip;
+        // 必要なら機器選択処理を後で追加
     }
 
     // ============================================================
-    // FLASK を生成（Scale=42 + 構造復元 + 描画順固定）
+    // SPAWN FLASK
     // ============================================================
-    //--------------------------------------
-    // Prefab instantiate
-    //--------------------------------------
     private void SpawnFlask()
     {
         if (currentInstance != null)
@@ -55,19 +58,18 @@ public class ChemElementSpawner : UdonSharpBehaviour
 
         if (currentInstance == null)
         {
-            Debug.LogError("sourceVessel は Prefab を設定してください");
+            Debug.LogError("sourceVessel が設定されていません");
             return;
         }
 
-        // 親・位置・回転・スケール適用
         currentInstance.transform.SetParent(spawnParent, false);
         currentInstance.transform.localPosition = Vector3.zero;
         currentInstance.transform.localRotation = Quaternion.identity;
-        currentInstance.transform.localScale = new Vector3(42, 42, 42);
+        currentInstance.transform.localScale = new Vector3(42f, 42f, 42f);
 
-        // ================================
-        // ModelRoot / Model の取得（重要）
-        // ================================
+        //------------------------------------------
+        // ModelRoot/Model の取得
+        //------------------------------------------
         Transform modelRoot = currentInstance.transform.Find("ModelRoot");
         if (modelRoot == null)
         {
@@ -78,94 +80,42 @@ public class ChemElementSpawner : UdonSharpBehaviour
         Transform model = modelRoot.Find("Model");
         if (model == null)
         {
-            Debug.LogError("ModelRoot の中に Model がありません");
+            Debug.LogError("ModelRoot 内に Model がありません");
             return;
         }
 
-        MeshFilter mf = model.GetComponent<MeshFilter>();
-        MeshRenderer mr = model.GetComponent<MeshRenderer>();
+        MeshRenderer modelRenderer = model.GetComponent<MeshRenderer>();
+        MeshFilter modelMesh = model.GetComponent<MeshFilter>();
 
-        if (mf == null || mr == null)
-        {
-            Debug.LogError("Model に MeshFilter / MeshRenderer がありません");
-            return;
-        }
-
-        // ================================
-        // LiquidContainer 系の取得
-        // ================================
+        //------------------------------------------
+        // LiquidContainer の取得
+        //------------------------------------------
         Transform container = currentInstance.transform.Find("LiquidContainer");
         if (container == null)
         {
-            Debug.LogError("LiquidContainer が 見つかりません");
+            Debug.LogError("LiquidContainer がありません");
             return;
         }
 
-        Transform lp = container.Find("LiquidParticle");
         Transform ls = container.Find("LiquidSurface");
+        Transform lp = container.Find("LiquidParticle");
 
-        if (lp != null)
-            liquidParticle = lp.GetComponent<ParticleSystem>();
-        else
-            Debug.LogError("LiquidParticle が 見つかりません");
+        if (ls != null) liquidSurface = ls.GetComponent<Renderer>();
+        if (lp != null) liquidParticle = lp.GetComponent<ParticleSystem>();
 
-        if (ls != null)
-            liquidSurface = ls.GetComponent<Renderer>();
-        else
-            Debug.LogError("LiquidSurface が 見つかりません");
-
-        // ================================
-        // 各種セットアップ
-        // ================================
-        ConfigureLiquidParticle(mf);
-        FixRenderingOrder(mr);
+        ConfigureLiquidParticle(modelMesh);
+        FixRenderingOrder(modelRenderer);
 
         lastPos = currentInstance.transform.position;
         lastRot = currentInstance.transform.rotation;
     }
 
-    private void InjectSurfaceReferences()
-    {
-        Transform container = currentInstance.transform.Find("LiquidContainer");
-        Transform ls = container.Find("LiquidSurface");
-        Transform lp = container.Find("LiquidParticle");
-        MeshRenderer surfaceRend = ls.GetComponent<MeshRenderer>();
-        ParticleSystem particle = lp.GetComponent<ParticleSystem>();
-
-        // ---- LiquidSurfaceController ----
-        var lsc = ls.GetComponent<UdonSharpBehaviour>();
-        if (lsc != null)
-        {
-            lsc.SetProgramVariable("surfaceRenderer", surfaceRend);
-        }
-
-        // ---- LiquidEffects 配下全入れ ----
-        Transform leRoot = container.Find("LiquidEffects");
-        var effects = leRoot.GetComponents<UdonSharpBehaviour>();
-        foreach (var ef in effects)
-        {
-            // Surface
-            ef.SetProgramVariable("Surface", ls.gameObject);
-
-            // Wave / Boil / ParticleEngine など存在する変数にだけ注入
-            if (ef.GetProgramVariable("Wave") != null)
-                ef.SetProgramVariable("Wave", ls.gameObject);
-
-            if (ef.GetProgramVariable("Boil") != null)
-                ef.SetProgramVariable("Boil", ls.gameObject);
-
-            if (ef.GetProgramVariable("ParticleEngine") != null)
-                ef.SetProgramVariable("ParticleEngine", particle);
-        }
-    }
-
     // ============================================================
-    // Particle 設定（Mesh 内に閉じ込める & 初期非表示）
+    // PARTICLE CONFIG
     // ============================================================
     private void ConfigureLiquidParticle(MeshFilter modelMesh)
     {
-        if (liquidParticle == null) return;
-        if (modelMesh == null) return;
+        if (liquidParticle == null || modelMesh == null) return;
 
         var emission = liquidParticle.emission;
         emission.enabled = false;
@@ -179,11 +129,7 @@ public class ChemElementSpawner : UdonSharpBehaviour
         var shape = liquidParticle.shape;
         shape.enabled = true;
         shape.shapeType = ParticleSystemShapeType.Mesh;
-        shape.meshShapeType = ParticleSystemMeshShapeType.Triangle;
-
-        // Model の Mesh を渡す
         shape.mesh = modelMesh.sharedMesh;
-
         shape.normalOffset = -0.02f;
 
         ParticleSystemRenderer pr = liquidParticle.GetComponent<ParticleSystemRenderer>();
@@ -192,47 +138,112 @@ public class ChemElementSpawner : UdonSharpBehaviour
     }
 
     // ============================================================
-    // 描画順序：Wireframe → Surface → Particle
+    // RENDER ORDER
     // ============================================================
     private void FixRenderingOrder(MeshRenderer modelRenderer)
     {
-        Material wireMat = modelRenderer.material;
-        wireMat.renderQueue = 2500;
-        wireMat.SetInt("_ZWrite", 0);
+        Material wire = modelRenderer.material;
+        wire.renderQueue = 2500;
+        wire.SetInt("_ZWrite", 0);
 
         if (liquidSurface != null)
         {
-            Material surfMat = liquidSurface.material;
-            surfMat.renderQueue = 2600;
-            surfMat.SetInt("_ZWrite", 0);
+            Material surf = liquidSurface.material;
+            surf.renderQueue = 2600;
+            surf.SetInt("_ZWrite", 0);
         }
 
         if (liquidParticle != null)
         {
-            ParticleSystemRenderer pr = liquidParticle.GetComponent<ParticleSystemRenderer>();
-            Material liqMat = pr.material;
-            liqMat.renderQueue = 2700;
-            liqMat.SetInt("_ZWrite", 0);
+            Material pm = liquidParticle.GetComponent<ParticleSystemRenderer>().material;
+            pm.renderQueue = 2700;
+            pm.SetInt("_ZWrite", 0);
         }
     }
 
     // ============================================================
-    // 色の適用
+    // MATTER STATE LOGIC
     // ============================================================
-    private void ApplyAppearance(Color col, string symbol)
+    private MatterState GetState(string symbol)
     {
-        if (liquidParticle != null)
-        {
-            var main = liquidParticle.main;
-            main.startColor = col;
-        }
+        float T = environment.Temperature;
+
+        float melt = db.GetMeltingPoint(symbol);
+        float boil = db.GetBoilingPoint(symbol);
+
+        if (T < melt) return MatterState.Solid;
+        if (T < boil) return MatterState.Liquid;
+        return MatterState.Gas;
+    }
+
+    //----------------------------------------------------------
+    // Solid
+    //----------------------------------------------------------
+    private void ApplySolidAppearance(string symbol)
+    {
+        Color col = db.GetColor(symbol);
 
         if (liquidSurface != null)
-            liquidSurface.material.SetColor("_Color", col);
+            liquidSurface.material.color = new Color(col.r * 0.6f, col.g * 0.6f, col.b * 0.6f, 1f);
+
+        if (liquidParticle != null)
+            liquidParticle.Stop();
+    }
+
+    //----------------------------------------------------------
+    // Liquid
+    //----------------------------------------------------------
+    private void ApplyLiquidAppearance(string symbol)
+    {
+        Color col = db.GetColor(symbol);
+
+        if (liquidSurface != null)
+            liquidSurface.material.color = col;
+
+        if (liquidParticle != null)
+        {
+            var em = liquidParticle.emission;
+            em.enabled = false;
+        }
+    }
+
+    //----------------------------------------------------------
+    // Gas
+    //----------------------------------------------------------
+    private void ApplyGasAppearance(string symbol)
+    {
+        Color col = db.GetColor(symbol);
+
+        if (liquidSurface != null)
+            liquidSurface.material.color = new Color(0, 0, 0, 0);
+
+        if (liquidParticle != null)
+        {
+            var em = liquidParticle.emission;
+            em.enabled = true;
+
+            var main = liquidParticle.main;
+            main.startColor = new Color(col.r, col.g, col.b, 0.25f);
+        }
     }
 
     // ============================================================
-    // 振ったときの揺れ
+    // APPLY MATTER STATE
+    // ============================================================
+    private void ApplyMatterState(string symbol)
+    {
+        MatterState s = GetState(symbol);
+
+        if (s == MatterState.Solid)
+            ApplySolidAppearance(symbol);
+        else if (s == MatterState.Liquid)
+            ApplyLiquidAppearance(symbol);
+        else
+            ApplyGasAppearance(symbol);
+    }
+
+    // ============================================================
+    // SHAKE NOISE + STATE UPDATE
     // ============================================================
     private void Update()
     {
@@ -251,29 +262,9 @@ public class ChemElementSpawner : UdonSharpBehaviour
 
         lastPos = pos;
         lastRot = rot;
-    }
 
-    // ============================================================
-    // 化学反応
-    // ============================================================
-    public void CombineWith(string next)
-    {
-        string reaction = predictor.Predict(lastElement, next);
-
-        if (reaction.Contains("塩")) animator.PlayFoam(liquidParticle);
-        if (reaction.Contains("酸化")) animator.PlayHeat(liquidParticle);
-        if (reaction.Contains("金属")) animator.PlaySpark(liquidParticle);
-        if (reaction.Contains("発光")) animator.PlayGlow(currentInstance);
-        if (reaction.Contains("波")) animator.PlayWave(liquidParticle);
-
-        lastElement = next;
-    }
-
-    public void _ResetExperiment()
-    {
-        if (currentInstance != null)
-            Destroy(currentInstance);
-
-        lastElement = "";
+        // 温度変化に応じた状態更新
+        if (lastElement != "")
+            ApplyMatterState(lastElement);
     }
 }

@@ -3,127 +3,127 @@ using UnityEngine;
 
 public class LiquidSurfaceController : UdonSharpBehaviour
 {
-    public MeshRenderer surfaceRenderer;
+    [Header("Renderer")]
+    public MeshRenderer surfaceRenderer;       // LiquidSurface の MeshRenderer
 
-    // Ripple
-    private float rippleTimer = 0f;
-    private float rippleDuration = 0f;
-    private float ripplePower = 0f;
+    [Header("Gas Effect")]
+    public ParticleSystem gasParticle;         // 気体用粒子（任意）
 
-    // Glow / PulseColor
-    private float glowTimer = 0f;
-    private float glowDuration = 0f;
-    private float glowPower = 0f;
-    private Color pulseColor = Color.clear;
+    // 内部状態（必要に応じスパナーが書き換える）
+    public float waveStrength = 0f;
+    public float viscosity = 1f;
+    public float rippleStrength = 0f;
 
-    // Wave
-    private float waveLevel = 0f;
-    private float viscosity = 1f;
+    // キャッシュ
+    private Material surfaceMat;
+    private ParticleSystem.EmissionModule gasEmission;
 
-    // Tilt normal
-    private Vector3 liquidNormal = Vector3.up;
+    private const int STATE_SOLID = 0;
+    private const int STATE_LIQUID = 1;
+    private const int STATE_GAS = 2;
 
     private void Start()
     {
-        if (surfaceRenderer == null)
-            surfaceRenderer = GetComponent<MeshRenderer>();
+        if (surfaceRenderer != null)
+            surfaceMat = surfaceRenderer.material;
+
+        if (gasParticle != null)
+            gasEmission = gasParticle.emission;
     }
 
-    private void Update()
+    // ============================================================
+    // 外部API（ChemElementSpawner から呼ばれる）
+    // ============================================================
+    public void SetSurfaceState(Color elementColor, int state)
     {
-        Material m = surfaceRenderer.material;
+        if (surfaceMat == null) return;
 
-        // ---------- Ripple ----------
-        if (rippleTimer > 0f)
+        switch (state)
         {
-            rippleTimer -= Time.deltaTime;
-            float normalized = rippleTimer / rippleDuration;
-            m.SetFloat("_RipplePower", ripplePower * normalized);
+            case STATE_SOLID:
+                ApplySolid(elementColor);
+                break;
+
+            case STATE_LIQUID:
+                ApplyLiquid(elementColor);
+                break;
+
+            case STATE_GAS:
+                ApplyGas(elementColor);
+                break;
         }
-        else
+    }
+
+    // 波 / 粘度 / Ripple（他スクリプトが呼ぶ可能性）
+    public void SetWave(float v) { waveStrength = v; }
+    public void SetViscosity(float v) { viscosity = v; }
+    public void SetRipple(float v) { rippleStrength = v; }
+
+    public void PulseColor(Color c)
+    {
+        if (surfaceMat != null)
+            surfaceMat.color = c;
+    }
+
+    // ============================================================
+    // Solid（固体）
+    // ============================================================
+    private void ApplySolid(Color col)
+    {
+        // 固体 → 表示はするが、色を暗く
+        if (surfaceMat != null)
         {
-            m.SetFloat("_RipplePower", 0f);
+            surfaceMat.color = new Color(col.r * 0.6f, col.g * 0.6f, col.b * 0.6f, 1f);
         }
 
-        // ---------- Glow Pulse ----------
-        if (glowTimer > 0f)
+        if (surfaceRenderer != null)
+            surfaceRenderer.enabled = true;
+
+        if (gasParticle != null)
         {
-            glowTimer -= Time.deltaTime;
-            float normalized = glowTimer / glowDuration;
-            m.SetFloat("_Glow", glowPower * normalized);
-            m.SetColor("_PulseColor", pulseColor * normalized);
+            gasEmission.enabled = false;
         }
-        else
+    }
+
+    // ============================================================
+    // Liquid（液体）
+    // ============================================================
+    private void ApplyLiquid(Color col)
+    {
+        if (surfaceMat != null)
         {
-            m.SetFloat("_Glow", 0f);
-            m.SetColor("_PulseColor", Color.clear);
+            surfaceMat.color = col;
         }
 
-        // ---------- Continuous props ----------
-        m.SetFloat("_WaveLevel", waveLevel);
-        m.SetFloat("_Viscosity", viscosity);
-        m.SetVector("_LiquidNormal", liquidNormal);
+        if (surfaceRenderer != null)
+            surfaceRenderer.enabled = true;
+
+        if (gasParticle != null)
+        {
+            gasEmission.enabled = false;
+        }
     }
 
-    // ------------------------------------------------------------------------
-    // PUBLIC API
-    // ------------------------------------------------------------------------
-
-    // Ripple (波紋)
-    public void SetRipple(float power)
+    // ============================================================
+    // Gas（気体）
+    // ============================================================
+    private void ApplyGas(Color col)
     {
-        SetRipple(power, 0.4f);
-    }
+        // 液体は透明にする
+        if (surfaceMat != null)
+        {
+            surfaceMat.color = new Color(col.r, col.g, col.b, 0f);
+        }
 
-    public void SetRipple(float power, float duration)
-    {
-        ripplePower = power;
-        rippleDuration = duration;
-        rippleTimer = duration;
-    }
+        // メッシュ非表示
+        if (surfaceRenderer != null)
+            surfaceRenderer.enabled = false;
 
-    // Wave
-    public void SetWave(float level)
-    {
-        waveLevel = level;
-    }
-
-    // Viscosity
-    public void SetViscosity(float v)
-    {
-        viscosity = Mathf.Clamp(v, 0.05f, 10f);
-    }
-
-    public void SetColor(Color c)
-    {
-        surfaceRenderer.material.SetColor("_Color", c);
-    }
-
-    // Tilt (液体の傾き)
-    public void ApplyTilt(Quaternion flaskRot)
-    {
-        liquidNormal = flaskRot * Vector3.up;
-    }
-
-    // ------------------------------------------------------------------------
-    // ★ PulseColor（復活！） LiquidReactionAnimator / LiquidBoilingController 用
-    // ------------------------------------------------------------------------
-
-    public void PulseColor(Color color)
-    {
-        PulseColor(color, 0.5f, 0.5f);
-    }
-
-    public void PulseColor(Color color, float power)
-    {
-        PulseColor(color, power, 0.5f);
-    }
-
-    public void PulseColor(Color color, float power, float duration)
-    {
-        pulseColor = color;
-        glowPower = power;
-        glowDuration = duration;
-        glowTimer = duration;
+        // ガス粒子表示
+        if (gasParticle != null)
+        {
+            gasEmission.enabled = true;
+            gasEmission.rateOverTime = 3f;
+        }
     }
 }
