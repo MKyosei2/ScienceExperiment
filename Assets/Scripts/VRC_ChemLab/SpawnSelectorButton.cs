@@ -2,45 +2,64 @@
 using UnityEngine;
 using VRC.SDKBase;
 
+public enum ButtonCategory
+{
+    Element,
+    Equipment,
+    Environment
+}
+
 public class SpawnSelectorButton : UdonSharpBehaviour
 {
+    [Header("設定")]
+    public ButtonCategory category = ButtonCategory.Element;
+
+    [Header("参照")]
     public ChemElementSpawner spawner;
 
-    // ★ SelectionCategory.None は存在しないため Element を初期値に設定
-    public SelectionCategory category = SelectionCategory.Element;
-
+    [Header("ボタン内容")]
     public string elementSymbol = "";
     public string equipmentName = "";
+    public string environmentCommand = "";
 
     public override void Interact()
     {
-        Press();
+        Debug.Log("[Button] 押された: " + GetButtonDescription());
+
+        if (spawner == null)
+        {
+            Debug.LogError("[Button] spawner が設定されていません");
+            return;
+        }
+
+        if (category == ButtonCategory.Element)
+        {
+            Debug.Log("[Button] Element: " + elementSymbol);
+            spawner.SelectElement(elementSymbol);
+        }
+        else if (category == ButtonCategory.Equipment)
+        {
+            Debug.Log("[Button] Equipment: " + equipmentName);
+            spawner.SelectEquipment(equipmentName);
+        }
+        else if (category == ButtonCategory.Environment)
+        {
+            Debug.Log("[Button] Environment: " + environmentCommand);
+            spawner.SendCustomEvent(environmentCommand);
+        }
     }
 
-    public void Press()
+    private string GetButtonDescription()
     {
-        if (spawner == null) return;
+        if (category == ButtonCategory.Element)
+            return "元素 (" + elementSymbol + ")";
 
-        // ELEMENT ボタン
-        if (category == SelectionCategory.Element && elementSymbol != "")
-        {
-            spawner.selectedElementName = elementSymbol;
-            spawner.SelectElement(elementSymbol);
-            return;
-        }
+        if (category == ButtonCategory.Equipment)
+            return "器具 (" + equipmentName + ")";
 
-        // TOOL ボタン
-        if (category == SelectionCategory.Tool && equipmentName != "")
-        {
-            spawner.selectedEquipmentName = equipmentName;
-            spawner.SelectEquipment(equipmentName);
-            return;
-        }
+        if (category == ButtonCategory.Environment)
+            return "環境 (" + environmentCommand + ")";
 
-        // CONDITION ボタン
-        if (category == SelectionCategory.Condition)
-        {
-            // 必要ならここに処理を書く
-        }
+        return "未設定ボタン";
     }
 }

@@ -1,17 +1,39 @@
 ﻿using UdonSharp;
 using UnityEngine;
 
-[AddComponentMenu("VRC Lab/CategoryController")]
 public class CategoryController : UdonSharpBehaviour
 {
-    public GameObject[] elementShow, elementHide;
-    public GameObject[] toolShow, toolHide;
-    public GameObject[] conditionShow, conditionHide;
-    public SpawnSelectorButton selectorToSet;
+    public ButtonCategory category = ButtonCategory.Element;
+    public SpawnSelectorButton[] buttons;
 
-    public void ShowElement() { Toggle(elementShow, true); Toggle(elementHide, false); Toggle(toolShow, false); Toggle(toolHide, true); Toggle(conditionShow, false); Toggle(conditionHide, true); if (selectorToSet != null) selectorToSet.category = SelectionCategory.Element; }
-    public void ShowTool() { Toggle(elementShow, false); Toggle(elementHide, true); Toggle(toolShow, true); Toggle(toolHide, false); Toggle(conditionShow, false); Toggle(conditionHide, true); if (selectorToSet != null) selectorToSet.category = SelectionCategory.Tool; }
-    public void ShowCondition() { Toggle(elementShow, false); Toggle(elementHide, true); Toggle(toolShow, false); Toggle(toolHide, true); Toggle(conditionShow, true); Toggle(conditionHide, false); if (selectorToSet != null) selectorToSet.category = SelectionCategory.Condition; }
+    public override void Interact()
+    {
+        ApplyCategory();
+    }
 
-    private void Toggle(GameObject[] arr, bool v) { if (arr == null) return; for (int i = 0; i < arr.Length; i++) if (arr[i] != null) arr[i].SetActive(v); }
+    public void ApplyCategory()
+    {
+        Debug.Log("[CategoryController] カテゴリ適用: " + category);
+
+        if (buttons == null || buttons.Length == 0)
+        {
+            Debug.LogError("[CategoryController] ボタン配列が空です");
+            return;
+        }
+
+        for (int i = 0; i < buttons.Length; i++)
+        {
+            SpawnSelectorButton b = buttons[i];
+            if (b == null)
+            {
+                Debug.LogError("[CategoryController] buttons[" + i + "] が null");
+                continue;
+            }
+
+            // ここがエラー原因 → ButtonCategory を使うよう統一
+            b.category = category;
+
+            Debug.Log("[CategoryController] 設定: buttons[" + i + "] に " + category + " を適用");
+        }
+    }
 }
