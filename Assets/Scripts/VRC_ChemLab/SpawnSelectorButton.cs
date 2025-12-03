@@ -1,11 +1,26 @@
 ﻿using UdonSharp;
 using UnityEngine;
 
+<<<<<<< Updated upstream
 [AddComponentMenu("VRC Lab/SpawnSelectorButton")]
+=======
+public enum ButtonCategory
+{
+    Element,
+    Equipment,
+    Environment
+}
+
+>>>>>>> Stashed changes
 public class SpawnSelectorButton : UdonSharpBehaviour
 {
+    [Header("設定")]
+    public ButtonCategory category = ButtonCategory.Element;
+
+    [Header("参照")]
     public ChemElementSpawner spawner;
 
+<<<<<<< Updated upstream
     // "Element" または "Equipment"
     public string type;
 
@@ -15,14 +30,43 @@ public class SpawnSelectorButton : UdonSharpBehaviour
     // カテゴリー情報（未使用でも残す）
     public SelectionCategory category;
     public string categoryName;
+=======
+    [Header("ボタン内容")]
+    public string elementSymbol = "";
+    public string equipmentName = "";
+    public string environmentCommand = "";
+>>>>>>> Stashed changes
 
     public override void Interact()
     {
-        Press();
+        Debug.Log("[Button] 押された: " + GetButtonDescription());
+
+        if (spawner == null)
+        {
+            Debug.LogError("[Button] spawner が設定されていません");
+            return;
+        }
+
+        if (category == ButtonCategory.Element)
+        {
+            Debug.Log("[Button] Element: " + elementSymbol);
+            spawner.SelectElement(elementSymbol);
+        }
+        else if (category == ButtonCategory.Equipment)
+        {
+            Debug.Log("[Button] Equipment: " + equipmentName);
+            spawner.SelectEquipment(equipmentName);
+        }
+        else if (category == ButtonCategory.Environment)
+        {
+            Debug.Log("[Button] Environment: " + environmentCommand);
+            spawner.SendCustomEvent(environmentCommand);
+        }
     }
 
-    public void Press()
+    private string GetButtonDescription()
     {
+<<<<<<< Updated upstream
         _OnClick();
     }
 
@@ -69,5 +113,17 @@ public class SpawnSelectorButton : UdonSharpBehaviour
         }
 
         Debug.LogWarning("[SpawnSelectorButton] type が不正（Element / Equipment ではありません）");
+=======
+        if (category == ButtonCategory.Element)
+            return "元素 (" + elementSymbol + ")";
+
+        if (category == ButtonCategory.Equipment)
+            return "器具 (" + equipmentName + ")";
+
+        if (category == ButtonCategory.Environment)
+            return "環境 (" + environmentCommand + ")";
+
+        return "未設定ボタン";
+>>>>>>> Stashed changes
     }
 }

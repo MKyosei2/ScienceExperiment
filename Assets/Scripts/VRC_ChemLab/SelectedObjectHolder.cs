@@ -4,64 +4,84 @@ using TMPro;
 
 public class SelectedObjectHolder : UdonSharpBehaviour
 {
-    [Header("Zones")]
-    public Transform elementZone, toolZone, conditionZone;
-
     [Header("UI")]
     public TextMeshProUGUI statusText;
 
-    private const int MaxElements = 8, MaxTools = 8;
+    private const int MaxElements = 8;
+    private const int MaxTools = 8;
 
-    public GameObject[] elementObjects = new GameObject[MaxElements];
-    public GameObject[] toolObjects = new GameObject[MaxTools];
-    public GameObject conditionObject;
-
+    // 選ばれた ID を保持
     public string[] elementIDs = new string[MaxElements];
     public string[] toolIDs = new string[MaxTools];
     public string conditionID = "";
 
-    private int elementCount = 0, toolCount = 0;
+    private int elementCount = 0;
+    private int toolCount = 0;
 
-    public bool AddSelection(SelectionCategory category, GameObject obj, string idOrName = "")
+    // ============================================================
+    // 選択処理：IDを保持する方式
+    // ============================================================
+    public bool AddSelection(SelectionCategory category, string id)
     {
-        if (obj == null) return false;
-        string id = string.IsNullOrEmpty(idOrName) ? obj.name : idOrName;
+        if (string.IsNullOrEmpty(id)) return false;
 
         if (category == SelectionCategory.Element)
-        { if (elementCount >= MaxElements) return false; elementObjects[elementCount] = obj; elementIDs[elementCount] = id; elementCount++; RefreshUI(); return true; }
+        {
+            if (elementCount >= MaxElements) return false;
+            elementIDs[elementCount] = id;
+            elementCount++;
+        }
         else if (category == SelectionCategory.Tool)
-        { if (toolCount >= MaxTools) return false; toolObjects[toolCount] = obj; toolIDs[toolCount] = id; toolCount++; RefreshUI(); return true; }
-        else
-        { conditionObject = obj; conditionID = id; RefreshUI(); return true; }
+        {
+            if (toolCount >= MaxTools) return false;
+            toolIDs[toolCount] = id;
+            toolCount++;
+        }
+        else // Condition
+        {
+            conditionID = id;
+        }
+
+        RefreshUI();
+        return true;
     }
 
-    public void SetAny(GameObject go)
+    // Condition を消す
+    public void ClearCondition()
     {
-        if (go == null) return;
-        if (elementZone != null && go.transform.IsChildOf(elementZone)) { AddSelection(SelectionCategory.Element, go, go.name); return; }
-        if (toolZone != null && go.transform.IsChildOf(toolZone)) { AddSelection(SelectionCategory.Tool, go, go.name); return; }
-        if (conditionZone != null && go.transform.IsChildOf(conditionZone)) { AddSelection(SelectionCategory.Condition, go, go.name); return; }
-        if (elementCount < 2) { AddSelection(SelectionCategory.Element, go, go.name); return; }
-        if (toolCount < 1) { AddSelection(SelectionCategory.Tool, go, go.name); return; }
-        AddSelection(SelectionCategory.Condition, go, go.name);
+        conditionID = "";
+        RefreshUI();
     }
 
-    public void ClearCondition() { conditionObject = null; conditionID = ""; RefreshUI(); }
+    // 全てリセット
     public void ClearAll()
     {
-        for (int i = 0; i < MaxElements; i++) { elementObjects[i] = null; elementIDs[i] = ""; }
-        for (int i = 0; i < MaxTools; i++) { toolObjects[i] = null; toolIDs[i] = ""; }
-        elementCount = 0; toolCount = 0; conditionObject = null; conditionID = ""; RefreshUI();
+        for (int i = 0; i < MaxElements; i++) elementIDs[i] = "";
+        for (int i = 0; i < MaxTools; i++) toolIDs[i] = "";
+
+        elementCount = 0;
+        toolCount = 0;
+        conditionID = "";
+
+        RefreshUI();
     }
 
-    public bool IsValid() { return elementCount >= 2 && toolCount >= 1 && (!string.IsNullOrEmpty(conditionID) || conditionObject != null); }
+    // 実験開始の条件チェック
+    public bool IsValid()
+    {
+        return (elementCount >= 2 &&
+                toolCount >= 1 &&
+                !string.IsNullOrEmpty(conditionID));
+    }
 
+    // UI 更新
     private void RefreshUI()
     {
         if (statusText == null) return;
-        statusText.text = $"Elements:{elementCount}  Tools:{toolCount}  Condition:{(string.IsNullOrEmpty(conditionID) && conditionObject == null ? "None" : "OK")}";
+        statusText.text =
+            $"Elements:{elementCount}  Tools:{toolCount}  Condition:{(string.IsNullOrEmpty(conditionID) ? "None" : "OK")}";
     }
 
-    public int GetElementCount() { return elementCount; }
-    public int GetToolCount() { return toolCount; }
+    public int GetElementCount() => elementCount;
+    public int GetToolCount() => toolCount;
 }

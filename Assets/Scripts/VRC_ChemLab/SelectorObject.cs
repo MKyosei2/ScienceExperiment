@@ -1,27 +1,28 @@
 ﻿using UdonSharp;
 using UnityEngine;
 
-[AddComponentMenu("VRC Lab/SelectorObject")]
 public class SelectorObject : UdonSharpBehaviour
 {
-    public SelectedObjectHolder selected;
+    public SelectedObjectHolder holder;
+
     public SelectionCategory category = SelectionCategory.Element;
-    public string idOverride = "";
 
-    public bool parentToZoneOnSelect = false;
-    public Transform zoneForThisCategory;
+    // 選択ID（元素記号、器具名、条件名）
+    public string selectionID = "";
 
-    public override void Interact() { Select(); }
-
-    public void Select()
+    public override void Interact()
     {
-        if (selected == null) return;
-        if (parentToZoneOnSelect && zoneForThisCategory != null)
+        if (holder == null)
         {
-            transform.SetParent(zoneForThisCategory, true);
-            transform.localPosition = Vector3.zero;
-            transform.localRotation = Quaternion.identity;
+            Debug.LogError("[SelectorObject] holder が設定されていません");
+            return;
         }
-        selected.AddSelection(category, gameObject, string.IsNullOrEmpty(idOverride) ? gameObject.name : idOverride);
+
+        bool ok = holder.AddSelection(category, selectionID);
+
+        if (!ok)
+            Debug.LogWarning("[SelectorObject] AddSelection に失敗（上限など）");
+        else
+            Debug.Log("[SelectorObject] 選択: " + category + " → " + selectionID);
     }
 }
