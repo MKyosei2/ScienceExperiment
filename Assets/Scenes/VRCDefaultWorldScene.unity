@@ -125,6 +125,193 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &186059920
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 186059921}
+  - component: {fileID: 186059923}
+  - component: {fileID: 186059922}
+  - component: {fileID: 186059925}
+  - component: {fileID: 186059924}
+  m_Layer: 5
+  m_Name: Status
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &186059921
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 186059920}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5697668429786937854}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 4359}
+  m_SizeDelta: {x: 5000, y: 2000}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &186059922
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 186059920}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: New Text
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 36
+  m_fontSizeBase: 36
+  m_fontWeight: 400
+  m_enableAutoSizing: 0
+  m_fontSizeMin: 18
+  m_fontSizeMax: 72
+  m_fontStyle: 0
+  m_HorizontalAlignment: 1
+  m_VerticalAlignment: 256
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_enableWordWrapping: 1
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 1
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 1
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_baseMaterial: {fileID: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!222 &186059923
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 186059920}
+  m_CullTransparentMesh: 1
+--- !u!114 &186059924
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 186059920}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45115577ef41a5b4ca741ed302693907, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactTextPlacement: {fileID: 0}
+  interactText: Use
+  interactTextGO: {fileID: 0}
+  proximity: 2
+  SynchronizePosition: 0
+  AllowCollisionOwnershipTransfer: 0
+  Reliable: 0
+  _syncMethod: 2
+  serializedProgramAsset: {fileID: 11400000, guid: f28907495ab26e54a863f03ef23ec488,
+    type: 2}
+  programSource: {fileID: 11400000, guid: ed6e6394b3b3c1448838f66ba3324e54, type: 2}
+  serializedPublicVariablesBytesString: Ai8AAAAAATIAAABWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgAuAFUAZABvAG4AVgBhAHIAaQBhAGIAbABlAFQAYQBiAGwAZQAsACAAVgBSAEMALgBVAGQAbwBuAC4AQwBvAG0AbQBvAG4AAAAAAAYBAAAAAAAAACcBBAAAAHQAeQBwAGUAAWgAAABTAHkAcwB0AGUAbQAuAEMAbwBsAGwAZQBjAHQAaQBvAG4AcwAuAEcAZQBuAGUAcgBpAGMALgBMAGkAcwB0AGAAMQBbAFsAVgBSAEMALgBVAGQAbwBuAC4AQwBvAG0AbQBvAG4ALgBJAG4AdABlAHIAZgBhAGMAZQBzAC4ASQBVAGQAbwBuAFYAYQByAGkAYQBiAGwAZQAsACAAVgBSAEMALgBVAGQAbwBuAC4AQwBvAG0AbQBvAG4AXQBdACwAIABtAHMAYwBvAHIAbABpAGIAAQEJAAAAVgBhAHIAaQBhAGIAbABlAHMALwEAAAABaAAAAFMAeQBzAHQAZQBtAC4AQwBvAGwAbABlAGMAdABpAG8AbgBzAC4ARwBlAG4AZQByAGkAYwAuAEwAaQBzAHQAYAAxAFsAWwBWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgAuAEkAbgB0AGUAcgBmAGEAYwBlAHMALgBJAFUAZABvAG4AVgBhAHIAaQBhAGIAbABlACwAIABWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgBdAF0ALAAgAG0AcwBjAG8AcgBsAGkAYgABAAAABgEAAAAAAAAAAi8CAAAAAUkAAABWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgAuAFUAZABvAG4AVgBhAHIAaQBhAGIAbABlAGAAMQBbAFsAUwB5AHMAdABlAG0ALgBJAG4AdAAzADIALAAgAG0AcwBjAG8AcgBsAGkAYgBdAF0ALAAgAFYAUgBDAC4AVQBkAG8AbgAuAEMAbwBtAG0AbwBuAAIAAAAGAgAAAAAAAAAnAQQAAAB0AHkAcABlAAEXAAAAUwB5AHMAdABlAG0ALgBTAHQAcgBpAG4AZwAsACAAbQBzAGMAbwByAGwAaQBiACcBCgAAAFMAeQBtAGIAbwBsAE4AYQBtAGUAAR8AAABfAF8AXwBVAGQAbwBuAFMAaABhAHIAcABCAGUAaABhAHYAaQBvAHUAcgBWAGUAcgBzAGkAbwBuAF8AXwBfACcBBAAAAHQAeQBwAGUAARYAAABTAHkAcwB0AGUAbQAuAEkAbgB0ADMAMgAsACAAbQBzAGMAbwByAGwAaQBiABcBBQAAAFYAYQBsAHUAZQACAAAABwUHBQcF
+  publicVariablesUnityEngineObjects: []
+  publicVariablesSerializationDataFormat: 0
+--- !u!114 &186059925
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 186059920}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76997a3f5d3ce31468b8fd8b9b231e8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  _udonSharpBackingUdonBehaviour: {fileID: 186059924}
+  statusText: {fileID: 186059922}
+  spawner: {fileID: 3904655326436809056}
+  environment: {fileID: 5676659891801965026}
 --- !u!114 &1159059038967697
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -147,10 +334,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1957513955779393419}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &2322858190860179
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -173,10 +361,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5161528280249975656}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!1 &2738154030739235
 GameObject:
   m_ObjectHideFlags: 0
@@ -335,10 +524,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1065525308614012054}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &54995756944175676
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -653,10 +843,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7555177413069526110}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!1 &146776003165416791
 GameObject:
   m_ObjectHideFlags: 0
@@ -871,10 +1062,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3756296877486450784}
-  spawner: {fileID: 3904655326436809056}
   category: 4
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!23 &222654883192479256
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1080,10 +1272,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3384506237524917575}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!65 &281922843077947791
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1208,10 +1401,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3052644698512490334}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &344667223659509017
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2164,6 +2358,10 @@ MonoBehaviour:
     ID: 240
     SerializedTypeNames:
     - VRC.Udon.UdonBehaviour
+  - gameObject: {fileID: 186059920}
+    ID: 241
+    SerializedTypeNames:
+    - VRC.Udon.UdonBehaviour
   portraitCameraPositionOffset: {x: 0, y: 0, z: 0}
   portraitCameraRotationOffset: {x: 0, y: 1, z: 0, w: -0.00000004371139}
   PlayerPersistence: []
@@ -2299,10 +2497,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 331500130292314583}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &388190535881894470
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2325,10 +2524,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4263483162296609484}
-  spawner: {fileID: 3904655326436809056}
   category: 3
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!33 &394722273999677674
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -2561,10 +2761,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7621701360966972992}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!65 &504638476072486745
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2744,10 +2945,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2887033892656685961}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!33 &549883212821219667
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -2820,10 +3022,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2125829907921130825}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!4 &592601433896218696
 Transform:
   m_ObjectHideFlags: 0
@@ -2894,10 +3097,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6621209709786820390}
-  spawner: {fileID: 3904655326436809056}
   category: 4
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!65 &610353807249193967
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2941,10 +3145,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 920020035974613744}
-  spawner: {fileID: 3904655326436809056}
   category: 4
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!33 &613523740769232861
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -2994,10 +3199,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 9021961840797760300}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!4 &649372392608554161
 Transform:
   m_ObjectHideFlags: 0
@@ -3128,10 +3334,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8550121759929620223}
-  spawner: {fileID: 3904655326436809056}
   category: 4
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!4 &684507976126965278
 Transform:
   m_ObjectHideFlags: 0
@@ -3567,10 +3774,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6389781751202260090}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!4 &866910222370449769
 Transform:
   m_ObjectHideFlags: 0
@@ -3688,10 +3896,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1708112255895361273}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!1 &896248372868613174
 GameObject:
   m_ObjectHideFlags: 0
@@ -3996,10 +4205,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3682430986986751772}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &1035428546841863399
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4022,10 +4232,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3962805889069651061}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!4 &1037885456063580190
 Transform:
   m_ObjectHideFlags: 0
@@ -4063,10 +4274,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 108117937186144575}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!1 &1043329917959965371
 GameObject:
   m_ObjectHideFlags: 0
@@ -4200,10 +4412,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5331742704562094905}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!4 &1097721558732369620
 Transform:
   m_ObjectHideFlags: 0
@@ -4394,10 +4607,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1390405903587367226}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!23 &1142329831785730463
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -4650,7 +4864,7 @@ MeshFilter:
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &1251241630582599634
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -4987,10 +5201,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1090301999927853959}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!23 &1405803093577713791
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -5244,10 +5459,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 970021621949178503}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!33 &1455610864049967777
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -5438,10 +5654,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1921557853664354454}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!4 &1515997471876576417
 Transform:
   m_ObjectHideFlags: 0
@@ -5480,7 +5697,7 @@ BoxCollider:
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &1523450786629067230
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -5526,10 +5743,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3494411386822005635}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!1 &1543633562532757949
 GameObject:
   m_ObjectHideFlags: 0
@@ -5573,10 +5791,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2433715349115709266}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &1563882026090443310
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5781,10 +6000,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8232473507769370707}
-  spawner: {fileID: 3904655326436809056}
   category: 3
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!1 &1632837944190886336
 GameObject:
   m_ObjectHideFlags: 0
@@ -5930,10 +6150,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6905188671581505292}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!4 &1737913712329844232
 Transform:
   m_ObjectHideFlags: 0
@@ -6107,10 +6328,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5824442708862759731}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!65 &1780582503648754365
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6211,10 +6433,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5578566226215167626}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &1821813245379913244
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6237,10 +6460,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8775459428506835251}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!33 &1823964647315770814
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -7036,10 +7260,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1982409954508057172}
-  spawner: {fileID: 3904655326436809056}
   category: 3
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &2047791875782028002
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7157,7 +7382,7 @@ MonoBehaviour:
   publicVariablesSerializationDataFormat: 0
 --- !u!114 &2072630592090956919
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -7995,10 +8220,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1989159696746714137}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!224 &2338997433803723986
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8234,10 +8460,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3378346541392256020}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!1 &2452025073675684304
 GameObject:
   m_ObjectHideFlags: 0
@@ -8505,10 +8732,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3197417755465983826}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &2496992469827011385
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8531,10 +8759,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1113342870858985879}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!65 &2529367090372475300
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -8688,10 +8917,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2041937695690968593}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!23 &2543948176863376741
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -8945,10 +9175,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4815806508702897716}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!65 &2699051390574929115
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -9368,10 +9599,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6223687928988799038}
-  spawner: {fileID: 3904655326436809056}
   category: 4
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &2903468889180730208
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9394,10 +9626,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1425236723161581782}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!1 &2911017935786934289
 GameObject:
   m_ObjectHideFlags: 0
@@ -9489,12 +9722,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2273584187577596261}
-  mode: 0
-  spawnButton: {fileID: 0}
-  zone: {fileID: 0}
-  fixedPrefab: {fileID: 0}
-  selected: {fileID: 6450317300254431265}
-  replaceExisting: 1
+  buttons: []
 --- !u!1 &2932980988737878958
 GameObject:
   m_ObjectHideFlags: 0
@@ -9595,10 +9823,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3822554301958818683}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &2951736933480902893
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9621,10 +9850,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7207019024404728284}
-  spawner: {fileID: 3904655326436809056}
   category: 3
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &2958029535178030733
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9916,10 +10146,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6066652912268973826}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!33 &3000821288898595434
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -9950,10 +10181,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7704820866935018363}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!65 &3008064917170226280
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -10228,10 +10460,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7257728210155732493}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!65 &3080670627228705172
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -10600,10 +10833,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1902576932931005492}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!33 &3168167062039412358
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -11123,10 +11357,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2978023677682347758}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!1 &3361267680577675596
 GameObject:
   m_ObjectHideFlags: 0
@@ -11276,10 +11511,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4536285741483301286}
-  spawner: {fileID: 3904655326436809056}
   category: 3
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &3392835014012472105
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11354,10 +11590,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 286784588841735792}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &3412239212846943325
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11454,10 +11691,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6347176846420905652}
-  spawner: {fileID: 3904655326436809056}
   category: 3
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!33 &3449688571721713506
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -11670,10 +11908,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 979373688431220428}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!65 &3531576925351317870
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -12036,10 +12275,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 54995756944175676}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &3665889087476061398
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12062,10 +12302,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 397926797739608533}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &3668009692096619383
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12088,10 +12329,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4420641248490924179}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!1 &3670170289464486024
 GameObject:
   m_ObjectHideFlags: 0
@@ -12229,12 +12471,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 20277373180411851}
-  mode: 0
-  spawnButton: {fileID: 0}
-  zone: {fileID: 0}
-  fixedPrefab: {fileID: 0}
-  selected: {fileID: 6450317300254431265}
-  replaceExisting: 1
+  buttons: []
 --- !u!114 &3713615641252662975
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12358,10 +12595,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8536665738059350234}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &3756296877486450784
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12748,10 +12986,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8650842171192490670}
-  spawner: {fileID: 3904655326436809056}
   category: 11
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!23 &3886540305627655669
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -12816,13 +13055,15 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6020154472550214558}
+  selectedElementName: 
+  selectedEquipmentName: 
   db: {fileID: 8779673056929123580}
-  environment: {fileID: 5676659891801965026}
+  predictor: {fileID: 4000560409695440427}
+  animator: {fileID: 3971481031745522972}
   spawnParent: {fileID: 5487657345019125194}
   sourceVessel: {fileID: 8746406110628965935, guid: c321b943e0a66784cb2d22b5dee14754,
     type: 3}
-  selectedElementName: 
-  selectedEquipmentName: 
+  lastEquipmentName: 
 --- !u!23 &3909573024584508172
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -13092,10 +13333,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7379084891360822790}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!4 &3982651394545451233
 Transform:
   m_ObjectHideFlags: 0
@@ -13169,10 +13411,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1753276578391117579}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &4000560409695440427
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13531,7 +13774,7 @@ GameObject:
   m_IsActive: 1
 --- !u!114 &4121385617109782340
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -13598,10 +13841,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1478298737356924251}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!23 &4137255900848209261
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -13774,10 +14018,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 231070649814928683}
-  spawner: {fileID: 3904655326436809056}
   category: 12
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &4205476528252385764
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13800,10 +14045,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2135273706182621831}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!1 &4209528769980716242
 GameObject:
   m_ObjectHideFlags: 0
@@ -13938,10 +14184,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1160520868354191768}
-  spawner: {fileID: 3904655326436809056}
   category: 3
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!23 &4286302577890918582
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -14053,10 +14300,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3951165084457736900}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &4329912691242251102
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14253,10 +14501,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4158314398071789676}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!4 &4362642515048308593
 Transform:
   m_ObjectHideFlags: 0
@@ -14323,10 +14572,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2958029535178030733}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &4383239942157653829
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14349,10 +14599,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7477635746074717293}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!33 &4385433349514556521
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -14509,10 +14760,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4000955062610354407}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!33 &4414471382907893284
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -14826,10 +15078,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3815659129547214302}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!1 &4493623273654317486
 GameObject:
   m_ObjectHideFlags: 0
@@ -15274,10 +15527,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4899106478506818629}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!4 &4659629123373936214
 Transform:
   m_ObjectHideFlags: 0
@@ -15656,7 +15910,7 @@ GameObject:
   m_IsActive: 1
 --- !u!114 &4790389179293529185
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -15984,10 +16238,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4385987572813169398}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!1 &4863737621349012573
 GameObject:
   m_ObjectHideFlags: 0
@@ -16031,10 +16286,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 790854199954707915}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &4873435540122213992
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16057,10 +16313,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3349862677565982904}
-  spawner: {fileID: 3904655326436809056}
   category: 3
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!33 &4893520959146262448
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -16562,10 +16819,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3963010477975238489}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!1 &5091190303928190059
 GameObject:
   m_ObjectHideFlags: 0
@@ -17112,10 +17370,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2725913979696810063}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!4 &5192198283008611865
 Transform:
   m_ObjectHideFlags: 0
@@ -17239,10 +17498,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1156206989959726362}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!222 &5237437483414041106
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -17479,10 +17739,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6529668715474781566}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!65 &5312879011226656854
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -17714,10 +17975,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3716264655996648579}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &5404871936872220609
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17740,10 +18002,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4352074241270387798}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!222 &5407708041759694811
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -17803,10 +18066,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4200089436740219754}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!33 &5422510903024793641
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -17853,10 +18117,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8886281018314273244}
-  spawner: {fileID: 3904655326436809056}
   category: 4
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!1 &5439089732089734725
 GameObject:
   m_ObjectHideFlags: 0
@@ -17898,10 +18163,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3405560470594170634}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!4 &5446048286267334084
 Transform:
   m_ObjectHideFlags: 0
@@ -18376,10 +18642,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2652927003947277644}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &5578566226215167626
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18555,10 +18822,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3694209943768623416}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &5638812354384914392
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18581,10 +18849,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8888087354976114140}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!1 &5640334946582231697
 GameObject:
   m_ObjectHideFlags: 0
@@ -18825,6 +19094,7 @@ RectTransform:
   - {fileID: 2316375204208515705}
   - {fileID: 3516917825734829259}
   - {fileID: 5133028979146865107}
+  - {fileID: 186059921}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -18927,10 +19197,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8408985778406586030}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!1 &5731525424749250705
 GameObject:
   m_ObjectHideFlags: 0
@@ -19345,10 +19616,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 141173618177979867}
-  spawner: {fileID: 3904655326436809056}
   category: 3
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!23 &5860191270812253284
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -19565,10 +19837,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4943263380592242334}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!1 &5900190972333427982
 GameObject:
   m_ObjectHideFlags: 0
@@ -19836,10 +20109,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4549592539855344266}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &6025421221350061505
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19862,10 +20136,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1193842770697651206}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!65 &6029093228244799740
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -19951,13 +20226,8 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2350809681846847333}
-  elementShow: []
-  elementHide: []
-  toolShow: []
-  toolHide: []
-  conditionShow: []
-  conditionHide: []
-  selectorToSet: {fileID: 3884166293071575618}
+  category: 0
+  buttons: []
 --- !u!4 &6046840101251334884
 Transform:
   m_ObjectHideFlags: 0
@@ -20336,10 +20606,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8717544801372401032}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!23 &6199735057550435880
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -20425,10 +20696,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4341375077017237897}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!23 &6219847477427089450
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -20733,10 +21005,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8051310399476023453}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &6344772005122841713
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20759,10 +21032,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 67257891548622604}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!33 &6347008082327680722
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -20819,10 +21093,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2303271715692567559}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &6362050099604175606
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20845,10 +21120,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 9119944457317828529}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!4 &6374545207618782213
 Transform:
   m_ObjectHideFlags: 0
@@ -21049,10 +21325,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5724414455751828283}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!4 &6386305776865608838
 Transform:
   m_ObjectHideFlags: 0
@@ -21382,12 +21659,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5795508244685687831}
-  mode: 0
-  spawnButton: {fileID: 0}
-  zone: {fileID: 0}
-  fixedPrefab: {fileID: 0}
-  selected: {fileID: 6450317300254431265}
-  replaceExisting: 1
+  buttons: []
 --- !u!114 &6529668715474781566
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21556,10 +21828,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2047791875782028002}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &6567522893880083475
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -21694,10 +21967,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3392835014012472105}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!23 &6597487799103994734
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -22235,10 +22509,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7829137670836569148}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!65 &6772701458515473022
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -22390,10 +22665,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1876235901017547561}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!65 &6810505203600254674
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -22857,10 +23133,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6912584098029008543}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &6912584098029008543
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22974,10 +23251,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2569928985705648506}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &6929858645353877843
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23344,10 +23622,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5722246054129799056}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!23 &7018663719232188898
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -23453,10 +23732,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3081713111038069491}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &7046698985140129042
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23479,10 +23759,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2626245539704898797}
-  spawner: {fileID: 3904655326436809056}
   category: 3
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!1 &7048352583885390307
 GameObject:
   m_ObjectHideFlags: 0
@@ -23559,10 +23840,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 9028039499398209458}
-  spawner: {fileID: 3904655326436809056}
   category: 3
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!65 &7061505182091843393
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -24002,10 +24284,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2922236977981350087}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!33 &7250162899452975504
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -24675,10 +24958,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7430978678401350973}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!4 &7459243951070661428
 Transform:
   m_ObjectHideFlags: 0
@@ -24757,10 +25041,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4943745642239429377}
-  spawner: {fileID: 3904655326436809056}
   category: 3
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!65 &7501167432367475708
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -25015,10 +25300,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2060156124450056650}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &7555177413069526110
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25130,10 +25416,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3129677229054073920}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &7594560434610140871
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25293,7 +25580,7 @@ MonoBehaviour:
   humidField: {fileID: 3040067153339604017}
 --- !u!114 &7644033750315907015
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -25360,10 +25647,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7244384533131503555}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!4 &7665183786436390800
 Transform:
   m_ObjectHideFlags: 0
@@ -25498,10 +25786,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7544583564982859622}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!1 &7716078755007260854
 GameObject:
   m_ObjectHideFlags: 0
@@ -25741,10 +26030,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1488023815570774156}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!1 &7770900525872062495
 GameObject:
   m_ObjectHideFlags: 0
@@ -26345,10 +26635,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5290180019175398356}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!33 &8030133949021072980
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -26405,10 +26696,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3713615641252662975}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &8043755240900685438
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26431,10 +26723,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1791614775247620274}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &8047305782184865723
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26532,10 +26825,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4514512501464296573}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!1 &8069961716828678509
 GameObject:
   m_ObjectHideFlags: 0
@@ -26684,10 +26978,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4075673821311801767}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &8128617072384547419
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26710,10 +27005,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5260029864333126565}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!23 &8128791387053273523
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -26828,10 +27124,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2876912007179613739}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!65 &8152125519223991186
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -26987,10 +27284,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8809173246449363259}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &8232473507769370707
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27123,10 +27421,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1563882026090443310}
-  spawner: {fileID: 3904655326436809056}
   category: 3
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!65 &8270894952965361379
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -27601,10 +27900,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3360798919774493729}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!1 &8461397838788509204
 GameObject:
   m_ObjectHideFlags: 0
@@ -27768,10 +28068,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4041671322411695109}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &8470685649638735323
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27794,10 +28095,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 9007529535614522700}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &8472824256218896748
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27820,10 +28122,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2992435083457666438}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!222 &8473458924460825769
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -28161,10 +28464,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 9187746723314533880}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &8607973348853450132
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -28378,10 +28682,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 34796448703442774}
-  spawner: {fileID: 3904655326436809056}
   category: 3
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!224 &8681171122333500165
 RectTransform:
   m_ObjectHideFlags: 0
@@ -29319,10 +29624,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3125365676986509907}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!4 &8805287681345782510
 Transform:
   m_ObjectHideFlags: 0
@@ -29497,10 +29803,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3864268418273586}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!1 &8835360685041602801
 GameObject:
   m_ObjectHideFlags: 0
@@ -29744,10 +30051,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8607973348853450132}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!1 &8907122850302244866
 GameObject:
   m_ObjectHideFlags: 0
@@ -30007,10 +30315,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5534725764774116232}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!33 &8952234085893696715
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -30083,10 +30392,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8799712102827082974}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!33 &8962386932639679798
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -30153,10 +30463,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3762374662189484729}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &9007529535614522700
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30213,10 +30524,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4419705941654621682}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!23 &9017988288774254904
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -30333,10 +30645,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 722227340221263910}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!114 &9063978713380960018
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30359,10 +30672,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3412239212846943325}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!65 &9086975292516124965
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -30827,10 +31141,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4992998654939531618}
-  spawner: {fileID: 3904655326436809056}
   category: 0
+  spawner: {fileID: 3904655326436809056}
   elementSymbol: 
   equipmentName: 
+  environmentCommand: 
 --- !u!1 &9221143066544790067
 GameObject:
   m_ObjectHideFlags: 0
