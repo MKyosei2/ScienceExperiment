@@ -1,31 +1,63 @@
 ﻿using UdonSharp;
 using UnityEngine;
 
-[AddComponentMenu("VRC Lab/ChemEnvironmentManager")]
 public class ChemEnvironmentManager : UdonSharpBehaviour
 {
-    [UdonSynced] public float Temperature = 25f;
-    [UdonSynced] public float Pressure = 1f;
-    [UdonSynced] public float Humidity = 50f;
+    public float Temperature = 25f;
+    public float Pressure = 1f;
+    public float Humidity = 50f;
 
-    // ==== 旧呼び出し互換 ====
-    public void AdjustTemperature(float d) { _AdjustTemperature(d); }
-    public void AdjustPressure(float d) { _AdjustPressure(d); }
-    public void AdjustHumidity(float d) { _AdjustHumidity(d); }
-
-    public void _ResetToDefaults()
+    // -------------------------
+    // 新バージョン基本制御
+    // -------------------------
+    public void _ChangeTemperature(float delta)
     {
-        Temperature = 25f;
-        Pressure = 1f;
-        Humidity = 50f;
-        Debug.Log("[EnvManager] ResetToDefaults()");
+        Temperature += delta;
+        Debug.Log("[ENV] Temperature = " + Temperature);
     }
+
+    public void _ChangePressure(float delta)
+    {
+        Pressure += delta;
+        Debug.Log("[ENV] Pressure = " + Pressure);
+    }
+
+    public void _ChangeHumidity(float delta)
+    {
+        Humidity += delta;
+        Debug.Log("[ENV] Humidity = " + Humidity);
+    }
+
+    // -------------------------
+    // Modify 統一制御（3Dボタン用）
+    // -------------------------
+    public void Modify(string key)
+    {
+        switch (key)
+        {
+            case "TempUp": _ChangeTemperature(+1); break;
+            case "TempDown": _ChangeTemperature(-1); break;
+
+            case "HumUp": _ChangeHumidity(+1); break;
+            case "HumDown": _ChangeHumidity(-1); break;
+
+            case "PressUp": _ChangePressure(+1); break;
+            case "PressDown": _ChangePressure(-1); break;
+
+            default:
+                Debug.LogWarning("[ENV] Unknown key: " + key);
+                break;
+        }
+    }
+
+    // ==============================
+    // ▼ UI 互換（旧スクリプト互換）
+    // ==============================
+    public void _AdjustTemperature(float delta) { _ChangeTemperature(delta); }
+    public void _AdjustHumidity(float delta) { _ChangeHumidity(delta); }
+    public void _AdjustPressure(float delta) { _ChangePressure(delta); }
 
     public void _SetTemperature(float v) { Temperature = v; }
     public void _SetPressure(float v) { Pressure = v; }
-    public void _SetHumidity(float v) { Humidity = Mathf.Clamp(v, 0f, 100f); }
-
-    public void _AdjustTemperature(float delta) { Temperature += delta; }
-    public void _AdjustPressure(float delta) { Pressure += delta; }
-    public void _AdjustHumidity(float delta) { Humidity = Mathf.Clamp(Humidity + delta, 0f, 100f); }
+    public void _SetHumidity(float v) { Humidity = v; }
 }

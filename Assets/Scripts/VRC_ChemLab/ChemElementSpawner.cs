@@ -261,4 +261,18 @@ public class ChemElementSpawner : UdonSharpBehaviour
 
         lastElement = "";
     }
+    public string GetLastElement()
+    {
+        return string.IsNullOrEmpty(selectedElementName) ? "None" : selectedElementName;
+    }
+
+    public string GetLastEquipment()
+    {
+        return string.IsNullOrEmpty(lastEquipmentName) ? "None" : lastEquipmentName;
+    }
+
+    public string GetHistoryLog()
+    {
+        return string.IsNullOrEmpty(elementHistory) ? "(empty)" : elementHistory;
+    }
 }

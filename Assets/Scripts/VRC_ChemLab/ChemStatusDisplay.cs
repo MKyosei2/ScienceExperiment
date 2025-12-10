@@ -1,60 +1,42 @@
-﻿using UnityEngine;
-using UdonSharp;
+﻿using UdonSharp;
+using UnityEngine;
 using TMPro;
 
 public class ChemStatusDisplay : UdonSharpBehaviour
 {
-    [Header("UI (TextMeshPro)")]
-    public TextMeshProUGUI statusText;
-
-    [Header("References")]
     public ChemElementSpawner spawner;
-    public ChemEnvironmentManager environment;
+    public ChemEnvironmentManager env;
+    public TMP_Text displayText;
 
-    private string elementHistory = "";
-    private string lastEquipment = "";
-    private string lastAiLog = "";
-    private string lastAiResult = "";
-
-    private void Update()
+    private void Start()
     {
-        if (statusText == null || spawner == null || environment == null)
-            return;
-
-        // 情報の更新
-        elementHistory = spawner.GetElementHistory();
-        lastEquipment = spawner.lastEquipmentName;
-
-        // 温度・圧力・湿度は大文字の変数名に合わせる
-        float temp = environment.Temperature;
-        float press = environment.Pressure;
-        float hum = environment.Humidity;
-
-        // テキスト描画
-        statusText.text =
-            "<b><size=130%>Experiment Status</size></b>\n" +
-            "------------------------------\n" +
-            $"<b>Element:</b> {elementHistory}\n" +
-            $"<b>Equipment:</b> {lastEquipment}\n\n" +
-            $"<b>Environment</b>\n" +
-            $" Temp: {temp} °C\n" +
-            $" Pressure: {press} atm\n" +
-            $" Humidity: {hum}%\n\n" +
-            "<b>AI Log:</b>\n" +
-            $"{lastAiLog}\n\n" +
-            "<b>Result:</b>\n" +
-            $"{lastAiResult}\n" +
-            "------------------------------";
+        RefreshUI();
     }
 
-    // --- 外部スクリプトからログを送るための関数 ---
-    public void AddAiLog(string log)
+    public void RefreshUI()
     {
-        lastAiLog = log;
-    }
+        if (displayText == null) return;
 
-    public void SetAiResult(string result)
-    {
-        lastAiResult = result;
+        // 元素 & 器具
+        string element = spawner != null ? spawner.GetLastElement() : "None";
+        string equip = spawner != null ? spawner.GetLastEquipment() : "None";
+
+        // 環境
+        string temp = env != null ? env.Temperature.ToString("F0") : "?";
+        string hum = env != null ? env.Humidity.ToString("F0") : "?";
+        string pres = env != null ? env.Pressure.ToString("F0") : "?";
+
+        // 履歴
+        string hist = spawner != null ? spawner.GetHistoryLog() : "(empty)";
+
+        displayText.text =
+            $"=== Experiment Status ===\n" +
+            $"Element: {element}\n" +
+            $"Equipment: {equip}\n" +
+            $"Temperature: {temp} °C\n" +
+            $"Humidity: {hum} %\n" +
+            $"Pressure: {pres} kPa\n\n" +
+            $"--- Log ---\n" +
+            $"{hist}";
     }
 }

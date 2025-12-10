@@ -1,6 +1,5 @@
 ﻿using UdonSharp;
 using UnityEngine;
-using VRC.SDKBase;
 
 public enum ButtonCategory
 {
@@ -11,55 +10,34 @@ public enum ButtonCategory
 
 public class SpawnSelectorButton : UdonSharpBehaviour
 {
-    [Header("設定")]
-    public ButtonCategory category = ButtonCategory.Element;
+    public ButtonCategory category;
+    public string value;
 
-    [Header("参照")]
     public ChemElementSpawner spawner;
-
-    [Header("ボタン内容")]
-    public string elementSymbol = "";
-    public string equipmentName = "";
-    public string environmentCommand = "";
+    public ChemEnvironmentManager env;
+    public ChemStatusDisplay statusDisplay;
 
     public override void Interact()
     {
-        Debug.Log("[Button] 押された: " + GetButtonDescription());
+        Debug.Log($"[Button] {category} / {value}");
 
-        if (spawner == null)
+        switch (category)
         {
-            Debug.LogError("[Button] spawner が設定されていません");
-            return;
+            case ButtonCategory.Element:
+                if (spawner != null) spawner.SelectElement(value);
+                break;
+
+            case ButtonCategory.Equipment:
+                if (spawner != null) spawner.SelectEquipment(value);
+                break;
+
+            case ButtonCategory.Environment:
+                if (env != null) env.Modify(value);
+                break;
         }
 
-        if (category == ButtonCategory.Element)
-        {
-            Debug.Log("[Button] Element: " + elementSymbol);
-            spawner.SelectElement(elementSymbol);
-        }
-        else if (category == ButtonCategory.Equipment)
-        {
-            Debug.Log("[Button] Equipment: " + equipmentName);
-            spawner.SelectEquipment(equipmentName);
-        }
-        else if (category == ButtonCategory.Environment)
-        {
-            Debug.Log("[Button] Environment: " + environmentCommand);
-            spawner.SendCustomEvent(environmentCommand);
-        }
-    }
-
-    private string GetButtonDescription()
-    {
-        if (category == ButtonCategory.Element)
-            return "元素 (" + elementSymbol + ")";
-
-        if (category == ButtonCategory.Equipment)
-            return "器具 (" + equipmentName + ")";
-
-        if (category == ButtonCategory.Environment)
-            return "環境 (" + environmentCommand + ")";
-
-        return "未設定ボタン";
+        // 全 UI 更新
+        if (statusDisplay != null)
+            statusDisplay.RefreshUI();
     }
 }
