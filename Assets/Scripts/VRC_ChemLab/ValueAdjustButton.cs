@@ -4,29 +4,20 @@ using UnityEngine;
 public class ValueAdjustButton : UdonSharpBehaviour
 {
     public ChemEnvironmentManager env;
-
-    public enum AdjustType { Temperature, Humidity, Pressure }
     public AdjustType adjustType;
-
     public float step = 1f;
 
     public override void Interact()
     {
         if (env == null) return;
 
-        switch (adjustType)
-        {
-            case AdjustType.Temperature:
-                env.AdjustTemperature(step);
-                break;
+        if (adjustType == AdjustType.Temperature)
+            env.AdjustTemperature(step);
 
-            case AdjustType.Humidity:
-                env.AdjustHumidity(step);
-                break;
+        else if (adjustType == AdjustType.Humidity)
+            env.AdjustHumidity(step);
 
-            case AdjustType.Pressure:
-                env.AdjustPressure(step);
-                break;
-        }
+        else if (adjustType == AdjustType.Pressure)
+            env.AdjustPressure(step);
     }
 }

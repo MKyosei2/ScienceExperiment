@@ -43,21 +43,17 @@ public class ChemElementSpawner : UdonSharpBehaviour
 
     public void _StartExperiment()
     {
-        if (lastElement == "None" || lastEquipment == "None")
-        {
-            historyLog.AppendLine("[ERROR] Missing element or equipment.");
-            RequestUIRefresh();
-            return;
-        }
-
-        historyLog.AppendLine($"[Experiment] Started → {lastElement} + {lastEquipment}");
+        historyLog.AppendLine($"Experiment Started → {lastElement} + {lastEquipment}");
 
         if (ai != null)
-        {
-            ai.ReceiveAIResponse("Request");
-            historyLog.AppendLine("[AI] Sent reaction request.");
-        }
+            ai.RunAIAnalysis();   // ← AIRequestSender に統一
 
+        RequestUIRefresh();
+    }
+
+    public void AppendAILog(string text)
+    {
+        historyLog.AppendLine(text);
         RequestUIRefresh();
     }
 

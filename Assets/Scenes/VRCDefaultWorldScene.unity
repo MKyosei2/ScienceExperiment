@@ -310,7 +310,7 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 186059924}
   spawner: {fileID: 3904655326436809056}
-  environment: {fileID: 0}
+  environment: {fileID: 5676659891801965026}
   displayText: {fileID: 186059922}
 --- !u!1 &1516284084
 GameObject:
@@ -13136,9 +13136,9 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6020154472550214558}
-  database: {fileID: 0}
+  database: {fileID: 8779673056929123580}
   environment: {fileID: 5676659891801965026}
-  ai: {fileID: 0}
+  ai: {fileID: 6097180532586197565}
 --- !u!23 &3909573024584508172
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -20447,6 +20447,8 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1523450786629067230}
   spawner: {fileID: 3904655326436809056}
+  database: {fileID: 8779673056929123580}
+  environment: {fileID: 5676659891801965026}
 --- !u!65 &6098803003583990712
 BoxCollider:
   m_ObjectHideFlags: 0
