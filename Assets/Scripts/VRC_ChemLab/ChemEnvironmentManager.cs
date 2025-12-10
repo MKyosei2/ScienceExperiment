@@ -3,22 +3,24 @@ using UnityEngine;
 
 public class ChemEnvironmentManager : UdonSharpBehaviour
 {
-    public float Temperature = 25f;
-    public float Humidity = 40f;
-    public float Pressure = 101f;
+    [Header("Environment Values")]
+    public float Temperature = 25f;   // °C
+    public float Humidity = 50f;      // %
+    public float Pressure = 1f;       // kPa
 
-    public void Modify(string command)
+    // ======== 調整処理 ========
+    public void AdjustTemperature(float step)
     {
-        switch (command)
-        {
-            case "TempPlus": Temperature += 1f; break;
-            case "TempMinus": Temperature -= 1f; break;
+        Temperature += step;
+    }
 
-            case "HumPlus": Humidity += 1f; break;
-            case "HumMinus": Humidity -= 1f; break;
+    public void AdjustHumidity(float step)
+    {
+        Humidity += step;
+    }
 
-            case "PresPlus": Pressure += 1f; break;
-            case "PresMinus": Pressure -= 1f; break;
-        }
+    public void AdjustPressure(float step)
+    {
+        Pressure += step;
     }
 }

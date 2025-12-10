@@ -1,17 +1,10 @@
 ﻿using UdonSharp;
 using UnityEngine;
 
-public enum ButtonCategory
-{
-    None,
-    Element,
-    Equipment,
-    Environment
-}
-
 public class SpawnSelectorButton : UdonSharpBehaviour
 {
-    public ButtonCategory category;
+    // 外部で定義された Enum を使う
+    public SelectionCategory category;
     public string value;
 
     public ChemElementSpawner spawner;
@@ -20,24 +13,15 @@ public class SpawnSelectorButton : UdonSharpBehaviour
 
     public override void Interact()
     {
-        Debug.Log($"[Button] {category} / {value}");
-
-        switch (category)
+        if (category == SelectionCategory.Element)
         {
-            case ButtonCategory.Element:
-                if (spawner != null) spawner.SelectElement(value);
-                break;
-
-            case ButtonCategory.Equipment:
-                if (spawner != null) spawner.SelectEquipment(value);
-                break;
-
-            case ButtonCategory.Environment:
-                if (env != null) env.Modify(value);
-                break;
+            spawner.SelectElement(value);
+        }
+        else if (category == SelectionCategory.Equipment)
+        {
+            spawner.SelectEquipment(value);
         }
 
-        if (statusDisplay != null)
-            statusDisplay.RefreshUI();
+        statusDisplay.RefreshUI();
     }
 }
