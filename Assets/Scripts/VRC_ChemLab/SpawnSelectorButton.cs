@@ -3,6 +3,7 @@ using UnityEngine;
 
 public enum ButtonCategory
 {
+    None,
     Element,
     Equipment,
     Environment
@@ -36,7 +37,6 @@ public class SpawnSelectorButton : UdonSharpBehaviour
                 break;
         }
 
-        // 全 UI 更新
         if (statusDisplay != null)
             statusDisplay.RefreshUI();
     }

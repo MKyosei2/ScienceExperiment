@@ -309,9 +309,9 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 186059924}
-  statusText: {fileID: 186059922}
   spawner: {fileID: 3904655326436809056}
-  environment: {fileID: 5676659891801965026}
+  env: {fileID: 5676659891801965026}
+  displayText: {fileID: 186059922}
 --- !u!114 &1159059038967697
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -334,11 +334,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1957513955779393419}
-  category: 0
+  category: 1
+  value: ND
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &2322858190860179
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -361,11 +361,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5161528280249975656}
-  category: 0
+  category: 1
+  value: SG
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!1 &2738154030739235
 GameObject:
   m_ObjectHideFlags: 0
@@ -524,11 +524,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1065525308614012054}
-  category: 0
+  category: 1
+  value: AC
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &54995756944175676
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -843,11 +843,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7555177413069526110}
-  category: 0
+  category: 1
+  value: GA
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!1 &146776003165416791
 GameObject:
   m_ObjectHideFlags: 0
@@ -1062,11 +1062,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3756296877486450784}
-  category: 4
+  category: 3
+  value: PRES
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!23 &222654883192479256
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1272,11 +1272,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3384506237524917575}
-  category: 0
+  category: 1
+  value: F
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!65 &281922843077947791
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1401,11 +1401,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3052644698512490334}
-  category: 0
+  category: 1
+  value: RU
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &344667223659509017
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2497,11 +2497,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 331500130292314583}
-  category: 0
+  category: 1
+  value: ZN
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &388190535881894470
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2524,11 +2524,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4263483162296609484}
-  category: 3
+  category: 2
+  value: SCHLENK_FLASK
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!33 &394722273999677674
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -2761,11 +2761,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7621701360966972992}
-  category: 0
+  category: 1
+  value: GD
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!65 &504638476072486745
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2945,11 +2945,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2887033892656685961}
-  category: 0
+  category: 1
+  value: NP
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!33 &549883212821219667
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -3022,11 +3022,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2125829907921130825}
-  category: 0
+  category: 1
+  value: S
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!4 &592601433896218696
 Transform:
   m_ObjectHideFlags: 0
@@ -3097,11 +3097,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6621209709786820390}
-  category: 4
+  category: 3
+  value: HUM
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!65 &610353807249193967
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3145,11 +3145,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 920020035974613744}
-  category: 4
+  category: 3
+  value: HUM
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!33 &613523740769232861
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -3199,11 +3199,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 9021961840797760300}
-  category: 0
+  category: 1
+  value: YB
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!4 &649372392608554161
 Transform:
   m_ObjectHideFlags: 0
@@ -3334,11 +3334,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8550121759929620223}
-  category: 4
+  category: 3
+  value: PRES
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!4 &684507976126965278
 Transform:
   m_ObjectHideFlags: 0
@@ -3774,11 +3774,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6389781751202260090}
-  category: 0
+  category: 1
+  value: B
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!4 &866910222370449769
 Transform:
   m_ObjectHideFlags: 0
@@ -3896,11 +3896,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1708112255895361273}
-  category: 0
+  category: 1
+  value: OG
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!1 &896248372868613174
 GameObject:
   m_ObjectHideFlags: 0
@@ -4205,11 +4205,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3682430986986751772}
-  category: 0
+  category: 1
+  value: CF
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &1035428546841863399
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4232,11 +4232,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3962805889069651061}
-  category: 0
+  category: 1
+  value: HF
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!4 &1037885456063580190
 Transform:
   m_ObjectHideFlags: 0
@@ -4274,11 +4274,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 108117937186144575}
-  category: 0
+  category: 1
+  value: NI
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!1 &1043329917959965371
 GameObject:
   m_ObjectHideFlags: 0
@@ -4412,11 +4412,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5331742704562094905}
-  category: 0
+  category: 1
+  value: NA
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!4 &1097721558732369620
 Transform:
   m_ObjectHideFlags: 0
@@ -4607,11 +4607,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1390405903587367226}
-  category: 0
+  category: 1
+  value: AS
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!23 &1142329831785730463
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -5201,11 +5201,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1090301999927853959}
-  category: 0
+  category: 1
+  value: ES
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!23 &1405803093577713791
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -5459,11 +5459,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 970021621949178503}
-  category: 0
+  category: 1
+  value: HG
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!33 &1455610864049967777
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -5654,11 +5654,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1921557853664354454}
-  category: 0
+  category: 1
+  value: SR
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!4 &1515997471876576417
 Transform:
   m_ObjectHideFlags: 0
@@ -5743,11 +5743,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3494411386822005635}
-  category: 0
+  category: 1
+  value: SE
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!1 &1543633562532757949
 GameObject:
   m_ObjectHideFlags: 0
@@ -5791,11 +5791,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2433715349115709266}
-  category: 0
+  category: 1
+  value: OS
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &1563882026090443310
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6000,11 +6000,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8232473507769370707}
-  category: 3
+  category: 0
+  value: 
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!1 &1632837944190886336
 GameObject:
   m_ObjectHideFlags: 0
@@ -6150,11 +6150,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6905188671581505292}
-  category: 0
+  category: 1
+  value: ZR
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!4 &1737913712329844232
 Transform:
   m_ObjectHideFlags: 0
@@ -6328,11 +6328,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5824442708862759731}
-  category: 0
+  category: 1
+  value: CL
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!65 &1780582503648754365
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6433,11 +6433,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5578566226215167626}
-  category: 0
+  category: 1
+  value: TE
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &1821813245379913244
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6460,11 +6460,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8775459428506835251}
-  category: 0
+  category: 1
+  value: CR
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!33 &1823964647315770814
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -7260,11 +7260,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1982409954508057172}
-  category: 3
+  category: 2
+  value: FLORENCE_FLASK
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &2047791875782028002
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8220,11 +8220,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1989159696746714137}
-  category: 0
+  category: 1
+  value: LU
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!224 &2338997433803723986
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8460,11 +8460,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3378346541392256020}
-  category: 0
+  category: 1
+  value: W
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!1 &2452025073675684304
 GameObject:
   m_ObjectHideFlags: 0
@@ -8732,11 +8732,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3197417755465983826}
-  category: 0
+  category: 1
+  value: Y
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &2496992469827011385
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8759,11 +8759,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1113342870858985879}
-  category: 0
+  category: 1
+  value: FE
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!65 &2529367090372475300
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -8917,11 +8917,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2041937695690968593}
-  category: 0
+  category: 1
+  value: TB
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!23 &2543948176863376741
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -9175,11 +9175,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4815806508702897716}
-  category: 0
+  category: 1
+  value: MG
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!65 &2699051390574929115
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -9599,11 +9599,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6223687928988799038}
-  category: 4
+  category: 3
+  value: TEMP
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &2903468889180730208
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9627,10 +9627,10 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1425236723161581782}
   category: 0
+  value: 
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!1 &2911017935786934289
 GameObject:
   m_ObjectHideFlags: 0
@@ -9823,11 +9823,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3822554301958818683}
-  category: 0
+  category: 1
+  value: PD
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &2951736933480902893
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9850,11 +9850,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7207019024404728284}
-  category: 3
+  category: 2
+  value: BEAKER
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &2958029535178030733
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10146,11 +10146,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6066652912268973826}
-  category: 0
+  category: 1
+  value: SN
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!33 &3000821288898595434
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -10181,11 +10181,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7704820866935018363}
-  category: 0
+  category: 1
+  value: CD
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!65 &3008064917170226280
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -10460,11 +10460,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7257728210155732493}
-  category: 0
+  category: 1
+  value: AT
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!65 &3080670627228705172
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -10833,11 +10833,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1902576932931005492}
-  category: 0
+  category: 1
+  value: CS
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!33 &3168167062039412358
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -11357,11 +11357,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2978023677682347758}
-  category: 0
+  category: 1
+  value: MN
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!1 &3361267680577675596
 GameObject:
   m_ObjectHideFlags: 0
@@ -11511,11 +11511,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4536285741483301286}
-  category: 3
+  category: 2
+  value: CONICAL_FLASK
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &3392835014012472105
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11590,11 +11590,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 286784588841735792}
-  category: 0
+  category: 1
+  value: TA
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &3412239212846943325
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11691,11 +11691,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6347176846420905652}
-  category: 3
+  category: 2
+  value: STRAUS_FLASK
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!33 &3449688571721713506
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -11908,11 +11908,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 979373688431220428}
-  category: 0
+  category: 1
+  value: FL
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!65 &3531576925351317870
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -12275,11 +12275,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 54995756944175676}
-  category: 0
+  category: 1
+  value: BR
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &3665889087476061398
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12302,11 +12302,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 397926797739608533}
-  category: 0
+  category: 1
+  value: CU
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &3668009692096619383
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12329,11 +12329,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4420641248490924179}
-  category: 0
+  category: 1
+  value: NE
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!1 &3670170289464486024
 GameObject:
   m_ObjectHideFlags: 0
@@ -12595,11 +12595,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8536665738059350234}
-  category: 0
+  category: 1
+  value: RH
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &3756296877486450784
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12986,11 +12986,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8650842171192490670}
-  category: 11
+  category: 0
+  value: 
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!23 &3886540305627655669
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -13333,11 +13333,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7379084891360822790}
-  category: 0
+  category: 1
+  value: K
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!4 &3982651394545451233
 Transform:
   m_ObjectHideFlags: 0
@@ -13411,11 +13411,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1753276578391117579}
-  category: 0
+  category: 1
+  value: LR
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &4000560409695440427
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13841,11 +13841,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1478298737356924251}
-  category: 0
+  category: 1
+  value: RN
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!23 &4137255900848209261
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -14018,11 +14018,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 231070649814928683}
-  category: 12
+  category: 0
+  value: 
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &4205476528252385764
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14045,11 +14045,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2135273706182621831}
-  category: 0
+  category: 1
+  value: MD
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!1 &4209528769980716242
 GameObject:
   m_ObjectHideFlags: 0
@@ -14184,11 +14184,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1160520868354191768}
-  category: 3
+  category: 0
+  value: 
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!23 &4286302577890918582
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -14300,11 +14300,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3951165084457736900}
-  category: 0
+  category: 1
+  value: V
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &4329912691242251102
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14501,11 +14501,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4158314398071789676}
-  category: 0
+  category: 1
+  value: SM
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!4 &4362642515048308593
 Transform:
   m_ObjectHideFlags: 0
@@ -14572,11 +14572,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2958029535178030733}
-  category: 0
+  category: 1
+  value: EU
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &4383239942157653829
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14599,11 +14599,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7477635746074717293}
-  category: 0
+  category: 1
+  value: BK
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!33 &4385433349514556521
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -14760,11 +14760,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4000955062610354407}
-  category: 0
+  category: 1
+  value: NH
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!33 &4414471382907893284
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -15078,11 +15078,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3815659129547214302}
-  category: 0
+  category: 1
+  value: BH
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!1 &4493623273654317486
 GameObject:
   m_ObjectHideFlags: 0
@@ -15527,11 +15527,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4899106478506818629}
-  category: 0
+  category: 1
+  value: LV
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!4 &4659629123373936214
 Transform:
   m_ObjectHideFlags: 0
@@ -16238,11 +16238,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4385987572813169398}
-  category: 0
+  category: 1
+  value: LI
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!1 &4863737621349012573
 GameObject:
   m_ObjectHideFlags: 0
@@ -16286,11 +16286,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 790854199954707915}
-  category: 0
+  category: 1
+  value: LA
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &4873435540122213992
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16313,11 +16313,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3349862677565982904}
-  category: 3
+  category: 2
+  value: SPOIT
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!33 &4893520959146262448
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -16819,11 +16819,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3963010477975238489}
-  category: 0
+  category: 1
+  value: BI
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!1 &5091190303928190059
 GameObject:
   m_ObjectHideFlags: 0
@@ -17370,11 +17370,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2725913979696810063}
-  category: 0
+  category: 1
+  value: TI
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!4 &5192198283008611865
 Transform:
   m_ObjectHideFlags: 0
@@ -17498,11 +17498,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1156206989959726362}
-  category: 0
+  category: 1
+  value: AR
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!222 &5237437483414041106
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -17739,11 +17739,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6529668715474781566}
-  category: 0
+  category: 1
+  value: RG
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!65 &5312879011226656854
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -17975,11 +17975,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3716264655996648579}
-  category: 0
+  category: 1
+  value: RB
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &5404871936872220609
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18002,11 +18002,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4352074241270387798}
-  category: 0
+  category: 1
+  value: TC
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!222 &5407708041759694811
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -18066,11 +18066,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4200089436740219754}
-  category: 0
+  category: 1
+  value: FM
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!33 &5422510903024793641
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -18117,11 +18117,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8886281018314273244}
-  category: 4
+  category: 3
+  value: TEMP
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!1 &5439089732089734725
 GameObject:
   m_ObjectHideFlags: 0
@@ -18163,11 +18163,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3405560470594170634}
-  category: 0
+  category: 1
+  value: PR
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!4 &5446048286267334084
 Transform:
   m_ObjectHideFlags: 0
@@ -18642,11 +18642,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2652927003947277644}
-  category: 0
+  category: 1
+  value: P
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &5578566226215167626
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18822,11 +18822,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3694209943768623416}
-  category: 0
+  category: 1
+  value: ER
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &5638812354384914392
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18849,11 +18849,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8888087354976114140}
-  category: 0
+  category: 1
+  value: SC
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!1 &5640334946582231697
 GameObject:
   m_ObjectHideFlags: 0
@@ -19197,11 +19197,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8408985778406586030}
-  category: 0
+  category: 1
+  value: MT
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!1 &5731525424749250705
 GameObject:
   m_ObjectHideFlags: 0
@@ -19616,11 +19616,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 141173618177979867}
-  category: 3
+  category: 2
+  value: CLAISEN_FLASK
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!23 &5860191270812253284
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -19837,11 +19837,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4943263380592242334}
-  category: 0
+  category: 1
+  value: I
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!1 &5900190972333427982
 GameObject:
   m_ObjectHideFlags: 0
@@ -20109,11 +20109,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4549592539855344266}
-  category: 0
+  category: 1
+  value: SB
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &6025421221350061505
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20136,11 +20136,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1193842770697651206}
-  category: 0
+  category: 1
+  value: TL
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!65 &6029093228244799740
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -20606,11 +20606,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8717544801372401032}
-  category: 0
+  category: 1
+  value: PO
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!23 &6199735057550435880
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -20696,11 +20696,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4341375077017237897}
-  category: 0
+  category: 1
+  value: NO
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!23 &6219847477427089450
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -21005,11 +21005,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8051310399476023453}
-  category: 0
+  category: 1
+  value: IR
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &6344772005122841713
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21032,11 +21032,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 67257891548622604}
-  category: 0
+  category: 1
+  value: BA
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!33 &6347008082327680722
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -21093,11 +21093,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2303271715692567559}
-  category: 0
+  category: 1
+  value: NB
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &6362050099604175606
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21120,11 +21120,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 9119944457317828529}
-  category: 0
+  category: 1
+  value: AG
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!4 &6374545207618782213
 Transform:
   m_ObjectHideFlags: 0
@@ -21325,11 +21325,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5724414455751828283}
-  category: 0
+  category: 1
+  value: CO
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!4 &6386305776865608838
 Transform:
   m_ObjectHideFlags: 0
@@ -21828,11 +21828,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2047791875782028002}
-  category: 0
+  category: 1
+  value: PU
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &6567522893880083475
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -21967,11 +21967,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3392835014012472105}
-  category: 0
+  category: 1
+  value: MC
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!23 &6597487799103994734
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -22509,11 +22509,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7829137670836569148}
-  category: 0
+  category: 1
+  value: AL
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!65 &6772701458515473022
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -22665,11 +22665,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1876235901017547561}
-  category: 0
+  category: 1
+  value: PT
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!65 &6810505203600254674
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -23133,11 +23133,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6912584098029008543}
-  category: 0
+  category: 1
+  value: CN
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &6912584098029008543
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23251,11 +23251,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2569928985705648506}
-  category: 0
+  category: 1
+  value: RE
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &6929858645353877843
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23622,11 +23622,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5722246054129799056}
-  category: 0
+  category: 1
+  value: HS
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!23 &7018663719232188898
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -23732,11 +23732,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3081713111038069491}
-  category: 0
+  category: 1
+  value: U
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &7046698985140129042
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23759,11 +23759,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2626245539704898797}
-  category: 3
+  category: 2
+  value: VOLUMETARIC_FLASK
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!1 &7048352583885390307
 GameObject:
   m_ObjectHideFlags: 0
@@ -23840,11 +23840,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 9028039499398209458}
-  category: 3
+  category: 2
+  value: GASBURNER
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!65 &7061505182091843393
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -24284,11 +24284,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2922236977981350087}
-  category: 0
+  category: 1
+  value: N
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!33 &7250162899452975504
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -24958,11 +24958,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7430978678401350973}
-  category: 0
+  category: 1
+  value: HO
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!4 &7459243951070661428
 Transform:
   m_ObjectHideFlags: 0
@@ -25041,11 +25041,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4943745642239429377}
-  category: 3
+  category: 0
+  value: 
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!65 &7501167432367475708
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -25300,11 +25300,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2060156124450056650}
-  category: 0
+  category: 1
+  value: DB
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &7555177413069526110
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25416,11 +25416,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3129677229054073920}
-  category: 0
+  category: 1
+  value: O
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &7594560434610140871
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25647,11 +25647,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7244384533131503555}
-  category: 0
+  category: 1
+  value: RA
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!4 &7665183786436390800
 Transform:
   m_ObjectHideFlags: 0
@@ -25786,11 +25786,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7544583564982859622}
-  category: 0
+  category: 1
+  value: MO
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!1 &7716078755007260854
 GameObject:
   m_ObjectHideFlags: 0
@@ -26030,11 +26030,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1488023815570774156}
-  category: 0
+  category: 1
+  value: AM
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!1 &7770900525872062495
 GameObject:
   m_ObjectHideFlags: 0
@@ -26635,11 +26635,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5290180019175398356}
-  category: 0
+  category: 1
+  value: KR
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!33 &8030133949021072980
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -26696,11 +26696,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3713615641252662975}
-  category: 0
+  category: 1
+  value: CM
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &8043755240900685438
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26723,11 +26723,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1791614775247620274}
-  category: 0
+  category: 1
+  value: CA
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &8047305782184865723
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26825,11 +26825,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4514512501464296573}
-  category: 0
+  category: 1
+  value: C
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!1 &8069961716828678509
 GameObject:
   m_ObjectHideFlags: 0
@@ -26978,11 +26978,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4075673821311801767}
-  category: 0
+  category: 1
+  value: PM
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &8128617072384547419
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27005,11 +27005,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5260029864333126565}
-  category: 0
+  category: 1
+  value: PB
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!23 &8128791387053273523
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -27124,11 +27124,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2876912007179613739}
-  category: 0
+  category: 1
+  value: GE
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!65 &8152125519223991186
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -27284,11 +27284,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8809173246449363259}
-  category: 0
+  category: 1
+  value: AU
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &8232473507769370707
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27421,11 +27421,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1563882026090443310}
-  category: 3
+  category: 2
+  value: KJELDAHL_FLASK
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!65 &8270894952965361379
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -27900,11 +27900,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3360798919774493729}
-  category: 0
+  category: 1
+  value: TH
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!1 &8461397838788509204
 GameObject:
   m_ObjectHideFlags: 0
@@ -28068,11 +28068,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4041671322411695109}
-  category: 0
+  category: 1
+  value: RF
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &8470685649638735323
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -28095,11 +28095,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 9007529535614522700}
-  category: 0
+  category: 1
+  value: DS
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &8472824256218896748
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -28122,11 +28122,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2992435083457666438}
-  category: 0
+  category: 1
+  value: DY
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!222 &8473458924460825769
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -28464,11 +28464,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 9187746723314533880}
-  category: 0
+  category: 1
+  value: H
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &8607973348853450132
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -28682,11 +28682,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 34796448703442774}
-  category: 3
+  category: 2
+  value: RETORT_FLASK
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!224 &8681171122333500165
 RectTransform:
   m_ObjectHideFlags: 0
@@ -29624,11 +29624,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3125365676986509907}
-  category: 0
+  category: 1
+  value: CE
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!4 &8805287681345782510
 Transform:
   m_ObjectHideFlags: 0
@@ -29803,11 +29803,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3864268418273586}
-  category: 0
+  category: 1
+  value: FR
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!1 &8835360685041602801
 GameObject:
   m_ObjectHideFlags: 0
@@ -30051,11 +30051,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8607973348853450132}
-  category: 0
+  category: 1
+  value: HE
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!1 &8907122850302244866
 GameObject:
   m_ObjectHideFlags: 0
@@ -30315,11 +30315,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5534725764774116232}
-  category: 0
+  category: 1
+  value: TS
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!33 &8952234085893696715
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -30392,11 +30392,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8799712102827082974}
-  category: 0
+  category: 1
+  value: PA
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!33 &8962386932639679798
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -30463,11 +30463,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3762374662189484729}
-  category: 0
+  category: 1
+  value: BE
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &9007529535614522700
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30524,11 +30524,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4419705941654621682}
-  category: 0
+  category: 1
+  value: TM
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!23 &9017988288774254904
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -30645,11 +30645,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 722227340221263910}
-  category: 0
+  category: 1
+  value: SI
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!114 &9063978713380960018
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30672,11 +30672,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3412239212846943325}
-  category: 0
+  category: 1
+  value: IN
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!65 &9086975292516124965
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -31014,7 +31014,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!114 &9187746723314533880
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -31141,11 +31141,11 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4992998654939531618}
-  category: 0
+  category: 1
+  value: XE
   spawner: {fileID: 3904655326436809056}
-  elementSymbol: 
-  equipmentName: 
-  environmentCommand: 
+  env: {fileID: 5676659891801965026}
+  statusDisplay: {fileID: 186059925}
 --- !u!1 &9221143066544790067
 GameObject:
   m_ObjectHideFlags: 0

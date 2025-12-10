@@ -50,13 +50,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: manager
+      Data: env
     - Name: $v
       Entry: 7
       Data: 2|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: manager
+      Data: env
     - Name: <UserType>k__BackingField
       Entry: 7
       Data: 3|System.RuntimeType, mscorlib
@@ -110,19 +110,19 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: tempField
+      Data: tempText
     - Name: $v
       Entry: 7
       Data: 6|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: tempField
+      Data: tempText
     - Name: <UserType>k__BackingField
       Entry: 7
       Data: 7|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: TMPro.TMP_InputField, Unity.TextMeshPro
+      Data: TMPro.TMP_Text, Unity.TextMeshPro
     - Name: 
       Entry: 8
       Data: 
@@ -164,13 +164,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: pressField
+      Data: humText
     - Name: $v
       Entry: 7
       Data: 9|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: pressField
+      Data: humText
     - Name: <UserType>k__BackingField
       Entry: 9
       Data: 7
@@ -212,13 +212,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: humidField
+      Data: presText
     - Name: $v
       Entry: 7
       Data: 11|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: humidField
+      Data: presText
     - Name: <UserType>k__BackingField
       Entry: 9
       Data: 7

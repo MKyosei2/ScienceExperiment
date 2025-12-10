@@ -2,40 +2,24 @@
 using UnityEngine;
 using TMPro;
 
-[AddComponentMenu("VRC Lab/EnvUISyncBridge")]
 public class EnvUISyncBridge : UdonSharpBehaviour
 {
-    public ChemEnvironmentManager manager;
-    public TMP_InputField tempField;
-    public TMP_InputField pressField;
-    public TMP_InputField humidField;
+    public ChemEnvironmentManager env;
+    public TMP_Text tempText;
+    public TMP_Text humText;
+    public TMP_Text presText;
 
-    public void _RefreshAllDisplays()
+    public void RefreshUI()
     {
-        if (manager == null) return;
-        tempField.text = manager.Temperature.ToString("F1");
-        pressField.text = manager.Pressure.ToString("F1");
-        humidField.text = manager.Humidity.ToString("F1");
-    }
+        if (env == null) return;
 
-    public void _SetTemperature(string value)
-    {
-        if (manager == null) return;
-        if (float.TryParse(value, out float t))
-            manager._SetTemperature(t);
-    }
+        if (tempText != null)
+            tempText.text = env.Temperature.ToString("F0");
 
-    public void _SetPressure(string value)
-    {
-        if (manager == null) return;
-        if (float.TryParse(value, out float p))
-            manager._SetPressure(p);
-    }
+        if (humText != null)
+            humText.text = env.Humidity.ToString("F0");
 
-    public void _SetHumidity(string value)
-    {
-        if (manager == null) return;
-        if (float.TryParse(value, out float h))
-            manager._SetHumidity(h);
+        if (presText != null)
+            presText.text = env.Pressure.ToString("F0");
     }
 }
