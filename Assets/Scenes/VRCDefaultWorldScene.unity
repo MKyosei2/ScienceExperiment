@@ -906,9 +906,8 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6250058516350236676}
-  envManager: {fileID: 5676659891801965026}
-  type: Pressure
-  step: -0.1
+  env: {fileID: 0}
+  command: 
 --- !u!1 &195960559596832565
 GameObject:
   m_ObjectHideFlags: 0
@@ -3064,9 +3063,8 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3696819331888792245}
-  envManager: {fileID: 5676659891801965026}
-  type: Humidity
-  step: 1
+  env: {fileID: 0}
+  command: 
 --- !u!33 &603119447931327047
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -4792,7 +4790,7 @@ GameObject:
   m_IsActive: 1
 --- !u!114 &1222270298652188706
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -5155,7 +5153,7 @@ MonoBehaviour:
   m_Softness: {x: 0, y: 0}
 --- !u!114 &1390405903587367226
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -8354,9 +8352,8 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3142960292590566573}
-  envManager: {fileID: 5676659891801965026}
-  type: Pressure
-  step: 0.1
+  env: {fileID: 0}
+  command: 
 --- !u!33 &2370444893018393789
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -9857,7 +9854,7 @@ MonoBehaviour:
   statusDisplay: {fileID: 186059925}
 --- !u!114 &2958029535178030733
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -11270,7 +11267,7 @@ MeshRenderer:
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &3349862677565982904
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -13055,15 +13052,8 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6020154472550214558}
-  selectedElementName: 
-  selectedEquipmentName: 
-  db: {fileID: 8779673056929123580}
-  predictor: {fileID: 4000560409695440427}
-  animator: {fileID: 3971481031745522972}
-  spawnParent: {fileID: 5487657345019125194}
-  sourceVessel: {fileID: 8746406110628965935, guid: c321b943e0a66784cb2d22b5dee14754,
-    type: 3}
-  lastEquipmentName: 
+  statusDisplay: {fileID: 186059925}
+  environment: {fileID: 5676659891801965026}
 --- !u!23 &3909573024584508172
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -14416,9 +14406,8 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5104027146165978128}
-  envManager: {fileID: 5676659891801965026}
-  type: Temoerature
-  step: 1
+  env: {fileID: 0}
+  command: 
 --- !u!33 &4341201826343986654
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -19050,8 +19039,8 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4309477518460230341}
   Temperature: 25
-  Pressure: 1
   Humidity: 50
+  Pressure: 1
 --- !u!114 &5678198872910061506
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -24147,7 +24136,7 @@ MeshFilter:
   m_Mesh: {fileID: 3265898953496719496, guid: e936df26e4d9f7e49b814c71597ed22e, type: 3}
 --- !u!114 &7207019024404728284
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -25574,10 +25563,10 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4006987451013869479}
-  manager: {fileID: 5676659891801965026}
-  tempField: {fileID: 6619054496597330770}
-  pressField: {fileID: 2529466125277153794}
-  humidField: {fileID: 3040067153339604017}
+  env: {fileID: 5676659891801965026}
+  tempText: {fileID: 8352343323209717967}
+  humText: {fileID: 6124020685344760417}
+  presText: {fileID: 5137153864981211979}
 --- !u!114 &7644033750315907015
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -26475,9 +26464,8 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4674736385662701851}
-  envManager: {fileID: 5676659891801965026}
-  type: Humidity
-  step: -1
+  env: {fileID: 0}
+  command: 
 --- !u!33 &7947376946043738132
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -28586,7 +28574,7 @@ BoxCollider:
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &8650842171192490670
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -29758,9 +29746,8 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3587222231071798553}
-  envManager: {fileID: 5676659891801965026}
-  type: Temoerature
-  step: -1
+  env: {fileID: 0}
+  command: 
 --- !u!114 &8822481267345160881
 MonoBehaviour:
   m_ObjectHideFlags: 0
