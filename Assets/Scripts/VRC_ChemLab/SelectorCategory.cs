@@ -1,27 +1,7 @@
-﻿using UdonSharp;
-using UnityEngine;
-
-public enum SelectionCategory
+﻿public enum SelectionCategory
 {
+    None,
     Element,
-    Compound,
-    Equipment,
-    Tool,
-    Condition,
-    TemperatureUp,
-    TemperatureDown,
-    HumidityUp,
-    HumidityDown,
-    PressureUp,
-    PressureDown,
-    StartExperiment,
-    ModeToggle,
-    Reset
-}
-
-[AddComponentMenu("VRC Lab/SelectorCategory")]
-public class SelectorCategory : UdonSharpBehaviour
-{
-    [Header("このオブジェクトのカテゴリ")]
-    public SelectionCategory category = SelectionCategory.Element;
+    Tool,        // ← 実験器具
+    Condition     // ← 温度/湿度/圧力などの環境調整
 }

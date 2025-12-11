@@ -4,74 +4,40 @@ using System.Text;
 
 public class ChemElementSpawner : UdonSharpBehaviour
 {
-    [Header("References")]
-    public ChemElementDatabase database;
-    public ChemEnvironmentManager environment;
+    public ChemElementDatabase db;
     public AIRequestSender ai;
 
     private string lastElement = "None";
-    private string lastEquipment = "None";
-    private StringBuilder historyLog = new StringBuilder();
+    private string lastTool = "None";
+    private StringBuilder log = new StringBuilder();
 
     public void SelectElement(string symbol)
     {
         lastElement = symbol;
-        string state = GetMatterState(symbol);
-        Color col = database.GetColor(symbol);
-
-        historyLog.AppendLine($"[Element] {symbol} ({state})");
-        RequestUIRefresh();
+        log.AppendLine($"Selected Element: {symbol}");
     }
 
-    public void SelectEquipment(string equip)
+    public void SelectEquipment(string tool)
     {
-        lastEquipment = equip;
-        historyLog.AppendLine($"[Equipment] {equip}");
-        RequestUIRefresh();
-    }
-
-    public string GetMatterState(string symbol)
-    {
-        float T = environment.Temperature;
-        float melt = database.GetMeltingPoint(symbol);
-        float boil = database.GetBoilingPoint(symbol);
-
-        if (T < melt) return "Solid";
-        if (T < boil) return "Liquid";
-        return "Gas";
-    }
-
-    public void _StartExperiment()
-    {
-        historyLog.AppendLine($"Experiment Started → {lastElement} + {lastEquipment}");
-
-        if (ai != null)
-            ai.RunAIAnalysis();   // ← AIRequestSender に統一
-
-        RequestUIRefresh();
-    }
-
-    public void AppendAILog(string text)
-    {
-        historyLog.AppendLine(text);
-        RequestUIRefresh();
-    }
-
-    public void _ApplyBondUpdate()
-    {
-        historyLog.AppendLine("[AI] Reaction complete → Compound formed.");
-
-        RequestUIRefresh();
+        lastTool = tool;
+        log.AppendLine($"Selected Tool: {tool}");
     }
 
     public string GetLastElement() => lastElement;
-    public string GetLastEquipment() => lastEquipment;
-    public string GetHistoryLog() => historyLog.ToString();
+    public string GetLastEquipment() => lastTool;
 
-    private void RequestUIRefresh()
+    public string GetHistoryLog() => log.ToString();
+
+    public void _StartExperiment()
     {
-        SendCustomEvent("_InternalUIRefresh");
+        string summary = $"Experiment Started:\nElement={lastElement}, Tool={lastTool}";
+        log.AppendLine(summary);
+
+        ai.RequestAI(lastElement, lastTool, this);
     }
 
-    public void _InternalUIRefresh() { }
+    public void AppendAILog(string message)
+    {
+        log.AppendLine(message);
+    }
 }

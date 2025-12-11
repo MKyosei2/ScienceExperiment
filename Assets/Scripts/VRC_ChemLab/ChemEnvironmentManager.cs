@@ -4,23 +4,39 @@ using UnityEngine;
 public class ChemEnvironmentManager : UdonSharpBehaviour
 {
     [Header("Environment Values")]
-    public float Temperature = 25f;   // °C
-    public float Humidity = 50f;      // %
-    public float Pressure = 1f;       // kPa
+    public float Temperature = 25f; // °C
+    public float Humidity = 40f;    // %
+    public float Pressure = 101f;   // kPa
 
-    // ======== 調整処理 ========
-    public void AdjustTemperature(float step)
+    public ChemStatusDisplay statusDisplay;
+
+    // =============================================================
+    // Modify（＋／− 調整の共通入口）
+    // =============================================================
+    public void Modify(string command)
     {
-        Temperature += step;
+        if (command == "TempUp") Temperature += 1f;
+        else if (command == "TempDown") Temperature -= 1f;
+
+        else if (command == "HumUp") Humidity += 1f;
+        else if (command == "HumDown") Humidity -= 1f;
+
+        else if (command == "PresUp") Pressure += 1f;
+        else if (command == "PresDown") Pressure -= 1f;
+
+        ClampValues();
+
+        if (statusDisplay != null)
+            statusDisplay.RefreshUI();
     }
 
-    public void AdjustHumidity(float step)
+    // =============================================================
+    // 値を正常範囲に収める
+    // =============================================================
+    private void ClampValues()
     {
-        Humidity += step;
-    }
-
-    public void AdjustPressure(float step)
-    {
-        Pressure += step;
+        Temperature = Mathf.Clamp(Temperature, -273f, 5000f);
+        Humidity = Mathf.Clamp(Humidity, 0f, 100f);
+        Pressure = Mathf.Clamp(Pressure, 1f, 5000f);
     }
 }

@@ -5,28 +5,26 @@ using TMPro;
 public class ChemStatusDisplay : UdonSharpBehaviour
 {
     public ChemElementSpawner spawner;
-    public ChemEnvironmentManager environment;
-    public TMP_Text displayText;
+    public ChemEnvironmentManager env;
+    public TextMeshProUGUI statusText;
 
     public void RefreshUI()
     {
-        if (displayText == null) return;
+        if (statusText == null) return;
 
-        string e = spawner != null ? spawner.GetLastElement() : "None";
-        string eq = spawner != null ? spawner.GetLastEquipment() : "None";
-        string logs = spawner != null ? spawner.GetHistoryLog() : "";
+        string e = spawner.GetLastElement();
+        string t = spawner.GetLastEquipment();
+        string logs = spawner.GetHistoryLog();
 
-        string temp = environment != null ? environment.Temperature.ToString("F0") : "?";
-        string hum = environment != null ? environment.Humidity.ToString("F0") : "?";
-        string pres = environment != null ? environment.Pressure.ToString("F0") : "?";
-
-        displayText.text =
-            $"=== Experiment Status ===\n" +
+        statusText.text =
+            $"--- Experiment Status ---\n" +
             $"Element: {e}\n" +
-            $"Equipment: {eq}\n" +
-            $"Temperature: {temp} °C\n" +
-            $"Humidity: {hum} %\n" +
-            $"Pressure: {pres} kPa\n" +
-            $"--- Log ---\n{logs}";
+            $"Tool: {t}\n\n" +
+            $"--- Environment ---\n" +
+            $"Temp: {env.Temperature} °C\n" +
+            $"Humidity: {env.Humidity} %\n" +
+            $"Pressure: {env.Pressure} kPa\n\n" +
+            $"--- Logs ---\n" +
+            logs;
     }
 }
