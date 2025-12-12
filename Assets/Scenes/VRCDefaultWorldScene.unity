@@ -415,7 +415,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1957513955779393419}
-  category: 1
+  category: 0
   idOrName: Nd
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -442,7 +442,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5161528280249975656}
-  category: 1
+  category: 0
   idOrName: Sg
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -465,7 +465,7 @@ GameObject:
   m_IsActive: 1
 --- !u!114 &3864268418273586
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -559,7 +559,7 @@ MeshRenderer:
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &34796448703442774
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -605,14 +605,14 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1065525308614012054}
-  category: 1
+  category: 0
   idOrName: Ac
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
   statusDisplay: {fileID: 186059925}
 --- !u!114 &54995756944175676
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -667,7 +667,7 @@ MeshFilter:
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &67257891548622604
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -722,7 +722,7 @@ BoxCollider:
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &108117937186144575
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -821,7 +821,7 @@ RectTransform:
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &141173618177979867
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -924,7 +924,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7555177413069526110}
-  category: 1
+  category: 0
   idOrName: Ga
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -987,9 +987,8 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6250058516350236676}
-  env: {fileID: 0}
-  command: 
-  statusDisplay: {fileID: 0}
+  env: {fileID: 5676659891801965026}
+  command: -1
 --- !u!1 &195960559596832565
 GameObject:
   m_ObjectHideFlags: 0
@@ -1143,7 +1142,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3756296877486450784}
-  category: 3
+  category: 2
   idOrName: presMinus
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -1353,7 +1352,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3384506237524917575}
-  category: 1
+  category: 0
   idOrName: F
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -1381,7 +1380,7 @@ BoxCollider:
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &286784588841735792
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -1436,7 +1435,7 @@ BoxCollider:
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &331500130292314583
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -1482,7 +1481,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3052644698512490334}
-  category: 1
+  category: 0
   idOrName: Ru
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -2582,7 +2581,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 331500130292314583}
-  category: 1
+  category: 0
   idOrName: Zn
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -2609,7 +2608,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4263483162296609484}
-  category: 2
+  category: 1
   idOrName: SCHLENK_FLASK
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -2624,7 +2623,7 @@ MeshFilter:
   m_Mesh: {fileID: 3265898953496719496, guid: be933bd7ad0670c40a63b912b5de97a2, type: 3}
 --- !u!114 &397926797739608533
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -2846,7 +2845,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7621701360966972992}
-  category: 1
+  category: 0
   idOrName: Gd
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -3030,7 +3029,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2887033892656685961}
-  category: 1
+  category: 0
   idOrName: Np
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -3107,7 +3106,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2125829907921130825}
-  category: 1
+  category: 0
   idOrName: S
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -3149,9 +3148,8 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3696819331888792245}
-  env: {fileID: 0}
-  command: 
-  statusDisplay: {fileID: 0}
+  env: {fileID: 5676659891801965026}
+  command: +1
 --- !u!33 &603119447931327047
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -3182,7 +3180,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6621209709786820390}
-  category: 3
+  category: 2
   idOrName: humPlus
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -3230,7 +3228,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 920020035974613744}
-  category: 3
+  category: 2
   idOrName: humMinus
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -3284,7 +3282,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 9021961840797760300}
-  category: 1
+  category: 0
   idOrName: Yb
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -3419,7 +3417,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8550121759929620223}
-  category: 3
+  category: 2
   idOrName: presPlus
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -3464,7 +3462,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &722227340221263910
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -3719,7 +3717,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &790854199954707915
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -3859,7 +3857,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6389781751202260090}
-  category: 1
+  category: 0
   idOrName: B
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -3981,7 +3979,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1708112255895361273}
-  category: 1
+  category: 0
   idOrName: Og
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -4071,7 +4069,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &920020035974613744
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -4141,7 +4139,7 @@ GameObject:
   m_IsActive: 1
 --- !u!114 &970021621949178503
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -4188,7 +4186,7 @@ BoxCollider:
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &979373688431220428
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -4290,7 +4288,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3682430986986751772}
-  category: 1
+  category: 0
   idOrName: Cf
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -4317,7 +4315,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3962805889069651061}
-  category: 1
+  category: 0
   idOrName: Hf
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -4359,7 +4357,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 108117937186144575}
-  category: 1
+  category: 0
   idOrName: Ni
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -4384,7 +4382,7 @@ GameObject:
   m_IsActive: 1
 --- !u!114 &1065525308614012054
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -4451,7 +4449,7 @@ GameObject:
   m_IsActive: 1
 --- !u!114 &1090301999927853959
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -4497,7 +4495,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5331742704562094905}
-  category: 1
+  category: 0
   idOrName: Na
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -4541,7 +4539,7 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 6567522893880083475}
 --- !u!114 &1113342870858985879
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -4692,7 +4690,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1390405903587367226}
-  category: 1
+  category: 0
   idOrName: As
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -4741,7 +4739,7 @@ MeshRenderer:
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &1156206989959726362
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -4767,7 +4765,7 @@ MonoBehaviour:
   publicVariablesSerializationDataFormat: 0
 --- !u!114 &1160520868354191768
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -4835,7 +4833,7 @@ MeshRenderer:
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &1193842770697651206
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -5286,7 +5284,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1090301999927853959}
-  category: 1
+  category: 0
   idOrName: Es
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -5544,7 +5542,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 970021621949178503}
-  category: 1
+  category: 0
   idOrName: Hg
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -5601,7 +5599,7 @@ MeshRenderer:
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &1478298737356924251
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -5677,7 +5675,7 @@ MeshFilter:
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &1488023815570774156
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -5739,7 +5737,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1921557853664354454}
-  category: 1
+  category: 0
   idOrName: Sr
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -5828,7 +5826,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3494411386822005635}
-  category: 1
+  category: 0
   idOrName: Se
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -5876,14 +5874,14 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2433715349115709266}
-  category: 1
+  category: 0
   idOrName: Os
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
   statusDisplay: {fileID: 186059925}
 --- !u!114 &1563882026090443310
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -6085,7 +6083,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8232473507769370707}
-  category: 2
+  category: 1
   idOrName: Test tube
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -6168,7 +6166,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1708112255895361273
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -6235,7 +6233,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6905188671581505292}
-  category: 1
+  category: 0
   idOrName: Zr
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -6283,7 +6281,7 @@ MeshFilter:
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &1753276578391117579
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -6413,7 +6411,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5824442708862759731}
-  category: 1
+  category: 0
   idOrName: Cl
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -6441,7 +6439,7 @@ BoxCollider:
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &1791614775247620274
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -6518,7 +6516,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5578566226215167626}
-  category: 1
+  category: 0
   idOrName: Te
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -6545,7 +6543,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8775459428506835251}
-  category: 1
+  category: 0
   idOrName: Cr
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -6778,7 +6776,7 @@ CanvasRenderer:
   m_CullTransparentMesh: 1
 --- !u!114 &1876235901017547561
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -6939,7 +6937,7 @@ MonoBehaviour:
   publicVariablesSerializationDataFormat: 0
 --- !u!114 &1921557853664354454
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -7014,7 +7012,7 @@ MonoBehaviour:
   m_LayoutPriority: 1
 --- !u!114 &1957513955779393419
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -7145,7 +7143,7 @@ GameObject:
   m_IsActive: 1
 --- !u!114 &1982409954508057172
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -7171,7 +7169,7 @@ MonoBehaviour:
   publicVariablesSerializationDataFormat: 0
 --- !u!114 &1989159696746714137
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -7260,7 +7258,7 @@ MeshRenderer:
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &2041937695690968593
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -7345,14 +7343,14 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1982409954508057172}
-  category: 2
+  category: 1
   idOrName: FLORENCE_FLASK
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
   statusDisplay: {fileID: 186059925}
 --- !u!114 &2047791875782028002
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -7441,7 +7439,7 @@ BoxCollider:
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &2060156124450056650
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -7698,7 +7696,7 @@ GameObject:
   m_IsActive: 1
 --- !u!114 &2125829907921130825
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -7739,7 +7737,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2135273706182621831
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -8238,7 +8236,7 @@ BoxCollider:
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &2303271715692567559
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -8305,7 +8303,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1989159696746714137}
-  category: 1
+  category: 0
   idOrName: Lu
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -8439,9 +8437,8 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3142960292590566573}
-  env: {fileID: 0}
-  command: 
-  statusDisplay: {fileID: 0}
+  env: {fileID: 5676659891801965026}
+  command: +1
 --- !u!33 &2370444893018393789
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -8499,7 +8496,7 @@ MonoBehaviour:
   publicVariablesSerializationDataFormat: 0
 --- !u!114 &2433715349115709266
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -8545,7 +8542,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3378346541392256020}
-  category: 1
+  category: 0
   idOrName: W
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -8817,7 +8814,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3197417755465983826}
-  category: 1
+  category: 0
   idOrName: Y
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -8844,7 +8841,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1113342870858985879}
-  category: 1
+  category: 0
   idOrName: Fe
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -9002,7 +8999,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2041937695690968593}
-  category: 1
+  category: 0
   idOrName: Tb
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -9059,7 +9056,7 @@ MeshFilter:
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &2569928985705648506
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -9165,7 +9162,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2626245539704898797
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -9214,7 +9211,7 @@ MeshFilter:
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &2652927003947277644
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -9260,7 +9257,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4815806508702897716}
-  category: 1
+  category: 0
   idOrName: Mg
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -9311,7 +9308,7 @@ GameObject:
   m_IsActive: 1
 --- !u!114 &2725913979696810063
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -9582,7 +9579,7 @@ MonoBehaviour:
   forceVR: 1
 --- !u!114 &2876912007179613739
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -9638,7 +9635,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2887033892656685961
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -9684,7 +9681,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6223687928988799038}
-  category: 3
+  category: 2
   idOrName: tempMinus
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -9739,7 +9736,7 @@ GameObject:
   m_IsActive: 1
 --- !u!114 &2922236977981350087
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -9908,7 +9905,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3822554301958818683}
-  category: 1
+  category: 0
   idOrName: Pd
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -9935,7 +9932,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7207019024404728284}
-  category: 2
+  category: 1
   idOrName: BEAKER
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -10039,7 +10036,7 @@ GameObject:
   m_IsActive: 1
 --- !u!114 &2978023677682347758
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -10122,7 +10119,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2992435083457666438
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -10231,7 +10228,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6066652912268973826}
-  category: 1
+  category: 0
   idOrName: Sn
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -10266,7 +10263,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7704820866935018363}
-  category: 1
+  category: 0
   idOrName: Cd
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -10499,7 +10496,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3052644698512490334
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -10545,7 +10542,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7257728210155732493}
-  category: 1
+  category: 0
   idOrName: At
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -10573,7 +10570,7 @@ BoxCollider:
   m_Center: {x: 0.0026420662, y: -0.0013433872, z: 0}
 --- !u!114 &3081713111038069491
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -10700,7 +10697,7 @@ MeshRenderer:
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &3125365676986509907
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -10726,7 +10723,7 @@ MonoBehaviour:
   publicVariablesSerializationDataFormat: 0
 --- !u!114 &3129677229054073920
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -10815,7 +10812,7 @@ BoxCollider:
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &3142960292590566573
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -10918,7 +10915,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1902576932931005492}
-  category: 1
+  category: 0
   idOrName: Cs
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -10970,7 +10967,7 @@ BoxCollider:
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &3197417755465983826
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -11381,7 +11378,7 @@ MonoBehaviour:
   publicVariablesSerializationDataFormat: 0
 --- !u!114 &3360798919774493729
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -11442,7 +11439,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2978023677682347758}
-  category: 1
+  category: 0
   idOrName: Mn
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -11503,7 +11500,7 @@ MeshFilter:
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &3378346541392256020
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -11550,7 +11547,7 @@ BoxCollider:
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &3384506237524917575
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -11596,14 +11593,14 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4536285741483301286}
-  category: 2
+  category: 1
   idOrName: CONICAL_FLASK
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
   statusDisplay: {fileID: 186059925}
 --- !u!114 &3392835014012472105
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -11629,7 +11626,7 @@ MonoBehaviour:
   publicVariablesSerializationDataFormat: 0
 --- !u!114 &3405560470594170634
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -11675,14 +11672,14 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 286784588841735792}
-  category: 1
+  category: 0
   idOrName: Ta
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
   statusDisplay: {fileID: 186059925}
 --- !u!114 &3412239212846943325
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -11776,7 +11773,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6347176846420905652}
-  category: 2
+  category: 1
   idOrName: STRAUS_FLASK
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -11843,7 +11840,7 @@ MeshFilter:
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &3494411386822005635
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -11993,7 +11990,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 979373688431220428}
-  category: 1
+  category: 0
   idOrName: Fl
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -12360,7 +12357,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 54995756944175676}
-  category: 1
+  category: 0
   idOrName: Br
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -12387,7 +12384,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 397926797739608533}
-  category: 1
+  category: 0
   idOrName: Cu
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -12414,7 +12411,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4420641248490924179}
-  category: 1
+  category: 0
   idOrName: Ne
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -12458,7 +12455,7 @@ BoxCollider:
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &3682430986986751772
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -12484,7 +12481,7 @@ MonoBehaviour:
   publicVariablesSerializationDataFormat: 0
 --- !u!114 &3694209943768623416
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -12510,7 +12507,7 @@ MonoBehaviour:
   publicVariablesSerializationDataFormat: 0
 --- !u!114 &3696819331888792245
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -12559,7 +12556,7 @@ MonoBehaviour:
   buttons: []
 --- !u!114 &3713615641252662975
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -12585,7 +12582,7 @@ MonoBehaviour:
   publicVariablesSerializationDataFormat: 0
 --- !u!114 &3716264655996648579
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -12680,14 +12677,14 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8536665738059350234}
-  category: 1
+  category: 0
   idOrName: Rh
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
   statusDisplay: {fileID: 186059925}
 --- !u!114 &3756296877486450784
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -12713,7 +12710,7 @@ MonoBehaviour:
   publicVariablesSerializationDataFormat: 0
 --- !u!114 &3762374662189484729
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -12926,7 +12923,7 @@ MeshFilter:
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &3815659129547214302
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -12952,7 +12949,7 @@ MonoBehaviour:
   publicVariablesSerializationDataFormat: 0
 --- !u!114 &3822554301958818683
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -13228,7 +13225,7 @@ GameObject:
   m_IsActive: 1
 --- !u!114 &3951165084457736900
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -13311,7 +13308,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3962805889069651061
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -13337,7 +13334,7 @@ MonoBehaviour:
   publicVariablesSerializationDataFormat: 0
 --- !u!114 &3963010477975238489
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -13411,7 +13408,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7379084891360822790}
-  category: 1
+  category: 0
   idOrName: K
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -13489,7 +13486,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1753276578391117579}
-  category: 1
+  category: 0
   idOrName: Lr
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -13519,7 +13516,7 @@ MonoBehaviour:
   db: {fileID: 8779673056929123580}
 --- !u!114 &4000955062610354407
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -13710,7 +13707,7 @@ MeshFilter:
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &4075673821311801767
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -13919,7 +13916,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1478298737356924251}
-  category: 1
+  category: 0
   idOrName: Rn
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -13968,7 +13965,7 @@ MeshRenderer:
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &4158314398071789676
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -14050,7 +14047,7 @@ GameObject:
   m_IsActive: 1
 --- !u!114 &4200089436740219754
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -14123,7 +14120,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2135273706182621831}
-  category: 1
+  category: 0
   idOrName: Md
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -14195,7 +14192,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4263483162296609484
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -14262,7 +14259,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1160520868354191768}
-  category: 2
+  category: 1
   idOrName: ROUND-BOTTOM_FLASK
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -14378,7 +14375,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3951165084457736900}
-  category: 1
+  category: 0
   idOrName: V
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -14494,9 +14491,8 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5104027146165978128}
-  env: {fileID: 0}
-  command: 
-  statusDisplay: {fileID: 0}
+  env: {fileID: 5676659891801965026}
+  command: +1
 --- !u!33 &4341201826343986654
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -14507,7 +14503,7 @@ MeshFilter:
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &4341375077017237897
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -14533,7 +14529,7 @@ MonoBehaviour:
   publicVariablesSerializationDataFormat: 0
 --- !u!114 &4352074241270387798
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -14579,7 +14575,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4158314398071789676}
-  category: 1
+  category: 0
   idOrName: Sm
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -14650,7 +14646,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2958029535178030733}
-  category: 1
+  category: 0
   idOrName: Eu
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -14677,7 +14673,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7477635746074717293}
-  category: 1
+  category: 0
   idOrName: Bk
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -14838,7 +14834,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4000955062610354407}
-  category: 1
+  category: 0
   idOrName: Nh
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -14861,7 +14857,7 @@ MeshFilter:
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &4419705941654621682
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -14887,7 +14883,7 @@ MonoBehaviour:
   publicVariablesSerializationDataFormat: 0
 --- !u!114 &4420641248490924179
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -15156,7 +15152,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3815659129547214302}
-  category: 1
+  category: 0
   idOrName: Bh
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -15213,7 +15209,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!114 &4514512501464296573
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -15284,7 +15280,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4536285741483301286
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -15367,7 +15363,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4549592539855344266
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -15605,7 +15601,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4899106478506818629}
-  category: 1
+  category: 0
   idOrName: Lv
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -15627,7 +15623,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4674736385662701851
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -16100,7 +16096,7 @@ BoxCollider:
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &4815806508702897716
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -16316,7 +16312,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4385987572813169398}
-  category: 1
+  category: 0
   idOrName: Li
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -16364,7 +16360,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 790854199954707915}
-  category: 1
+  category: 0
   idOrName: La
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -16391,7 +16387,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3349862677565982904}
-  category: 2
+  category: 1
   idOrName: Spoit
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -16456,7 +16452,7 @@ MeshRenderer:
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &4899106478506818629
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -16514,7 +16510,7 @@ GameObject:
   m_IsActive: 1
 --- !u!114 &4943263380592242334
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -16540,7 +16536,7 @@ MonoBehaviour:
   publicVariablesSerializationDataFormat: 0
 --- !u!114 &4943745642239429377
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -16679,7 +16675,7 @@ BoxCollider:
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &4992998654939531618
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -16897,7 +16893,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3963010477975238489}
-  category: 1
+  category: 0
   idOrName: Bi
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -17250,7 +17246,7 @@ MeshRenderer:
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &5161528280249975656
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -17448,7 +17444,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2725913979696810063}
-  category: 1
+  category: 0
   idOrName: Ti
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -17576,7 +17572,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1156206989959726362}
-  category: 1
+  category: 0
   idOrName: Ar
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -17648,7 +17644,7 @@ MeshRenderer:
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &5260029864333126565
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -17771,7 +17767,7 @@ BoxCollider:
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &5290180019175398356
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -17817,7 +17813,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6529668715474781566}
-  category: 1
+  category: 0
   idOrName: Rg
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -18053,7 +18049,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3716264655996648579}
-  category: 1
+  category: 0
   idOrName: Rb
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -18080,7 +18076,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4352074241270387798}
-  category: 1
+  category: 0
   idOrName: Tc
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -18144,7 +18140,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4200089436740219754}
-  category: 1
+  category: 0
   idOrName: Fm
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -18195,7 +18191,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8886281018314273244}
-  category: 3
+  category: 2
   idOrName: tempPlus
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -18241,7 +18237,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3405560470594170634}
-  category: 1
+  category: 0
   idOrName: Pr
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -18584,7 +18580,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5534725764774116232
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -18720,14 +18716,14 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2652927003947277644}
-  category: 1
+  category: 0
   idOrName: P
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
   statusDisplay: {fileID: 186059925}
 --- !u!114 &5578566226215167626
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -18900,7 +18896,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3694209943768623416}
-  category: 1
+  category: 0
   idOrName: Er
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -18927,7 +18923,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8888087354976114140}
-  category: 1
+  category: 0
   idOrName: Sc
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -19204,7 +19200,7 @@ GameObject:
   m_IsActive: 1
 --- !u!114 &5722246054129799056
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -19276,7 +19272,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8408985778406586030}
-  category: 1
+  category: 0
   idOrName: Mt
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -19561,7 +19557,7 @@ MeshRenderer:
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &5824442708862759731
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -19695,7 +19691,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 141173618177979867}
-  category: 2
+  category: 1
   idOrName: CLAISEN_FLASK
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -19916,7 +19912,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4943263380592242334}
-  category: 1
+  category: 0
   idOrName: I
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -20188,7 +20184,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4549592539855344266}
-  category: 1
+  category: 0
   idOrName: Sb
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -20215,7 +20211,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1193842770697651206}
-  category: 1
+  category: 0
   idOrName: Tl
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -20325,7 +20321,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6066652912268973826
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -20685,7 +20681,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8717544801372401032}
-  category: 1
+  category: 0
   idOrName: Po
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -20775,7 +20771,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4341375077017237897}
-  category: 1
+  category: 0
   idOrName: No
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -20892,7 +20888,7 @@ GameObject:
   m_IsActive: 1
 --- !u!114 &6250058516350236676
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -21084,7 +21080,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8051310399476023453}
-  category: 1
+  category: 0
   idOrName: Ir
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -21111,7 +21107,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 67257891548622604}
-  category: 1
+  category: 0
   idOrName: Ba
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -21126,7 +21122,7 @@ MeshFilter:
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &6347176846420905652
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -21172,7 +21168,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2303271715692567559}
-  category: 1
+  category: 0
   idOrName: Nb
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -21199,7 +21195,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 9119944457317828529}
-  category: 1
+  category: 0
   idOrName: Ag
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -21404,7 +21400,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5724414455751828283}
-  category: 1
+  category: 0
   idOrName: Co
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -21447,7 +21443,7 @@ BoxCollider:
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &6389781751202260090
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -21741,7 +21737,7 @@ MonoBehaviour:
   buttons: []
 --- !u!114 &6529668715474781566
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -21907,7 +21903,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2047791875782028002}
-  category: 1
+  category: 0
   idOrName: Pu
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -21961,6 +21957,7 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1222270298652188706}
   spawner: {fileID: 3904655326436809056}
+  statusDisplay: {fileID: 0}
 --- !u!23 &6577516259119073906
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -22046,7 +22043,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3392835014012472105}
-  category: 1
+  category: 0
   idOrName: Mc
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -22274,7 +22271,7 @@ MonoBehaviour:
   m_InputValidator: {fileID: 0}
 --- !u!114 &6621209709786820390
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -22588,7 +22585,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7829137670836569148}
-  category: 1
+  category: 0
   idOrName: Al
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -22744,7 +22741,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1876235901017547561}
-  category: 1
+  category: 0
   idOrName: Pt
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -23166,7 +23163,7 @@ BoxCollider:
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &6905188671581505292
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -23212,14 +23209,14 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6912584098029008543}
-  category: 1
+  category: 0
   idOrName: Cn
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
   statusDisplay: {fileID: 186059925}
 --- !u!114 &6912584098029008543
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -23330,7 +23327,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2569928985705648506}
-  category: 1
+  category: 0
   idOrName: Re
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -23701,7 +23698,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5722246054129799056}
-  category: 1
+  category: 0
   idOrName: Hs
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -23811,7 +23808,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3081713111038069491}
-  category: 1
+  category: 0
   idOrName: U
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -23838,7 +23835,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2626245539704898797}
-  category: 2
+  category: 1
   idOrName: VOLUMETARIC_FLASK
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -23919,7 +23916,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 9028039499398209458}
-  category: 2
+  category: 1
   idOrName: Gasburner
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -24317,7 +24314,7 @@ GameObject:
   m_IsActive: 1
 --- !u!114 &7244384533131503555
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -24363,7 +24360,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2922236977981350087}
-  category: 1
+  category: 0
   idOrName: N
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -24399,7 +24396,7 @@ BoxCollider:
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &7257728210155732493
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -24821,7 +24818,7 @@ MeshRenderer:
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &7379084891360822790
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -24894,7 +24891,7 @@ BoxCollider:
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &7430978678401350973
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -25037,7 +25034,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7430978678401350973}
-  category: 1
+  category: 0
   idOrName: Ho
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -25074,7 +25071,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7477635746074717293
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -25120,7 +25117,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4943745642239429377}
-  category: 2
+  category: 1
   idOrName: EAR-SHAPED_FLASK
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -25333,7 +25330,7 @@ BoxCollider:
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &7544583564982859622
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -25379,14 +25376,14 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2060156124450056650}
-  category: 1
+  category: 0
   idOrName: Db
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
   statusDisplay: {fileID: 186059925}
 --- !u!114 &7555177413069526110
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -25495,7 +25492,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3129677229054073920}
-  category: 1
+  category: 0
   idOrName: O
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -25607,7 +25604,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7621701360966972992
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -25724,7 +25721,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7244384533131503555}
-  category: 1
+  category: 0
   idOrName: Ra
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -25817,7 +25814,7 @@ BoxCollider:
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &7704820866935018363
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -25863,7 +25860,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7544583564982859622}
-  category: 1
+  category: 0
   idOrName: Mo
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -26108,7 +26105,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1488023815570774156}
-  category: 1
+  category: 0
   idOrName: Am
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -26268,7 +26265,7 @@ MeshRenderer:
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &7829137670836569148
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -26553,9 +26550,8 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4674736385662701851}
-  env: {fileID: 0}
-  command: 
-  statusDisplay: {fileID: 0}
+  env: {fileID: 5676659891801965026}
+  command: -1
 --- !u!33 &7947376946043738132
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -26713,7 +26709,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5290180019175398356}
-  category: 1
+  category: 0
   idOrName: Kr
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -26774,7 +26770,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3713615641252662975}
-  category: 1
+  category: 0
   idOrName: Cm
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -26801,7 +26797,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1791614775247620274}
-  category: 1
+  category: 0
   idOrName: Ca
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -26838,7 +26834,7 @@ MonoBehaviour:
   m_PixelsPerUnitMultiplier: 1
 --- !u!114 &8051310399476023453
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -26903,7 +26899,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4514512501464296573}
-  category: 1
+  category: 0
   idOrName: C
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -27056,7 +27052,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4075673821311801767}
-  category: 1
+  category: 0
   idOrName: Pm
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -27083,7 +27079,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5260029864333126565}
-  category: 1
+  category: 0
   idOrName: Pb
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -27202,7 +27198,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2876912007179613739}
-  category: 1
+  category: 0
   idOrName: Ge
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -27362,14 +27358,14 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8809173246449363259}
-  category: 1
+  category: 0
   idOrName: Au
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
   statusDisplay: {fileID: 186059925}
 --- !u!114 &8232473507769370707
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -27499,7 +27495,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1563882026090443310}
-  category: 2
+  category: 1
   idOrName: KJELDAHL_FLASK
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -27782,7 +27778,7 @@ BoxCollider:
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &8408985778406586030
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -27978,7 +27974,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3360798919774493729}
-  category: 1
+  category: 0
   idOrName: Th
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -28146,7 +28142,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4041671322411695109}
-  category: 1
+  category: 0
   idOrName: Rf
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -28173,7 +28169,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 9007529535614522700}
-  category: 1
+  category: 0
   idOrName: Ds
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -28200,7 +28196,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2992435083457666438}
-  category: 1
+  category: 0
   idOrName: Dy
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -28301,7 +28297,7 @@ MeshFilter:
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &8536665738059350234
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -28327,7 +28323,7 @@ MonoBehaviour:
   publicVariablesSerializationDataFormat: 0
 --- !u!114 &8550121759929620223
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -28542,14 +28538,14 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 9187746723314533880}
-  category: 1
+  category: 0
   idOrName: H
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
   statusDisplay: {fileID: 186059925}
 --- !u!114 &8607973348853450132
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -28760,7 +28756,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 34796448703442774}
-  category: 2
+  category: 1
   idOrName: RETORT_FLASK
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -28894,7 +28890,7 @@ Camera:
   m_StereoSeparation: 0.022
 --- !u!114 &8717544801372401032
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -28963,7 +28959,7 @@ MonoBehaviour:
   modeRouter: {fileID: 1112880494854366686}
 --- !u!114 &8775459428506835251
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -29656,7 +29652,7 @@ MeshRenderer:
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &8799712102827082974
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -29702,7 +29698,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3125365676986509907}
-  category: 1
+  category: 0
   idOrName: Ce
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -29774,7 +29770,7 @@ MeshRenderer:
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &8809173246449363259
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -29836,9 +29832,8 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3587222231071798553}
-  env: {fileID: 0}
-  command: 
-  statusDisplay: {fileID: 0}
+  env: {fileID: 5676659891801965026}
+  command: -1
 --- !u!114 &8822481267345160881
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -29881,7 +29876,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3864268418273586}
-  category: 1
+  category: 0
   idOrName: Fr
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -29994,7 +29989,7 @@ MonoBehaviour:
   publicVariablesSerializationDataFormat: 0
 --- !u!114 &8888087354976114140
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -30129,7 +30124,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8607973348853450132}
-  category: 1
+  category: 0
   idOrName: He
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -30393,7 +30388,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5534725764774116232}
-  category: 1
+  category: 0
   idOrName: Ts
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -30470,7 +30465,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8799712102827082974}
-  category: 1
+  category: 0
   idOrName: Pa
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -30541,14 +30536,14 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3762374662189484729}
-  category: 1
+  category: 0
   idOrName: Be
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
   statusDisplay: {fileID: 186059925}
 --- !u!114 &9007529535614522700
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -30602,7 +30597,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4419705941654621682}
-  category: 1
+  category: 0
   idOrName: Tm
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -30651,7 +30646,7 @@ MeshRenderer:
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &9021961840797760300
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -30677,7 +30672,7 @@ MonoBehaviour:
   publicVariablesSerializationDataFormat: 0
 --- !u!114 &9028039499398209458
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -30723,7 +30718,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 722227340221263910}
-  category: 1
+  category: 0
   idOrName: Si
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -30750,7 +30745,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3412239212846943325}
-  category: 1
+  category: 0
   idOrName: In
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -30969,7 +30964,7 @@ GameObject:
   m_IsActive: 1
 --- !u!114 &9119944457317828529
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -31219,7 +31214,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4992998654939531618}
-  category: 1
+  category: 0
   idOrName: Xe
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}

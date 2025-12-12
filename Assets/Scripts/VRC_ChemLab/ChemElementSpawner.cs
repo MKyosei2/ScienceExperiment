@@ -25,7 +25,6 @@ public class ChemElementSpawner : UdonSharpBehaviour
 
     public string GetLastElement() => lastElement;
     public string GetLastEquipment() => lastTool;
-
     public string GetHistoryLog() => log.ToString();
 
     public void _StartExperiment()
