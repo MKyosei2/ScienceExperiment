@@ -1191,7 +1191,7 @@ MeshRenderer:
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &231070649814928683
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -4042,7 +4042,7 @@ GameObject:
   - component: {fileID: 1222270298652188706}
   - component: {fileID: 3884166293071575618}
   - component: {fileID: 8650842171192490670}
-  m_Layer: 5
+  m_Layer: 13
   m_Name: StartButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5396,7 +5396,7 @@ MeshRenderer:
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &1425236723161581782
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -6902,7 +6902,7 @@ GameObject:
   - component: {fileID: 7398911245662282649}
   - component: {fileID: 2903468889180730208}
   - component: {fileID: 1425236723161581782}
-  m_Layer: 5
+  m_Layer: 13
   m_Name: ResetButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9299,7 +9299,7 @@ GameObject:
   - component: {fileID: 7887311964168074434}
   - component: {fileID: 4202264204543821130}
   - component: {fileID: 231070649814928683}
-  m_Layer: 5
+  m_Layer: 13
   m_Name: ModeToggleButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9708,7 +9708,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1425236723161581782}
-  category: 0
+  category: 3
   idOrName: ResetButton
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -13068,7 +13068,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8650842171192490670}
-  category: 0
+  category: 3
   idOrName: StartButton
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -14093,7 +14093,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 231070649814928683}
-  category: 0
+  category: 3
   idOrName: ModeToggleButton
   elementSpawner: {fileID: 3904655326436809056}
   environmentManager: {fileID: 5676659891801965026}
@@ -21957,7 +21957,6 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1222270298652188706}
   spawner: {fileID: 3904655326436809056}
-  statusDisplay: {fileID: 0}
 --- !u!23 &6577516259119073906
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -24844,7 +24843,7 @@ MonoBehaviour:
   publicVariablesSerializationDataFormat: 0
 --- !u!114 &7398911245662282649
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -26406,7 +26405,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7887311964168074434
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -26972,7 +26971,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3516917825734829259}
-  m_Layer: 5
+  m_Layer: 13
   m_Name: Buttons
   m_TagString: Untagged
   m_Icon: {fileID: 0}
