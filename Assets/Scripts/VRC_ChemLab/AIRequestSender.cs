@@ -13,8 +13,8 @@ public class AIRequestSender : UdonSharpBehaviour
      * Timing
      * ================================ */
     [Header("Timing")]
-    [Range(0.02f, 0.2f)] public float realtimeTick = 0.1f;   // 見た目・反応（速い）
-    [Range(0.2f, 1.0f)] public float thinkingTick = 0.4f;   // 重度分析（遅い）
+    [Range(0.02f, 0.2f)] public float realtimeTick = 0.1f;
+    [Range(0.2f, 1.0f)] public float thinkingTick = 0.4f;
 
     /* ================================
      * Science tuning
@@ -32,8 +32,16 @@ public class AIRequestSender : UdonSharpBehaviour
 
     [System.NonSerialized] public string inputFormula;
     [System.NonSerialized] public string toolId;
+
+    // ★ 内部正式名
     [System.NonSerialized] public string productFormula;
     [System.NonSerialized] public string reactionTag;
+
+    // ★ 互換API（Spawner用）
+    public string predictedProductFormula
+    {
+        get { return productFormula; }
+    }
 
     [System.NonSerialized] public float progress01;
 
@@ -60,10 +68,9 @@ public class AIRequestSender : UdonSharpBehaviour
     private float _rtAccum;
     private float _thinkAccum;
 
-    // 内部“思考結果”（高速レイヤーが参照）
-    private float _reactionPotential;   // この条件で反応が起きやすいか
-    private float _gasLikelihood;        // 気体・煙方向
-    private float _energyRelease;        // 発熱・発光方向
+    private float _reactionPotential;
+    private float _gasLikelihood;
+    private float _energyRelease;
     private bool _isDangerous;
 
     /* ================================
@@ -85,8 +92,10 @@ public class AIRequestSender : UdonSharpBehaviour
 
         if (reactionPredictor != null)
         {
-            reactionPredictor.Predict(inputFormula, toolId,
-                out productFormula, out reactionTag, out explainText);
+            reactionPredictor.Predict(
+                inputFormula, toolId,
+                out productFormula, out reactionTag, out explainText
+            );
         }
         else
         {
@@ -104,7 +113,17 @@ public class AIRequestSender : UdonSharpBehaviour
     }
 
     /* ================================
-     * Called from Spawner (every frame)
+     * Compatibility API (Spawner expects this)
+     * ================================ */
+    public bool ShouldTick(float deltaTime)
+    {
+        // 旧Spawnerは「AI側でTick管理していない」前提
+        // 新AIは内部でTick管理しているため、常に true でOK
+        return true;
+    }
+
+    /* ================================
+     * Called every frame from Spawner
      * ================================ */
     public void TickRealtime(
         float stir, float pour, float heat, float shake, float tempC)
@@ -115,14 +134,12 @@ public class AIRequestSender : UdonSharpBehaviour
         _rtAccum += dt;
         _thinkAccum += dt;
 
-        /* ---------- Layer 2 : Deep Thinking ---------- */
         if (_thinkAccum >= thinkingTick)
         {
             _thinkAccum = 0f;
             RunDeepAnalysis(stir, pour, heat, shake, tempC);
         }
 
-        /* ---------- Layer 1 : Instant Reaction ---------- */
         if (_rtAccum >= realtimeTick)
         {
             _rtAccum = 0f;
@@ -136,28 +153,24 @@ public class AIRequestSender : UdonSharpBehaviour
     private void RunDeepAnalysis(
         float stir, float pour, float heat, float shake, float tempC)
     {
-        // 1) 状態評価
         ElementState st = ElementState.Solid;
         if (elementDb != null)
             st = elementDb.GetStateFromFormulaAtTemp(inputFormula, tempC);
 
         _gasLikelihood =
-            (st == ElementState.Gas) ? 1f :
-            (st == ElementState.Liquid) ? 0.4f : 0f;
+            st == ElementState.Gas ? 1f :
+            st == ElementState.Liquid ? 0.4f : 0f;
 
-        // 2) 反応ポテンシャル
         float thermal = Mathf.Clamp01((tempC - 20f) / 80f) * temperatureWeight;
         float mixing = Mathf.Clamp01(stir * 0.6f + pour * 0.4f) * mixingWeight;
 
         _reactionPotential = thermal + mixing;
 
-        // 3) エネルギー解放傾向
         _energyRelease =
             reactionTag == "oxidation"
                 ? thermal * energyReleaseWeight
                 : mixing * 0.5f;
 
-        // 4) 危険性評価
         if (elementDb != null)
         {
             int hz = elementDb.GetHazardFromFormula(inputFormula);
@@ -166,7 +179,6 @@ public class AIRequestSender : UdonSharpBehaviour
                 safetyText = elementDb.BuildSafetyHintFromFormula(inputFormula, reactionTag);
         }
 
-        // 5) メタ判断（ヒント生成）
         if (_reactionPotential < 0.2f)
             hintText = "条件が弱いです。加熱や攪拌を試してください。";
         else if (_reactionPotential > 1.2f)
@@ -181,7 +193,6 @@ public class AIRequestSender : UdonSharpBehaviour
     private void RunFastReaction(
         float stir, float pour, float heat, float shake)
     {
-        // 進行度（即応）
         float drive =
             heat * 0.4f +
             stir * 0.25f +
@@ -190,12 +201,11 @@ public class AIRequestSender : UdonSharpBehaviour
 
         progress01 = Mathf.Clamp01(progress01 + drive * _reactionPotential * realtimeTick);
 
-        // FXは“思考結果”を即座に反映
         fxHeat = Mathf.Clamp01(_energyRelease);
         fxGlow = Mathf.Clamp01(_energyRelease * 0.8f);
         fxSmoke = Mathf.Clamp01(_gasLikelihood);
         fxWave = Mathf.Clamp01(stir + pour);
-        fxFoam = Mathf.Clamp01(mixingClamp(stir, pour));
+        fxFoam = Mathf.Clamp01(stir * 0.6f + pour * 0.4f);
         fxSpark = Mathf.Clamp01(_energyRelease * heat);
 
         if (progress01 >= 1f)
@@ -204,10 +214,5 @@ public class AIRequestSender : UdonSharpBehaviour
             isRunning = false;
             explainText = "条件と操作に基づき、反応が完了しました。";
         }
-    }
-
-    private float mixingClamp(float s, float p)
-    {
-        return Mathf.Clamp01(s * 0.6f + p * 0.4f);
     }
 }
