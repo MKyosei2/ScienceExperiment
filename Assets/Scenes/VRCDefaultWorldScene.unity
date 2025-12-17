@@ -13137,8 +13137,25 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6020154472550214558}
-  db: {fileID: 8779673056929123580}
+  elementDb: {fileID: 8779673056929123580}
+  environment: {fileID: 5676659891801965026}
   ai: {fileID: 6097180532586197565}
+  sampleVisual: {fileID: 0}
+  reactionAnimator: {fileID: 0}
+  heatSource: {fileID: 2967992304926382365}
+  hintText: {fileID: 0}
+  explainText: {fileID: 0}
+  safetyText: {fileID: 0}
+  debugText: {fileID: 0}
+  realtimeOnlyInVR: 1
+  stirRadiusMeters: 0.25
+  stirSpeedToMax: 2
+  shakeAccelToMax: 12
+  pourTiltToMaxDeg: 80
+  pourTiltStartDeg: 25
+  heatNearMeters: 0.2
+  heatFarMeters: 0.8
+  containerTransform: {fileID: 2203407528741229537}
 --- !u!23 &3909573024584508172
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -13380,12 +13397,18 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 505589921589476758}
-  foam: {fileID: 0}
-  heat: {fileID: 0}
-  spark: {fileID: 0}
-  glowRenderer: {fileID: 0}
-  liquidSurface: {fileID: 8664170460588894993, guid: c321b943e0a66784cb2d22b5dee14754,
-    type: 3}
+  foamParticles: {fileID: 0}
+  smokeParticles: {fileID: 0}
+  sparkParticles: {fileID: 0}
+  glowRenderers: []
+  emissionProperty: _EmissionColor
+  emissionMax: 2
+  heatRenderers: []
+  heatProperty: _GlowIntensity
+  heatMax: 1
+  waveRenderers: []
+  waveProperty: _WaveStrength
+  waveMax: 1
 --- !u!114 &3977827684132286071
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13513,7 +13536,12 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5678198872910061506}
-  db: {fileID: 8779673056929123580}
+  enableIonicBuild: 0
+  oxidationAnion: O
+  chlorideAnion: Cl
+  burnerKeyword: Gasburner
+  flaskKeyword: FLASK
+  beakerKeyword: Beaker
 --- !u!114 &4000955062610354407
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -20448,6 +20476,13 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1523450786629067230}
+  elementDb: {fileID: 8779673056929123580}
+  reactionPredictor: {fileID: 4000560409695440427}
+  tickInterval: 0.1
+  reactionSpeed: 1
+  minInputToProgress: 0.05
+  enableHints: 1
+  enableSafetyHints: 1
 --- !u!65 &6098803003583990712
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -29131,482 +29166,10 @@ MonoBehaviour:
   - Lv
   - Ts
   - Og
-  Groups:
-  - nonmetal
-  - noble
-  - metal
-  - metal
-  - metalloid
-  - nonmetal
-  - nonmetal
-  - nonmetal
-  - halogen
-  - noble
-  - metal
-  - metal
-  - metal
-  - metalloid
-  - nonmetal
-  - nonmetal
-  - halogen
-  - noble
-  - metal
-  - metal
-  - metal
-  - metal
-  - metal
-  - metal
-  - metal
-  - metal
-  - metal
-  - metal
-  - metal
-  - metal
-  - metal
-  - metalloid
-  - metalloid
-  - nonmetal
-  - halogen
-  - noble
-  - metal
-  - metal
-  - metal
-  - metal
-  - metal
-  - metal
-  - metal
-  - metal
-  - metal
-  - metal
-  - metal
-  - metal
-  - metal
-  - metal
-  - metalloid
-  - metalloid
-  - halogen
-  - noble
-  - metal
-  - metal
-  - lanact
-  - lanact
-  - lanact
-  - lanact
-  - lanact
-  - lanact
-  - lanact
-  - lanact
-  - lanact
-  - lanact
-  - lanact
-  - lanact
-  - lanact
-  - lanact
-  - lanact
-  - metal
-  - metal
-  - metal
-  - metal
-  - metal
-  - metal
-  - metal
-  - metal
-  - metal
-  - metal
-  - metal
-  - metal
-  - metal
-  - halogen
-  - noble
-  - metal
-  - metal
-  - lanact
-  - lanact
-  - lanact
-  - lanact
-  - lanact
-  - lanact
-  - lanact
-  - lanact
-  - lanact
-  - lanact
-  - lanact
-  - lanact
-  - lanact
-  - lanact
-  - lanact
-  - metal
-  - metal
-  - metal
-  - metal
-  - metal
-  - metal
-  - metal
-  - metal
-  - metal
-  - metal
-  - metal
-  - metal
-  - metal
-  - halogen
-  - noble
-  Colors:
-  - {r: 0.9, g: 0.9, b: 0.9, a: 1}
-  - {r: 0.8, g: 0.8, b: 1, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.5, g: 0.5, b: 0.6, a: 1}
-  - {r: 0.9, g: 0.9, b: 0.9, a: 1}
-  - {r: 0.9, g: 0.9, b: 0.9, a: 1}
-  - {r: 0.9, g: 0.9, b: 0.9, a: 1}
-  - {r: 0.9, g: 0.9, b: 0.3, a: 1}
-  - {r: 0.8, g: 0.8, b: 1, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.5, g: 0.5, b: 0.6, a: 1}
-  - {r: 0.9, g: 0.9, b: 0.9, a: 1}
-  - {r: 0.9, g: 0.9, b: 0.9, a: 1}
-  - {r: 0.9, g: 0.9, b: 0.3, a: 1}
-  - {r: 0.8, g: 0.8, b: 1, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.5, g: 0.5, b: 0.6, a: 1}
-  - {r: 0.5, g: 0.5, b: 0.6, a: 1}
-  - {r: 0.9, g: 0.9, b: 0.9, a: 1}
-  - {r: 0.9, g: 0.9, b: 0.3, a: 1}
-  - {r: 0.8, g: 0.8, b: 1, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.5, g: 0.5, b: 0.6, a: 1}
-  - {r: 0.5, g: 0.5, b: 0.6, a: 1}
-  - {r: 0.9, g: 0.9, b: 0.3, a: 1}
-  - {r: 0.8, g: 0.8, b: 1, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
-  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
-  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
-  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
-  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
-  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
-  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
-  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
-  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
-  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
-  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
-  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
-  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
-  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
-  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.9, g: 0.9, b: 0.3, a: 1}
-  - {r: 0.8, g: 0.8, b: 1, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
-  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
-  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
-  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
-  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
-  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
-  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
-  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
-  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
-  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
-  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
-  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
-  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
-  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
-  - {r: 0.6, g: 0.7, b: 0.6, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  - {r: 0.9, g: 0.9, b: 0.3, a: 1}
-  - {r: 0.8, g: 0.8, b: 1, a: 1}
-  MeltingPoints:
-  - -50
-  - -200
-  - 400
-  - 400
-  - 600
-  - -50
-  - -50
-  - -50
-  - -100
-  - -200
-  - 400
-  - 400
-  - 400
-  - 600
-  - -50
-  - -50
-  - -100
-  - -200
-  - 400
-  - 400
-  - 400
-  - 400
-  - 400
-  - 400
-  - 400
-  - 400
-  - 400
-  - 400
-  - 400
-  - 400
-  - 400
-  - 600
-  - 600
-  - -50
-  - -100
-  - -200
-  - 400
-  - 400
-  - 400
-  - 400
-  - 400
-  - 400
-  - 400
-  - 400
-  - 400
-  - 400
-  - 400
-  - 400
-  - 400
-  - 400
-  - 600
-  - 600
-  - -100
-  - -200
-  - 400
-  - 400
-  - 900
-  - 900
-  - 900
-  - 900
-  - 900
-  - 900
-  - 900
-  - 900
-  - 900
-  - 900
-  - 900
-  - 900
-  - 900
-  - 900
-  - 900
-  - 400
-  - 400
-  - 400
-  - 400
-  - 400
-  - 400
-  - 400
-  - 400
-  - 400
-  - 400
-  - 400
-  - 400
-  - 400
-  - -100
-  - -200
-  - 400
-  - 400
-  - 900
-  - 900
-  - 900
-  - 900
-  - 900
-  - 900
-  - 900
-  - 900
-  - 900
-  - 900
-  - 900
-  - 900
-  - 900
-  - 900
-  - 900
-  - 400
-  - 400
-  - 400
-  - 400
-  - 400
-  - 400
-  - 400
-  - 400
-  - 400
-  - 400
-  - 400
-  - 400
-  - 400
-  - -100
-  - -200
-  BoilingPoints:
-  - 200
-  - -150
-  - 2500
-  - 2500
-  - 1800
-  - 200
-  - 200
-  - 200
-  - 60
-  - -150
-  - 2500
-  - 2500
-  - 2500
-  - 1800
-  - 200
-  - 200
-  - 60
-  - -150
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 1800
-  - 1800
-  - 200
-  - 60
-  - -150
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 1800
-  - 1800
-  - 60
-  - -150
-  - 2500
-  - 2500
-  - 3000
-  - 3000
-  - 3000
-  - 3000
-  - 3000
-  - 3000
-  - 3000
-  - 3000
-  - 3000
-  - 3000
-  - 3000
-  - 3000
-  - 3000
-  - 3000
-  - 3000
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 60
-  - -150
-  - 2500
-  - 2500
-  - 3000
-  - 3000
-  - 3000
-  - 3000
-  - 3000
-  - 3000
-  - 3000
-  - 3000
-  - 3000
-  - 3000
-  - 3000
-  - 3000
-  - 3000
-  - 3000
-  - 3000
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 2500
-  - 60
-  - -150
+  DisplayColors: []
+  MeltingPointC: []
+  BoilingPointC: []
+  HazardFlags: 
 --- !u!23 &8794427367480929940
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -31170,6 +30733,10 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4790389179293529185}
+  solidObj: {fileID: 0}
+  liquidObj: {fileID: 0}
+  gasObj: {fileID: 0}
+  targetRenderers: []
 --- !u!65 &9216582626265214905
 BoxCollider:
   m_ObjectHideFlags: 0
