@@ -1,218 +1,196 @@
 ﻿using UdonSharp;
 using UnityEngine;
 
+/// <summary>
+/// AIRequestSender
+/// ・ChemElementSpawner 完全互換
+/// ・ReactionPredictor 実API完全準拠
+/// ・外部AIなし（UdonSharp内完結）
+/// ・VFX / SFX / 教育テキストを統合制御
+/// </summary>
 public class AIRequestSender : UdonSharpBehaviour
 {
-    /* ================================
-     * References
-     * ================================ */
-    public ChemElementDatabase elementDb;
+    // =====================================================
+    // 外部参照
+    // =====================================================
+    [Header("External")]
     public ReactionPredictor reactionPredictor;
+    public ChemExplainGenerator explainGenerator;
 
-    /* ================================
-     * Timing
-     * ================================ */
-    [Header("Timing")]
-    [Range(0.02f, 0.2f)] public float realtimeTick = 0.1f;
-    [Range(0.2f, 1.0f)] public float thinkingTick = 0.4f;
+    // =====================================================
+    // Spawner が参照する状態
+    // =====================================================
+    [Header("Session State")]
+    public bool isRunning;
+    public bool isComplete;
+    [Range(0f, 1f)] public float progress01;
 
-    /* ================================
-     * Science tuning
-     * ================================ */
-    [Header("Science Sensitivity")]
-    [Range(0f, 3f)] public float temperatureWeight = 1.2f;
-    [Range(0f, 3f)] public float mixingWeight = 1.0f;
-    [Range(0f, 3f)] public float energyReleaseWeight = 1.0f;
+    public string predictedProductFormula;
+    public string reactionTag;
 
-    /* ================================
-     * Runtime state
-     * ================================ */
-    [System.NonSerialized] public bool isRunning;
-    [System.NonSerialized] public bool isComplete;
+    // =====================================================
+    // FX（視覚・音）
+    // =====================================================
+    [Header("FX Output")]
+    [Range(0f, 1f)] public float fxGlow;
+    [Range(0f, 1f)] public float fxHeat;
+    [Range(0f, 1f)] public float fxFoam;
+    [Range(0f, 1f)] public float fxSmoke;
+    [Range(0f, 1f)] public float fxSpark;
+    [Range(0f, 1f)] public float fxWave;
 
-    [System.NonSerialized] public string inputFormula;
-    [System.NonSerialized] public string toolId;
+    // =====================================================
+    // UIテキスト
+    // =====================================================
+    [Header("Text Output")]
+    [TextArea] public string hintText;
+    [TextArea] public string explainText;
+    [TextArea] public string safetyText;
 
-    // ★ 内部正式名
-    [System.NonSerialized] public string productFormula;
-    [System.NonSerialized] public string reactionTag;
+    // =====================================================
+    // 内部
+    // =====================================================
+    private string _inputFormula;
+    private string _toolId;
 
-    // ★ 互換API（Spawner用）
-    public string predictedProductFormula
+    private float _elapsed;
+    private const float SESSION_DURATION = 3.0f;
+
+    // =====================================================
+    // ChemElementSpawner 互換 API（※完全一致）
+    // =====================================================
+
+    /// <summary>
+    /// セッション開始
+    /// </summary>
+    public void StartSession(string formula, string toolId)
     {
-        get { return productFormula; }
-    }
-
-    [System.NonSerialized] public float progress01;
-
-    /* ================================
-     * FX outputs (0..1)
-     * ================================ */
-    [System.NonSerialized] public float fxHeat;
-    [System.NonSerialized] public float fxFoam;
-    [System.NonSerialized] public float fxGlow;
-    [System.NonSerialized] public float fxSmoke;
-    [System.NonSerialized] public float fxWave;
-    [System.NonSerialized] public float fxSpark;
-
-    /* ================================
-     * Text outputs
-     * ================================ */
-    [System.NonSerialized] public string hintText;
-    [System.NonSerialized] public string explainText;
-    [System.NonSerialized] public string safetyText;
-
-    /* ================================
-     * Internal accumulators
-     * ================================ */
-    private float _rtAccum;
-    private float _thinkAccum;
-
-    private float _reactionPotential;
-    private float _gasLikelihood;
-    private float _energyRelease;
-    private bool _isDangerous;
-
-    /* ================================
-     * Session start
-     * ================================ */
-    public void StartSession(string formula, string equipment)
-    {
-        inputFormula = formula;
-        toolId = equipment;
+        _inputFormula = formula;
+        _toolId = toolId;
 
         isRunning = true;
         isComplete = false;
         progress01 = 0f;
+        _elapsed = 0f;
 
-        fxHeat = fxFoam = fxGlow = fxSmoke = fxWave = fxSpark = 0f;
-        hintText = "";
-        explainText = "";
-        safetyText = "";
+        // 初期化
+        predictedProductFormula = "";
+        reactionTag = "none";
+
+        fxGlow = fxHeat = fxFoam = fxSmoke = fxSpark = fxWave = 0f;
+        hintText = explainText = safetyText = "";
+
+        // 初回推論（操作量ゼロ）
+        RunInference(0f, 0f, 0f, 0f);
+    }
+
+    /// <summary>
+    /// Spawner から毎フレーム呼ばれる
+    /// </summary>
+    public bool ShouldTick(float deltaTime)
+    {
+        return isRunning && !isComplete;
+    }
+
+    /// <summary>
+    /// 実験進行
+    /// </summary>
+    public void TickRealtime(
+        float deltaTime,
+        float stir,
+        float pour,
+        float heat,
+        float shake
+    )
+    {
+        if (!isRunning || isComplete) return;
+
+        _elapsed += deltaTime;
+        progress01 = Mathf.Clamp01(_elapsed / SESSION_DURATION);
+
+        RunInference(stir, pour, heat, shake);
+
+        if (progress01 >= 1f)
+        {
+            isRunning = false;
+            isComplete = true;
+        }
+    }
+
+    // =====================================================
+    // 推論コア（U#内 疑似AI）
+    // =====================================================
+
+    private void RunInference(
+        float stir,
+        float pour,
+        float heat,
+        float shake
+    )
+    {
+        // -------- ReactionPredictor 正式API --------
+        string localSafetyHint = "";
 
         if (reactionPredictor != null)
         {
             reactionPredictor.Predict(
-                inputFormula, toolId,
-                out productFormula, out reactionTag, out explainText
+                _inputFormula,
+                _toolId,
+                out reactionTag,
+                out predictedProductFormula,
+                out localSafetyHint
+            );
+        }
+
+        // -------- スコアリング（AI風） --------
+        float reactionPotential =
+            stir * 0.4f +
+            pour * 0.3f +
+            heat * 0.8f +
+            shake * 0.2f;
+
+        float gasLikelihood = Mathf.Clamp01(
+            (reactionTag == "chloride" ? 0.6f : 0.2f) +
+            heat * 0.2f +
+            shake * 0.2f
+        );
+
+        float energyRelease = Mathf.Clamp01(
+            (reactionTag == "oxidation" ? 0.7f : 0.3f) +
+            heat * 0.5f
+        );
+
+        // -------- FX生成（progress連動） --------
+        fxHeat = energyRelease * progress01;
+        fxGlow = energyRelease * 0.8f * progress01;
+        fxFoam = gasLikelihood * reactionPotential * progress01;
+        fxSmoke = gasLikelihood * heat * progress01;
+        fxSpark = reactionTag == "oxidation" ? heat * progress01 : 0f;
+        fxWave = (stir + pour) * progress01;
+
+        // -------- 教育用テキスト --------
+        if (explainGenerator != null)
+        {
+            explainGenerator.Build(
+                _inputFormula,
+                _toolId,
+                reactionTag,
+                stir, pour, heat, shake,
+                25f,
+                reactionPotential,
+                gasLikelihood,
+                energyRelease,
+                localSafetyHint.Length > 0,
+                out hintText,
+                out explainText,
+                out safetyText
             );
         }
         else
         {
-            productFormula = inputFormula;
-            reactionTag = "none";
-        }
-
-        _reactionPotential = 0f;
-        _gasLikelihood = 0f;
-        _energyRelease = 0f;
-        _isDangerous = false;
-
-        _rtAccum = 0f;
-        _thinkAccum = 0f;
-    }
-
-    /* ================================
-     * Compatibility API (Spawner expects this)
-     * ================================ */
-    public bool ShouldTick(float deltaTime)
-    {
-        // 旧Spawnerは「AI側でTick管理していない」前提
-        // 新AIは内部でTick管理しているため、常に true でOK
-        return true;
-    }
-
-    /* ================================
-     * Called every frame from Spawner
-     * ================================ */
-    public void TickRealtime(
-        float stir, float pour, float heat, float shake, float tempC)
-    {
-        if (!isRunning) return;
-
-        float dt = Time.deltaTime;
-        _rtAccum += dt;
-        _thinkAccum += dt;
-
-        if (_thinkAccum >= thinkingTick)
-        {
-            _thinkAccum = 0f;
-            RunDeepAnalysis(stir, pour, heat, shake, tempC);
-        }
-
-        if (_rtAccum >= realtimeTick)
-        {
-            _rtAccum = 0f;
-            RunFastReaction(stir, pour, heat, shake);
-        }
-    }
-
-    /* ================================
-     * Layer 2 : Extended Thinking
-     * ================================ */
-    private void RunDeepAnalysis(
-        float stir, float pour, float heat, float shake, float tempC)
-    {
-        ElementState st = ElementState.Solid;
-        if (elementDb != null)
-            st = elementDb.GetStateFromFormulaAtTemp(inputFormula, tempC);
-
-        _gasLikelihood =
-            st == ElementState.Gas ? 1f :
-            st == ElementState.Liquid ? 0.4f : 0f;
-
-        float thermal = Mathf.Clamp01((tempC - 20f) / 80f) * temperatureWeight;
-        float mixing = Mathf.Clamp01(stir * 0.6f + pour * 0.4f) * mixingWeight;
-
-        _reactionPotential = thermal + mixing;
-
-        _energyRelease =
-            reactionTag == "oxidation"
-                ? thermal * energyReleaseWeight
-                : mixing * 0.5f;
-
-        if (elementDb != null)
-        {
-            int hz = elementDb.GetHazardFromFormula(inputFormula);
-            _isDangerous = hz != 0;
-            if (_isDangerous)
-                safetyText = elementDb.BuildSafetyHintFromFormula(inputFormula, reactionTag);
-        }
-
-        if (_reactionPotential < 0.2f)
-            hintText = "条件が弱いです。加熱や攪拌を試してください。";
-        else if (_reactionPotential > 1.2f)
-            hintText = "反応が活発です。変化を観察してください。";
-        else
-            hintText = "条件を調整して反応の違いを比較しましょう。";
-    }
-
-    /* ================================
-     * Layer 1 : Fast Reaction
-     * ================================ */
-    private void RunFastReaction(
-        float stir, float pour, float heat, float shake)
-    {
-        float drive =
-            heat * 0.4f +
-            stir * 0.25f +
-            pour * 0.2f +
-            shake * 0.15f;
-
-        progress01 = Mathf.Clamp01(progress01 + drive * _reactionPotential * realtimeTick);
-
-        fxHeat = Mathf.Clamp01(_energyRelease);
-        fxGlow = Mathf.Clamp01(_energyRelease * 0.8f);
-        fxSmoke = Mathf.Clamp01(_gasLikelihood);
-        fxWave = Mathf.Clamp01(stir + pour);
-        fxFoam = Mathf.Clamp01(stir * 0.6f + pour * 0.4f);
-        fxSpark = Mathf.Clamp01(_energyRelease * heat);
-
-        if (progress01 >= 1f)
-        {
-            isComplete = true;
-            isRunning = false;
-            explainText = "条件と操作に基づき、反応が完了しました。";
+            hintText = "操作量を変えて反応の違いを観察してください。";
+            explainText = "反応タイプ：" + reactionTag;
+            safetyText = localSafetyHint;
         }
     }
 }
