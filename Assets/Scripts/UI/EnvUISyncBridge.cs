@@ -8,6 +8,14 @@ public class EnvUISyncBridge : UdonSharpBehaviour
 
     public override void OnDeserialization()
     {
-        status.RefreshUI();
+        if (status != null) status.RefreshUI();
     }
+
+
+// Orchestrator/ボタンから呼ぶ用（明示更新）
+public void _RefreshAllDisplays()
+{
+    if (status != null) status.RefreshUI();
+}
+
 }

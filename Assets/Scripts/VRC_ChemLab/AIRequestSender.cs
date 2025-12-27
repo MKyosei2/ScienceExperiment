@@ -32,6 +32,22 @@ public class AIRequestSender : UdonSharpBehaviour
     // =====================================================
     [Header("Generated (Fixed until Reset)")]
     public string reactionTag;
+
+
+[Header("Context (optional)")]
+public ChemElementDatabase elementDb;
+public ReactionPredictor predictor;
+public ChemExplainGenerator explainGenerator;
+public ChemicalReactionDatabase compoundDb;
+
+[Header("Environment snapshot (optional)")]
+public float envTempC = 25f;
+public float envHumidity = 40f;
+public float envPressure = 101f;
+
+[Header("Determinism")]
+public bool useOverrideSeed = false;
+public int sessionSeedOverride = 0;
     public string predictedProductFormula;
 
     [TextArea] public string hintText;
@@ -72,6 +88,8 @@ public class AIRequestSender : UdonSharpBehaviour
 
     private string _inputFormula;
     private string _toolId;
+
+    private string _predictorExplain;
 
     private float _elapsed;
     private const float SESSION_DURATION = 3.0f;
@@ -132,9 +150,43 @@ public class AIRequestSender : UdonSharpBehaviour
         fxFoam = _cachedGasLevel * _cachedReactionStrength * progress01;
         fxSmoke = _cachedGasLevel * heat * progress01;
         fxSpark = reactionTag == "oxidation" ? heat * progress01 : 0f;
-        fxWave = (stir + pour) * progress01;
 
-        if (progress01 >= 1f)
+fxWave = (stir + pour) * progress01;
+
+// 進行中のヒント/説明を操作に追従（任意）
+if (explainGenerator != null)
+{
+    bool isDangerous = false;
+    if (elementDb != null)
+    {
+        int hz = elementDb.GetHazardFromFormula(predictedProductFormula);
+        isDangerous = hz != 0;
+    }
+
+    string h, e, s;
+    explainGenerator.Build(
+        _inputFormula,
+        _toolId,
+        reactionTag,
+        stir,
+        pour,
+        heat,
+        shake,
+        envTempC,
+        _cachedReactionStrength,
+        _cachedGasLevel,
+        _cachedEnergy,
+        isDangerous,
+        out h, out e, out s
+    );
+
+    hintText = h;
+    explainText = e;
+    safetyText = s;
+}
+
+if (progress01 >= 1f)
+
         {
             isRunning = false;
             isComplete = true;
@@ -144,21 +196,29 @@ public class AIRequestSender : UdonSharpBehaviour
     /// <summary>
     /// リセット（生成AIの記憶を破棄）
     /// </summary>
-    public void ResetSession()
-    {
-        isRunning = false;
-        isComplete = false;
-        progress01 = 0f;
+    
+public void ResetSession()
+{
+    isRunning = false;
+    isComplete = false;
+    progress01 = 0f;
 
-        _hasGenerated = false;
+    reactionTag = "";
+    predictedProductFormula = "";
 
-        reactionTag = "";
-        predictedProductFormula = "";
+    hintText = "";
+    explainText = "";
+    safetyText = "";
 
-        hintText = explainText = safetyText = "";
+    fxGlow = fxHeat = fxFoam = fxSmoke = fxSpark = fxWave = 0f;
 
-        fxGlow = fxHeat = fxFoam = fxSmoke = fxSpark = fxWave = 0f;
-    }
+    _hasGenerated = false;
+    _elapsed = 0f;
+
+    _cachedReactionStrength = 0f;
+    _cachedGasLevel = 0f;
+    _cachedEnergy = 0f;
+}
 
     // =====================================================
     // ===== 生成AIコア（1回だけ実行）=====
@@ -170,18 +230,36 @@ public class AIRequestSender : UdonSharpBehaviour
         _hasGenerated = true;
 
         // -------------------------------------------------
-        // セッション固有Seed（完全新規・固定）
-        // -------------------------------------------------
-        _sessionSeed = (int)(Time.time * 1000f) % 1000000;
-        Random.InitState(_sessionSeed);
+        
+// -------------------------------------------------
+// セッション固有Seed（固定/再現性）
+// -------------------------------------------------
+if (useOverrideSeed)
+{
+    _sessionSeed = sessionSeedOverride;
+}
+else
+{
+    _sessionSeed = (int)(Time.time * 1000f) % 1000000;
+}
+Random.InitState(_sessionSeed);
 
-        // -------------------------------------------------
-        // 疑似推論（ルール＋生成）
-        // -------------------------------------------------
-        reactionTag = InferReactionTag(_inputFormula, _toolId);
-        predictedProductFormula = InferProduct(_inputFormula, reactionTag);
-
-        _cachedReactionStrength = Random.Range(0.4f, 0.9f);
+// -------------------------------------------------
+        
+// -------------------------------------------------
+// 推論（Predictorがあればそれを優先）
+// -------------------------------------------------
+string predictorExplain = "";
+if (predictor != null)
+{
+    predictor.Predict(_inputFormula, _toolId, out predictedProductFormula, out reactionTag, out predictorExplain);
+}
+else
+{
+    reactionTag = InferReactionTag(_inputFormula, _toolId);
+    predictedProductFormula = InferProduct(_inputFormula, reactionTag);
+}
+_cachedReactionStrength = Random.Range(0.4f, 0.9f);
         _cachedGasLevel = Random.Range(0.1f, 0.7f);
         _cachedEnergy = Random.Range(0.2f, 0.95f);
 
@@ -195,25 +273,56 @@ public class AIRequestSender : UdonSharpBehaviour
         indStability = Random.Range(0.3f, 1.0f);
 
         // -------------------------------------------------
-        // テキスト生成（完全新規・固定）
+        
+                _predictorExplain = predictorExplain;
+
         // -------------------------------------------------
-        hintText = Pick(new string[] {
-            "条件を少し変えて反応の違いを観察してください。",
-            "操作を1つずつ変えると因果が見えます。",
-            "攪拌や加熱を調整して変化を比較しましょう。"
-        });
+        // テキスト生成（ExplainGeneratorがあればそれを優先）
+        // -------------------------------------------------
+        bool isDangerous = false;
+        if (elementDb != null)
+        {
+            int hz = elementDb.GetHazardFromFormula(predictedProductFormula);
+            isDangerous = hz != 0;
+        }
 
-        explainText =
-            "【生成推論】この実験は「" + reactionTag + "」方向の変化を示します。\n" +
-            "【個体差】サイズ=" + Percent(indSize) +
-            " / 色ずれ=" + Percent(Mathf.Abs(indColorShift)) +
-            " / 粗さ=" + Percent(indRoughness) + "\n" +
-            "【注記】この結果は本セッション固有です。";
+        if (explainGenerator != null)
+        {
+            string h, e, s;
+            explainGenerator.Build(
+                _inputFormula,
+                _toolId,
+                reactionTag,
+                0f, 0f, 0f, 0f,
+                envTempC,
+                _cachedReactionStrength,
+                _cachedGasLevel,
+                _cachedEnergy,
+                isDangerous,
+                out h, out e, out s
+            );
 
-        safetyText =
-            _cachedEnergy > 0.75f
-                ? "注意：反応エネルギーが高めです。演出に従って観察してください。"
-                : "安全：通常の観察条件です。";
+            hintText = h;
+            explainText = string.IsNullOrEmpty(_predictorExplain) ? e : (e + "\n【予測】" + _predictorExplain);
+            safetyText = s;
+        }
+        else
+        {
+            hintText = Pick(new string[] {
+                "条件を少し変えて反応の違いを観察してください。",
+                "操作を1つずつ変えると因果が見えます。",
+                "攪拌や加熱を調整して変化を比較しましょう。"
+            });
+
+	            explainText =
+	                "【生成推論】この実験は「" + reactionTag + "」方向の変化を示します。\n" +
+	                "入力: " + _inputFormula + " / 器具: " + _toolId + "\n" +
+	                "生成物(推定): " + predictedProductFormula + "\n" +
+	                "（※外部AIなし：テンプレ＋条件分岐）";
+
+            safetyText = "安全注意：換気と保護具（ゴーグル等）を推奨します。";
+        }
+
     }
 
     // =====================================================

@@ -39,7 +39,7 @@ public class ReactionPredictor : UdonSharpBehaviour
         bool looksCompound = LooksLikeCompound(input);
 
         // 加熱系（酸化方向）
-        if (tool.Contains(burnerKeyword))
+        if (tool.Contains(burnerKeyword) || tool == "burner" || tool == "Gasburner")
         {
             reactionTag = "oxidation";
             explain = "加熱を伴う変化として扱います（酸化/発熱/発光など）。";
@@ -67,7 +67,7 @@ public class ReactionPredictor : UdonSharpBehaviour
         }
 
         // ビーカー系（溶解/混合）
-        if (tool.Contains(beakerKeyword))
+        if (tool.Contains(beakerKeyword) || tool == "beaker" || tool == "Beaker")
         {
             reactionTag = "dissolve";
             explain = "溶解・混合による変化として扱います。";

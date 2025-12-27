@@ -8,6 +8,12 @@ public class ChemEnvironmentManager : UdonSharpBehaviour
     public float Humidity = 40f;    // %
     public float Pressure = 101f;   // kPa
 
+[Header("Defaults")]
+public float defaultTemperature = 25f;
+public float defaultHumidity = 40f;
+public float defaultPressure = 101f;
+
+
     public ChemStatusDisplay statusDisplay;
 
     // =============================================================
@@ -30,7 +36,24 @@ public class ChemEnvironmentManager : UdonSharpBehaviour
             statusDisplay.RefreshUI();
     }
 
-    // =============================================================
+    
+
+// =============================================================
+// Reset（Orchestrator/ボタンから呼ばれる）
+// =============================================================
+public void _ResetToDefaults()
+{
+    Temperature = defaultTemperature;
+    Humidity = defaultHumidity;
+    Pressure = defaultPressure;
+
+    ClampValues();
+
+    if (statusDisplay != null)
+        statusDisplay.RefreshUI();
+}
+
+// =============================================================
     // 値を正常範囲に収める
     // =============================================================
     private void ClampValues()

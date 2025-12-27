@@ -11,6 +11,15 @@ public class ChemElementSpawner : UdonSharpBehaviour
     public ChemEnvironmentManager environment; // 既存がある前提（無い場合はnull可）
     public AIRequestSender ai;
 
+    [Header("Logic / Explain (optional)")]
+    public ReactionPredictor predictor;
+    public ChemExplainGenerator explainGenerator;
+    public ChemicalReactionDatabase compoundDb;
+
+    [Header("Determinism (recommended for school)")]
+    public bool deterministicSeed = true;
+    public int fixedSeed = 0; // 0=auto hash
+
     [Header("Visual")]
     public ChemVisualController sampleVisual;     // 元素/生成物の見た目
     public ChemReactionAnimator reactionAnimator; // 泡/熱/煙/発光など
@@ -112,6 +121,28 @@ public class ChemElementSpawner : UdonSharpBehaviour
             AppendDebug("AIRequestSender is null.");
             return;
         }
+        // AIに環境/DB/説明器を渡す（任意）
+        ai.envTempC = GetEnvTempC();
+        ai.envHumidity = GetEnvHumidity();
+        ai.envPressure = GetEnvPressure();
+        ai.elementDb = elementDb;
+        ai.predictor = predictor;
+        ai.explainGenerator = explainGenerator;
+        ai.compoundDb = compoundDb;
+
+        // 学校/科学館向け：入力＋環境が同じなら同じ結果になる Seed
+        if (deterministicSeed)
+        {
+            int seed = fixedSeed != 0
+                ? fixedSeed
+                : ComputeSeed(_selectedInput, _selectedTool, ai.envTempC, ai.envHumidity, ai.envPressure);
+            ai.useOverrideSeed = true;
+            ai.sessionSeedOverride = seed;
+        }
+        else
+        {
+            ai.useOverrideSeed = false;
+        }
 
         ai.StartSession(_selectedInput, _selectedTool);
 
@@ -120,6 +151,34 @@ public class ChemElementSpawner : UdonSharpBehaviour
 
         // 進行中は入力見た目、完了で生成物へ切替（Update側で実施）
         WriteUI();
+    }
+
+    // 実験リセット（リセットボタン/Orchestratorから呼ぶ）
+    public void _ResetExperiment()
+    {
+        _currentProduct = "";
+        _selectedInput = "H";
+        _selectedTool = "None";
+
+        // ログクリア
+        if (_history != null) _history.Length = 0;
+        AppendHistory("Experiment Reset");
+
+        // AI リセット
+        if (ai != null) ai.ResetSession();
+
+        // 演出停止
+        if (reactionAnimator != null) reactionAnimator.StopAll();
+
+        // 見た目初期化
+        if (sampleVisual != null)
+        {
+            sampleVisual.SetElementAppearance(Color.white, ElementState.Liquid, null);
+            sampleVisual.UpdateEnvironment(GetEnvTempC(), GetEnvHumidity(), GetEnvPressure());
+        }
+
+        WriteUI();
+        WriteUIRealtime();
     }
 
     private void Update()
@@ -146,9 +205,12 @@ public class ChemElementSpawner : UdonSharpBehaviour
         ComputeMotionInputs(out stir01, out pour01, out heat01, out shake01);
 
         float envTemp = GetEnvTempC();
+        ai.envTempC = envTemp;
+        ai.envHumidity = GetEnvHumidity();
+        ai.envPressure = GetEnvPressure();
 
         // AIへ入力
-        ai.TickRealtime(stir01, pour01, heat01, shake01, envTemp);
+        ai.TickRealtime(_dtSafe, stir01, pour01, heat01, shake01);
 
         // 演出反映（連続制御）
         if (reactionAnimator != null)
@@ -252,7 +314,9 @@ public class ChemElementSpawner : UdonSharpBehaviour
         Color c = elementDb.GetColorFromFormula(symbolOrFormula);
         ElementState st = elementDb.GetStateFromFormulaAtTemp(symbolOrFormula, temp);
 
-        sampleVisual.SetElementAppearance(c, st);
+        Material mat = elementDb.GetMaterialFromFormula(symbolOrFormula, st);
+
+        sampleVisual.SetElementAppearance(c, st, mat);
         sampleVisual.UpdateEnvironment(temp, GetEnvHumidity(), GetEnvPressure());
     }
 
@@ -271,6 +335,46 @@ public class ChemElementSpawner : UdonSharpBehaviour
         if (environment != null) return environment.Pressure;
         return 101f;
     }
+
+    // 入力・条件から再現可能なSeedを作る（学校/科学館向け）
+    private int ComputeSeed(string input, string tool, float tempC, float humidity, float pressure)
+    {
+        // UdonSharp は long の剰余演算などが不安定になりやすいので、int 範囲で安全に回す
+        // mod を小さく保つことで (hash * 31) が int を超えないようにする
+        const int mod = 1000000; // 0〜999,999
+
+        int hash = 17;
+
+        hash = (hash * 31 + HashString(input, mod)) % mod;
+        hash = (hash * 31 + HashString(tool, mod)) % mod;
+
+        int t = Mathf.RoundToInt(tempC * 10f);
+        int h = Mathf.RoundToInt(humidity * 10f);
+        int p = Mathf.RoundToInt(pressure * 10f);
+
+        // 値の取り込み（mod が小さいのでオーバーフローしない）
+        hash = (hash * 31 + (t & 0x7fffffff)) % mod;
+        hash = (hash * 31 + (h & 0x7fffffff)) % mod;
+        hash = (hash * 31 + (p & 0x7fffffff)) % mod;
+
+        // seed 0 は避ける
+        if (hash == 0) hash = 1;
+        return hash;
+    }
+
+    private int HashString(string s, int mod)
+    {
+        if (string.IsNullOrEmpty(s)) return 0;
+
+        int h = 0;
+        for (int i = 0; i < s.Length; i++)
+        {
+            h = (h * 31 + (int)s[i]) % mod;
+        }
+        return h;
+    }
+
+
 
     private void WriteUI()
     {

@@ -12,7 +12,15 @@ public class ChemStatusDisplay : UdonSharpBehaviour
     {
         if (statusText == null) return;
 
-        string e = spawner.GetLastElement();
+
+if (spawner == null || env == null)
+{
+    statusText.text = "Experiment Status: (missing references)";
+    return;
+}
+
+string e = spawner.GetLastElement();
+
         string t = spawner.GetLastEquipment();
         string logs = spawner.GetHistoryLog();
 

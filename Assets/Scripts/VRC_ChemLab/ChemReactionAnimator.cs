@@ -171,4 +171,17 @@ public class ChemReactionAnimator : UdonSharpBehaviour
     }
 
     private float Clamp01(float v) { return v < 0f ? 0f : (v > 1f ? 1f : v); }
+
+
+// まとめて停止（リセット用）
+public void StopAll()
+{
+    SetFoamLevel(0f);
+    SetSmokeLevel(0f);
+    SetSparkLevel(0f);
+    SetGlowLevel(0f);
+    SetHeatLevel(0f);
+    SetWaveLevel(0f);
+}
+
 }

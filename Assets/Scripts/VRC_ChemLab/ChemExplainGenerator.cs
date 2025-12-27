@@ -13,6 +13,11 @@ public class ChemExplainGenerator : UdonSharpBehaviour
     [Range(0, 2)]
     public int verbosity = 1; // 0=短い / 1=標準 / 2=少し詳しい
 
+
+[Header("Optional Databases")]
+public ChemElementDatabase elementDb;
+public ChemicalReactionDatabase compoundDb;
+
     // =====================================================
     // 外部から呼ばれる生成API
     // =====================================================
@@ -102,7 +107,35 @@ public class ChemExplainGenerator : UdonSharpBehaviour
         {
             safety = "安全：通常の観察条件です。";
         }
+    
+
+// -----------------------
+// 追加：化合物DB（2元素だけの式の場合）
+// -----------------------
+if (compoundDb != null && elementDb != null && !string.IsNullOrEmpty(inputFormula))
+{
+    string[] s = new string[16];
+    int[] n = new int[16];
+    int used = elementDb.ParseFormulaNoParens(inputFormula, s, n);
+    int distinct = 0;
+    string a = "", b = "";
+    for (int i = 0; i < used; i++)
+    {
+        if (n[i] <= 0) continue;
+        if (distinct == 0) a = s[i];
+        else if (distinct == 1) b = s[i];
+        distinct++;
+        if (distinct >= 2) break;
     }
+
+    if (distinct == 2)
+    {
+        string cname = compoundDb.GetCompoundName(a, b);
+        string cdesc = compoundDb.GetDescription(cname);
+        explain += "\n\n【化合物】" + cname + "\n" + cdesc;
+    }
+}
+}
 
     // =====================================================
     // 内部ロジック

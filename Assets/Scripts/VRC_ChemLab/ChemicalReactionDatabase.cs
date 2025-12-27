@@ -12,7 +12,11 @@ public class ChemicalReactionDatabase : UdonSharpBehaviour
             string t = a; a = b; b = t;
         }
 
-        // 典型例（足したい場合は増やしてください）
+        
+// 同じ元素同士は化合物ではない
+if (a == b) return a + "（単体）";
+
+// 典型例（足したい場合は増やしてください）
         if (a == "H" && b == "O") return "H₂O（水）";
         if (a == "Na" && b == "Cl") return "NaCl（塩化ナトリウム / 食塩）";
         if (a == "C" && b == "O") return "CO / CO₂（一酸化炭素 / 二酸化炭素）";

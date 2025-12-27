@@ -9,6 +9,11 @@ public class ChemElementDatabase : UdonSharpBehaviour
     public float[] MeltingPointC;    // ℃（未定義は +Infinity 推奨）
     public float[] BoilingPointC;    // ℃（未定義は +Infinity 推奨）
     public int[] HazardFlags;        // 任意（ビットフラグ）
+    [Header("Optional Visual Materials (parallel arrays)")]
+    public Material[] SolidMaterials;   // 固体用マテリアル（未指定なら色のみ）
+    public Material[] LiquidMaterials;  // 液体用マテリアル
+    public Material[] GasMaterials;     // 気体用マテリアル（煙などは別途）
+
 
     // HazardFlags
     public const int HAZ_FLAMMABLE = 1 << 0;
@@ -69,6 +74,58 @@ public class ChemElementDatabase : UdonSharpBehaviour
         if (i < 0 || HazardFlags == null) return 0;
         return HazardFlags[i];
     }
+
+
+// ---- Visual material getters (optional) ----
+public Material GetMaterial(string symbol, ElementState state)
+{
+    int i = IndexOf(symbol);
+    if (i < 0) return null;
+
+    if (state == ElementState.Solid)
+    {
+        if (SolidMaterials != null && i < SolidMaterials.Length) return SolidMaterials[i];
+        return null;
+    }
+    if (state == ElementState.Liquid)
+    {
+        if (LiquidMaterials != null && i < LiquidMaterials.Length) return LiquidMaterials[i];
+        return null;
+    }
+    // Gas
+    if (GasMaterials != null && i < GasMaterials.Length) return GasMaterials[i];
+    return null;
+}
+
+/// <summary>
+/// 式の場合、含有量が最大の元素を代表としてマテリアルを返します（無ければnull）
+/// </summary>
+public Material GetMaterialFromFormula(string symbolOrFormula, ElementState state)
+{
+    if (string.IsNullOrEmpty(symbolOrFormula)) return null;
+    // 単体元素
+    int idx = IndexOf(symbolOrFormula);
+    if (idx >= 0) return GetMaterial(symbolOrFormula, state);
+
+    
+// 化学式 → 最大カウントの元素を代表として選ぶ
+string[] s = new string[16];
+int[] n = new int[16];
+int used = ParseFormulaNoParens(symbolOrFormula, s, n);
+if (used <= 0) return null;
+
+int best = 0;
+int bestCount = n[0];
+for (int i = 1; i < used; i++)
+{
+    if (n[i] > bestCount)
+    {
+        bestCount = n[i];
+        best = i;
+    }
+}
+return GetMaterial(s[best], state);
+}
 
     // ---- Extended getters（未設定は安全側）----
     public int GetAtomicNumber(string symbol)

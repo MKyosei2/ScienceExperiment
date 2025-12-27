@@ -1,6 +1,7 @@
 ﻿using UdonSharp;
 using UnityEngine;
 
+// 表示状態（固体/液体/気体）
 public enum ElementState { Solid, Liquid, Gas }
 
 public class ChemVisualController : UdonSharpBehaviour
@@ -20,7 +21,9 @@ public class ChemVisualController : UdonSharpBehaviour
         if (gasObj == null) gasObj = FindChild("Gas");
 
         if (targetRenderers == null || targetRenderers.Length == 0)
+        {
             targetRenderers = GetComponentsInChildren<Renderer>(true);
+        }
     }
 
     private GameObject FindChild(string name)
@@ -29,13 +32,16 @@ public class ChemVisualController : UdonSharpBehaviour
         return t != null ? t.gameObject : null;
     }
 
-    public void SetElementAppearance(Color color, ElementState state)
+    /// <summary>
+    /// 元素見た目の更新（状態 + 色 + 任意のマテリアル差し替え）
+    /// </summary>
+    public void SetElementAppearance(Color color, ElementState state, Material overrideMaterial)
     {
         if (solidObj != null) solidObj.SetActive(state == ElementState.Solid);
         if (liquidObj != null) liquidObj.SetActive(state == ElementState.Liquid);
         if (gasObj != null) gasObj.SetActive(state == ElementState.Gas);
 
-        ApplyColor(color);
+        ApplyMaterialAndColor(overrideMaterial, color);
     }
 
     public void UpdateEnvironment(float tempC, float hum, float pres)
@@ -57,7 +63,7 @@ public class ChemVisualController : UdonSharpBehaviour
         }
     }
 
-    private void ApplyColor(Color c)
+    private void ApplyMaterialAndColor(Material mat, Color c)
     {
         if (targetRenderers == null) return;
 
@@ -65,11 +71,25 @@ public class ChemVisualController : UdonSharpBehaviour
         {
             var r = targetRenderers[i];
             if (r == null) continue;
-            var m = r.material;
-            if (m == null) continue;
 
-            if (m.HasProperty("_BaseColor")) m.SetColor("_BaseColor", c);
-            if (m.HasProperty("_Color")) m.SetColor("_Color", c);
+            // マテリアル差し替え（指定があれば）
+            if (mat != null)
+            {
+                // .material はインスタンス化される（UdonSharpでは一般に安全）
+                r.material = mat;
+            }
+
+            var mtl = r.material;
+            if (mtl == null) continue;
+
+            if (mtl.HasProperty("_BaseColor")) mtl.SetColor("_BaseColor", c);
+            if (mtl.HasProperty("_Color")) mtl.SetColor("_Color", c);
+
+            // Emission を使う場合は色も渡す（強さは UpdateEnvironment で調整）
+            if (mtl.HasProperty("_EmissionColor"))
+            {
+                mtl.SetColor("_EmissionColor", c);
+            }
         }
     }
 }

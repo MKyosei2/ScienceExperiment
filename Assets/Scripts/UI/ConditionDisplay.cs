@@ -19,6 +19,6 @@ public class ConditionDisplay : UdonSharpBehaviour
             text.text = env.Humidity.ToString("F0") + " %";
 
         else if (mode == "pressure")
-            text.text = env.Pressure.ToString("F2") + " atm";
+            text.text = env.Pressure.ToString("F1") + " kPa";
     }
 }
