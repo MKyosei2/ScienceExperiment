@@ -1,442 +1,484 @@
-﻿using UdonSharp;
+using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
+using VRC.Udon;
 using UnityEngine.UI;
-using System.Text;
 
+/// <summary>
+/// ChemElementSpawner (Network-authoritative experiment core)
+/// ---------------------------------------------------------
+/// 同期：実験の真実（操作者/選択/環境/反応結果/進行度）
+/// 非同期：見た目（演出/補間/粒子/移動）
+///
+/// 注意：VRChat/Udon同期で60fps配信は現実的ではないため、
+///       ネット同期はイベント/低頻度更新、表示は各クライアントで60fps更新する設計です。
+/// </summary>
 public class ChemElementSpawner : UdonSharpBehaviour
 {
-    [Header("Core")]
+    [Header("Databases / Logic")]
     public ChemElementDatabase elementDb;
-    public ChemEnvironmentManager environment; // 既存がある前提（無い場合はnull可）
-    public AIRequestSender ai;
+    public ChemicalReactionDatabase reactionDb;     // 任意（説明用）
+    public ReactionPredictor predictor;             // 任意（結果ID/タグ推定）
+    public ChemExplainGenerator explainGenerator;   // 任意（外部AIなし説明）
 
-    [Header("Logic / Explain (optional)")]
-    public ReactionPredictor predictor;
-    public ChemExplainGenerator explainGenerator;
-    public ChemicalReactionDatabase compoundDb;
+    [Header("Environment (optional)")]
+    public ChemEnvironmentManager environment;      // UI操作の受け口（確定時のみ同期）
 
-    [Header("Determinism (recommended for school)")]
-    public bool deterministicSeed = true;
-    public int fixedSeed = 0; // 0=auto hash
+    [Header("Local Visual (async)")]
+    public ChemVisualController sampleVisual;       // 見た目（固液気/色/マテリアル）
+    public ChemReactionAnimator reactionAnimator;   // 泡/煙/熱/発光など（ローカル演出）
+    public AIRequestSender ai;                      // VFX係数生成（ローカル）
 
-    [Header("Visual")]
-    public ChemVisualController sampleVisual;     // 元素/生成物の見た目
-    public ChemReactionAnimator reactionAnimator; // 泡/熱/煙/発光など
-    public Transform heatSource;                  // バーナー等（無ければnull）
-
-    [Header("Optional UI (no TMP dependency)")]
+    [Header("UI (optional, no TMP dependency)")]
     public Text hintText;
     public Text explainText;
     public Text safetyText;
     public Text debugText;
 
-    [Header("VR Motion Sensing")]
-    public bool realtimeOnlyInVR = true;
-    public float stirRadiusMeters = 0.25f;      // 混ぜ判定：容器の近くで手が動く
-    public float stirSpeedToMax = 2.0f;         // これ以上の手速度でstir=1
-    public float shakeAccelToMax = 12.0f;       // これ以上の加速度でshake=1
-    public float pourTiltToMaxDeg = 80f;        // これ以上の傾きでpour=1
-    public float pourTiltStartDeg = 25f;        // これ以下はpour=0
-    public float heatNearMeters = 0.20f;        // 熱源近い
-    public float heatFarMeters = 0.80f;         // 熱源遠い
+    [Header("Networking")]
+    [Tooltip("操作者が進行度を同期する最小間隔（秒）。0.1=10Hz程度。")]
+    public float progressSyncInterval = 0.12f;
 
-    [Header("Target (what player manipulates)")]
-    public Transform containerTransform; // ビーカー等。無ければこのオブジェクト自身
+    // -----------------------------
+    // Synced experiment "truth"
+    // -----------------------------
+    [UdonSynced] private int _syncedVersion;              // 変更カウンタ
+    [UdonSynced] private int _syncedOperatorPlayerId = -1;
 
-    // ---- 状態 ----
-    private string _selectedInput = "H";   // 元素記号または式
-    private string _selectedTool = "None"; // 器具ID
-    private string _currentProduct = "";  // 完了したら入る
+    [UdonSynced] private string _syncedInput;            // 元素/式（ボタンのidOrName）
+    [UdonSynced] private string _syncedTool;             // 器具ID
+    [UdonSynced] private float _syncedTempC;
+    [UdonSynced] private float _syncedPressureKPa;
+    [UdonSynced] private float _syncedHumidity;
 
-    // ---- 履歴（ChemStatusDisplay互換用）----
-    private StringBuilder _history = new StringBuilder(2048);
-    private const int HISTORY_MAX_CHARS = 12000;
+    [UdonSynced] private string _syncedReactionTag;      // "oxidation"/"chloride"/"none" etc.
+    [UdonSynced] private string _syncedProductFormula;   // 生成物（式/ラベル）
+    [UdonSynced] private int _syncedSeed;                // 再現性確保用
 
-    private VRCPlayerApi _lp;
-    private Vector3 _prevRHPos;
-    private Vector3 _prevLHPos;
-    private Vector3 _prevRHVel;
-    private Vector3 _prevLHVel;
-    private float _dtSafe;
+    [UdonSynced] private int _syncedPhase;               // 0=idle 1=running 2=complete
+    [UdonSynced] private float _syncedProgress01;        // 0..1（演出を揃えたい場合）
+
+    // -----------------------------
+    // Local cache
+    // -----------------------------
+    private int _lastAppliedVersion = -1;
+    private float _nextProgressSyncAt;
+    private string _history = "";
+    private string _localInput = "";
+    private string _localTool = "";
 
     private void Start()
     {
-        _lp = Networking.LocalPlayer;
-        if (containerTransform == null) containerTransform = transform;
-
-        AppendHistory("Spawner Start");
-
-        // 初期見た目
-        UpdateSampleAppearance(_selectedInput);
+        // 初回UI反映（ローカル）
+        ApplyVisualFromState(force:true);
         WriteUI();
     }
 
-    // =========================
-    // ChemStatusDisplay 互換API
-    // =========================
-    public string GetLastElement()
+    // =====================================================
+    // Role management (operator / spectator)
+    // =====================================================
+    public bool IsOperatorLocal()
     {
-        // 旧挙動に寄せる：最後に選択した入力（元素/式）
-        return _selectedInput;
+        VRCPlayerApi lp = Networking.LocalPlayer;
+        if (lp == null) return true; // offline
+        return lp.playerId == _syncedOperatorPlayerId;
     }
 
-    public string GetLastEquipment()
+    public bool HasOperator()
     {
-        return _selectedTool;
+        return _syncedOperatorPlayerId >= 0;
     }
 
-    public string GetHistoryLog()
+    private bool EnsureCanControl()
     {
-        return _history.ToString();
+        VRCPlayerApi lp = Networking.LocalPlayer;
+        if (lp == null) return true;
+
+        // operator未選択なら、押した人を操作者にする（自動取得）
+        if (_syncedOperatorPlayerId < 0)
+        {
+            ClaimOperator(lp);
+            return true;
+        }
+
+        if (lp.playerId == _syncedOperatorPlayerId) return true;
+
+        // spectator：操作拒否
+        AppendDebug("Spectator: 操作者のみ操作できます。");
+        return false;
     }
 
-    // ---- 既存フロー：ボタンから呼ばれる想定 ----
+    private void ClaimOperator(VRCPlayerApi lp)
+    {
+        // オーナーを取る（このオブジェクトの同期を送るため）
+        if (!Networking.IsOwner(gameObject))
+        {
+            Networking.SetOwner(lp, gameObject);
+        }
+
+        _syncedOperatorPlayerId = lp.playerId;
+        _syncedVersion++;
+        RequestSerialization();
+
+        AppendHistory("ClaimOperator: " + lp.playerId);
+        WriteUI();
+    }
+
+    public void _ReleaseOperator()
+    {
+        VRCPlayerApi lp = Networking.LocalPlayer;
+        if (lp == null) return;
+        if (lp.playerId != _syncedOperatorPlayerId) return;
+
+        if (!Networking.IsOwner(gameObject))
+        {
+            Networking.SetOwner(lp, gameObject);
+        }
+
+        _syncedOperatorPlayerId = -1;
+        _syncedPhase = 0;
+        _syncedProgress01 = 0f;
+        _syncedVersion++;
+        RequestSerialization();
+
+        AppendHistory("ReleaseOperator");
+        StopLocalSession();
+        ApplyVisualFromState(force:true);
+        WriteUI();
+    }
+
+    // =====================================================
+    // Button-facing API (all cube buttons can call these)
+    // =====================================================
     public void SelectElement(string symbolOrFormula)
     {
-        _selectedInput = (symbolOrFormula == null) ? "" : symbolOrFormula.Trim();
-        _currentProduct = ""; // 入力が変わったら生成物は一旦クリア
+        if (!EnsureCanControl()) return;
 
-        AppendHistory("SelectElement: " + _selectedInput);
+        _localInput = (symbolOrFormula == null) ? "" : symbolOrFormula.Trim();
+        _syncedInput = _localInput;
 
-        UpdateSampleAppearance(_selectedInput);
+        _syncedVersion++;
+        RequestSerialization();
+
+        AppendHistory("SelectElement: " + _localInput);
+
+        // 非同期演出：器具に投入されるように見せる（ローカル即時）
+        if (sampleVisual != null)
+            sampleVisual.NotifyElementSelected(_localInput);
+
+        ApplyVisualFromState(force:true);
         WriteUI();
     }
 
     public void SelectEquipment(string toolId)
     {
-        _selectedTool = (toolId == null) ? "" : toolId.Trim();
+        if (!EnsureCanControl()) return;
 
-        AppendHistory("SelectEquipment: " + _selectedTool);
+        _localTool = (toolId == null) ? "" : toolId.Trim();
+        _syncedTool = _localTool;
 
+        _syncedVersion++;
+        RequestSerialization();
+
+        AppendHistory("SelectEquipment: " + _localTool);
         WriteUI();
     }
 
-    // 実験開始（既存の「開始ボタン」想定）
+    // 環境調整（ConditionAdjusterから呼ぶ想定）
+    public void ModifyEnvironment(string command)
+    {
+        if (!EnsureCanControl()) return;
+        if (environment == null) return;
+
+        environment.Modify(command);
+
+        // 同期へ反映
+        _syncedTempC = environment.temperatureC;
+        _syncedPressureKPa = environment.pressureKPa;
+        _syncedHumidity = environment.humidity;
+
+        _syncedVersion++;
+        RequestSerialization();
+
+        AppendHistory("ModifyEnv: " + command);
+        WriteUI();
+    }
+
+    // 実験開始（開始ボタン想定）
     public void _StartExperiment()
     {
-        if (ai == null)
+        if (!EnsureCanControl()) return;
+
+        // 環境値（確定値）を取得して同期に載せる
+        PullEnvironmentForSync();
+
+        // Seed（再現性）：入力/器具/環境からint範囲ハッシュ
+        _syncedSeed = ComputeSeed(_syncedInput, _syncedTool, _syncedTempC, _syncedPressureKPa, _syncedHumidity);
+
+        // 反応予測（結果の"真実"）
+        string product = _syncedInput;
+        string tag = "none";
+        string explain = "";
+        if (predictor != null)
         {
-            AppendHistory("ERROR: AIRequestSender is null.");
-            AppendDebug("AIRequestSender is null.");
-            return;
+            predictor.Predict(_syncedInput, _syncedTool, out product, out tag, out explain);
         }
-        // AIに環境/DB/説明器を渡す（任意）
-        ai.envTempC = GetEnvTempC();
-        ai.envHumidity = GetEnvHumidity();
-        ai.envPressure = GetEnvPressure();
-        ai.elementDb = elementDb;
-        ai.predictor = predictor;
-        ai.explainGenerator = explainGenerator;
-        ai.compoundDb = compoundDb;
+        _syncedProductFormula = product;
+        _syncedReactionTag = tag;
 
-        // 学校/科学館向け：入力＋環境が同じなら同じ結果になる Seed
-        if (deterministicSeed)
-        {
-            int seed = fixedSeed != 0
-                ? fixedSeed
-                : ComputeSeed(_selectedInput, _selectedTool, ai.envTempC, ai.envHumidity, ai.envPressure);
-            ai.useOverrideSeed = true;
-            ai.sessionSeedOverride = seed;
-        }
-        else
-        {
-            ai.useOverrideSeed = false;
-        }
+        // フェーズ更新
+        _syncedPhase = 1;
+        _syncedProgress01 = 0f;
 
-        ai.StartSession(_selectedInput, _selectedTool);
+        _syncedVersion++;
+        RequestSerialization();
 
-        AppendHistory("Experiment Start: input=" + _selectedInput + " tool=" + _selectedTool);
-        AppendHistory("Predicted Product: " + ai.predictedProductFormula + " / Tag: " + ai.reactionTag);
+        AppendHistory("StartExperiment: input=" + _syncedInput + " tool=" + _syncedTool + " tag=" + _syncedReactionTag);
 
-        // 進行中は入力見た目、完了で生成物へ切替（Update側で実施）
+        // ローカル：セッション開始（視覚/説明生成）
+        StartLocalSessionFromSynced();
+
+        ApplyVisualFromState(force:true);
         WriteUI();
     }
 
-    // 実験リセット（リセットボタン/Orchestratorから呼ぶ）
     public void _ResetExperiment()
     {
-        _currentProduct = "";
-        _selectedInput = "H";
-        _selectedTool = "None";
+        if (!EnsureCanControl()) return;
 
-        // ログクリア
-        if (_history != null) _history.Length = 0;
-        AppendHistory("Experiment Reset");
+        // 同期状態初期化
+        _syncedInput = "";
+        _syncedTool = "";
+        _syncedReactionTag = "none";
+        _syncedProductFormula = "";
+        _syncedSeed = 0;
+        _syncedPhase = 0;
+        _syncedProgress01 = 0f;
 
-        // AI リセット
-        if (ai != null) ai.ResetSession();
+        // envはデフォルトに戻す（環境マネージャ側でもResetされる想定）
+        PullEnvironmentForSync();
 
-        // 演出停止
-        if (reactionAnimator != null) reactionAnimator.StopAll();
+        _syncedVersion++;
+        RequestSerialization();
 
-        // 見た目初期化
-        if (sampleVisual != null)
-        {
-            sampleVisual.SetElementAppearance(Color.white, ElementState.Liquid, null);
-            sampleVisual.UpdateEnvironment(GetEnvTempC(), GetEnvHumidity(), GetEnvPressure());
-        }
-
+        AppendHistory("ResetExperiment");
+        StopLocalSession();
+        ApplyVisualFromState(force:true);
         WriteUI();
-        WriteUIRealtime();
     }
 
+    // =====================================================
+    // Update loop (async visuals at 60fps, low-rate sync)
+    // =====================================================
     private void Update()
     {
-        if (ai == null) return;
+        // ローカル可視化は常時（60fps）
+        TickLocalVisual(Time.deltaTime);
 
-        // VRのみでリアルタイム、という要件
-        if (realtimeOnlyInVR)
+        // operatorのみ：進行度を低頻度で同期
+        if (_syncedPhase == 1 && IsOperatorLocal())
         {
-            if (_lp == null) _lp = Networking.LocalPlayer;
-            if (_lp == null || !_lp.IsUserInVR()) return;
-        }
-
-        if (!ai.isRunning) return;
-
-        _dtSafe = Time.deltaTime;
-        if (_dtSafe <= 0f) _dtSafe = 0.016f;
-
-        // AI tick 間引き
-        if (!ai.ShouldTick(_dtSafe)) return;
-
-        // センサー入力算出
-        float stir01, pour01, heat01, shake01;
-        ComputeMotionInputs(out stir01, out pour01, out heat01, out shake01);
-
-        float envTemp = GetEnvTempC();
-        ai.envTempC = envTemp;
-        ai.envHumidity = GetEnvHumidity();
-        ai.envPressure = GetEnvPressure();
-
-        // AIへ入力
-        ai.TickRealtime(_dtSafe, stir01, pour01, heat01, shake01);
-
-        // 演出反映（連続制御）
-        if (reactionAnimator != null)
-        {
-            reactionAnimator.SetHeatLevel(ai.fxHeat);
-            reactionAnimator.SetFoamLevel(ai.fxFoam);
-            reactionAnimator.SetGlowLevel(ai.fxGlow);
-            reactionAnimator.SetWaveLevel(ai.fxWave);
-            reactionAnimator.SetSparkLevel(ai.fxSpark);
-            reactionAnimator.SetSmokeLevel(ai.fxSmoke);
-        }
-
-        // 完了したら生成物へ見た目を切り替える
-        if (ai.isComplete)
-        {
-            if (!string.IsNullOrEmpty(ai.predictedProductFormula))
+            if (Time.time >= _nextProgressSyncAt)
             {
-                if (_currentProduct != ai.predictedProductFormula)
+                _nextProgressSyncAt = Time.time + Mathf.Max(0.05f, progressSyncInterval);
+                // aiがあれば、aiの進行度を同期に乗せる
+                if (ai != null && ai.isRunning)
                 {
-                    _currentProduct = ai.predictedProductFormula;
-                    AppendHistory("Experiment Complete: product=" + _currentProduct);
+                    _syncedProgress01 = Mathf.Clamp01(ai.sessionProgress01);
                 }
-                UpdateSampleAppearance(_currentProduct);
+                RequestSerialization();
+            }
+        }
+    }
+
+    private void TickLocalVisual(float dt)
+    {
+        // operator：入力操作で進行（将来：手の動き/注ぎ/加熱を入れる）
+        if (_syncedPhase == 1 && IsOperatorLocal())
+        {
+            if (ai != null)
+            {
+                // dt駆動（ローカル）。ここをVRモーションで増減する設計にできる。
+                ai.TickRealtime(dt, 0f, 0f, 0f, 0f);
+                if (ai.isComplete)
+                {
+                    _syncedPhase = 2;
+                    _syncedProgress01 = 1f;
+                    _syncedVersion++;
+                    RequestSerialization();
+
+                    AppendHistory("ExperimentComplete");
+                    WriteUI();
+                }
             }
         }
         else
         {
-            // 進行中は入力の見た目
-            UpdateSampleAppearance(_selectedInput);
+            // spectator：同期Progressに追従してローカル演出を動かす
+            if (ai != null && _syncedPhase == 1)
+            {
+                ai.EvaluateAtProgress(_syncedProgress01);
+            }
         }
 
-        WriteUIRealtime();
+        // 演出適用（ローカル）
+        if (reactionAnimator != null && ai != null)
+        {
+            reactionAnimator.ApplyPreset(_syncedReactionTag, ai, _syncedProgress01);
+        }
     }
 
-    private void ComputeMotionInputs(out float stir01, out float pour01, out float heat01, out float shake01)
+    // =====================================================
+    // Sync receive
+    // =====================================================
+    public override void OnDeserialization()
     {
-        stir01 = 0f; pour01 = 0f; heat01 = 0f; shake01 = 0f;
+        if (_syncedVersion == _lastAppliedVersion) return;
+        _lastAppliedVersion = _syncedVersion;
 
-        if (_lp == null) _lp = Networking.LocalPlayer;
-        if (_lp == null) return;
+        // ローカルキャッシュ更新
+        _localInput = _syncedInput == null ? "" : _syncedInput;
+        _localTool = _syncedTool == null ? "" : _syncedTool;
 
-        // 手トラッキング
-        VRCPlayerApi.TrackingData rh = _lp.GetTrackingData(VRCPlayerApi.TrackingDataType.RightHand);
-        VRCPlayerApi.TrackingData lh = _lp.GetTrackingData(VRCPlayerApi.TrackingDataType.LeftHand);
-
-        Vector3 rhPos = rh.position;
-        Vector3 lhPos = lh.position;
-
-        Vector3 rhVel = (rhPos - _prevRHPos) / Mathf.Max(_dtSafe, 0.01f);
-        Vector3 lhVel = (lhPos - _prevLHPos) / Mathf.Max(_dtSafe, 0.01f);
-
-        Vector3 rhAcc = (rhVel - _prevRHVel) / Mathf.Max(_dtSafe, 0.01f);
-        Vector3 lhAcc = (lhVel - _prevLHVel) / Mathf.Max(_dtSafe, 0.01f);
-
-        _prevRHPos = rhPos; _prevLHPos = lhPos;
-        _prevRHVel = rhVel; _prevLHVel = lhVel;
-
-        Vector3 center = containerTransform != null ? containerTransform.position : transform.position;
-
-        // 1) stir：容器近くで手が速く動くほど
-        float rhNear = 1f - Mathf.Clamp01(Vector3.Distance(rhPos, center) / Mathf.Max(stirRadiusMeters, 0.01f));
-        float lhNear = 1f - Mathf.Clamp01(Vector3.Distance(lhPos, center) / Mathf.Max(stirRadiusMeters, 0.01f));
-
-        float rhSpeed01 = Mathf.Clamp01(rhVel.magnitude / Mathf.Max(stirSpeedToMax, 0.01f)) * rhNear;
-        float lhSpeed01 = Mathf.Clamp01(lhVel.magnitude / Mathf.Max(stirSpeedToMax, 0.01f)) * lhNear;
-
-        stir01 = Mathf.Clamp01(Mathf.Max(rhSpeed01, lhSpeed01));
-
-        // 2) shake：加速度が大きいほど
-        float rhShake01 = Mathf.Clamp01(rhAcc.magnitude / Mathf.Max(shakeAccelToMax, 0.01f));
-        float lhShake01 = Mathf.Clamp01(lhAcc.magnitude / Mathf.Max(shakeAccelToMax, 0.01f));
-        shake01 = Mathf.Clamp01(Mathf.Max(rhShake01, lhShake01));
-
-        // 3) pour：容器の傾き
-        if (containerTransform == null) containerTransform = transform;
-
-        float tiltDeg = Vector3.Angle(containerTransform.up, Vector3.up); // 0=直立、90=横倒し
-        if (tiltDeg <= pourTiltStartDeg) pour01 = 0f;
-        else if (tiltDeg >= pourTiltToMaxDeg) pour01 = 1f;
-        else pour01 = Mathf.InverseLerp(pourTiltStartDeg, pourTiltToMaxDeg, tiltDeg);
-
-        // 4) heat：容器と熱源の距離
-        if (heatSource != null && containerTransform != null)
+        // セッション状態の反映
+        if (_syncedPhase == 0)
         {
-            float d = Vector3.Distance(containerTransform.position, heatSource.position);
-            if (d <= heatNearMeters) heat01 = 1f;
-            else if (d >= heatFarMeters) heat01 = 0f;
-            else heat01 = 1f - Mathf.InverseLerp(heatNearMeters, heatFarMeters, d);
+            StopLocalSession();
         }
         else
         {
-            heat01 = 0f;
+            // spectator/後から入った人：同期状態からローカルセッション復元
+            StartLocalSessionFromSynced();
         }
+
+        ApplyVisualFromState(force:true);
+        WriteUI();
     }
 
-    private void UpdateSampleAppearance(string symbolOrFormula)
+    // =====================================================
+    // Helpers
+    // =====================================================
+    private void PullEnvironmentForSync()
     {
-        if (elementDb == null || sampleVisual == null) return;
-
-        float temp = GetEnvTempC();
-        Color c = elementDb.GetColorFromFormula(symbolOrFormula);
-        ElementState st = elementDb.GetStateFromFormulaAtTemp(symbolOrFormula, temp);
-
-        Material mat = elementDb.GetMaterialFromFormula(symbolOrFormula, st);
-
-        sampleVisual.SetElementAppearance(c, st, mat);
-        sampleVisual.UpdateEnvironment(temp, GetEnvHumidity(), GetEnvPressure());
-    }
-
-    private float GetEnvTempC()
-    {
-        if (environment != null) return environment.Temperature;
-        return 25f;
-    }
-    private float GetEnvHumidity()
-    {
-        if (environment != null) return environment.Humidity;
-        return 50f;
-    }
-    private float GetEnvPressure()
-    {
-        if (environment != null) return environment.Pressure;
-        return 101f;
-    }
-
-    // 入力・条件から再現可能なSeedを作る（学校/科学館向け）
-    private int ComputeSeed(string input, string tool, float tempC, float humidity, float pressure)
-    {
-        // UdonSharp は long の剰余演算などが不安定になりやすいので、int 範囲で安全に回す
-        // mod を小さく保つことで (hash * 31) が int を超えないようにする
-        const int mod = 1000000; // 0〜999,999
-
-        int hash = 17;
-
-        hash = (hash * 31 + HashString(input, mod)) % mod;
-        hash = (hash * 31 + HashString(tool, mod)) % mod;
-
-        int t = Mathf.RoundToInt(tempC * 10f);
-        int h = Mathf.RoundToInt(humidity * 10f);
-        int p = Mathf.RoundToInt(pressure * 10f);
-
-        // 値の取り込み（mod が小さいのでオーバーフローしない）
-        hash = (hash * 31 + (t & 0x7fffffff)) % mod;
-        hash = (hash * 31 + (h & 0x7fffffff)) % mod;
-        hash = (hash * 31 + (p & 0x7fffffff)) % mod;
-
-        // seed 0 は避ける
-        if (hash == 0) hash = 1;
-        return hash;
-    }
-
-    private int HashString(string s, int mod)
-    {
-        if (string.IsNullOrEmpty(s)) return 0;
-
-        int h = 0;
-        for (int i = 0; i < s.Length; i++)
+        if (environment != null)
         {
-            h = (h * 31 + (int)s[i]) % mod;
+            _syncedTempC = environment.temperatureC;
+            _syncedPressureKPa = environment.pressureKPa;
+            _syncedHumidity = environment.humidity;
         }
-        return h;
     }
 
+    private void StartLocalSessionFromSynced()
+    {
+        if (ai != null)
+        {
+            ai.useOverrideSeed = true;
+            ai.sessionSeedOverride = _syncedSeed;
+            ai.StartSession(_syncedInput, _syncedTool);
+            // spectatorは外部progressで追従させる
+            if (!IsOperatorLocal())
+            {
+                ai.EvaluateAtProgress(_syncedProgress01);
+            }
+        }
 
+        // 説明/ヒント/安全（決定論）
+        if (explainGenerator != null)
+        {
+            float potential = (_syncedReactionTag == "none") ? 0.1f : 0.8f;
+            bool dangerous = (elementDb != null && elementDb.GetHazard(_syncedInput) != 0);
+
+            string hint, explain, safety;
+            explainGenerator.Generate(_syncedInput, _syncedTool, potential, _syncedTempC, _syncedPressureKPa, _syncedHumidity, dangerous,
+                out hint, out explain, out safety);
+
+            if (hintText != null) hintText.text = hint;
+            if (explainText != null) explainText.text = explain;
+            if (safetyText != null) safetyText.text = safety;
+        }
+    }
+
+    private void StopLocalSession()
+    {
+        if (ai != null) ai.ResetSession();
+        if (reactionAnimator != null) reactionAnimator.ResetLevels();
+    }
+
+    private void ApplyVisualFromState(bool force)
+    {
+        if (sampleVisual == null || elementDb == null) return;
+
+        string sym = _syncedInput == null ? "" : _syncedInput;
+        sampleVisual.ApplyElementBySymbol(elementDb, sym, _syncedTempC);
+    }
 
     private void WriteUI()
     {
-        if (hintText != null) hintText.text = "";
-        if (explainText != null) explainText.text = "";
-        if (safetyText != null) safetyText.text = "";
+        if (debugText == null) return;
 
-        if (debugText != null)
-        {
-            debugText.text =
-                "Input: " + _selectedInput + "\n" +
-                "Tool: " + _selectedTool + "\n" +
-                "Product: " + (_currentProduct == "" ? "-" : _currentProduct);
-        }
+        string role = IsOperatorLocal() ? "Operator" : "Spectator";
+        debugText.text =
+            "Role: " + role + "\n" +
+            "OperatorId: " + _syncedOperatorPlayerId + "\n" +
+            "Input: " + (_syncedInput ?? "") + "\n" +
+            "Tool: " + (_syncedTool ?? "") + "\n" +
+            "Phase: " + _syncedPhase + " (" + Mathf.RoundToInt(_syncedProgress01 * 100f) + "%)\n" +
+            "Reaction: " + (_syncedReactionTag ?? "none") + "\n" +
+            "Product: " + (_syncedProductFormula ?? "") + "\n";
     }
 
-    private void WriteUIRealtime()
+    private void AppendHistory(string line)
     {
-        if (ai == null) return;
-
-        if (hintText != null) hintText.text = ai.hintText;
-        if (safetyText != null) safetyText.text = ai.safetyText;
-
-        // 完了したら解説を出す
-        if (ai.isComplete && explainText != null)
-        {
-            explainText.text = ai.explainText;
-        }
-
-        if (debugText != null)
-        {
-            debugText.text =
-                "Input: " + _selectedInput + "\n" +
-                "Tool: " + _selectedTool + "\n" +
-                "Progress: " + Mathf.RoundToInt(ai.progress01 * 100f) + "%\n" +
-                "Product: " + (ai.isComplete ? ai.predictedProductFormula : "-");
-        }
+        if (string.IsNullOrEmpty(line)) return;
+        _history += line + "\n";
     }
 
-    private void AppendDebug(string msg)
+    private void AppendDebug(string line)
     {
         if (debugText == null) return;
-        debugText.text = (debugText.text + "\n" + msg);
+        debugText.text = (debugText.text ?? "") + "\n" + line;
     }
 
-    private void AppendHistory(string msg)
+    // Udon互換：int内で回る簡易ハッシュ（mod演算はintのみ）
+    private int ComputeSeed(string a, string b, float tC, float pKPa, float h)
     {
-        if (_history == null) _history = new StringBuilder(2048);
-
-        // 簡易タイムスタンプ（秒）
-        _history.Append("[t=");
-        _history.Append(Time.time.ToString("0.0"));
-        _history.Append("] ");
-        _history.AppendLine(msg);
-
-        // 肥大化防止（末尾を残す）
-        if (_history.Length > HISTORY_MAX_CHARS)
-        {
-            string tail = _history.ToString(_history.Length - (HISTORY_MAX_CHARS / 2), (HISTORY_MAX_CHARS / 2));
-            _history.Length = 0;
-            _history.AppendLine("...(trimmed)...");
-            _history.Append(tail);
-        }
+        int hash = 17;
+        hash = HashStep(hash, a);
+        hash = HashStep(hash, b);
+        hash = HashStep(hash, Mathf.RoundToInt(tC * 10f).ToString());
+        hash = HashStep(hash, Mathf.RoundToInt(pKPa * 10f).ToString());
+        hash = HashStep(hash, Mathf.RoundToInt(h * 100f).ToString());
+        if (hash < 0) hash = -hash;
+        return hash;
     }
+
+    private int HashStep(int hash, string s)
+    {
+        if (s == null) return hash;
+        int len = s.Length;
+        for (int i = 0; i < len; i++)
+        {
+            hash = (hash * 31) + (int)s[i];
+        }
+        return hash;
+    }
+
+    // =====================================================
+    // Public getters (used by status UI)
+    // =====================================================
+    public string GetLastElement()
+    {
+        return _syncedInput == null ? "" : _syncedInput;
+    }
+
+    public string GetLastEquipment()
+    {
+        return _syncedTool == null ? "" : _syncedTool;
+    }
+
+    public string GetHistoryLog()
+    {
+        return _history == null ? "" : _history;
+    }
+
 }

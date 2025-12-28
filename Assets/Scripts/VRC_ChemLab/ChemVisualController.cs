@@ -1,18 +1,43 @@
-﻿using UdonSharp;
+using UdonSharp;
 using UnityEngine;
 
-// 表示状態（固体/液体/気体）
-public enum ElementState { Solid, Liquid, Gas }
 
+/// <summary>
+/// UdonSharp does not support nested type declarations.
+/// Keep enums as top-level types.
+/// </summary>
+public enum ChemElementState
+{
+    Solid = 0,
+    Liquid = 1,
+    Gas = 2
+}
+
+/// <summary>
+/// ChemVisualController (Async-only visuals)
+/// ・同期の真実はChemElementSpawnerが持つ
+/// ・ここは「どう見せるか」だけ（非同期）
+///
+/// 追加演出（元素が器具に入る見せ方）は、
+/// optionalの dropAnimator に対して CustomEvent を送る方式で接続します。
+/// </summary>
 public class ChemVisualController : UdonSharpBehaviour
 {
     [Header("State Visuals (optional)")]
-    public GameObject solidObj;   // 子に "Solid" があるなら未指定でOK
-    public GameObject liquidObj;  // 子に "Liquid"
-    public GameObject gasObj;     // 子に "Gas"
+    public GameObject solidObj;
+    public GameObject liquidObj;
+    public GameObject gasObj;
 
-    [Header("Color Apply")]
-    public Renderer[] targetRenderers; // 未指定なら子Rendererを自動取得
+    [Header("Renderer Targets (optional)")]
+    public Renderer[] targetRenderers;
+
+    [Header("Optional Drop Animation (async)")]
+    public UdonSharpBehaviour dropAnimator; // 追加スクリプトがある場合だけ使用
+    public Transform dropStart;
+    public Transform dropEnd;
+
+    [HideInInspector] public string lastSelectedSymbol; // dropAnimatorが参照
+    [HideInInspector] public Color lastSelectedColor;   // dropAnimatorが参照
 
     private void Start()
     {
@@ -26,70 +51,86 @@ public class ChemVisualController : UdonSharpBehaviour
         }
     }
 
-    private GameObject FindChild(string name)
+    // called by spawner (async)
+    public void NotifyElementSelected(string symbol)
     {
-        Transform t = transform.Find(name);
+        lastSelectedSymbol = symbol == null ? "" : symbol;
+        // dropAnimatorがあれば「投入っぽい動き」を開始
+        if (dropAnimator != null)
+        {
+            dropAnimator.SendCustomEvent("_PlayDrop");
+        }
+    }
+
+    public void ApplyElementBySymbol(ChemElementDatabase db, string symbolOrFormula, float temperatureC)
+    {
+        if (db == null) return;
+
+        // element symbol を優先（"NaCl"等は先頭2文字/1文字から拾う簡易）
+        string sym = ExtractSymbol(db, symbolOrFormula);
+
+        Color c = db.GetColor(sym);
+        lastSelectedColor = c;
+
+        // 状態判定（MP/BP）
+        float mp = db.GetMP(sym);
+        float bp = db.GetBP(sym);
+
+        ChemElementState state;
+        if (temperatureC < mp) state = ChemElementState.Solid;
+        else if (temperatureC < bp) state = ChemElementState.Liquid;
+        else state = ChemElementState.Gas;
+
+        SetState(state);
+        ApplyColor(c);
+    }
+
+    public void SetState(ChemElementState s)
+    {
+        if (solidObj != null) solidObj.SetActive(s == ChemElementState.Solid);
+        if (liquidObj != null) liquidObj.SetActive(s == ChemElementState.Liquid);
+        if (gasObj != null) gasObj.SetActive(s == ChemElementState.Gas);
+    }
+
+    public void ApplyColor(Color c)
+    {
+        if (targetRenderers == null) return;
+
+        for (int i = 0; i < targetRenderers.Length; i++)
+        {
+            Renderer r = targetRenderers[i];
+            if (r == null) continue;
+            Material m = r.material;
+            if (m == null) continue;
+
+            if (m.HasProperty("_BaseColor")) m.SetColor("_BaseColor", c);
+            if (m.HasProperty("_Color")) m.SetColor("_Color", c);
+        }
+    }
+
+    private GameObject FindChild(string childName)
+    {
+        Transform t = transform.Find(childName);
         return t != null ? t.gameObject : null;
     }
 
-    /// <summary>
-    /// 元素見た目の更新（状態 + 色 + 任意のマテリアル差し替え）
-    /// </summary>
-    public void SetElementAppearance(Color color, ElementState state, Material overrideMaterial)
+    private string ExtractSymbol(ChemElementDatabase db, string input)
     {
-        if (solidObj != null) solidObj.SetActive(state == ElementState.Solid);
-        if (liquidObj != null) liquidObj.SetActive(state == ElementState.Liquid);
-        if (gasObj != null) gasObj.SetActive(state == ElementState.Gas);
+        if (string.IsNullOrEmpty(input)) return "";
+        string s = input.Trim();
 
-        ApplyMaterialAndColor(overrideMaterial, color);
-    }
+        // 完全一致
+        if (db.ContainsSymbol(s)) return s;
 
-    public void UpdateEnvironment(float tempC, float hum, float pres)
-    {
-        // 任意：シェーダー側が対応していれば反映
-        if (targetRenderers == null) return;
-
-        float glow = Mathf.Clamp01(tempC / 120f);
-        for (int i = 0; i < targetRenderers.Length; i++)
+        // 先頭2文字/1文字を試す（H2O, NaCl のような簡易）
+        if (s.Length >= 2)
         {
-            var r = targetRenderers[i];
-            if (r == null) continue;
-            var m = r.material;
-            if (m == null) continue;
-
-            if (m.HasProperty("_Humidity")) m.SetFloat("_Humidity", hum);
-            if (m.HasProperty("_Pressure")) m.SetFloat("_Pressure", pres);
-            if (m.HasProperty("_GlowIntensity")) m.SetFloat("_GlowIntensity", glow);
+            string s2 = s.Substring(0, 2);
+            if (db.ContainsSymbol(s2)) return s2;
         }
-    }
+        string s1 = s.Substring(0, 1);
+        if (db.ContainsSymbol(s1)) return s1;
 
-    private void ApplyMaterialAndColor(Material mat, Color c)
-    {
-        if (targetRenderers == null) return;
-
-        for (int i = 0; i < targetRenderers.Length; i++)
-        {
-            var r = targetRenderers[i];
-            if (r == null) continue;
-
-            // マテリアル差し替え（指定があれば）
-            if (mat != null)
-            {
-                // .material はインスタンス化される（UdonSharpでは一般に安全）
-                r.material = mat;
-            }
-
-            var mtl = r.material;
-            if (mtl == null) continue;
-
-            if (mtl.HasProperty("_BaseColor")) mtl.SetColor("_BaseColor", c);
-            if (mtl.HasProperty("_Color")) mtl.SetColor("_Color", c);
-
-            // Emission を使う場合は色も渡す（強さは UpdateEnvironment で調整）
-            if (mtl.HasProperty("_EmissionColor"))
-            {
-                mtl.SetColor("_EmissionColor", c);
-            }
-        }
+        return s;
     }
 }

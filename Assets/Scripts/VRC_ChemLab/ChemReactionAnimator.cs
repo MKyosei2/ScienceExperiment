@@ -1,6 +1,10 @@
-﻿using UdonSharp;
+using UdonSharp;
 using UnityEngine;
 
+/// <summary>
+/// ChemReactionAnimator (Async VFX controller)
+/// spawner / AIRequestSender が出した係数を、粒子・発光・液面などに適用する。
+/// </summary>
 public class ChemReactionAnimator : UdonSharpBehaviour
 {
     [Header("Particles (optional)")]
@@ -15,173 +19,113 @@ public class ChemReactionAnimator : UdonSharpBehaviour
 
     [Header("Heat (optional)")]
     public Renderer[] heatRenderers;
-    public string heatProperty = "_GlowIntensity"; // shader側に無ければ無視
+    public string heatProperty = "_HeatStrength";
     [Range(0f, 5f)] public float heatMax = 1.0f;
 
     [Header("Wave (optional)")]
     public Renderer[] waveRenderers;
-    public string waveProperty = "_WaveStrength"; // shader側に無ければ無視
+    public string waveProperty = "_WaveStrength";
     [Range(0f, 5f)] public float waveMax = 1.0f;
 
-    // 内部強度
     private float _heat, _foam, _glow, _wave, _spark, _smoke;
 
-    // ---- 既存互換：単発トリガー（引数は未使用でもOK）----
-    public void PlayFoam(GameObject _unused) { SetFoamLevel(1f); }
-    public void PlayHeat(GameObject _unused) { SetHeatLevel(1f); }
-    public void PlaySpark(GameObject _unused) { SetSparkLevel(1f); }
-    public void PlayWave(GameObject _unused) { SetWaveLevel(1f); }
-    public void PlayGlow(GameObject _unused) { SetGlowLevel(1f); }
-    public void PlaySmoke(GameObject _unused) { SetSmokeLevel(1f); }
+    // ---- public setters ----
+    public void SetHeatLevel(float v)  { _heat = Mathf.Clamp01(v);  Apply(); }
+    public void SetFoamLevel(float v)  { _foam = Mathf.Clamp01(v);  Apply(); }
+    public void SetGlowLevel(float v)  { _glow = Mathf.Clamp01(v);  Apply(); }
+    public void SetWaveLevel(float v)  { _wave = Mathf.Clamp01(v);  Apply(); }
+    public void SetSparkLevel(float v) { _spark = Mathf.Clamp01(v); Apply(); }
+    public void SetSmokeLevel(float v) { _smoke = Mathf.Clamp01(v); Apply(); }
 
-    // ---- リアルタイム制御：0..1 ----
-    public void SetHeatLevel(float v)
+    public void ResetLevels()
     {
-        _heat = Clamp01(v);
-        ApplyHeat();
+        _heat = _foam = _glow = _wave = _spark = _smoke = 0f;
+        Apply();
     }
 
-    public void SetFoamLevel(float v)
+    /// <summary>
+    /// reactionTag と ai の係数からプリセット適用
+    /// </summary>
+    public void ApplyPreset(string reactionTag, AIRequestSender ai, float progress01)
     {
-        _foam = Clamp01(v);
-        ApplyFoam();
-    }
-
-    public void SetGlowLevel(float v)
-    {
-        _glow = Clamp01(v);
-        ApplyGlow();
-    }
-
-    public void SetWaveLevel(float v)
-    {
-        _wave = Clamp01(v);
-        ApplyWave();
-    }
-
-    public void SetSparkLevel(float v)
-    {
-        _spark = Clamp01(v);
-        ApplySpark();
-    }
-
-    public void SetSmokeLevel(float v)
-    {
-        _smoke = Clamp01(v);
-        ApplySmoke();
-    }
-
-    private void ApplyFoam()
-    {
-        if (foamParticles == null) return;
-        var em = foamParticles.emission;
-        em.enabled = _foam > 0.01f;
-        // rateOverTime は struct なのでこうする
-        ParticleSystem.MinMaxCurve rate = em.rateOverTime;
-        rate.constant = 50f * _foam;
-        em.rateOverTime = rate;
-
-        if (_foam > 0.01f && !foamParticles.isPlaying) foamParticles.Play();
-        if (_foam <= 0.01f && foamParticles.isPlaying) foamParticles.Stop();
-    }
-
-    private void ApplySmoke()
-    {
-        if (smokeParticles == null) return;
-        var em = smokeParticles.emission;
-        em.enabled = _smoke > 0.01f;
-        ParticleSystem.MinMaxCurve rate = em.rateOverTime;
-        rate.constant = 30f * _smoke;
-        em.rateOverTime = rate;
-
-        if (_smoke > 0.01f && !smokeParticles.isPlaying) smokeParticles.Play();
-        if (_smoke <= 0.01f && smokeParticles.isPlaying) smokeParticles.Stop();
-    }
-
-    private void ApplySpark()
-    {
-        if (sparkParticles == null) return;
-        var em = sparkParticles.emission;
-        em.enabled = _spark > 0.01f;
-        ParticleSystem.MinMaxCurve rate = em.rateOverTime;
-        rate.constant = 20f * _spark;
-        em.rateOverTime = rate;
-
-        if (_spark > 0.01f && !sparkParticles.isPlaying) sparkParticles.Play();
-        if (_spark <= 0.01f && sparkParticles.isPlaying) sparkParticles.Stop();
-    }
-
-    private void ApplyGlow()
-    {
-        if (glowRenderers == null) return;
-        for (int i = 0; i < glowRenderers.Length; i++)
+        if (ai == null)
         {
-            var r = glowRenderers[i];
-            if (r == null) continue;
-            var m = r.material;
-            if (m == null) continue;
+            ResetLevels();
+            return;
+        }
 
-            // emissionがある場合だけ
-            if (m.HasProperty(emissionProperty))
-            {
-                // 色は変えず“強度だけ”上げる（既存色に乗算）
-                Color baseCol = m.GetColor(emissionProperty);
-                float s = emissionMax * _glow;
-                m.SetColor(emissionProperty, baseCol * Mathf.Max(0.01f, s));
-            }
+        // 基本はai係数を使う。reactionTagが無い場合もこれで動く。
+        SetHeatLevel(ai.fxHeat);
+        SetFoamLevel(ai.fxFoam);
+        SetGlowLevel(ai.fxGlow);
+        SetWaveLevel(ai.fxWave);
+        SetSparkLevel(ai.fxSpark);
+        SetSmokeLevel(ai.fxSmoke);
+
+        // タグで軽く補正（任意）
+        if (reactionTag == "none")
+        {
+            // 変化が弱い
+            SetGlowLevel(ai.fxGlow * 0.2f);
+            SetFoamLevel(ai.fxFoam * 0.2f);
+            SetSmokeLevel(ai.fxSmoke * 0.2f);
         }
     }
 
-    private void ApplyHeat()
+    private void Apply()
     {
-        if (heatRenderers == null) return;
-        float v = heatMax * _heat;
+        // 粒子（量はEmissionRateでなく、Play/Stopの切替＋rateOverTimeを触れるなら触る）
+        ApplyParticle(foamParticles, _foam);
+        ApplyParticle(smokeParticles, _smoke);
+        ApplyParticle(sparkParticles, _spark);
 
-        for (int i = 0; i < heatRenderers.Length; i++)
+        // 発光（EmissionColor）
+        if (glowRenderers != null)
         {
-            var r = heatRenderers[i];
-            if (r == null) continue;
-            var m = r.material;
-            if (m == null) continue;
-
-            if (m.HasProperty(heatProperty))
+            for (int i = 0; i < glowRenderers.Length; i++)
             {
-                m.SetFloat(heatProperty, v);
+                Renderer r = glowRenderers[i];
+                if (r == null) continue;
+                Material m = r.material;
+                if (m == null) continue;
+                if (m.HasProperty(emissionProperty))
+                {
+                    m.SetColor(emissionProperty, Color.white * (_glow * emissionMax));
+                }
             }
         }
+
+        // Heat / Wave（shader propertyがあれば）
+        ApplyFloatToRenderers(heatRenderers, heatProperty, _heat * heatMax);
+        ApplyFloatToRenderers(waveRenderers, waveProperty, _wave * waveMax);
     }
 
-    private void ApplyWave()
+    private void ApplyParticle(ParticleSystem ps, float level01)
     {
-        if (waveRenderers == null) return;
-        float v = waveMax * _wave;
-
-        for (int i = 0; i < waveRenderers.Length; i++)
+        if (ps == null) return;
+        if (level01 <= 0.01f)
         {
-            var r = waveRenderers[i];
-            if (r == null) continue;
-            var m = r.material;
-            if (m == null) continue;
+            if (ps.isPlaying) ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            return;
+        }
 
-            if (m.HasProperty(waveProperty))
-            {
-                m.SetFloat(waveProperty, v);
-            }
+        if (!ps.isPlaying) ps.Play();
+        // 可能ならrateOverTimeを調整（Main/EmissionはUdonで触れるが、環境次第で無理なら無視）
+        var emission = ps.emission;
+        emission.enabled = true;
+        emission.rateOverTime = 10f * level01;
+    }
+
+    private void ApplyFloatToRenderers(Renderer[] rs, string prop, float v)
+    {
+        if (rs == null) return;
+        for (int i = 0; i < rs.Length; i++)
+        {
+            Renderer r = rs[i];
+            if (r == null) continue;
+            Material m = r.material;
+            if (m == null) continue;
+            if (m.HasProperty(prop)) m.SetFloat(prop, v);
         }
     }
-
-    private float Clamp01(float v) { return v < 0f ? 0f : (v > 1f ? 1f : v); }
-
-
-// まとめて停止（リセット用）
-public void StopAll()
-{
-    SetFoamLevel(0f);
-    SetSmokeLevel(0f);
-    SetSparkLevel(0f);
-    SetGlowLevel(0f);
-    SetHeatLevel(0f);
-    SetWaveLevel(0f);
-}
-
 }

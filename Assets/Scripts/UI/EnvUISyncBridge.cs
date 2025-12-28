@@ -1,6 +1,11 @@
-﻿using UdonSharp;
+using UdonSharp;
 using UnityEngine;
 
+/// <summary>
+/// EnvUISyncBridge
+/// UI表示更新をまとめるだけのブリッジ。
+/// （同期の真実はspawnerが持つ。UI更新はローカル。）
+/// </summary>
 public class EnvUISyncBridge : UdonSharpBehaviour
 {
     public ChemEnvironmentManager env;
@@ -8,14 +13,11 @@ public class EnvUISyncBridge : UdonSharpBehaviour
 
     public override void OnDeserialization()
     {
-        if (status != null) status.RefreshUI();
+        _RefreshAllDisplays();
     }
 
-
-// Orchestrator/ボタンから呼ぶ用（明示更新）
-public void _RefreshAllDisplays()
-{
-    if (status != null) status.RefreshUI();
-}
-
+    public void _RefreshAllDisplays()
+    {
+        if (status != null) status.RefreshUI();
+    }
 }

@@ -1,7 +1,12 @@
-﻿using UdonSharp;
+using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
 
+/// <summary>
+/// ExperimentOrchestrator
+/// 教材フローの入口（ミッション/開始/リセット）
+/// ※Importer/Hierarchyは無視して、コード側の骨格だけ提供。
+/// </summary>
 [AddComponentMenu("VRC Lab/ExperimentOrchestrator")]
 public class ExperimentOrchestrator : UdonSharpBehaviour
 {
@@ -9,27 +14,34 @@ public class ExperimentOrchestrator : UdonSharpBehaviour
     public ChemEnvironmentManager environmentManager;
     public EnvUISyncBridge uiSync;
 
-    private bool isVR;
+    [Header("Auto Start")]
+    public bool autoStartOnDesktop = false;
 
-    void Start()
+    private void Start()
     {
-        isVR = Networking.LocalPlayer != null && Networking.LocalPlayer.IsUserInVR();
-        Debug.Log($"[Orchestrator] モード: {(isVR ? "VR" : "PC")}");
+        if (spawner == null) return;
+
+        bool isVR = Networking.LocalPlayer != null && Networking.LocalPlayer.IsUserInVR();
+        if (!isVR && autoStartOnDesktop)
+        {
+            spawner.SendCustomEvent("_StartExperiment");
+        }
     }
 
     public void _StartExperiment()
     {
-        if (isVR)
-            Debug.Log("[Orchestrator] VRモード: 手動操作で開始");
-        else
-            spawner.SendCustomEvent("_StartExperiment");
+        if (spawner != null) spawner.SendCustomEvent("_StartExperiment");
     }
 
     public void _ResetExperiment()
     {
-        spawner.SendCustomEvent("_ResetExperiment");
-        environmentManager.SendCustomEvent("_ResetToDefaults");
-        uiSync.SendCustomEvent("_RefreshAllDisplays");
-        Debug.Log("[Orchestrator] 実験リセット完了");
+        if (spawner != null) spawner.SendCustomEvent("_ResetExperiment");
+        if (environmentManager != null) environmentManager.SendCustomEvent("_ResetToDefaults");
+        if (uiSync != null) uiSync.SendCustomEvent("_RefreshAllDisplays");
+    }
+
+    public void _ReleaseOperator()
+    {
+        if (spawner != null) spawner.SendCustomEvent("_ReleaseOperator");
     }
 }

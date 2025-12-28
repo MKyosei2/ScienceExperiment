@@ -1,356 +1,171 @@
-﻿using UdonSharp;
+using UdonSharp;
 using UnityEngine;
 
 /// <summary>
 /// AIRequestSender
 /// --------------------------------------------------
-/// ・生成AIは1セッション1回のみ実行
-/// ・Resetされるまで結果は固定
-/// ・インスタンスが存在する限りデータ保持
-/// ・生成物Prefabに「個体差パラメータ」を供給
-/// ・UdonSharp完全対応
+/// 外部APIなしの「生成っぽい」係数生成器。
+/// ・StartSessionで入力/器具を受け取る
+/// ・seed固定で再現性を担保
+/// ・TickRealtime or EvaluateAtProgress で可視化用係数を更新
 /// --------------------------------------------------
-///
-/// 外部想定API：
-///   StartSession(string formula, string toolId)
-///   ShouldTick(float deltaTime)
-///   TickRealtime(float deltaTime, float stir, float pour, float heat, float shake)
-///   ResetSession()
 /// </summary>
 public class AIRequestSender : UdonSharpBehaviour
 {
-    // =====================================================
-    // セッション状態（外部参照用）
-    // =====================================================
     [Header("Session State")]
     public bool isRunning;
     public bool isComplete;
-    [Range(0f, 1f)] public float progress01;
 
-    // =====================================================
-    // 生成結果（固定）
-    // =====================================================
-    [Header("Generated (Fixed until Reset)")]
-    public string reactionTag;
+    [Header("Deterministic Seed")]
+    public bool useOverrideSeed;
+    public int sessionSeedOverride;
 
-
-[Header("Context (optional)")]
-public ChemElementDatabase elementDb;
-public ReactionPredictor predictor;
-public ChemExplainGenerator explainGenerator;
-public ChemicalReactionDatabase compoundDb;
-
-[Header("Environment snapshot (optional)")]
-public float envTempC = 25f;
-public float envHumidity = 40f;
-public float envPressure = 101f;
-
-[Header("Determinism")]
-public bool useOverrideSeed = false;
-public int sessionSeedOverride = 0;
+    [Header("Predicted (for UI / visuals)")]
     public string predictedProductFormula;
+    public string predictedReactionTag;
 
-    [TextArea] public string hintText;
-    [TextArea] public string explainText;
-    [TextArea] public string safetyText;
+    [Header("Outputs (0..1)")]
+    [Range(0f,1f)] public float fxHeat;
+    [Range(0f,1f)] public float fxFoam;
+    [Range(0f,1f)] public float fxGlow;
+    [Range(0f,1f)] public float fxWave;
+    [Range(0f,1f)] public float fxSpark;
+    [Range(0f,1f)] public float fxSmoke;
 
-    // =====================================================
-    // FX（再生用）
-    // =====================================================
-    [Header("FX Output")]
-    [Range(0f, 1f)] public float fxGlow;
-    [Range(0f, 1f)] public float fxHeat;
-    [Range(0f, 1f)] public float fxFoam;
-    [Range(0f, 1f)] public float fxSmoke;
-    [Range(0f, 1f)] public float fxSpark;
-    [Range(0f, 1f)] public float fxWave;
+    [Header("Progress")]
+    [Range(0f,1f)] public float sessionProgress01;
 
-    // =====================================================
-    // 生成物：個体差パラメータ（固定）
-    // =====================================================
-    [Header("Individual Parameters (for Product Prefab)")]
-    [Range(0.5f, 1.5f)] public float indSize;
-    [Range(-0.2f, 0.2f)] public float indColorShift;
-    [Range(0f, 1f)] public float indRoughness;
-    [Range(0f, 1f)] public float indGlow;
-    [Range(0f, 1f)] public float indStability;
+    // internal variation
+    private float _v1, _v2, _v3;
 
-    // =====================================================
-    // 内部キャッシュ（生成AIの記憶）
-    // =====================================================
-    private bool _hasGenerated;
-
-    private float _cachedReactionStrength;
-    private float _cachedGasLevel;
-    private float _cachedEnergy;
-
-    private int _sessionSeed;
-
-    private string _inputFormula;
-    private string _toolId;
-
-    private string _predictorExplain;
-
-    private float _elapsed;
-    private const float SESSION_DURATION = 3.0f;
-
-    // =====================================================
-    // ===== 外部から呼ばれるAPI =====
-    // =====================================================
-
-    /// <summary>
-    /// 実験開始（生成AIはここで1回だけ動く）
-    /// </summary>
     public void StartSession(string formula, string toolId)
     {
-        _inputFormula = formula;
-        _toolId = toolId;
+        string f = formula == null ? "" : formula.Trim();
+        string t = toolId == null ? "" : toolId.Trim();
+
+        int seed = useOverrideSeed ? sessionSeedOverride : ComputeSeed(f, t);
+        SeedVariations(seed);
+
+        predictedProductFormula = f;
+        predictedReactionTag = PredictTagFromTool(t);
 
         isRunning = true;
         isComplete = false;
-        progress01 = 0f;
-        _elapsed = 0f;
-
-        _hasGenerated = false;
-
-        // 初期化
-        fxGlow = fxHeat = fxFoam = fxSmoke = fxSpark = fxWave = 0f;
-        hintText = explainText = safetyText = "";
-
-        GenerateOnce();
+        sessionProgress01 = 0f;
+        EvaluateAtProgress(0f);
     }
 
-    /// <summary>
-    /// Spawner 側の進行判定用
-    /// </summary>
-    public bool ShouldTick(float deltaTime)
+    public void TickRealtime(float deltaTime, float stir01, float pour01, float heat01, float shake01)
     {
-        return isRunning && !isComplete;
-    }
+        if (!isRunning) return;
 
-    /// <summary>
-    /// 実験進行（再生フェーズ）
-    /// </summary>
-    public void TickRealtime(
-        float deltaTime,
-        float stir,
-        float pour,
-        float heat,
-        float shake
-    )
-    {
-        if (!isRunning || isComplete) return;
+        // 基本進行（操作入力があれば速くなるよう拡張可能）
+        float speed = 0.20f + 0.10f * _v1;
+        sessionProgress01 = Mathf.Clamp01(sessionProgress01 + deltaTime * speed);
 
-        _elapsed += deltaTime;
-        progress01 = Mathf.Clamp01(_elapsed / SESSION_DURATION);
+        EvaluateAtProgress(sessionProgress01);
 
-        // ===== 再生（生成しない）=====
-        fxHeat = _cachedEnergy * progress01;
-        fxGlow = _cachedEnergy * 0.8f * progress01;
-        fxFoam = _cachedGasLevel * _cachedReactionStrength * progress01;
-        fxSmoke = _cachedGasLevel * heat * progress01;
-        fxSpark = reactionTag == "oxidation" ? heat * progress01 : 0f;
-
-fxWave = (stir + pour) * progress01;
-
-// 進行中のヒント/説明を操作に追従（任意）
-if (explainGenerator != null)
-{
-    bool isDangerous = false;
-    if (elementDb != null)
-    {
-        int hz = elementDb.GetHazardFromFormula(predictedProductFormula);
-        isDangerous = hz != 0;
-    }
-
-    string h, e, s;
-    explainGenerator.Build(
-        _inputFormula,
-        _toolId,
-        reactionTag,
-        stir,
-        pour,
-        heat,
-        shake,
-        envTempC,
-        _cachedReactionStrength,
-        _cachedGasLevel,
-        _cachedEnergy,
-        isDangerous,
-        out h, out e, out s
-    );
-
-    hintText = h;
-    explainText = e;
-    safetyText = s;
-}
-
-if (progress01 >= 1f)
-
+        if (sessionProgress01 >= 0.999f)
         {
-            isRunning = false;
             isComplete = true;
         }
     }
 
     /// <summary>
-    /// リセット（生成AIの記憶を破棄）
+    /// spectator/同期追従用：progressだけで係数を決定（非同期60fpsで補間）
     /// </summary>
-    
-public void ResetSession()
-{
-    isRunning = false;
-    isComplete = false;
-    progress01 = 0f;
-
-    reactionTag = "";
-    predictedProductFormula = "";
-
-    hintText = "";
-    explainText = "";
-    safetyText = "";
-
-    fxGlow = fxHeat = fxFoam = fxSmoke = fxSpark = fxWave = 0f;
-
-    _hasGenerated = false;
-    _elapsed = 0f;
-
-    _cachedReactionStrength = 0f;
-    _cachedGasLevel = 0f;
-    _cachedEnergy = 0f;
-}
-
-    // =====================================================
-    // ===== 生成AIコア（1回だけ実行）=====
-    // =====================================================
-
-    private void GenerateOnce()
+    public void EvaluateAtProgress(float progress01)
     {
-        if (_hasGenerated) return;
-        _hasGenerated = true;
+        if (!isRunning) return;
 
-        // -------------------------------------------------
-        
-// -------------------------------------------------
-// セッション固有Seed（固定/再現性）
-// -------------------------------------------------
-if (useOverrideSeed)
-{
-    _sessionSeed = sessionSeedOverride;
-}
-else
-{
-    _sessionSeed = (int)(Time.time * 1000f) % 1000000;
-}
-Random.InitState(_sessionSeed);
+        float p = Mathf.Clamp01(progress01);
+        sessionProgress01 = p;
 
-// -------------------------------------------------
-        
-// -------------------------------------------------
-// 推論（Predictorがあればそれを優先）
-// -------------------------------------------------
-string predictorExplain = "";
-if (predictor != null)
-{
-    predictor.Predict(_inputFormula, _toolId, out predictedProductFormula, out reactionTag, out predictorExplain);
-}
-else
-{
-    reactionTag = InferReactionTag(_inputFormula, _toolId);
-    predictedProductFormula = InferProduct(_inputFormula, reactionTag);
-}
-_cachedReactionStrength = Random.Range(0.4f, 0.9f);
-        _cachedGasLevel = Random.Range(0.1f, 0.7f);
-        _cachedEnergy = Random.Range(0.2f, 0.95f);
-
-        // -------------------------------------------------
-        // 個体差パラメータ生成（生成物用）
-        // -------------------------------------------------
-        indSize = Random.Range(0.8f, 1.3f);
-        indColorShift = Random.Range(-0.15f, 0.15f);
-        indRoughness = Random.Range(0.2f, 0.8f);
-        indGlow = Random.Range(0.0f, 0.9f);
-        indStability = Random.Range(0.3f, 1.0f);
-
-        // -------------------------------------------------
-        
-                _predictorExplain = predictorExplain;
-
-        // -------------------------------------------------
-        // テキスト生成（ExplainGeneratorがあればそれを優先）
-        // -------------------------------------------------
-        bool isDangerous = false;
-        if (elementDb != null)
+        // タグ別にカーブを変える
+        if (predictedReactionTag == "oxidation")
         {
-            int hz = elementDb.GetHazardFromFormula(predictedProductFormula);
-            isDangerous = hz != 0;
+            fxHeat = EaseInOut(p);
+            fxGlow = EaseOut(p) * (0.7f + 0.3f * _v2);
+            fxSmoke = EaseIn(p) * (0.5f + 0.5f * _v3);
+            fxSpark = (p > 0.7f) ? (p - 0.7f) / 0.3f * (0.2f + 0.8f * _v1) : 0f;
+            fxFoam = 0.05f * (0.5f + 0.5f * _v2);
+            fxWave = 0.15f * (0.5f + 0.5f * _v3);
         }
-
-        if (explainGenerator != null)
+        else if (predictedReactionTag == "chloride" || predictedReactionTag == "mixing")
         {
-            string h, e, s;
-            explainGenerator.Build(
-                _inputFormula,
-                _toolId,
-                reactionTag,
-                0f, 0f, 0f, 0f,
-                envTempC,
-                _cachedReactionStrength,
-                _cachedGasLevel,
-                _cachedEnergy,
-                isDangerous,
-                out h, out e, out s
-            );
-
-            hintText = h;
-            explainText = string.IsNullOrEmpty(_predictorExplain) ? e : (e + "\n【予測】" + _predictorExplain);
-            safetyText = s;
+            fxFoam = EaseInOut(p) * (0.6f + 0.4f * _v1);
+            fxWave = EaseInOut(p) * (0.5f + 0.5f * _v2);
+            fxGlow = 0.10f * (0.5f + 0.5f * _v3);
+            fxHeat = 0.10f * (0.5f + 0.5f * _v2);
+            fxSmoke = 0.15f * (0.5f + 0.5f * _v1);
+            fxSpark = 0f;
         }
         else
         {
-            hintText = Pick(new string[] {
-                "条件を少し変えて反応の違いを観察してください。",
-                "操作を1つずつ変えると因果が見えます。",
-                "攪拌や加熱を調整して変化を比較しましょう。"
-            });
-
-	            explainText =
-	                "【生成推論】この実験は「" + reactionTag + "」方向の変化を示します。\n" +
-	                "入力: " + _inputFormula + " / 器具: " + _toolId + "\n" +
-	                "生成物(推定): " + predictedProductFormula + "\n" +
-	                "（※外部AIなし：テンプレ＋条件分岐）";
-
-            safetyText = "安全注意：換気と保護具（ゴーグル等）を推奨します。";
+            fxHeat = 0.05f;
+            fxFoam = 0.02f;
+            fxGlow = 0.02f;
+            fxWave = 0.02f;
+            fxSpark = 0f;
+            fxSmoke = 0.01f;
         }
-
     }
 
-    // =====================================================
-    // ===== 内部ユーティリティ =====
-    // =====================================================
-
-    private string InferReactionTag(string formula, string tool)
+    public void ResetSession()
     {
-        if (tool == "burner") return "oxidation";
-        if (tool == "beaker") return "dissolve";
-        return "mix";
+        isRunning = false;
+        isComplete = false;
+        predictedProductFormula = "";
+        predictedReactionTag = "none";
+        sessionProgress01 = 0f;
+
+        fxHeat = fxFoam = fxGlow = fxWave = fxSpark = fxSmoke = 0f;
     }
 
-    private string InferProduct(string formula, string tag)
+    private string PredictTagFromTool(string toolId)
     {
-        if (tag == "oxidation") return formula + "_OX";
-        if (tag == "dissolve") return formula + "_AQ";
-        return formula + "_MIX";
+        if (string.IsNullOrEmpty(toolId)) return "none";
+        if (toolId.Contains("Gasburner")) return "oxidation";
+        if (toolId.Contains("FLASK") || toolId.Contains("Beaker")) return "mixing";
+        return "none";
     }
 
-    private string Pick(string[] list)
+    private void SeedVariations(int seed)
     {
-        if (list == null || list.Length == 0) return "";
-        return list[Random.Range(0, list.Length)];
+        // LCG
+        int s = seed;
+        s = (s * 1103515245 + 12345);
+        _v1 = ((s >> 16) & 0x7FFF) / 32767f;
+        s = (s * 1103515245 + 12345);
+        _v2 = ((s >> 16) & 0x7FFF) / 32767f;
+        s = (s * 1103515245 + 12345);
+        _v3 = ((s >> 16) & 0x7FFF) / 32767f;
     }
 
-    private string Percent(float v)
+    private int ComputeSeed(string a, string b)
     {
-        return Mathf.RoundToInt(Mathf.Clamp01(v) * 100f) + "%";
+        int hash = 17;
+        hash = HashStep(hash, a);
+        hash = HashStep(hash, b);
+        if (hash < 0) hash = -hash;
+        return hash;
+    }
+
+    private int HashStep(int hash, string s)
+    {
+        if (s == null) return hash;
+        int len = s.Length;
+        for (int i = 0; i < len; i++)
+        {
+            hash = (hash * 31) + (int)s[i];
+        }
+        return hash;
+    }
+
+    private float EaseIn(float t) { return t * t; }
+    private float EaseOut(float t) { return 1f - (1f - t) * (1f - t); }
+    private float EaseInOut(float t)
+    {
+        return t < 0.5f ? 2f * t * t : 1f - Mathf.Pow(-2f * t + 2f, 2f) / 2f;
     }
 }
