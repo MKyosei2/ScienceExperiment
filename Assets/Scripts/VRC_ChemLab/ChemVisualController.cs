@@ -39,6 +39,12 @@ public class ChemVisualController : UdonSharpBehaviour
     [HideInInspector] public string lastSelectedSymbol; // dropAnimatorが参照
     [HideInInspector] public Color lastSelectedColor;   // dropAnimatorが参照
 
+    // cache (avoid material touching / SetActive spam)
+    private bool _hasLastState;
+    private ChemElementState _lastState;
+    private bool _hasLastColor;
+    private Color _lastColor;
+
     private void Start()
     {
         if (solidObj == null) solidObj = FindChild("Solid");
@@ -87,6 +93,10 @@ public class ChemVisualController : UdonSharpBehaviour
 
     public void SetState(ChemElementState s)
     {
+        if (_hasLastState && _lastState == s) return;
+        _hasLastState = true;
+        _lastState = s;
+
         if (solidObj != null) solidObj.SetActive(s == ChemElementState.Solid);
         if (liquidObj != null) liquidObj.SetActive(s == ChemElementState.Liquid);
         if (gasObj != null) gasObj.SetActive(s == ChemElementState.Gas);
@@ -94,6 +104,21 @@ public class ChemVisualController : UdonSharpBehaviour
 
     public void ApplyColor(Color c)
     {
+        if (_hasLastColor)
+        {
+            float dr = c.r - _lastColor.r;
+            float dg = c.g - _lastColor.g;
+            float db = c.b - _lastColor.b;
+            float da = c.a - _lastColor.a;
+            if ((dr * dr + dg * dg + db * db + da * da) < 0.00001f)
+            {
+                return;
+            }
+        }
+
+        _hasLastColor = true;
+        _lastColor = c;
+
         if (targetRenderers == null) return;
 
         for (int i = 0; i < targetRenderers.Length; i++)

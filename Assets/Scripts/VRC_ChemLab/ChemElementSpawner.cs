@@ -7,8 +7,8 @@ using UnityEngine.UI;
 /// <summary>
 /// ChemElementSpawner (Network-authoritative experiment core)
 /// ---------------------------------------------------------
-/// 同期：実験の真実（操作者/選択/環境/反応結果/進行度）
-/// 非同期：見た目（演出/補間/粒子/移動）
+/// 同期：実験の真実（操作者/選択/環境/反応結果/進行度/温度）
+/// 非同期：見た目（演出/補間/粒子/状態変化の表示）
 ///
 /// 注意：VRChat/Udon同期で60fps配信は現実的ではないため、
 ///       ネット同期はイベント/低頻度更新、表示は各クライアントで60fps更新する設計です。
@@ -25,7 +25,7 @@ public class ChemElementSpawner : UdonSharpBehaviour
     public ChemEnvironmentManager environment;      // UI操作の受け口（確定時のみ同期）
 
     [Header("Local Visual (async)")]
-    public ChemVisualController sampleVisual;       // 見た目（固液気/色/マテリアル）
+    public ChemVisualController sampleVisual;       // 見た目（固液気/色）
     public ChemReactionAnimator reactionAnimator;   // 泡/煙/熱/発光など（ローカル演出）
     public AIRequestSender ai;                      // VFX係数生成（ローカル）
 
@@ -39,17 +39,51 @@ public class ChemElementSpawner : UdonSharpBehaviour
     [Tooltip("操作者が進行度を同期する最小間隔（秒）。0.1=10Hz程度。")]
     public float progressSyncInterval = 0.12f;
 
+    [Tooltip("操作者が温度を同期する最小間隔（秒）。表示は各クライアントで60fps補間。")]
+    public float temperatureSyncInterval = 0.25f;
+
+    [Header("Dynamic Temperature Model")]
+    [Tooltip("実験中に温度を動かす（同期は低頻度、見た目は各クライアントで60fps更新）")]
+    public bool enableDynamicTemperature = true;
+
+    [Tooltip("外部加熱(ヒーター)の最大上昇量（℃）。Heat01=1で ambient+この値 を目標にします")]
+    public float externalHeatMaxDeltaC = 250f;
+
+    [Tooltip("反応由来の熱(0..1)を温度に足す最大上昇量（℃）。ai.fxHeat を使用")]
+    public float reactionHeatMaxDeltaC = 80f;
+
+    [Tooltip("温度が目標へ近づく速度（℃/秒）。")]
+    public float thermalResponseCPerSec = 35f;
+
+    [Tooltip("見た目温度（非同期）が同期温度へ追従する速さ（大きいほどキビキビ）")]
+    public float visualTempLerpSpeed = 10f;
+
+    [Header("Heater Input (optional)")]
+    [Tooltip("true の場合、containerTransform と heatSource の距離から Heat01 を自動算出します（操作者のみ）。")]
+    public bool autoHeatFromProximity = false;
+
+    public Transform containerTransform;
+    public Transform heatSource;
+    public float heatNearMeters = 0.20f;
+    public float heatFarMeters = 0.80f;
+
     // -----------------------------
     // Synced experiment "truth"
     // -----------------------------
-    [UdonSynced] private int _syncedVersion;              // 変更カウンタ
+    [UdonSynced] private int _syncedVersion;              // 主要変更カウンタ（選択/開始/リセット/操作者変更）
     [UdonSynced] private int _syncedOperatorPlayerId = -1;
 
     [UdonSynced] private string _syncedInput;            // 元素/式（ボタンのidOrName）
     [UdonSynced] private string _syncedTool;             // 器具ID
-    [UdonSynced] private float _syncedTempC;
+
+    // 環境（同期）
+    [UdonSynced] private float _syncedTempC;             // 現在温度（実験中は動的に更新）
+    [UdonSynced] private float _syncedAmbientTempC;      // 基準温度（初期条件/環境設定）
     [UdonSynced] private float _syncedPressureKPa;
     [UdonSynced] private float _syncedHumidity;
+
+    // 温度操作（同期）
+    [UdonSynced] private float _syncedHeat01;            // 0..1 外部加熱レベル（ボタン or 自動近接）
 
     [UdonSynced] private string _syncedReactionTag;      // "oxidation"/"chloride"/"none" etc.
     [UdonSynced] private string _syncedProductFormula;   // 生成物（式/ラベル）
@@ -63,14 +97,29 @@ public class ChemElementSpawner : UdonSharpBehaviour
     // -----------------------------
     private int _lastAppliedVersion = -1;
     private float _nextProgressSyncAt;
+    private float _nextTempSyncAt;
     private string _history = "";
     private string _localInput = "";
     private string _localTool = "";
 
+    // Local temperature (operator simulation + everyone visual smoothing)
+    private float _simTempC;
+    private float _visualTempC;
+    private bool _tempInitialized;
+
     private void Start()
     {
-        // 初回UI反映（ローカル）
-        ApplyVisualFromState(force:true);
+        if (containerTransform == null) containerTransform = transform;
+
+        // 初期環境を同期変数へ取り込み（オフライン/単独テスト向け）
+        PullEnvironmentForSync(true);
+
+        // 温度初期化
+        _simTempC = _syncedTempC;
+        _visualTempC = _syncedTempC;
+        _tempInitialized = true;
+
+        ApplyVisualFromState(true);
         WriteUI();
     }
 
@@ -138,12 +187,17 @@ public class ChemElementSpawner : UdonSharpBehaviour
         _syncedOperatorPlayerId = -1;
         _syncedPhase = 0;
         _syncedProgress01 = 0f;
+        _syncedHeat01 = 0f;
+
+        // 温度は環境基準へ戻す
+        _syncedTempC = _syncedAmbientTempC;
+
         _syncedVersion++;
         RequestSerialization();
 
         AppendHistory("ReleaseOperator");
         StopLocalSession();
-        ApplyVisualFromState(force:true);
+        ApplyVisualFromState(true);
         WriteUI();
     }
 
@@ -166,7 +220,7 @@ public class ChemElementSpawner : UdonSharpBehaviour
         if (sampleVisual != null)
             sampleVisual.NotifyElementSelected(_localInput);
 
-        ApplyVisualFromState(force:true);
+        ApplyVisualFromState(true);
         WriteUI();
     }
 
@@ -184,20 +238,54 @@ public class ChemElementSpawner : UdonSharpBehaviour
         WriteUI();
     }
 
-    // 環境調整（ConditionAdjusterから呼ぶ想定）
+    /// <summary>
+    /// 環境調整（ConditionAdjusterから呼ぶ想定）
+    /// 既存の TempUp/TempDown 等に加えて、HeatUp/HeatDown/HeatOn/HeatOff も受け付ける。
+    /// </summary>
     public void ModifyEnvironment(string command)
     {
         if (!EnsureCanControl()) return;
+        if (string.IsNullOrEmpty(command)) return;
+
+        // ---- heater commands (synced) ----
+        if (command == "HeatOn")
+        {
+            SetHeat01(1f, true);
+            return;
+        }
+        if (command == "HeatOff")
+        {
+            SetHeat01(0f, true);
+            return;
+        }
+        if (command == "HeatUp")
+        {
+            SetHeat01(_syncedHeat01 + 0.1f, true);
+            return;
+        }
+        if (command == "HeatDown")
+        {
+            SetHeat01(_syncedHeat01 - 0.1f, true);
+            return;
+        }
+
+        // ---- normal environment commands ----
         if (environment == null) return;
 
         environment.Modify(command);
 
-        // 同期へ反映
-        _syncedTempC = environment.temperatureC;
+        // 同期へ反映（基準温度は環境のTemperature）
+        _syncedAmbientTempC = environment.temperatureC;
         _syncedPressureKPa = environment.pressureKPa;
         _syncedHumidity = environment.humidity;
 
-        _syncedVersion++;
+        // idle中は現在温度も追従
+        if (_syncedPhase == 0)
+        {
+            _syncedTempC = _syncedAmbientTempC;
+            _simTempC = _syncedTempC;
+        }
+
         RequestSerialization();
 
         AppendHistory("ModifyEnv: " + command);
@@ -210,10 +298,10 @@ public class ChemElementSpawner : UdonSharpBehaviour
         if (!EnsureCanControl()) return;
 
         // 環境値（確定値）を取得して同期に載せる
-        PullEnvironmentForSync();
+        PullEnvironmentForSync(false);
 
         // Seed（再現性）：入力/器具/環境からint範囲ハッシュ
-        _syncedSeed = ComputeSeed(_syncedInput, _syncedTool, _syncedTempC, _syncedPressureKPa, _syncedHumidity);
+        _syncedSeed = ComputeSeed(_syncedInput, _syncedTool, _syncedAmbientTempC, _syncedPressureKPa, _syncedHumidity);
 
         // 反応予測（結果の"真実"）
         string product = _syncedInput;
@@ -230,6 +318,13 @@ public class ChemElementSpawner : UdonSharpBehaviour
         _syncedPhase = 1;
         _syncedProgress01 = 0f;
 
+        // 温度初期化（基準温度スタート、加熱0）
+        _syncedHeat01 = 0f;
+        _syncedTempC = _syncedAmbientTempC;
+        _simTempC = _syncedTempC;
+        _visualTempC = _syncedTempC;
+        _tempInitialized = true;
+
         _syncedVersion++;
         RequestSerialization();
 
@@ -238,7 +333,7 @@ public class ChemElementSpawner : UdonSharpBehaviour
         // ローカル：セッション開始（視覚/説明生成）
         StartLocalSessionFromSynced();
 
-        ApplyVisualFromState(force:true);
+        ApplyVisualFromState(true);
         WriteUI();
     }
 
@@ -254,16 +349,21 @@ public class ChemElementSpawner : UdonSharpBehaviour
         _syncedSeed = 0;
         _syncedPhase = 0;
         _syncedProgress01 = 0f;
+        _syncedHeat01 = 0f;
 
         // envはデフォルトに戻す（環境マネージャ側でもResetされる想定）
-        PullEnvironmentForSync();
+        PullEnvironmentForSync(false);
+
+        // 温度は基準へ戻す
+        _syncedTempC = _syncedAmbientTempC;
+        _simTempC = _syncedTempC;
 
         _syncedVersion++;
         RequestSerialization();
 
         AppendHistory("ResetExperiment");
         StopLocalSession();
-        ApplyVisualFromState(force:true);
+        ApplyVisualFromState(true);
         WriteUI();
     }
 
@@ -272,8 +372,17 @@ public class ChemElementSpawner : UdonSharpBehaviour
     // =====================================================
     private void Update()
     {
-        // ローカル可視化は常時（60fps）
-        TickLocalVisual(Time.deltaTime);
+        float dt = Time.deltaTime;
+        if (dt <= 0f) dt = 0.016f;
+
+        // 温度モデル＆見た目温度補間（60fps）
+        TickLocalTemperature(dt);
+
+        // ローカル可視化（60fps）
+        TickLocalVisual(dt);
+
+        // 見た目：温度に応じて固液気を切替（非同期）
+        ApplyVisualContinuous();
 
         // operatorのみ：進行度を低頻度で同期
         if (_syncedPhase == 1 && IsOperatorLocal())
@@ -281,11 +390,27 @@ public class ChemElementSpawner : UdonSharpBehaviour
             if (Time.time >= _nextProgressSyncAt)
             {
                 _nextProgressSyncAt = Time.time + Mathf.Max(0.05f, progressSyncInterval);
+
                 // aiがあれば、aiの進行度を同期に乗せる
                 if (ai != null && ai.isRunning)
                 {
                     _syncedProgress01 = Mathf.Clamp01(ai.sessionProgress01);
                 }
+                RequestSerialization();
+            }
+        }
+
+        // operatorのみ：温度を低頻度で同期
+        if (_syncedPhase == 1 && IsOperatorLocal() && enableDynamicTemperature)
+        {
+            if (Time.time >= _nextTempSyncAt)
+            {
+                _nextTempSyncAt = Time.time + Mathf.Max(0.10f, temperatureSyncInterval);
+                _syncedTempC = _simTempC;
+
+                // UI表示（ローカル env を更新）
+                if (environment != null) environment.Temperature = _syncedTempC;
+
                 RequestSerialization();
             }
         }
@@ -298,7 +423,7 @@ public class ChemElementSpawner : UdonSharpBehaviour
         {
             if (ai != null)
             {
-                // dt駆動（ローカル）。ここをVRモーションで増減する設計にできる。
+                // 現状はモーション入力未接続（0）。必要ならここに stir/pour/shake などを足す。
                 ai.TickRealtime(dt, 0f, 0f, 0f, 0f);
                 if (ai.isComplete)
                 {
@@ -328,43 +453,159 @@ public class ChemElementSpawner : UdonSharpBehaviour
         }
     }
 
+    /// <summary>
+    /// 温度の「同期の真実」と「非同期の見た目」を分離。
+    /// - operator：温度をシミュレートし、低頻度で _syncedTempC を更新
+    /// - spectator：_syncedTempC を受け取り、_visualTempC を60fpsで補間
+    /// </summary>
+    private void TickLocalTemperature(float dt)
+    {
+        if (!_tempInitialized)
+        {
+            _simTempC = _syncedTempC;
+            _visualTempC = _syncedTempC;
+            _tempInitialized = true;
+        }
+
+        // 見た目温度：同期温度へ追従（全員）
+        float lerpT = 1f - Mathf.Exp(-Mathf.Max(0.01f, visualTempLerpSpeed) * dt);
+        _visualTempC = Mathf.Lerp(_visualTempC, _syncedTempC, lerpT);
+
+        if (!enableDynamicTemperature) return;
+        if (_syncedPhase != 1) return;
+
+        // operatorのみシミュレーション（スペクテイターは _syncedTempC に従う）
+        if (!IsOperatorLocal()) return;
+
+        float heat01 = _syncedHeat01;
+        if (autoHeatFromProximity)
+        {
+            float autoHeat = ComputeHeat01FromProximity();
+
+            // 自動ヒートは同期値も追従させる（ただし連打しないため温度同期のタイミングで反映）
+            heat01 = autoHeat;
+            _syncedHeat01 = autoHeat;
+        }
+
+        float reaction01 = 0f;
+        if (ai != null) reaction01 = Mathf.Clamp01(ai.fxHeat);
+
+        float target = _syncedAmbientTempC
+            + heat01 * externalHeatMaxDeltaC
+            + reaction01 * reactionHeatMaxDeltaC;
+
+        float step = Mathf.Max(0.01f, thermalResponseCPerSec) * dt;
+        _simTempC = Mathf.MoveTowards(_simTempC, target, step);
+    }
+
+    private float ComputeHeat01FromProximity()
+    {
+        if (containerTransform == null) containerTransform = transform;
+        if (heatSource == null) return _syncedHeat01;
+
+        float d = Vector3.Distance(containerTransform.position, heatSource.position);
+        if (d <= heatNearMeters) return 1f;
+        if (d >= heatFarMeters) return 0f;
+
+        // 近いほど1
+        float t = Mathf.InverseLerp(heatFarMeters, heatNearMeters, d);
+        return Mathf.Clamp01(t);
+    }
+
+    private void ApplyVisualContinuous()
+    {
+        if (sampleVisual == null || elementDb == null) return;
+
+        string sym = _syncedInput == null ? "" : _syncedInput;
+        sampleVisual.ApplyElementBySymbol(elementDb, sym, _visualTempC);
+    }
+
     // =====================================================
     // Sync receive
     // =====================================================
     public override void OnDeserialization()
     {
-        if (_syncedVersion == _lastAppliedVersion) return;
-        _lastAppliedVersion = _syncedVersion;
+        // 進行度/温度の更新など「軽い変化」も反映したいので、versionガードは重い処理だけに使う。
+        bool majorChanged = _syncedVersion != _lastAppliedVersion;
 
         // ローカルキャッシュ更新
         _localInput = _syncedInput == null ? "" : _syncedInput;
         _localTool = _syncedTool == null ? "" : _syncedTool;
 
-        // セッション状態の反映
-        if (_syncedPhase == 0)
+        // UI側の環境表示を更新（常に）
+        if (environment != null)
         {
-            StopLocalSession();
-        }
-        else
-        {
-            // spectator/後から入った人：同期状態からローカルセッション復元
-            StartLocalSessionFromSynced();
+            environment.Temperature = _syncedTempC;
+            environment.Pressure = _syncedPressureKPa;
+            environment.Humidity = _syncedHumidity;
         }
 
-        ApplyVisualFromState(force:true);
+        if (majorChanged)
+        {
+            _lastAppliedVersion = _syncedVersion;
+
+            // セッション状態の反映
+            if (_syncedPhase == 0)
+            {
+                StopLocalSession();
+            }
+            else
+            {
+                // spectator/後から入った人：同期状態からローカルセッション復元
+                StartLocalSessionFromSynced();
+            }
+
+            // 温度追従を安定化
+            _simTempC = _syncedTempC;
+            _visualTempC = _syncedTempC;
+            _tempInitialized = true;
+
+            ApplyVisualFromState(true);
+        }
+
+        // 軽い更新（progress/temp等）はここでUI更新
         WriteUI();
     }
 
     // =====================================================
     // Helpers
     // =====================================================
-    private void PullEnvironmentForSync()
+    private void PullEnvironmentForSync(bool initIfUnset)
     {
         if (environment != null)
         {
-            _syncedTempC = environment.temperatureC;
+            _syncedAmbientTempC = environment.temperatureC;
             _syncedPressureKPa = environment.pressureKPa;
             _syncedHumidity = environment.humidity;
+
+            if (_syncedPhase == 0)
+                _syncedTempC = _syncedAmbientTempC;
+
+            return;
+        }
+
+        // environment が無い場合の初期値
+        if (initIfUnset)
+        {
+            if (_syncedAmbientTempC == 0f && _syncedTempC == 0f)
+            {
+                _syncedAmbientTempC = 25f;
+                _syncedTempC = 25f;
+                _syncedPressureKPa = 101f;
+                _syncedHumidity = 40f;
+            }
+        }
+    }
+
+    private void SetHeat01(float value01, bool recordHistory)
+    {
+        _syncedHeat01 = Mathf.Clamp01(value01);
+        RequestSerialization();
+
+        if (recordHistory)
+        {
+            AppendHistory("Heat01=" + _syncedHeat01.ToString("0.00"));
+            WriteUI();
         }
     }
 
@@ -375,6 +616,7 @@ public class ChemElementSpawner : UdonSharpBehaviour
             ai.useOverrideSeed = true;
             ai.sessionSeedOverride = _syncedSeed;
             ai.StartSession(_syncedInput, _syncedTool);
+
             // spectatorは外部progressで追従させる
             if (!IsOperatorLocal())
             {
@@ -389,7 +631,7 @@ public class ChemElementSpawner : UdonSharpBehaviour
             bool dangerous = (elementDb != null && elementDb.GetHazard(_syncedInput) != 0);
 
             string hint, explain, safety;
-            explainGenerator.Generate(_syncedInput, _syncedTool, potential, _syncedTempC, _syncedPressureKPa, _syncedHumidity, dangerous,
+            explainGenerator.Generate(_syncedInput, _syncedTool, potential, _syncedAmbientTempC, _syncedPressureKPa, _syncedHumidity, dangerous,
                 out hint, out explain, out safety);
 
             if (hintText != null) hintText.text = hint;
@@ -409,7 +651,7 @@ public class ChemElementSpawner : UdonSharpBehaviour
         if (sampleVisual == null || elementDb == null) return;
 
         string sym = _syncedInput == null ? "" : _syncedInput;
-        sampleVisual.ApplyElementBySymbol(elementDb, sym, _syncedTempC);
+        sampleVisual.ApplyElementBySymbol(elementDb, sym, _visualTempC);
     }
 
     private void WriteUI()
@@ -417,12 +659,15 @@ public class ChemElementSpawner : UdonSharpBehaviour
         if (debugText == null) return;
 
         string role = IsOperatorLocal() ? "Operator" : "Spectator";
+
         debugText.text =
             "Role: " + role + "\n" +
             "OperatorId: " + _syncedOperatorPlayerId + "\n" +
             "Input: " + (_syncedInput ?? "") + "\n" +
             "Tool: " + (_syncedTool ?? "") + "\n" +
             "Phase: " + _syncedPhase + " (" + Mathf.RoundToInt(_syncedProgress01 * 100f) + "%)\n" +
+            "Temp: " + _syncedTempC.ToString("0.0") + " °C (ambient " + _syncedAmbientTempC.ToString("0.0") + ")\n" +
+            "Heat01: " + _syncedHeat01.ToString("0.00") + "\n" +
             "Reaction: " + (_syncedReactionTag ?? "none") + "\n" +
             "Product: " + (_syncedProductFormula ?? "") + "\n";
     }
@@ -439,7 +684,7 @@ public class ChemElementSpawner : UdonSharpBehaviour
         debugText.text = (debugText.text ?? "") + "\n" + line;
     }
 
-    // Udon互換：int内で回る簡易ハッシュ（mod演算はintのみ）
+    // Udon互換：int内で回る簡易ハッシュ
     private int ComputeSeed(string a, string b, float tC, float pKPa, float h)
     {
         int hash = 17;
@@ -481,4 +726,8 @@ public class ChemElementSpawner : UdonSharpBehaviour
         return _history == null ? "" : _history;
     }
 
+    public float GetCurrentTemperatureC()
+    {
+        return _visualTempC;
+    }
 }
