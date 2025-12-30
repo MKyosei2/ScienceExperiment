@@ -980,243 +980,243 @@ MonoBehaviour:
   - {r: 0.75, g: 0.65, b: 1, a: 1}
   - {r: 1, g: 0.75, b: 0.85, a: 1}
   MeltingPointC:
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
+  - -259.16
+  - -273.15
+  - 180.5
+  - 1287
+  - 2076
+  - 3642
+  - -210
+  - -218.79
+  - -219.67
+  - -248.59
+  - 97.794
+  - 650
+  - 660.32
+  - 1414
+  - 610
+  - 115.21
+  - -101.5
+  - -189.34
+  - 63.5
+  - 842
+  - 1541
+  - 1668
+  - 1910
+  - 1907
+  - 1246
+  - 1538
+  - 1495
+  - 1455
+  - 1084.62
+  - 419.53
+  - 29.7646
+  - 938.25
+  - 817
+  - 221
+  - -7.2
+  - -157.36
+  - 39.31
+  - 777
+  - 1526
+  - 1855
+  - 2477
+  - 2623
+  - 2157
+  - 2334
+  - 1964
+  - 1554.9
+  - 961.78
+  - 321.07
+  - 156.6
+  - 231.93
+  - 630.63
+  - 449.51
+  - 113.7
+  - -111.75
+  - 28.44
+  - 727
+  - 920
+  - 798
+  - 931
+  - 1021
+  - 1100
+  - 1072
+  - 822
+  - 1312
+  - 1356
+  - 1407
+  - 1474
+  - 1529
+  - 1545
+  - 1337
+  - 824
+  - 1663
+  - 2233
+  - 3017
+  - 3422
+  - 3186
+  - 3033
+  - 2446
+  - 1768
+  - 1064.18
+  - -38.829
+  - 303.5
+  - 327.46
+  - 254
+  - 302
+  - -71
+  - 27
+  - 112
+  - 52
+  - 700
+  - 973
+  - 1050
+  - 1323
+  - 1750
+  - 1572
+  - 1135
+  - 640
+  - 1340
+  - 1176
+  - 1345
+  - 986
+  - 900
+  - 860
+  - 1527
+  - 827
+  - 827
+  - 1627
+  - 2100
+  - 3557
+  - 4221
+  - 4215
+  - 3732
+  - 2928
+  - 1981
+  - 1166
+  - 10
+  - 430
+  - -73
   BoilingPointC:
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
-  - Infinity
+  - -252.879
+  - -268.928
+  - 1330
+  - 2469
+  - 3927
+  - 4027
+  - -195.795
+  - -182.962
+  - -188.11
+  - -246.046
+  - 882.94
+  - 1090
+  - 2470
+  - 3265
+  - 280.5
+  - 444.72
+  - -34.04
+  - -185.848
+  - 759
+  - 1484
+  - 2836
+  - 3287
+  - 3407
+  - 2671
+  - 2061
+  - 2862
+  - 2927
+  - 2730
+  - 2562
+  - 907
+  - 2204
+  - 2820
+  - 614
+  - 685
+  - 58.8
+  - -153.22
+  - 688
+  - 1382
+  - 3338
+  - 4409
+  - 4744
+  - 4639
+  - 3990
+  - 4150
+  - 3695
+  - 2963
+  - 2162
+  - 767
+  - 2072
+  - 2602
+  - 1587
+  - 987
+  - 184.3
+  - -107.05
+  - 670.8
+  - 1391
+  - 3464
+  - 3443
+  - 3520
+  - 3074
+  - 3000
+  - 1794
+  - 1529
+  - 3273
+  - 3230
+  - 2567
+  - 2700
+  - 2510
+  - 1469
+  - 1196
+  - 996
+  - 3402
+  - 4602
+  - 5458
+  - 5555
+  - 5596
+  - 5012
+  - 4428
+  - 3825
+  - 2856
+  - 1473
+  - 1749
+  - 1564
+  - 962
+  - 230
+  - -61.7
+  - 677
+  - 1737
+  - 3198
+  - 4788
+  - 4027
+  - 4131
+  - 3902
+  - 3228
+  - 2607
+  - 3110
+  - 2627
+  - 1470
+  - 996
+  - 1730.5
+  - 1030.5
+  - 1030.5
+  - 3876
+  - 5500
+  - 6172
+  - 6471
+  - 6927
+  - 5874
+  - 5129
+  - 4687
+  - 3778
+  - 67
+  - 1130
+  - 107
+  - 1100
+  - 812
+  - 610
+  - 177
   HazardFlags: 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   AtomicNumbers: 0100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000c0000000d0000000e0000000f000000100000001100000012000000130000001400000015000000160000001700000018000000190000001a0000001b0000001c0000001d0000001e0000001f000000200000002100000022000000230000002400000025000000260000002700000028000000290000002a0000002b0000002c0000002d0000002e0000002f000000300000003100000032000000330000003400000035000000360000003700000038000000390000003a0000003b0000003c0000003d0000003e0000003f000000400000004100000042000000430000004400000045000000460000004700000048000000490000004a0000004b0000004c0000004d0000004e0000004f000000500000005100000052000000530000005400000055000000560000005700000058000000590000005a0000005b0000005c0000005d0000005e0000005f000000600000006100000062000000630000006400000065000000660000006700000068000000690000006a0000006b0000006c0000006d0000006e0000006f00000070000000710000007200000073000000740000007500000076000000
   NamesJa:
@@ -3508,14 +3508,6 @@ MonoBehaviour:
     SerializedTypeNames:
     - VRC.Udon.UdonBehaviour
     - VRC.Udon.UdonBehaviour
-  - gameObject: {fileID: 0}
-    ID: 209
-    SerializedTypeNames:
-    - VRC.Udon.UdonBehaviour
-  - gameObject: {fileID: 0}
-    ID: 211
-    SerializedTypeNames:
-    - VRC.Udon.UdonBehaviour
   - gameObject: {fileID: 6421396946325988639}
     ID: 212
     SerializedTypeNames:
@@ -4048,56 +4040,8 @@ MonoBehaviour:
     ID: 167
     SerializedTypeNames:
     - VRC.Udon.UdonBehaviour
-  - gameObject: {fileID: 0}
-    ID: 215
-    SerializedTypeNames:
-    - VRC.Udon.UdonBehaviour
-  - gameObject: {fileID: 0}
-    ID: 216
-    SerializedTypeNames:
-    - VRC.Udon.UdonBehaviour
-  - gameObject: {fileID: 0}
-    ID: 218
-    SerializedTypeNames:
-    - VRC.Udon.UdonBehaviour
-  - gameObject: {fileID: 0}
-    ID: 222
-    SerializedTypeNames:
-    - VRC.Udon.UdonBehaviour
-  - gameObject: {fileID: 0}
-    ID: 223
-    SerializedTypeNames:
-    - VRC.Udon.UdonBehaviour
-  - gameObject: {fileID: 0}
-    ID: 224
-    SerializedTypeNames:
-    - VRC.Udon.UdonBehaviour
-  - gameObject: {fileID: 0}
-    ID: 225
-    SerializedTypeNames:
-    - VRC.Udon.UdonBehaviour
   - gameObject: {fileID: 1833520188802013135}
     ID: 176
-    SerializedTypeNames:
-    - VRC.Udon.UdonBehaviour
-  - gameObject: {fileID: 0}
-    ID: 227
-    SerializedTypeNames:
-    - VRC.Udon.UdonBehaviour
-  - gameObject: {fileID: 0}
-    ID: 214
-    SerializedTypeNames:
-    - VRC.Udon.UdonBehaviour
-  - gameObject: {fileID: 0}
-    ID: 210
-    SerializedTypeNames:
-    - VRC.Udon.UdonBehaviour
-  - gameObject: {fileID: 0}
-    ID: 228
-    SerializedTypeNames:
-    - VRC.Udon.UdonBehaviour
-  - gameObject: {fileID: 0}
-    ID: 229
     SerializedTypeNames:
     - VRC.Udon.UdonBehaviour
   - gameObject: {fileID: 2710048340374791832}
@@ -4144,11 +4088,6 @@ MonoBehaviour:
     ID: 236
     SerializedTypeNames:
     - VRC.Udon.UdonBehaviour
-  - gameObject: {fileID: 0}
-    ID: 226
-    SerializedTypeNames:
-    - VRC.Udon.UdonBehaviour
-    - VRC.Udon.UdonBehaviour
   - gameObject: {fileID: 1901042816400030681}
     ID: 220
     SerializedTypeNames:
@@ -4158,24 +4097,54 @@ MonoBehaviour:
     ID: 237
     SerializedTypeNames:
     - VRC.Udon.UdonBehaviour
-  - gameObject: {fileID: 0}
-    ID: 238
-    SerializedTypeNames:
-    - VRC.Udon.UdonBehaviour
-  - gameObject: {fileID: 0}
-    ID: 239
-    SerializedTypeNames:
-    - VRC.Udon.UdonBehaviour
-  - gameObject: {fileID: 0}
-    ID: 240
-    SerializedTypeNames:
-    - VRC.Udon.UdonBehaviour
   - gameObject: {fileID: 186059920}
     ID: 241
     SerializedTypeNames:
     - VRC.Udon.UdonBehaviour
-  - gameObject: {fileID: 0}
+  - gameObject: {fileID: 1333534135}
     ID: 242
+    SerializedTypeNames:
+    - VRC.Udon.UdonBehaviour
+  - gameObject: {fileID: 1048843264}
+    ID: 243
+    SerializedTypeNames:
+    - VRC.Udon.UdonBehaviour
+  - gameObject: {fileID: 139136155}
+    ID: 244
+    SerializedTypeNames:
+    - VRC.Udon.UdonBehaviour
+  - gameObject: {fileID: 376516161}
+    ID: 245
+    SerializedTypeNames:
+    - VRC.Udon.UdonBehaviour
+  - gameObject: {fileID: 1410712206}
+    ID: 246
+    SerializedTypeNames:
+    - VRC.Udon.UdonBehaviour
+  - gameObject: {fileID: 1127525528}
+    ID: 247
+    SerializedTypeNames:
+    - VRC.Udon.UdonBehaviour
+  - gameObject: {fileID: 417112634}
+    ID: 248
+    SerializedTypeNames:
+    - VRC.Udon.UdonBehaviour
+  - gameObject: {fileID: 1821020396}
+    ID: 249
+    SerializedTypeNames:
+    - VRC.Udon.UdonBehaviour
+  - gameObject: {fileID: 1271621144}
+    ID: 250
+    SerializedTypeNames:
+    - VRC.Udon.UdonBehaviour
+    - VRC.Udon.UdonBehaviour
+  - gameObject: {fileID: 2038324834}
+    ID: 251
+    SerializedTypeNames:
+    - VRC.Udon.UdonBehaviour
+    - VRC.Udon.UdonBehaviour
+  - gameObject: {fileID: 447303565}
+    ID: 252
     SerializedTypeNames:
     - VRC.Udon.UdonBehaviour
   portraitCameraPositionOffset: {x: 0, y: 0, z: 0}
