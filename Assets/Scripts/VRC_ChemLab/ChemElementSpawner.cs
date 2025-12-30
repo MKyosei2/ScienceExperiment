@@ -25,6 +25,7 @@ public class ChemElementSpawner : UdonSharpBehaviour
     public ChemEnvironmentManager environment;      // UI操作の受け口（確定時のみ同期）
 
     [Header("Local Visual (async)")]
+    public bool showProductWhenComplete = true;   // 完了後は生成物を表示
     public ChemVisualController sampleVisual;       // 見た目（固液気/色）
     public ChemReactionAnimator reactionAnimator;   // 泡/煙/熱/発光など（ローカル演出）
     public AIRequestSender ai;                      // VFX係数生成（ローカル）
@@ -96,6 +97,7 @@ public class ChemElementSpawner : UdonSharpBehaviour
     // Local cache
     // -----------------------------
     private int _lastAppliedVersion = -1;
+    private int _lastAppliedPhase = -1;
     private float _nextProgressSyncAt;
     private float _nextTempSyncAt;
     private string _history = "";
@@ -114,10 +116,14 @@ public class ChemElementSpawner : UdonSharpBehaviour
         // 初期環境を同期変数へ取り込み（オフライン/単独テスト向け）
         PullEnvironmentForSync(true);
 
+        _lastAppliedPhase = _syncedPhase;
+
         // 温度初期化
         _simTempC = _syncedTempC;
         _visualTempC = _syncedTempC;
         _tempInitialized = true;
+
+        if (sampleVisual != null) sampleVisual.NotifyExperimentReset();
 
         ApplyVisualFromState(true);
         WriteUI();
@@ -197,6 +203,7 @@ public class ChemElementSpawner : UdonSharpBehaviour
 
         AppendHistory("ReleaseOperator");
         StopLocalSession();
+        if (sampleVisual != null) sampleVisual.NotifyExperimentReset();
         ApplyVisualFromState(true);
         WriteUI();
     }
@@ -331,6 +338,7 @@ public class ChemElementSpawner : UdonSharpBehaviour
         AppendHistory("StartExperiment: input=" + _syncedInput + " tool=" + _syncedTool + " tag=" + _syncedReactionTag);
 
         // ローカル：セッション開始（視覚/説明生成）
+        if (sampleVisual != null) sampleVisual.NotifyExperimentReset();
         StartLocalSessionFromSynced();
 
         ApplyVisualFromState(true);
@@ -363,6 +371,7 @@ public class ChemElementSpawner : UdonSharpBehaviour
 
         AppendHistory("ResetExperiment");
         StopLocalSession();
+        if (sampleVisual != null) sampleVisual.NotifyExperimentReset();
         ApplyVisualFromState(true);
         WriteUI();
     }
@@ -383,6 +392,16 @@ public class ChemElementSpawner : UdonSharpBehaviour
 
         // 見た目：温度に応じて固液気を切替（非同期）
         ApplyVisualContinuous();
+
+        // フェーズ遷移を検出してローカル演出へ通知（主にcomplete）
+        if (_syncedPhase != _lastAppliedPhase)
+        {
+            if (sampleVisual != null && _syncedPhase == 2)
+            {
+                sampleVisual.NotifyReactionComplete(_syncedProductFormula, _syncedReactionTag);
+            }
+            _lastAppliedPhase = _syncedPhase;
+        }
 
         // operatorのみ：進行度を低頻度で同期
         if (_syncedPhase == 1 && IsOperatorLocal())
@@ -512,11 +531,21 @@ public class ChemElementSpawner : UdonSharpBehaviour
         return Mathf.Clamp01(t);
     }
 
+
+    private string GetDisplayFormula()
+    {
+        if (showProductWhenComplete && _syncedPhase == 2)
+        {
+            if (!string.IsNullOrEmpty(_syncedProductFormula)) return _syncedProductFormula;
+        }
+        return string.IsNullOrEmpty(_syncedInput) ? "" : _syncedInput;
+    }
+
     private void ApplyVisualContinuous()
     {
         if (sampleVisual == null || elementDb == null) return;
 
-        string sym = _syncedInput == null ? "" : _syncedInput;
+        string sym = GetDisplayFormula();
         sampleVisual.ApplyElementBySymbol(elementDb, sym, _visualTempC);
     }
 
@@ -650,8 +679,18 @@ public class ChemElementSpawner : UdonSharpBehaviour
     {
         if (sampleVisual == null || elementDb == null) return;
 
-        string sym = _syncedInput == null ? "" : _syncedInput;
+        string sym = GetDisplayFormula();
         sampleVisual.ApplyElementBySymbol(elementDb, sym, _visualTempC);
+
+        // 完了フェーズ通知（ローカル演出）
+        if (_syncedPhase != _lastAppliedPhase)
+        {
+            if (sampleVisual != null && _syncedPhase == 2)
+            {
+                sampleVisual.NotifyReactionComplete(_syncedProductFormula, _syncedReactionTag);
+            }
+            _lastAppliedPhase = _syncedPhase;
+        }
     }
 
     private void WriteUI()
@@ -729,5 +768,51 @@ public class ChemElementSpawner : UdonSharpBehaviour
     public float GetCurrentTemperatureC()
     {
         return _visualTempC;
+    }
+
+
+    public string GetInputFormula()
+    {
+        return _syncedInput == null ? "" : _syncedInput;
+    }
+
+    public string GetProductFormula()
+    {
+        return _syncedProductFormula == null ? "" : _syncedProductFormula;
+    }
+
+    public string GetDisplayFormulaForUI()
+    {
+        return GetDisplayFormula();
+    }
+
+    public int GetPhase()
+    {
+        return _syncedPhase;
+    }
+
+    public float GetProgress01()
+    {
+        return _syncedProgress01;
+    }
+
+    public float GetHeat01()
+    {
+        return _syncedHeat01;
+    }
+
+    public float GetSyncedTemperatureC()
+    {
+        return _syncedTempC;
+    }
+
+    public float GetAmbientTemperatureC()
+    {
+        return _syncedAmbientTempC;
+    }
+
+    public string GetReactionTag()
+    {
+        return _syncedReactionTag == null ? "none" : _syncedReactionTag;
     }
 }

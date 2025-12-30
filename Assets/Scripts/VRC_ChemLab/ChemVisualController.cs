@@ -1,7 +1,6 @@
 using UdonSharp;
 using UnityEngine;
 
-
 /// <summary>
 /// UdonSharp does not support nested type declarations.
 /// Keep enums as top-level types.
@@ -31,6 +30,18 @@ public class ChemVisualController : UdonSharpBehaviour
     [Header("Renderer Targets (optional)")]
     public Renderer[] targetRenderers;
 
+    [Header("Product Token (optional, async)")]
+    [Tooltip("生成物を器具内に残すためのトークン（任意）。完了時のみ表示。")]
+    public GameObject productTokenObj;
+
+    [Tooltip("トークンの色を変えるRenderer群（未指定ならproductTokenObj配下を自動収集）。")]
+    public Renderer[] productTokenRenderers;
+
+    [Tooltip("トークンを置く位置（任意）。未指定なら dropEnd、さらに無ければ自身。")]
+    public Transform productTokenAnchor;
+
+    public bool showProductTokenOnComplete = true;
+
     [Header("Optional Drop Animation (async)")]
     public UdonSharpBehaviour dropAnimator; // 追加スクリプトがある場合だけ使用
     public Transform dropStart;
@@ -44,6 +55,7 @@ public class ChemVisualController : UdonSharpBehaviour
     private ChemElementState _lastState;
     private bool _hasLastColor;
     private Color _lastColor;
+    private bool _tokenActive;
 
     private void Start()
     {
@@ -55,17 +67,81 @@ public class ChemVisualController : UdonSharpBehaviour
         {
             targetRenderers = GetComponentsInChildren<Renderer>(true);
         }
+
+        // ProductToken auto find
+        if (productTokenObj == null)
+        {
+            GameObject pt = FindChild("ProductToken");
+            if (pt != null) productTokenObj = pt;
+        }
+
+        if (productTokenObj != null)
+        {
+            if (productTokenRenderers == null || productTokenRenderers.Length == 0)
+            {
+                productTokenRenderers = productTokenObj.GetComponentsInChildren<Renderer>(true);
+            }
+            productTokenObj.SetActive(false);
+            _tokenActive = false;
+        }
     }
 
     // called by spawner (async)
     public void NotifyElementSelected(string symbol)
     {
         lastSelectedSymbol = symbol == null ? "" : symbol;
+
+        // selecting a new input should hide previous product token
+        NotifyExperimentReset();
+
         // dropAnimatorがあれば「投入っぽい動き」を開始
         if (dropAnimator != null)
         {
             dropAnimator.SendCustomEvent("_PlayDrop");
         }
+    }
+
+    // called by spawner (async) on reset/start
+    public void NotifyExperimentReset()
+    {
+        SetProductTokenActive(false);
+    }
+
+    // called by spawner (async) when phase becomes complete
+    public void NotifyReactionComplete(string productFormula, string reactionTag)
+    {
+        lastSelectedSymbol = productFormula == null ? "" : productFormula;
+
+        // optional: pulse / drop to emphasize completion
+        if (dropAnimator != null)
+        {
+            dropAnimator.SendCustomEvent("_PlayDrop");
+        }
+
+        if (showProductTokenOnComplete)
+        {
+            SetProductTokenActive(true);
+            PlaceProductToken();
+        }
+    }
+
+    private void SetProductTokenActive(bool on)
+    {
+        if (productTokenObj == null) return;
+        if (_tokenActive == on) return;
+        _tokenActive = on;
+        productTokenObj.SetActive(on);
+    }
+
+    private void PlaceProductToken()
+    {
+        if (productTokenObj == null) return;
+        Transform a = productTokenAnchor;
+        if (a == null) a = dropEnd;
+        if (a == null) a = transform;
+
+        productTokenObj.transform.position = a.position;
+        productTokenObj.transform.rotation = a.rotation;
     }
 
     public void ApplyElementBySymbol(ChemElementDatabase db, string symbolOrFormula, float temperatureC)
@@ -75,12 +151,29 @@ public class ChemVisualController : UdonSharpBehaviour
         // element symbol を優先（"NaCl"等は先頭2文字/1文字から拾う簡易）
         string sym = ExtractSymbol(db, symbolOrFormula);
 
-        Color c = db.GetColor(sym);
-        lastSelectedColor = c;
+        bool isElement = db.ContainsSymbol(sym);
 
-        // 状態判定（MP/BP）
-        float mp = db.GetMP(sym);
-        float bp = db.GetBP(sym);
+        Color c;
+        float mp;
+        float bp;
+
+        if (isElement)
+        {
+            c = db.GetColor(sym);
+            mp = db.GetMP(sym);
+            bp = db.GetBP(sym);
+
+            // safety: if not defined, fallback to room-temp thresholds
+            if (float.IsNaN(mp)) mp = 25f;
+            if (float.IsNaN(bp)) bp = 100f;
+        }
+        else
+        {
+            // compound fallback (for products like "NaCl", "H2O" etc.)
+            GetCompoundFallback(symbolOrFormula, out c, out mp, out bp);
+        }
+
+        lastSelectedColor = c;
 
         ChemElementState state;
         if (temperatureC < mp) state = ChemElementState.Solid;
@@ -119,11 +212,21 @@ public class ChemVisualController : UdonSharpBehaviour
         _hasLastColor = true;
         _lastColor = c;
 
-        if (targetRenderers == null) return;
+        ApplyColorToRenderers(targetRenderers, c);
 
-        for (int i = 0; i < targetRenderers.Length; i++)
+        if (_tokenActive)
         {
-            Renderer r = targetRenderers[i];
+            ApplyColorToRenderers(productTokenRenderers, c);
+        }
+    }
+
+    private void ApplyColorToRenderers(Renderer[] renderers, Color c)
+    {
+        if (renderers == null) return;
+
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            Renderer r = renderers[i];
             if (r == null) continue;
             Material m = r.material;
             if (m == null) continue;
@@ -137,6 +240,54 @@ public class ChemVisualController : UdonSharpBehaviour
     {
         Transform t = transform.Find(childName);
         return t != null ? t.gameObject : null;
+    }
+
+    private void GetCompoundFallback(string formula, out Color color, out float mpC, out float bpC)
+    {
+        // Known common compounds (approx, for educational visualization)
+        // Used only when formula is NOT an element symbol in the element database.
+        if (string.IsNullOrEmpty(formula))
+        {
+            color = Color.white;
+            mpC = 25f;
+            bpC = 100f;
+            return;
+        }
+
+        string f = formula.Trim();
+
+        // Water
+        if (f == "H2O" || f == "Water")
+        {
+            color = new Color(0.35f, 0.65f, 1f);
+            mpC = 0f;
+            bpC = 100f;
+            return;
+        }
+
+        // Sodium chloride (table salt)
+        if (f == "NaCl" || f == "Salt")
+        {
+            color = new Color(0.95f, 0.95f, 0.95f);
+            mpC = 801f;
+            bpC = 1413f;
+            return;
+        }
+
+        // Generic fallback: visually distinct but deterministic per formula
+        int h = 17;
+        int len = f.Length;
+        for (int i = 0; i < len; i++)
+        {
+            h = (h * 31) + (int)f[i];
+        }
+
+        float hue = Mathf.Repeat((h & 0x7fffffff) * 0.0001f, 1f);
+        color = Color.HSVToRGB(hue, 0.35f, 1f);
+
+        // Default thresholds (for state visualization only)
+        mpC = 25f;
+        bpC = 100f;
     }
 
     private string ExtractSymbol(ChemElementDatabase db, string input)
