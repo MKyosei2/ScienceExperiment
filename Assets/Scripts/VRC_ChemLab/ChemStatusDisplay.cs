@@ -11,6 +11,7 @@ public class ChemStatusDisplay : UdonSharpBehaviour
 {
     public ChemElementSpawner spawner;
     public ChemEnvironmentManager env;
+    public ExperimentOrchestrator orchestrator;
     public TextMeshProUGUI statusText;
 
     [Header("Auto Refresh (optional)")]
@@ -61,7 +62,23 @@ public class ChemStatusDisplay : UdonSharpBehaviour
 
         string phaseLabel = (phase == 0) ? "Idle" : (phase == 1) ? "Running" : (phase == 2) ? "Complete" : phase.ToString();
 
-        statusText.text =
+        
+        string missionTitle = orchestrator != null ? orchestrator.GetMissionTitle() : "";
+        string missionGoal = orchestrator != null ? orchestrator.GetMissionGoal() : "";
+        int missionIndex = orchestrator != null ? orchestrator.GetMissionIndex() : -1;
+        int score = orchestrator != null ? orchestrator.GetScore() : 0;
+        int attempts = orchestrator != null ? orchestrator.GetAttempts() : 0;
+        string lastGrade = orchestrator != null ? orchestrator.GetLastGradeText() : "";
+        string missionPhase = orchestrator != null ? orchestrator.GetMissionPhaseText() : "";
+
+statusText.text =
+            "--- Mission ---\n" +
+            "Index: " + missionIndex + "\n" +
+            "Title: " + missionTitle + "\n" +
+            "Goal: " + missionGoal + "\n" +
+            "MissionPhase: " + missionPhase + "\n" +
+            "Score: " + score + "  Attempts: " + attempts + "\n" +
+            "Last: " + lastGrade + "\n\n" +
             "--- Experiment Status ---\n" +
             "Phase: " + phaseLabel + " (" + Mathf.RoundToInt(prog * 100f) + "%)\n" +
             "ReactionTag: " + tag + "\n" +

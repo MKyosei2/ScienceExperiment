@@ -28,7 +28,11 @@ public class ChemElementSpawner : UdonSharpBehaviour
     public bool showProductWhenComplete = true;   // 完了後は生成物を表示
     public ChemVisualController sampleVisual;       // 見た目（固液気/色）
     public ChemReactionAnimator reactionAnimator;   // 泡/煙/熱/発光など（ローカル演出）
-    public AIRequestSender ai;                      // VFX係数生成（ローカル）
+    public AIRequestSender ai;
+
+    [Header("Education/Game Flow (optional)")]
+    public ExperimentOrchestrator orchestrator;
+                      // VFX係数生成（ローカル）
 
     [Header("UI (optional, no TMP dependency)")]
     public Text hintText;
@@ -72,7 +76,9 @@ public class ChemElementSpawner : UdonSharpBehaviour
     // Synced experiment "truth"
     // -----------------------------
     [UdonSynced] private int _syncedVersion;              // 主要変更カウンタ（選択/開始/リセット/操作者変更）
-    [UdonSynced] private int _syncedOperatorPlayerId = -1;
+    [UdonSynced]     private int _localLastPhase = -99;
+
+    private int _syncedOperatorPlayerId = -1;
 
     [UdonSynced] private string _syncedInput;            // 元素/式（ボタンのidOrName）
     [UdonSynced] private string _syncedTool;             // 器具ID
@@ -127,7 +133,9 @@ public class ChemElementSpawner : UdonSharpBehaviour
 
         ApplyVisualFromState(true);
         WriteUI();
-    }
+    
+        _localLastPhase = _syncedPhase;
+}
 
     // =====================================================
     // Role management (operator / spectator)
@@ -433,7 +441,9 @@ public class ChemElementSpawner : UdonSharpBehaviour
                 RequestSerialization();
             }
         }
-    }
+    
+        CheckPhaseTransition();
+}
 
     private void TickLocalVisual(float dt)
     {
@@ -594,7 +604,9 @@ public class ChemElementSpawner : UdonSharpBehaviour
 
         // 軽い更新（progress/temp等）はここでUI更新
         WriteUI();
-    }
+    
+        CheckPhaseTransition();
+}
 
     // =====================================================
     // Helpers
@@ -815,4 +827,22 @@ public class ChemElementSpawner : UdonSharpBehaviour
     {
         return _syncedReactionTag == null ? "none" : _syncedReactionTag;
     }
+
+    private void CheckPhaseTransition()
+    {
+        if (_localLastPhase == _syncedPhase) return;
+
+        // Notify orchestrator about phase change (local event)
+        if (orchestrator != null)
+        {
+            orchestrator.SendCustomEvent("_OnSpawnerPhaseChanged");
+            if (_syncedPhase == 2) // complete
+            {
+                orchestrator.SendCustomEvent("_OnExperimentCompleted");
+            }
+        }
+
+        _localLastPhase = _syncedPhase;
+    }
+
 }
