@@ -26,6 +26,23 @@ public class ExperimentOrchestrator : UdonSharpBehaviour
     public string[] missionGoalProductFormula; // 例: "H2O", "NaCl"
     public int[] missionPoints;
 
+    [Header("Mission Conditions (Importer-friendly arrays)")]
+    [Tooltip("必須器具ID。空欄なら制約なし。")]
+    public string[] missionRequiredToolId;
+
+    [Tooltip("温度条件（提出時の同期温度に対して適用）。max <= min の場合は無視。")]
+    public float[] missionMinTempC;
+    public float[] missionMaxTempC;
+
+    [Tooltip("操作条件：実験中に到達した最大値で判定。0なら制約なし。")]
+    public float[] missionMinHeat01;
+    public float[] missionMinStir01;
+    public float[] missionMinPour01;
+    public float[] missionMinShake01;
+
+    [Tooltip("1の場合、実験がComplete(phase=2)になってからでないとPASS不可")]
+    public int[] missionRequireComplete;
+
     [Header("Settings")]
     public bool autoStartOnDesktop = false;
     public bool autoGradeOnComplete = true;
@@ -76,6 +93,54 @@ public class ExperimentOrchestrator : UdonSharpBehaviour
         if (_missionIndex < 0 || missionGoalProductFormula == null) return "";
         if (_missionIndex >= missionGoalProductFormula.Length) return "";
         return missionGoalProductFormula[_missionIndex];
+    }
+
+    public string GetMissionRequiredTool()
+    {
+        EnsureMissionDefaults();
+        if (_missionIndex < 0 || missionRequiredToolId == null) return "";
+        if (_missionIndex >= missionRequiredToolId.Length) return "";
+        return missionRequiredToolId[_missionIndex];
+    }
+
+    // Backward compatible name (used internally)
+    public string GetMissionRequiredToolId() { return GetMissionRequiredTool(); }
+
+    public float GetMissionMinTempC()
+    {
+        EnsureMissionDefaults();
+        if (_missionIndex < 0 || missionMinTempC == null) return 0f;
+        if (_missionIndex >= missionMinTempC.Length) return 0f;
+        return missionMinTempC[_missionIndex];
+    }
+
+    public float GetMissionMaxTempC()
+    {
+        EnsureMissionDefaults();
+        if (_missionIndex < 0 || missionMaxTempC == null) return 0f;
+        if (_missionIndex >= missionMaxTempC.Length) return 0f;
+        return missionMaxTempC[_missionIndex];
+    }
+
+    public float GetMissionMinHeat01() { return GetArrayF(missionMinHeat01); }
+    public float GetMissionMinStir01() { return GetArrayF(missionMinStir01); }
+    public float GetMissionMinPour01() { return GetArrayF(missionMinPour01); }
+    public float GetMissionMinShake01() { return GetArrayF(missionMinShake01); }
+
+    public bool GetMissionRequireComplete()
+    {
+        EnsureMissionDefaults();
+        if (_missionIndex < 0 || missionRequireComplete == null) return false;
+        if (_missionIndex >= missionRequireComplete.Length) return false;
+        return missionRequireComplete[_missionIndex] != 0;
+    }
+
+    private float GetArrayF(float[] arr)
+    {
+        EnsureMissionDefaults();
+        if (_missionIndex < 0 || arr == null) return 0f;
+        if (_missionIndex >= arr.Length) return 0f;
+        return arr[_missionIndex];
     }
 
     public string GetMissionPrompt()
@@ -243,7 +308,55 @@ public class ExperimentOrchestrator : UdonSharpBehaviour
             if (pts <= 0) pts = 1;
         }
 
-        bool ok = NormalizeFormula(actual) == NormalizeFormula(expected);
+        // ---------- Conditions ----------
+        bool okProduct = true;
+        if (!string.IsNullOrEmpty(expected))
+        {
+            okProduct = NormalizeFormula(actual) == NormalizeFormula(expected);
+        }
+
+        // Tool requirement
+        string requiredTool = GetMissionRequiredToolId();
+        string actualTool = spawner != null ? spawner.GetLastEquipment() : "";
+        bool okTool = true;
+        if (!string.IsNullOrEmpty(requiredTool))
+        {
+            okTool = NormalizeFormula(actualTool) == NormalizeFormula(requiredTool);
+        }
+
+        // Temp range requirement (submit-time synced temp)
+        float t = spawner != null ? spawner.GetSyncedTemperatureC() : 0f;
+        float tMin = GetMissionMinTempC();
+        float tMax = GetMissionMaxTempC();
+        bool okTemp = true;
+        if (tMax > tMin)
+        {
+            okTemp = (t >= tMin && t <= tMax);
+        }
+
+        // Operation requirements (max reached during run)
+        float maxHeat = spawner != null ? spawner.GetMaxHeat01() : 0f;
+        float maxStir = spawner != null ? spawner.GetMaxStir01() : 0f;
+        float maxPour = spawner != null ? spawner.GetMaxPour01() : 0f;
+        float maxShake = spawner != null ? spawner.GetMaxShake01() : 0f;
+
+        float reqHeat = GetMissionMinHeat01();
+        float reqStir = GetMissionMinStir01();
+        float reqPour = GetMissionMinPour01();
+        float reqShake = GetMissionMinShake01();
+
+        bool okHeat = reqHeat <= 0f || maxHeat >= reqHeat;
+        bool okStir = reqStir <= 0f || maxStir >= reqStir;
+        bool okPour = reqPour <= 0f || maxPour >= reqPour;
+        bool okShake = reqShake <= 0f || maxShake >= reqShake;
+
+        bool okComplete = true;
+        if (GetMissionRequireComplete())
+        {
+            okComplete = spawner != null && spawner.GetPhase() == 2;
+        }
+
+        bool ok = okProduct && okTool && okTemp && okHeat && okStir && okPour && okShake && okComplete;
         if (ok)
         {
             _lastGrade = 1;
@@ -260,7 +373,10 @@ public class ExperimentOrchestrator : UdonSharpBehaviour
         // Local feedback
         if (spawner != null && spawner.explainText != null)
         {
-            spawner.explainText.text = BuildFeedbackLocal(ok, expected, actual, pts);
+            spawner.explainText.text = BuildFeedbackLocal(ok, expected, actual, pts,
+                requiredTool, actualTool, t, tMin, tMax,
+                reqHeat, maxHeat, reqStir, maxStir, reqPour, maxPour, reqShake, maxShake,
+                okComplete);
         }
 
         if (autoAdvanceOnSuccess && ok)
@@ -306,23 +422,84 @@ public class ExperimentOrchestrator : UdonSharpBehaviour
         return s;
     }
 
-    private string BuildFeedbackLocal(bool ok, string expected, string actual, int pts)
+    private string BuildFeedbackLocal(
+        bool ok,
+        string expected,
+        string actual,
+        int pts,
+        string requiredTool,
+        string actualTool,
+        float tempC,
+        float tempMinC,
+        float tempMaxC,
+        float reqHeat,
+        float maxHeat,
+        float reqStir,
+        float maxStir,
+        float reqPour,
+        float maxPour,
+        float reqShake,
+        float maxShake,
+        bool okComplete
+    )
     {
         string s = "";
-        s += ok ? "✅ 正解！\n" : "❌ 不正解。\n";
-        s += "Expected: " + expected + "\n";
-        s += "Actual: " + actual + "\n";
-        if (ok) s += "Points: +" + pts + "\n";
-        s += "Score: " + _score + "\n";
-        s += "Attempts: " + _attempts + "\n";
-        s += "\n振り返り:\n";
-        if (ok)
+        s += ok ? "✅ PASS\n" : "❌ FAIL\n";
+
+        s += "\n--- Result ---\n";
+        if (!string.IsNullOrEmpty(expected)) s += "GoalProduct: " + expected + "\n";
+        s += "YourProduct: " + actual + "\n";
+
+        s += "\n--- Checks ---\n";
+        if (!string.IsNullOrEmpty(expected))
         {
-            s += "生成物が目的どおりになった理由を、温度/器具/入力の観点で説明してみよう。\n";
+            bool okP = NormalizeFormula(actual) == NormalizeFormula(expected);
+            s += (okP ? "✅ " : "❌ ") + "Product match\n";
+        }
+
+        if (!string.IsNullOrEmpty(requiredTool))
+        {
+            bool okT = NormalizeFormula(actualTool) == NormalizeFormula(requiredTool);
+            s += (okT ? "✅ " : "❌ ") + "Tool: need " + requiredTool + " / used " + actualTool + "\n";
         }
         else
         {
-            s += "入力元素、器具、温度、攪拌などの条件を変えて再挑戦してみよう。\n";
+            s += "(Tool: any)\n";
+        }
+
+        if (tempMaxC > tempMinC)
+        {
+            bool okTemp = (tempC >= tempMinC && tempC <= tempMaxC);
+            s += (okTemp ? "✅ " : "❌ ") + "Temp: " + tempC.ToString("0.0") + "C in [" + tempMinC.ToString("0.0") + ", " + tempMaxC.ToString("0.0") + "]\n";
+        }
+        else
+        {
+            s += "(Temp: any)\n";
+        }
+
+        if (reqHeat > 0f) s += (maxHeat >= reqHeat ? "✅ " : "❌ ") + "Heat max " + maxHeat.ToString("0.00") + " >= " + reqHeat.ToString("0.00") + "\n";
+        if (reqStir > 0f) s += (maxStir >= reqStir ? "✅ " : "❌ ") + "Stir max " + maxStir.ToString("0.00") + " >= " + reqStir.ToString("0.00") + "\n";
+        if (reqPour > 0f) s += (maxPour >= reqPour ? "✅ " : "❌ ") + "Pour max " + maxPour.ToString("0.00") + " >= " + reqPour.ToString("0.00") + "\n";
+        if (reqShake > 0f) s += (maxShake >= reqShake ? "✅ " : "❌ ") + "Shake max " + maxShake.ToString("0.00") + " >= " + reqShake.ToString("0.00") + "\n";
+        if (reqHeat <= 0f && reqStir <= 0f && reqPour <= 0f && reqShake <= 0f) s += "(Operation: any)\n";
+
+        if (GetMissionRequireComplete())
+        {
+            s += (okComplete ? "✅ " : "❌ ") + "Require Complete (phase=2)\n";
+        }
+
+        s += "\nPoints: " + (ok ? ("+" + pts) : "+0") + "\n";
+        s += "Score: " + _score + "\n";
+        s += "Attempts: " + _attempts + "\n";
+
+        s += "\n--- Reflection ---\n";
+        if (ok)
+        {
+            s += "条件（器具/温度/操作）が結果にどう影響したか説明してみよう。\n";
+        }
+        else
+        {
+            s += "失敗したチェック項目を満たすように、器具/温度/攪拌などを調整して再挑戦しよう。\n";
         }
         return s;
     }
@@ -358,5 +535,27 @@ public class ExperimentOrchestrator : UdonSharpBehaviour
         };
 
         missionPoints = new int[] { 2, 2, 3, 4 };
+
+        // --- Conditions defaults (example) ---
+        // Tool IDs are examples. Replace via Importer.
+        missionRequiredToolId = new string[]
+        {
+            "beaker",   // water
+            "beaker",   // salt
+            "beaker",   // CO2
+            "reactor"   // NH3
+        };
+
+        // Temp range: max<=min means "ignore".
+        missionMinTempC = new float[] { 0f, 20f, 15f, 350f };
+        missionMaxTempC = new float[] { 100f, 80f, 60f, 550f };
+
+        // Operation: require reaching these levels at least once during run.
+        missionMinHeat01 = new float[] { 0.2f, 0f, 0f, 0.6f };
+        missionMinStir01 = new float[] { 0.3f, 0.2f, 0.1f, 0.4f };
+        missionMinPour01 = new float[] { 0.1f, 0.2f, 0.2f, 0f };
+        missionMinShake01 = new float[] { 0f, 0f, 0f, 0f };
+
+        missionRequireComplete = new int[] { 1, 1, 1, 1 };
     }
 }

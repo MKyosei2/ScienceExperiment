@@ -92,6 +92,20 @@ public class ChemElementSpawner : UdonSharpBehaviour
     // 温度操作（同期）
     [UdonSynced] private float _syncedHeat01;            // 0..1 外部加熱レベル（ボタン or 自動近接）
 
+    // 操作（同期）：教材ゲームの採点対象にもする
+    // 「現在値」と「実験中に到達した最大値」を分ける（採点で“やったか”を見るため）
+    [UdonSynced] private float _syncedStir01;
+    [UdonSynced] private float _syncedPour01;
+    [UdonSynced] private float _syncedShake01;
+
+    [UdonSynced] private float _syncedMaxHeat01;
+    [UdonSynced] private float _syncedMaxStir01;
+    [UdonSynced] private float _syncedMaxPour01;
+    [UdonSynced] private float _syncedMaxShake01;
+
+    [UdonSynced] private float _syncedMinTempCReached;
+    [UdonSynced] private float _syncedMaxTempCReached;
+
     [UdonSynced] private string _syncedReactionTag;      // "oxidation"/"chloride"/"none" etc.
     [UdonSynced] private string _syncedProductFormula;   // 生成物（式/ラベル）
     [UdonSynced] private int _syncedSeed;                // 再現性確保用
@@ -202,9 +216,19 @@ public class ChemElementSpawner : UdonSharpBehaviour
         _syncedPhase = 0;
         _syncedProgress01 = 0f;
         _syncedHeat01 = 0f;
+        _syncedStir01 = 0f;
+        _syncedPour01 = 0f;
+        _syncedShake01 = 0f;
+
+        _syncedMaxHeat01 = 0f;
+        _syncedMaxStir01 = 0f;
+        _syncedMaxPour01 = 0f;
+        _syncedMaxShake01 = 0f;
 
         // 温度は環境基準へ戻す
         _syncedTempC = _syncedAmbientTempC;
+        _syncedMinTempCReached = _syncedTempC;
+        _syncedMaxTempCReached = _syncedTempC;
 
         _syncedVersion++;
         RequestSerialization();
@@ -284,6 +308,25 @@ public class ChemElementSpawner : UdonSharpBehaviour
             return;
         }
 
+        // ---- operation commands (synced) ----
+        // Stir
+        if (command == "StirOn") { SetStir01(1f, true); return; }
+        if (command == "StirOff") { SetStir01(0f, true); return; }
+        if (command == "StirUp") { SetStir01(_syncedStir01 + 0.1f, true); return; }
+        if (command == "StirDown") { SetStir01(_syncedStir01 - 0.1f, true); return; }
+
+        // Pour
+        if (command == "PourOn") { SetPour01(1f, true); return; }
+        if (command == "PourOff") { SetPour01(0f, true); return; }
+        if (command == "PourUp") { SetPour01(_syncedPour01 + 0.1f, true); return; }
+        if (command == "PourDown") { SetPour01(_syncedPour01 - 0.1f, true); return; }
+
+        // Shake
+        if (command == "ShakeOn") { SetShake01(1f, true); return; }
+        if (command == "ShakeOff") { SetShake01(0f, true); return; }
+        if (command == "ShakeUp") { SetShake01(_syncedShake01 + 0.1f, true); return; }
+        if (command == "ShakeDown") { SetShake01(_syncedShake01 - 0.1f, true); return; }
+
         // ---- normal environment commands ----
         if (environment == null) return;
 
@@ -335,10 +378,21 @@ public class ChemElementSpawner : UdonSharpBehaviour
 
         // 温度初期化（基準温度スタート、加熱0）
         _syncedHeat01 = 0f;
+        _syncedStir01 = 0f;
+        _syncedPour01 = 0f;
+        _syncedShake01 = 0f;
+
+        _syncedMaxHeat01 = 0f;
+        _syncedMaxStir01 = 0f;
+        _syncedMaxPour01 = 0f;
+        _syncedMaxShake01 = 0f;
         _syncedTempC = _syncedAmbientTempC;
         _simTempC = _syncedTempC;
         _visualTempC = _syncedTempC;
         _tempInitialized = true;
+
+        _syncedMinTempCReached = _syncedTempC;
+        _syncedMaxTempCReached = _syncedTempC;
 
         _syncedVersion++;
         RequestSerialization();
@@ -366,6 +420,14 @@ public class ChemElementSpawner : UdonSharpBehaviour
         _syncedPhase = 0;
         _syncedProgress01 = 0f;
         _syncedHeat01 = 0f;
+        _syncedStir01 = 0f;
+        _syncedPour01 = 0f;
+        _syncedShake01 = 0f;
+
+        _syncedMaxHeat01 = 0f;
+        _syncedMaxStir01 = 0f;
+        _syncedMaxPour01 = 0f;
+        _syncedMaxShake01 = 0f;
 
         // envはデフォルトに戻す（環境マネージャ側でもResetされる想定）
         PullEnvironmentForSync(false);
@@ -373,6 +435,9 @@ public class ChemElementSpawner : UdonSharpBehaviour
         // 温度は基準へ戻す
         _syncedTempC = _syncedAmbientTempC;
         _simTempC = _syncedTempC;
+
+        _syncedMinTempCReached = _syncedTempC;
+        _syncedMaxTempCReached = _syncedTempC;
 
         _syncedVersion++;
         RequestSerialization();
@@ -394,6 +459,19 @@ public class ChemElementSpawner : UdonSharpBehaviour
 
         // 温度モデル＆見た目温度補間（60fps）
         TickLocalTemperature(dt);
+
+        // operatorのみ：実験中の到達値を記録（採点用）
+        if (_syncedPhase == 1 && IsOperatorLocal())
+        {
+            if (_syncedHeat01 > _syncedMaxHeat01) _syncedMaxHeat01 = _syncedHeat01;
+            if (_syncedStir01 > _syncedMaxStir01) _syncedMaxStir01 = _syncedStir01;
+            if (_syncedPour01 > _syncedMaxPour01) _syncedMaxPour01 = _syncedPour01;
+            if (_syncedShake01 > _syncedMaxShake01) _syncedMaxShake01 = _syncedShake01;
+
+            // 温度の到達レンジ（シミュレート温度）
+            if (_simTempC < _syncedMinTempCReached) _syncedMinTempCReached = _simTempC;
+            if (_simTempC > _syncedMaxTempCReached) _syncedMaxTempCReached = _simTempC;
+        }
 
         // ローカル可視化（60fps）
         TickLocalVisual(dt);
@@ -452,8 +530,9 @@ public class ChemElementSpawner : UdonSharpBehaviour
         {
             if (ai != null)
             {
-                // 現状はモーション入力未接続（0）。必要ならここに stir/pour/shake などを足す。
-                ai.TickRealtime(dt, 0f, 0f, 0f, 0f);
+                // 操作入力（同期）：教材ゲームの採点でも使用
+                // TickRealtime(dt, stir, pour, heat, shake)
+                ai.TickRealtime(dt, _syncedStir01, _syncedPour01, _syncedHeat01, _syncedShake01);
                 if (ai.isComplete)
                 {
                     _syncedPhase = 2;
@@ -641,11 +720,51 @@ public class ChemElementSpawner : UdonSharpBehaviour
     private void SetHeat01(float value01, bool recordHistory)
     {
         _syncedHeat01 = Mathf.Clamp01(value01);
+        if (_syncedHeat01 > _syncedMaxHeat01) _syncedMaxHeat01 = _syncedHeat01;
         RequestSerialization();
 
         if (recordHistory)
         {
             AppendHistory("Heat01=" + _syncedHeat01.ToString("0.00"));
+            WriteUI();
+        }
+    }
+
+    private void SetStir01(float value01, bool recordHistory)
+    {
+        _syncedStir01 = Mathf.Clamp01(value01);
+        if (_syncedStir01 > _syncedMaxStir01) _syncedMaxStir01 = _syncedStir01;
+        RequestSerialization();
+
+        if (recordHistory)
+        {
+            AppendHistory("Stir01=" + _syncedStir01.ToString("0.00"));
+            WriteUI();
+        }
+    }
+
+    private void SetPour01(float value01, bool recordHistory)
+    {
+        _syncedPour01 = Mathf.Clamp01(value01);
+        if (_syncedPour01 > _syncedMaxPour01) _syncedMaxPour01 = _syncedPour01;
+        RequestSerialization();
+
+        if (recordHistory)
+        {
+            AppendHistory("Pour01=" + _syncedPour01.ToString("0.00"));
+            WriteUI();
+        }
+    }
+
+    private void SetShake01(float value01, bool recordHistory)
+    {
+        _syncedShake01 = Mathf.Clamp01(value01);
+        if (_syncedShake01 > _syncedMaxShake01) _syncedMaxShake01 = _syncedShake01;
+        RequestSerialization();
+
+        if (recordHistory)
+        {
+            AppendHistory("Shake01=" + _syncedShake01.ToString("0.00"));
             WriteUI();
         }
     }
@@ -719,6 +838,10 @@ public class ChemElementSpawner : UdonSharpBehaviour
             "Phase: " + _syncedPhase + " (" + Mathf.RoundToInt(_syncedProgress01 * 100f) + "%)\n" +
             "Temp: " + _syncedTempC.ToString("0.0") + " °C (ambient " + _syncedAmbientTempC.ToString("0.0") + ")\n" +
             "Heat01: " + _syncedHeat01.ToString("0.00") + "\n" +
+            "Stir01: " + _syncedStir01.ToString("0.00") + " (max " + _syncedMaxStir01.ToString("0.00") + ")\n" +
+            "Pour01: " + _syncedPour01.ToString("0.00") + " (max " + _syncedMaxPour01.ToString("0.00") + ")\n" +
+            "Shake01: " + _syncedShake01.ToString("0.00") + " (max " + _syncedMaxShake01.ToString("0.00") + ")\n" +
+            "TempReached: " + _syncedMinTempCReached.ToString("0.0") + ".." + _syncedMaxTempCReached.ToString("0.0") + " °C\n" +
             "Reaction: " + (_syncedReactionTag ?? "none") + "\n" +
             "Product: " + (_syncedProductFormula ?? "") + "\n";
     }
@@ -812,6 +935,18 @@ public class ChemElementSpawner : UdonSharpBehaviour
     {
         return _syncedHeat01;
     }
+
+    public float GetStir01() { return _syncedStir01; }
+    public float GetPour01() { return _syncedPour01; }
+    public float GetShake01() { return _syncedShake01; }
+
+    public float GetMaxHeat01() { return _syncedMaxHeat01; }
+    public float GetMaxStir01() { return _syncedMaxStir01; }
+    public float GetMaxPour01() { return _syncedMaxPour01; }
+    public float GetMaxShake01() { return _syncedMaxShake01; }
+
+    public float GetMinTempReachedC() { return _syncedMinTempCReached; }
+    public float GetMaxTempReachedC() { return _syncedMaxTempCReached; }
 
     public float GetSyncedTemperatureC()
     {
