@@ -1,10 +1,14 @@
-﻿using UdonSharp;
+using UdonSharp;
 using UnityEngine;
 
 public class ReactionPredictor : UdonSharpBehaviour
 {
     [Header("DB (optional, for better formulas)")]
     public ChemElementDatabase elementDb;
+
+    [Header("Known Compound Normalization (optional)")]
+    [Tooltip("If true, when the predicted formula matches a known compound entry in elementDb, keep the known formula string (normalized).")]
+    public bool normalizeToKnownCompounds = true;
 
     // いまのプロジェクトの「器具ID」命名に合わせて調整してください
     [Header("Tool Keywords")]
@@ -49,6 +53,7 @@ public class ReactionPredictor : UdonSharpBehaviour
             else
                 productFormula = input;
 
+            productFormula = NormalizeIfKnown(productFormula);
             return;
         }
 
@@ -63,6 +68,7 @@ public class ReactionPredictor : UdonSharpBehaviour
             else
                 productFormula = input;
 
+            productFormula = NormalizeIfKnown(productFormula);
             return;
         }
 
@@ -71,9 +77,22 @@ public class ReactionPredictor : UdonSharpBehaviour
         {
             reactionTag = "dissolve";
             explain = "溶解・混合による変化として扱います。";
-            productFormula = input;
+            productFormula = NormalizeIfKnown(input);
             return;
         }
+
+        // default
+        productFormula = NormalizeIfKnown(productFormula);
+    }
+
+    private string NormalizeIfKnown(string f)
+    {
+        if (!normalizeToKnownCompounds) return f;
+        if (elementDb == null) return f;
+        string nf = elementDb.NormalizeFormula(f);
+        if (elementDb.ContainsCompound(nf))
+            return nf;
+        return f;
     }
 
     // ===== 強化：価数から式生成（Al(+3) + O(-2) => Al2O3）=====

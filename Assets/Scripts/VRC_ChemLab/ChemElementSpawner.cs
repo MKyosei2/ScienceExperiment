@@ -557,7 +557,7 @@ public class ChemElementSpawner : UdonSharpBehaviour
         // 演出適用（ローカル）
         if (reactionAnimator != null && ai != null)
         {
-            reactionAnimator.ApplyPreset(_syncedReactionTag, ai, _syncedProgress01);
+            reactionAnimator.ApplyPreset(_syncedReactionTag, ai, _syncedProgress01, sampleVisual);
         }
     }
 
@@ -787,12 +787,41 @@ public class ChemElementSpawner : UdonSharpBehaviour
         // 説明/ヒント/安全（決定論）
         if (explainGenerator != null)
         {
-            float potential = (_syncedReactionTag == "none") ? 0.1f : 0.8f;
-            bool dangerous = (elementDb != null && elementDb.GetHazard(_syncedInput) != 0);
+            // 反応らしさ（簡易）: 操作量と反応タグから算出
+            float op = Mathf.Clamp01(0.25f * _syncedStir01 + 0.25f * _syncedPour01 + 0.35f * _syncedHeat01 + 0.15f * _syncedShake01);
+            float potential = (_syncedReactionTag == "none") ? (0.10f + 0.40f * op) : (0.60f + 0.60f * op);
+
+            bool dangerous = (elementDb != null && elementDb.GetHazardForFormulaOrElement(_syncedInput) != 0);
+            bool known = (elementDb != null) && (elementDb.ContainsSymbol(_syncedInput) || elementDb.ContainsCompound(_syncedInput));
+
+            // 推定メモ（UI用）
+            string note = "";
+            if (!known)
+            {
+                note = (sampleVisual != null && !string.IsNullOrEmpty(sampleVisual.lastInferenceNote))
+                    ? sampleVisual.lastInferenceNote
+                    : "組成から推定して見た目を生成（外部APIなし）";
+            }
 
             string hint, explain, safety;
-            explainGenerator.Generate(_syncedInput, _syncedTool, potential, _syncedAmbientTempC, _syncedPressureKPa, _syncedHumidity, dangerous,
-                out hint, out explain, out safety);
+            explainGenerator.GenerateDetailed(
+                _syncedInput,
+                _syncedTool,
+                _syncedReactionTag,
+                _syncedStir01,
+                _syncedPour01,
+                _syncedHeat01,
+                _syncedShake01,
+                _syncedTempC,
+                _syncedPressureKPa,
+                _syncedHumidity,
+                dangerous,
+                known,
+                note,
+                out hint,
+                out explain,
+                out safety
+            );
 
             if (hintText != null) hintText.text = hint;
             if (explainText != null) explainText.text = explain;

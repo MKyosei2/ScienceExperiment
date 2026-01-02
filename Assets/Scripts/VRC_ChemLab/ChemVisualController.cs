@@ -17,11 +17,27 @@ public enum ChemElementState
 /// ・同期の真実はChemElementSpawnerが持つ
 /// ・ここは「どう見せるか」だけ（非同期）
 ///
-/// 追加演出（元素が器具に入る見せ方）は、
-/// optionalの dropAnimator に対して CustomEvent を送る方式で接続します。
+/// 2026-01:
+/// - 既知化合物テーブル（ChemElementDatabase内）を参照して本格表示
+/// - 未知化合物は式から組成を推定し、Particle/Shader用の"レシピ"を生成（ローカル）
 /// </summary>
 public class ChemVisualController : UdonSharpBehaviour
 {
+    // -----------------------------
+    // Archetype / Particle Preset (int codes)
+    // -----------------------------
+    public const int ARCH_CRYSTAL = 0;
+    public const int ARCH_POWDER = 1;
+    public const int ARCH_METAL = 2;
+    public const int ARCH_LIQUID = 3;
+    public const int ARCH_GASFOG = 4;
+
+    public const int PT_NONE = 0;
+    public const int PT_GLINT = 1;
+    public const int PT_PRECIPITATE = 2;
+    public const int PT_BUBBLE = 3;
+    public const int PT_FOG = 4;
+
     [Header("State Visuals (optional)")]
     public GameObject solidObj;
     public GameObject liquidObj;
@@ -30,11 +46,23 @@ public class ChemVisualController : UdonSharpBehaviour
     [Header("Renderer Targets (optional)")]
     public Renderer[] targetRenderers;
 
+    [Header("Shader Property Names (optional)")]
+    public string propBaseColor = "_BaseColor";
+    public string propColorFallback = "_Color";
+    public string propOpacity = "_Opacity";
+    public string propMetallic = "_Metallic";
+    public string propSmoothness = "_Smoothness";
+    public string propGlossinessFallback = "_Glossiness";
+    public string propEmissionStrength = "_EmissionStrength";
+    public string propEmissionColor = "_EmissionColor";
+    public string propNoiseScale = "_NoiseScale";
+    public string propDissolve = "_Dissolve";
+
     [Header("Product Token (optional, async)")]
     [Tooltip("生成物を器具内に残すためのトークン（任意）。完了時のみ表示。")]
     public GameObject productTokenObj;
 
-    [Tooltip("トークンの色を変えるRenderer群（未指定ならproductTokenObj配下を自動収集）。")]
+    [Tooltip("トークンの見た目を変えるRenderer群（未指定ならproductTokenObj配下を自動収集）。")]
     public Renderer[] productTokenRenderers;
 
     [Tooltip("トークンを置く位置（任意）。未指定なら dropEnd、さらに無ければ自身。")]
@@ -47,15 +75,46 @@ public class ChemVisualController : UdonSharpBehaviour
     public Transform dropStart;
     public Transform dropEnd;
 
+    // last info (for other scripts)
     [HideInInspector] public string lastSelectedSymbol; // dropAnimatorが参照
     [HideInInspector] public Color lastSelectedColor;   // dropAnimatorが参照
+
+    [Header("Last Recipe (read-only, for UI/VFX)")]
+    [HideInInspector] public bool lastIsElement;
+    [HideInInspector] public bool lastIsKnownCompound;
+    [HideInInspector] public string lastRecipeSource;     // "element" / "known" / "inferred"
+    [HideInInspector] public string lastInferenceNote;    // short note for UI
+    [HideInInspector] public int lastArchetype;
+    [HideInInspector] public int lastParticlePreset;
+
+    [HideInInspector] public float lastOpacity;
+    [HideInInspector] public float lastMetallic;
+    [HideInInspector] public float lastSmoothness;
+    [HideInInspector] public float lastEmission;
+    [HideInInspector] public float lastNoiseScale;
+    [HideInInspector] public float lastFogDensity;
+    [HideInInspector] public float lastBubbleRate;
+    [HideInInspector] public float lastViscosity;
+    [HideInInspector] public float lastDensity;
 
     // cache (avoid material touching / SetActive spam)
     private bool _hasLastState;
     private ChemElementState _lastState;
-    private bool _hasLastColor;
-    private Color _lastColor;
+
     private bool _tokenActive;
+
+    private bool _hasLastRecipe;
+    private Color _lastBaseColor;
+    private float _lastOpacity;
+    private float _lastMetallic;
+    private float _lastSmoothness;
+    private float _lastEmission;
+    private float _lastNoiseScale;
+
+    // temp buffers for formula parsing
+    private const int MAX_ELEMS = 12;
+    private string[] _tmpSyms;
+    private int[] _tmpCounts;
 
     private void Start()
     {
@@ -84,6 +143,9 @@ public class ChemVisualController : UdonSharpBehaviour
             productTokenObj.SetActive(false);
             _tokenActive = false;
         }
+
+        _tmpSyms = new string[MAX_ELEMS];
+        _tmpCounts = new int[MAX_ELEMS];
     }
 
     // called by spawner (async)
@@ -122,6 +184,9 @@ public class ChemVisualController : UdonSharpBehaviour
         {
             SetProductTokenActive(true);
             PlaceProductToken();
+
+            // product token should match current recipe (color/material)
+            ApplyLastRecipeToToken();
         }
     }
 
@@ -144,44 +209,190 @@ public class ChemVisualController : UdonSharpBehaviour
         productTokenObj.transform.rotation = a.rotation;
     }
 
+    /// <summary>
+    /// Main visual API called by spawner.
+    /// - Uses element DB for element symbols
+    /// - Uses known compound tables when available
+    /// - Otherwise: infer a VisualRecipe from the formula (local, deterministic)
+    /// </summary>
     public void ApplyElementBySymbol(ChemElementDatabase db, string symbolOrFormula, float temperatureC)
     {
         if (db == null) return;
 
-        // element symbol を優先（"NaCl"等は先頭2文字/1文字から拾う簡易）
-        string sym = ExtractSymbol(db, symbolOrFormula);
+        string input = symbolOrFormula == null ? "" : symbolOrFormula.Trim();
+        if (string.IsNullOrEmpty(input))
+        {
+            lastSelectedColor = Color.white;
+            lastInferenceNote = "";
+            lastRecipeSource = "none";
+            lastIsElement = false;
+            lastIsKnownCompound = false;
+            lastArchetype = ARCH_CRYSTAL;
+            lastParticlePreset = PT_NONE;
+            SetState(ChemElementState.Solid);
+            ApplyRecipe(Color.white, 1f, 0f, 0.4f, 0f, 0.2f, 0f);
+            return;
+        }
 
+        // Element symbol を優先（"NaCl"等は先頭2文字/1文字から拾う簡易）
+        string sym = ExtractSymbol(db, input);
         bool isElement = db.ContainsSymbol(sym);
 
-        Color c;
+        // Outputs
+        Color baseColor;
         float mp;
         float bp;
+        int hazard;
+        int archetype;
+        int particlePreset;
+        float opacity;
+        float metallic;
+        float smoothness;
+        float emission;
+        float noiseScale;
+        float fogDensity;
+        float bubbleRate;
+        float viscosity;
+        float density;
+
+        bool knownCompound = false;
+        string recipeSource = "";
+        string inference = "";
 
         if (isElement)
         {
-            c = db.GetColor(sym);
+            recipeSource = "element";
+            baseColor = db.GetColor(sym);
             mp = db.GetMP(sym);
             bp = db.GetBP(sym);
+            hazard = db.GetHazard(sym);
 
-            // safety: if not defined, fallback to room-temp thresholds
-            if (float.IsNaN(mp)) mp = 25f;
-            if (float.IsNaN(bp)) bp = 100f;
+            // safety: if not defined
+            if (float.IsNaN(mp) || float.IsInfinity(mp)) mp = 25f;
+            if (float.IsNaN(bp) || float.IsInfinity(bp)) bp = 100f;
+
+            float metal01 = db.GetIsMetal(sym) ? 1f : 0f;
+            archetype = db.GetIsMetal(sym) ? ARCH_METAL : ARCH_CRYSTAL;
+            particlePreset = db.GetIsMetal(sym) ? PT_GLINT : PT_NONE;
+
+            opacity = 0.98f;
+            metallic = metal01;
+            smoothness = db.GetIsMetal(sym) ? 0.65f : 0.40f;
+            emission = (hazard & ChemElementDatabase.HAZ_RADIOACTIVE) != 0 ? 0.20f : 0.03f;
+            noiseScale = 0.25f;
+            fogDensity = 0.60f;
+            bubbleRate = 0f;
+            viscosity = 1f;
+            density = 1f;
+
+            inference = db.GetNameJa(sym);
         }
         else
         {
-            // compound fallback (for products like "NaCl", "H2O" etc.)
-            GetCompoundFallback(symbolOrFormula, out c, out mp, out bp);
+            // try known compound table first
+            knownCompound = db.TryGetCompoundRecipe(input,
+                out baseColor,
+                out mp,
+                out bp,
+                out hazard,
+                out archetype,
+                out particlePreset,
+                out opacity,
+                out metallic,
+                out smoothness,
+                out emission,
+                out noiseScale,
+                out fogDensity,
+                out bubbleRate,
+                out viscosity,
+                out density);
+
+            if (knownCompound)
+            {
+                recipeSource = "known";
+                inference = db.GetCompoundNameJa(input);
+
+                if (float.IsNaN(mp) || float.IsInfinity(mp)) mp = 25f;
+                if (float.IsNaN(bp) || float.IsInfinity(bp)) bp = 100f;
+
+                // If table has no archetype, decide from mp/bp
+                if (archetype < 0) archetype = ARCH_CRYSTAL;
+            }
+            else
+            {
+                recipeSource = "inferred";
+                InferCompoundRecipe(db, input, temperatureC,
+                    out baseColor,
+                    out mp,
+                    out bp,
+                    out hazard,
+                    out archetype,
+                    out particlePreset,
+                    out opacity,
+                    out metallic,
+                    out smoothness,
+                    out emission,
+                    out noiseScale,
+                    out fogDensity,
+                    out bubbleRate,
+                    out viscosity,
+                    out density,
+                    out inference);
+            }
         }
 
-        lastSelectedColor = c;
+        lastSelectedSymbol = input;
+        lastSelectedColor = baseColor;
 
+        lastIsElement = isElement;
+        lastIsKnownCompound = knownCompound;
+        lastRecipeSource = recipeSource;
+        lastInferenceNote = inference;
+        lastArchetype = archetype;
+        lastParticlePreset = particlePreset;
+
+        lastOpacity = opacity;
+        lastMetallic = metallic;
+        lastSmoothness = smoothness;
+        lastEmission = emission;
+        lastNoiseScale = noiseScale;
+        lastFogDensity = fogDensity;
+        lastBubbleRate = bubbleRate;
+        lastViscosity = viscosity;
+        lastDensity = density;
+
+        // determine state from mp/bp
         ChemElementState state;
         if (temperatureC < mp) state = ChemElementState.Solid;
         else if (temperatureC < bp) state = ChemElementState.Liquid;
         else state = ChemElementState.Gas;
 
+        // If archetype indicates gas/liquid strongly, override (keeps visuals consistent)
+        if (archetype == ARCH_GASFOG) state = ChemElementState.Gas;
+        else if (archetype == ARCH_LIQUID) state = ChemElementState.Liquid;
+
         SetState(state);
-        ApplyColor(c);
+
+        // dissolve can be used for transitions (optional). Here keep 0.
+        ApplyRecipe(baseColor, opacity, metallic, smoothness, emission, noiseScale, 0f);
+
+        // token should match while active
+        ApplyLastRecipeToToken();
+    }
+
+    private void ApplyLastRecipeToToken()
+    {
+        if (!_tokenActive) return;
+        if (productTokenRenderers == null || productTokenRenderers.Length == 0) return;
+
+        ApplyRecipeToRenderers(productTokenRenderers,
+            lastSelectedColor,
+            lastOpacity,
+            lastMetallic,
+            lastSmoothness,
+            lastEmission,
+            lastNoiseScale,
+            0f);
     }
 
     public void SetState(ChemElementState s)
@@ -195,34 +406,46 @@ public class ChemVisualController : UdonSharpBehaviour
         if (gasObj != null) gasObj.SetActive(s == ChemElementState.Gas);
     }
 
-    public void ApplyColor(Color c)
+    /// <summary>
+    /// Apply shader recipe to main renderers.
+    /// </summary>
+    private void ApplyRecipe(Color baseColor, float opacity, float metallic, float smoothness, float emission, float noiseScale, float dissolve)
     {
-        if (_hasLastColor)
+        // Cache check
+        if (_hasLastRecipe)
         {
-            float dr = c.r - _lastColor.r;
-            float dg = c.g - _lastColor.g;
-            float db = c.b - _lastColor.b;
-            float da = c.a - _lastColor.a;
-            if ((dr * dr + dg * dg + db * db + da * da) < 0.00001f)
+            float dr = baseColor.r - _lastBaseColor.r;
+            float dg = baseColor.g - _lastBaseColor.g;
+            float db = baseColor.b - _lastBaseColor.b;
+            float da = opacity - _lastOpacity;
+            float dm = metallic - _lastMetallic;
+            float ds = smoothness - _lastSmoothness;
+            float de = emission - _lastEmission;
+            float dn = noiseScale - _lastNoiseScale;
+
+            if ((dr * dr + dg * dg + db * db + da * da + dm * dm + ds * ds + de * de + dn * dn) < 0.000001f)
             {
                 return;
             }
         }
 
-        _hasLastColor = true;
-        _lastColor = c;
+        _hasLastRecipe = true;
+        _lastBaseColor = baseColor;
+        _lastOpacity = opacity;
+        _lastMetallic = metallic;
+        _lastSmoothness = smoothness;
+        _lastEmission = emission;
+        _lastNoiseScale = noiseScale;
 
-        ApplyColorToRenderers(targetRenderers, c);
-
-        if (_tokenActive)
-        {
-            ApplyColorToRenderers(productTokenRenderers, c);
-        }
+        ApplyRecipeToRenderers(targetRenderers, baseColor, opacity, metallic, smoothness, emission, noiseScale, dissolve);
     }
 
-    private void ApplyColorToRenderers(Renderer[] renderers, Color c)
+    private void ApplyRecipeToRenderers(Renderer[] renderers, Color baseColor, float opacity, float metallic, float smoothness, float emission, float noiseScale, float dissolve)
     {
         if (renderers == null) return;
+
+        Color c = baseColor;
+        c.a = Mathf.Clamp01(opacity);
 
         for (int i = 0; i < renderers.Length; i++)
         {
@@ -231,63 +454,354 @@ public class ChemVisualController : UdonSharpBehaviour
             Material m = r.material;
             if (m == null) continue;
 
-            if (m.HasProperty("_BaseColor")) m.SetColor("_BaseColor", c);
-            if (m.HasProperty("_Color")) m.SetColor("_Color", c);
+            // base color
+            if (!string.IsNullOrEmpty(propBaseColor) && m.HasProperty(propBaseColor)) m.SetColor(propBaseColor, c);
+            if (!string.IsNullOrEmpty(propColorFallback) && m.HasProperty(propColorFallback)) m.SetColor(propColorFallback, c);
+
+            // opacity (if custom shader supports)
+            if (!string.IsNullOrEmpty(propOpacity) && m.HasProperty(propOpacity)) m.SetFloat(propOpacity, opacity);
+
+            // metallic / smoothness
+            if (!string.IsNullOrEmpty(propMetallic) && m.HasProperty(propMetallic)) m.SetFloat(propMetallic, metallic);
+
+            if (!string.IsNullOrEmpty(propSmoothness) && m.HasProperty(propSmoothness))
+                m.SetFloat(propSmoothness, smoothness);
+            else if (!string.IsNullOrEmpty(propGlossinessFallback) && m.HasProperty(propGlossinessFallback))
+                m.SetFloat(propGlossinessFallback, smoothness);
+
+            // emission
+            if (!string.IsNullOrEmpty(propEmissionStrength) && m.HasProperty(propEmissionStrength))
+                m.SetFloat(propEmissionStrength, emission);
+            if (!string.IsNullOrEmpty(propEmissionColor) && m.HasProperty(propEmissionColor))
+                m.SetColor(propEmissionColor, Color.white * emission);
+
+            // noise / dissolve
+            if (!string.IsNullOrEmpty(propNoiseScale) && m.HasProperty(propNoiseScale))
+                m.SetFloat(propNoiseScale, noiseScale);
+            if (!string.IsNullOrEmpty(propDissolve) && m.HasProperty(propDissolve))
+                m.SetFloat(propDissolve, dissolve);
         }
+    }
+
+    // ==========================================
+    // Inference (未知化合物)
+    // ==========================================
+
+    private void InferCompoundRecipe(
+        ChemElementDatabase db,
+        string formula,
+        float temperatureC,
+        out Color baseColor,
+        out float mpC,
+        out float bpC,
+        out int hazard,
+        out int archetype,
+        out int particlePreset,
+        out float opacity,
+        out float metallic,
+        out float smoothness,
+        out float emission,
+        out float noiseScale,
+        out float fogDensity,
+        out float bubbleRate,
+        out float viscosity,
+        out float density,
+        out string note
+    )
+    {
+        hazard = db.GetHazardForFormulaOrElement(formula);
+
+        int n = ParseFormulaToBuffers(db, formula);
+        int total = 0;
+        int metalCount = 0;
+
+        float enMin = 999f;
+        float enMax = 0f;
+        bool hasEN = false;
+
+        float massSum = 0f;
+        Color colSum = new Color(0f, 0f, 0f, 0f);
+
+        for (int i = 0; i < n; i++)
+        {
+            string s = _tmpSyms[i];
+            int c = _tmpCounts[i];
+            if (c <= 0) continue;
+
+            total += c;
+
+            Color ec = db.GetColor(s);
+            colSum.r += ec.r * c;
+            colSum.g += ec.g * c;
+            colSum.b += ec.b * c;
+
+            float am = db.GetAtomicMass(s);
+            if (am > 0f) massSum += am * c;
+
+            float en = db.GetElectronegativity(s);
+            if (en > 0f)
+            {
+                hasEN = true;
+                if (en < enMin) enMin = en;
+                if (en > enMax) enMax = en;
+            }
+
+            if (db.GetIsMetal(s)) metalCount += c;
+        }
+
+        if (total <= 0)
+        {
+            // fallback deterministic
+            int h = 17;
+            for (int i = 0; i < formula.Length; i++) h = (h * 31) + (int)formula[i];
+            float hue = Mathf.Repeat((h & 0x7fffffff) * 0.0001f, 1f);
+            baseColor = Color.HSVToRGB(hue, 0.35f, 1f);
+            mpC = 25f;
+            bpC = 100f;
+            archetype = ARCH_CRYSTAL;
+            particlePreset = PT_NONE;
+            opacity = 0.95f;
+            metallic = 0f;
+            smoothness = 0.35f;
+            emission = 0.03f;
+            noiseScale = 0.35f;
+            fogDensity = 0.7f;
+            bubbleRate = 0.2f;
+            viscosity = 1f;
+            density = 1f;
+            note = "推定：組成解析失敗";
+            return;
+        }
+
+        baseColor = new Color(colSum.r / total, colSum.g / total, colSum.b / total, 1f);
+
+        float metalRatio = (float)metalCount / (float)total;
+        float deltaEN = hasEN ? (enMax - enMin) : 0f;
+        float ionic01 = hasEN ? Mathf.Clamp01((deltaEN - 0.8f) / 1.5f) : 0.25f;
+        float avgMass = massSum > 0f ? (massSum / total) : 30f;
+
+        // Color adjustments: ionic -> desaturate toward white, metal -> toward gray
+        if (ionic01 > 0.05f)
+        {
+            baseColor = Color.Lerp(baseColor, Color.white, ionic01 * 0.55f);
+        }
+        if (metalRatio > 0.05f)
+        {
+            float lum = (baseColor.r + baseColor.g + baseColor.b) / 3f;
+            Color gray = new Color(lum, lum, lum, 1f);
+            baseColor = Color.Lerp(baseColor, gray, metalRatio * 0.65f);
+        }
+
+        // Estimate mp/bp for phase visualization (educational, not scientific)
+        mpC = 10f + ionic01 * 420f + metalRatio * 260f + Mathf.Clamp(avgMass, 5f, 150f) * 0.8f;
+        bpC = mpC + 90f + (1f - ionic01) * 120f + Mathf.Clamp(avgMass, 5f, 250f) * 0.6f;
+
+        // Decide archetype mainly by solid composition; state will override when hot
+        if (temperatureC >= bpC)
+        {
+            archetype = ARCH_GASFOG;
+            particlePreset = PT_FOG;
+        }
+        else if (temperatureC >= mpC)
+        {
+            archetype = ARCH_LIQUID;
+            particlePreset = PT_BUBBLE;
+        }
+        else
+        {
+            if (metalRatio >= 0.65f)
+            {
+                archetype = ARCH_METAL;
+                particlePreset = PT_GLINT;
+            }
+            else if (ionic01 >= 0.60f)
+            {
+                archetype = ARCH_CRYSTAL;
+                particlePreset = PT_GLINT;
+            }
+            else
+            {
+                archetype = ARCH_POWDER;
+                particlePreset = PT_NONE;
+            }
+        }
+
+        // Visual parameters
+        if (archetype == ARCH_GASFOG)
+        {
+            opacity = 0.07f;
+            metallic = 0f;
+            smoothness = 0f;
+            emission = 0.01f;
+            noiseScale = 0.45f;
+            fogDensity = 0.65f + 0.35f * Mathf.Clamp01(avgMass / 120f);
+            bubbleRate = 0f;
+            viscosity = 0f;
+            density = 0.6f + 0.6f * Mathf.Clamp01(avgMass / 120f);
+        }
+        else if (archetype == ARCH_LIQUID)
+        {
+            opacity = 0.12f;
+            metallic = Mathf.Clamp01(metalRatio * 0.2f);
+            smoothness = 0.88f;
+            emission = 0.02f;
+            noiseScale = 0.22f;
+            fogDensity = 0.0f;
+            bubbleRate = 0.25f + 0.55f * (1f - ionic01);
+            viscosity = 0.7f + 1.0f * Mathf.Clamp01(avgMass / 120f);
+            density = 0.8f + 0.7f * Mathf.Clamp01(avgMass / 120f);
+        }
+        else
+        {
+            opacity = (archetype == ARCH_POWDER) ? 0.95f : 0.98f;
+            metallic = Mathf.Clamp01(metalRatio);
+            smoothness = (archetype == ARCH_METAL) ? 0.70f : 0.40f;
+            emission = (hazard & ChemElementDatabase.HAZ_RADIOACTIVE) != 0 ? 0.25f : 0.03f;
+            noiseScale = (archetype == ARCH_POWDER) ? 0.55f : 0.28f;
+            fogDensity = 0.0f;
+            bubbleRate = 0.0f;
+            viscosity = 0f;
+            density = 1.0f;
+        }
+
+        // Compose short inference note
+        string mode = (archetype == ARCH_GASFOG) ? "気体" : (archetype == ARCH_LIQUID) ? "液体" : (archetype == ARCH_METAL) ? "金属" : (archetype == ARCH_POWDER) ? "粉末" : "結晶";
+        note = "推定:" + mode;
+        if (hasEN) note += " ΔEN=" + deltaEN.ToString("0.0");
+        note += " 金属率=" + Mathf.RoundToInt(metalRatio * 100f) + "%";
+    }
+
+    /// <summary>
+    /// Parse formula into internal buffers.
+    /// Supports: H2O, NaCl, CO2, NH3, CuSO4, dots (CuSO4.5H2O), leading coefficients (5H2O).
+    /// No parentheses support.
+    /// Returns unique element count stored in _tmpSyms/_tmpCounts.
+    /// </summary>
+    private int ParseFormulaToBuffers(ChemElementDatabase db, string formula)
+    {
+        for (int i = 0; i < MAX_ELEMS; i++)
+        {
+            _tmpSyms[i] = "";
+            _tmpCounts[i] = 0;
+        }
+
+        if (string.IsNullOrEmpty(formula)) return 0;
+
+        string f = db.NormalizeFormula(formula);
+        int len = f.Length;
+
+        int unique = 0;
+        int partMul = 1;
+        bool atPartStart = true;
+
+        int iPos = 0;
+        while (iPos < len)
+        {
+            char ch = f[iPos];
+
+            // separator (hydrate dot)
+            if (ch == '.')
+            {
+                partMul = 1;
+                atPartStart = true;
+                iPos++;
+                continue;
+            }
+
+            // skip non-ascii letters
+            if (ch == '+' || ch == '-' || ch == '=' || ch == '(' || ch == ')' || ch == '[' || ch == ']' )
+            {
+                iPos++;
+                continue;
+            }
+
+            // coefficient at part start: e.g. 5H2O
+            if (atPartStart && ch >= '0' && ch <= '9')
+            {
+                int num = 0;
+                while (iPos < len)
+                {
+                    char d = f[iPos];
+                    if (d < '0' || d > '9') break;
+                    num = (num * 10) + (d - '0');
+                    iPos++;
+                }
+                partMul = Mathf.Clamp(num, 1, 99);
+                atPartStart = false;
+                continue;
+            }
+
+            // element token
+            if (ch >= 'A' && ch <= 'Z')
+            {
+                int start = iPos;
+                iPos++;
+                if (iPos < len)
+                {
+                    char lo = f[iPos];
+                    if (lo >= 'a' && lo <= 'z') iPos++;
+                }
+                string raw = f.Substring(start, iPos - start);
+
+                // validate with DB; if unknown and 2 letters, try 1 letter
+                string sym = raw;
+                if (!db.ContainsSymbol(sym) && sym.Length == 2)
+                {
+                    string s1 = sym.Substring(0, 1);
+                    if (db.ContainsSymbol(s1)) sym = s1;
+                }
+
+                // count digits
+                int num = 0;
+                bool hasNum = false;
+                while (iPos < len)
+                {
+                    char d = f[iPos];
+                    if (d < '0' || d > '9') break;
+                    hasNum = true;
+                    num = (num * 10) + (d - '0');
+                    iPos++;
+                }
+                int count = hasNum ? num : 1;
+                count *= partMul;
+
+                // add / accumulate
+                int found = -1;
+                for (int k = 0; k < unique; k++)
+                {
+                    if (_tmpSyms[k] == sym)
+                    {
+                        found = k;
+                        break;
+                    }
+                }
+                if (found >= 0)
+                {
+                    _tmpCounts[found] += count;
+                }
+                else if (unique < MAX_ELEMS)
+                {
+                    _tmpSyms[unique] = sym;
+                    _tmpCounts[unique] = count;
+                    unique++;
+                }
+
+                atPartStart = false;
+                continue;
+            }
+
+            // other characters
+            atPartStart = false;
+            iPos++;
+        }
+
+        return unique;
     }
 
     private GameObject FindChild(string childName)
     {
         Transform t = transform.Find(childName);
         return t != null ? t.gameObject : null;
-    }
-
-    private void GetCompoundFallback(string formula, out Color color, out float mpC, out float bpC)
-    {
-        // Known common compounds (approx, for educational visualization)
-        // Used only when formula is NOT an element symbol in the element database.
-        if (string.IsNullOrEmpty(formula))
-        {
-            color = Color.white;
-            mpC = 25f;
-            bpC = 100f;
-            return;
-        }
-
-        string f = formula.Trim();
-
-        // Water
-        if (f == "H2O" || f == "Water")
-        {
-            color = new Color(0.35f, 0.65f, 1f);
-            mpC = 0f;
-            bpC = 100f;
-            return;
-        }
-
-        // Sodium chloride (table salt)
-        if (f == "NaCl" || f == "Salt")
-        {
-            color = new Color(0.95f, 0.95f, 0.95f);
-            mpC = 801f;
-            bpC = 1413f;
-            return;
-        }
-
-        // Generic fallback: visually distinct but deterministic per formula
-        int h = 17;
-        int len = f.Length;
-        for (int i = 0; i < len; i++)
-        {
-            h = (h * 31) + (int)f[i];
-        }
-
-        float hue = Mathf.Repeat((h & 0x7fffffff) * 0.0001f, 1f);
-        color = Color.HSVToRGB(hue, 0.35f, 1f);
-
-        // Default thresholds (for state visualization only)
-        mpC = 25f;
-        bpC = 100f;
     }
 
     private string ExtractSymbol(ChemElementDatabase db, string input)

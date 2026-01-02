@@ -14,6 +14,9 @@ public class ChemStatusDisplay : UdonSharpBehaviour
     public ExperimentOrchestrator orchestrator;
     public TextMeshProUGUI statusText;
 
+    [Header("Visual Recipe (optional)")]
+    public ChemVisualController visual;
+
     [Header("Auto Refresh (optional)")]
     public bool autoRefresh = true;
     [Tooltip("自動更新の間隔（秒）。0以下で無効")]
@@ -27,6 +30,7 @@ public class ChemStatusDisplay : UdonSharpBehaviour
         {
             _nextRefresh = Time.time + 0.1f;
         }
+        if (visual == null && spawner != null) visual = spawner.sampleVisual;
         RefreshUI();
     }
 
@@ -36,6 +40,7 @@ public class ChemStatusDisplay : UdonSharpBehaviour
         if (refreshInterval <= 0f) return;
         if (Time.time < _nextRefresh) return;
         _nextRefresh = Time.time + refreshInterval;
+        if (visual == null && spawner != null) visual = spawner.sampleVisual;
         RefreshUI();
     }
 
@@ -67,6 +72,14 @@ public class ChemStatusDisplay : UdonSharpBehaviour
         float tempVisual = spawner != null ? spawner.GetCurrentTemperatureC() : tempSynced;
         float ambient = spawner != null ? spawner.GetAmbientTemperatureC() : (env != null ? env.Temperature : 0f);
         string tag = spawner != null ? spawner.GetReactionTag() : "none";
+
+        // Visual recipe info (local)
+        if (visual == null && spawner != null) visual = spawner.sampleVisual;
+        string recipeSource = visual != null ? (visual.lastRecipeSource ?? "") : "";
+        string recipeType = visual != null ? (visual.lastIsKnownCompound ? "KnownCompound" : (visual.lastIsElement ? "Element" : "Inferred")) : "";
+        string arch = visual != null ? ArchetypeToLabel(visual.lastArchetype) : "";
+        string preset = visual != null ? PresetToLabel(visual.lastParticlePreset) : "";
+        string infer = visual != null ? (visual.lastInferenceNote ?? "") : "";
 
         float hum = env != null ? env.Humidity : 0f;
         float pres = env != null ? env.Pressure : 0f;
@@ -128,4 +141,25 @@ statusText.text =
             "--- Logs ---\n" +
             logs;
     }
+
+    private string ArchetypeToLabel(int a)
+    {
+        if (a == ChemVisualController.ARCH_CRYSTAL) return "Crystal";
+        if (a == ChemVisualController.ARCH_POWDER) return "Powder";
+        if (a == ChemVisualController.ARCH_METAL) return "Metal";
+        if (a == ChemVisualController.ARCH_LIQUID) return "Liquid";
+        if (a == ChemVisualController.ARCH_GASFOG) return "Gas/Fog";
+        return a.ToString();
+    }
+
+    private string PresetToLabel(int p)
+    {
+        if (p == ChemVisualController.PT_NONE) return "None";
+        if (p == ChemVisualController.PT_GLINT) return "Glint";
+        if (p == ChemVisualController.PT_PRECIPITATE) return "Precipitate";
+        if (p == ChemVisualController.PT_BUBBLE) return "Bubble";
+        if (p == ChemVisualController.PT_FOG) return "Fog";
+        return p.ToString();
+    }
+
 }
