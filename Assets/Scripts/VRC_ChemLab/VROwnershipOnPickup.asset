@@ -161,7 +161,7 @@ MonoBehaviour:
       Data: 10|UnityEngine.HeaderAttribute, UnityEngine.CoreModule
     - Name: header
       Entry: 1
-      Data: 'Optional: claim operator early (no UI change)'
+      Data: 'Optional: claim operator early (recommended for low-latency feel)'
     - Name: 
       Entry: 8
       Data: 
