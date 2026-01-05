@@ -969,6 +969,43 @@ public class ChemElementSpawner : UdonSharpBehaviour
     public float GetPour01() { return _syncedPour01; }
     public float GetShake01() { return _syncedShake01; }
 
+    // =====================================================
+    // Public ops setter (VR/physical input)
+    // =====================================================
+    // VRなどから連続値(0..1)で操作量を直接渡すための入口
+    public void SetOps01(float heat01, float stir01, float pour01, float shake01)
+    {
+        if (!EnsureCanControl()) return;
+
+        heat01  = Mathf.Clamp01(heat01);
+        stir01  = Mathf.Clamp01(stir01);
+        pour01  = Mathf.Clamp01(pour01);
+        shake01 = Mathf.Clamp01(shake01);
+
+        // 同期負荷軽減：僅差は無視
+        const float eps = 0.02f;
+        bool changed =
+            Mathf.Abs(_syncedHeat01  - heat01)  > eps ||
+            Mathf.Abs(_syncedStir01  - stir01)  > eps ||
+            Mathf.Abs(_syncedPour01  - pour01)  > eps ||
+            Mathf.Abs(_syncedShake01 - shake01) > eps;
+
+        if (!changed) return;
+
+        _syncedHeat01  = heat01;
+        _syncedStir01  = stir01;
+        _syncedPour01  = pour01;
+        _syncedShake01 = shake01;
+
+        // 最大値（採点用）も更新
+        if (_syncedHeat01  > _syncedMaxHeat01)  _syncedMaxHeat01  = _syncedHeat01;
+        if (_syncedStir01  > _syncedMaxStir01)  _syncedMaxStir01  = _syncedStir01;
+        if (_syncedPour01  > _syncedMaxPour01)  _syncedMaxPour01  = _syncedPour01;
+        if (_syncedShake01 > _syncedMaxShake01) _syncedMaxShake01 = _syncedShake01;
+
+        RequestSerialization();
+    }
+
     public float GetMaxHeat01() { return _syncedMaxHeat01; }
     public float GetMaxStir01() { return _syncedMaxStir01; }
     public float GetMaxPour01() { return _syncedMaxPour01; }
