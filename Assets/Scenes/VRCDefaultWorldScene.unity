@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.31095207, g: 0.3321825, b: 0.39446488, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -465,7 +465,6 @@ MonoBehaviour:
   predictor: {fileID: 1821020399}
   explainGenerator: {fileID: 1410712209}
   environment: {fileID: 376516164}
-  autoBindOptionalReferences: 1
   showProductWhenComplete: 1
   sampleVisual: {fileID: 126484677}
   reactionAnimator: {fileID: 1546114377}
@@ -1251,9 +1250,6 @@ MonoBehaviour:
   missionPrompts: []
   missionGoalProductFormula: []
   missionPoints: 
-  missionCsv: {fileID: 0}
-  missionJson: {fileID: 0}
-  loadMissionsOnStart: 1
   missionRequiredToolId: []
   missionMinTempC: []
   missionMaxTempC: []
@@ -6497,7 +6493,7 @@ Transform:
   m_GameObject: {fileID: 540640938}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -26705,7 +26701,7 @@ Transform:
   m_GameObject: {fileID: 1016887475}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -26828,7 +26824,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1028064685}
-  particle: {fileID: 429492451}
+  particle: {fileID: 1494264950}
   surface: {fileID: 1634223835}
 --- !u!1 &1044960241
 GameObject:
@@ -35329,7 +35325,6 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1396188751}
-  autoCollectButtons: 1
   buttons: []
 --- !u!1 &1410712206
 GameObject:
@@ -40969,7 +40964,7 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1494264953}
   particle: {fileID: 1494264950}
-  surface: {fileID: 0}
+  surface: {fileID: 1634223835}
 --- !u!114 &1494264953
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -41057,7 +41052,7 @@ Transform:
   m_GameObject: {fileID: 1530110315}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -42083,7 +42078,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1634223836}
-  surfaceRenderer: {fileID: 0}
+  surfaceRenderer: {fileID: 664380159}
   gasParticle: {fileID: 429492451}
   waveStrength: 0
   viscosity: 1
@@ -61571,7 +61566,6 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2273584187577596261}
-  autoCollectButtons: 1
   buttons: []
 --- !u!1 &2932980988737878958
 GameObject:
@@ -64192,7 +64186,6 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 20277373180411851}
-  autoCollectButtons: 1
   buttons: []
 --- !u!114 &3713615641252662975
 MonoBehaviour:
@@ -72831,7 +72824,6 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5795508244685687831}
-  autoCollectButtons: 1
   buttons: []
 --- !u!114 &6529668715474781566
 MonoBehaviour:
