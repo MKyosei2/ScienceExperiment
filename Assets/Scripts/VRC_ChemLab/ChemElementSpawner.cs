@@ -32,7 +32,7 @@ public class ChemElementSpawner : UdonSharpBehaviour
 
     [Header("Education/Game Flow (optional)")]
     public ExperimentOrchestrator orchestrator;
-                      // VFX係数生成（ローカル）
+    // VFX係数生成（ローカル）
 
     [Header("UI (optional, no TMP dependency)")]
     public Text hintText;
@@ -72,11 +72,77 @@ public class ChemElementSpawner : UdonSharpBehaviour
     public float heatNearMeters = 0.20f;
     public float heatFarMeters = 0.80f;
 
+    [Header("3D Selection Visuals (Udon-safe)")]
+    [Tooltip("true の場合、元素/器具ボタン選択時に 3D を表示します（各クライアントの非同期表示）。")]
+    public bool enableSelectionVisuals = true;
+
+    [Tooltip("器具モデルの親Transform。直下の子オブジェクト名 = toolId で一致させてください。")]
+    public Transform toolModelsRoot;
+
+    [Tooltip("元素モデルの親Transform。直下の子オブジェクト名 = symbolOrFormula で一致させてください。")]
+    public Transform elementModelsRoot;
+
+    [Tooltip("器具を表示する基準Transform。未指定なら containerTransform を使います。")]
+    public Transform toolPreviewAnchor;
+
+    [Tooltip("true の場合、選択された器具を toolPreviewAnchor に移動して表示します。false の場合は元の配置のまま表示します。")]
+    public bool repositionToolToAnchor = true;
+
+    [Tooltip("器具の表示位置（toolPreviewAnchor のローカル座標）。")]
+    public Vector3 toolPreviewLocalPos = Vector3.zero;
+
+    [Tooltip("器具の表示回転（toolPreviewAnchor のローカル回転、オイラー角）。")]
+    public Vector3 toolPreviewLocalEuler = Vector3.zero;
+
+    [Tooltip("器具の表示スケール（toolPreviewAnchor のローカルスケール）。")]
+    public Vector3 toolPreviewLocalScale = Vector3.one;
+
+    [Tooltip("器具側に「元素エフェクトを出す位置」を置く場合、その子オブジェクト名。例: ElementEffectAnchor")]
+    public string elementEffectAnchorChildName = "ElementEffectAnchor";
+
+    [Tooltip("元素の表示位置（アンカーのローカル座標）。")]
+    public Vector3 elementEffectLocalPos = Vector3.zero;
+
+    [Tooltip("元素の表示回転（アンカーのローカル回転、オイラー角）。")]
+    public Vector3 elementEffectLocalEuler = Vector3.zero;
+
+    [Tooltip("元素の表示スケール（アンカーのローカルスケール）。")]
+    public Vector3 elementEffectLocalScale = Vector3.one;
+
+    [Tooltip("true の場合、未選択の器具は非表示にします。")]
+    public bool hideUnselectedTools = true;
+
+    [Tooltip("true の場合、未選択の元素は非表示にします。")]
+    public bool hideUnselectedElements = true;
+
+    // internal caches (Udon-safe: direct children only)
+    private bool _selectionPoolsReady = false;
+    private Transform[] _toolPool;
+    private string[] _toolPoolKey;
+    private int _toolPoolCount;
+
+    private Transform[] _elementPool;
+    private string[] _elementPoolKey;
+    private int _elementPoolCount;
+
+    // last moved objects (restore original placement)
+    private Transform _movedTool;
+    private Transform _movedToolParent;
+    private Vector3 _movedToolLocalPos;
+    private Quaternion _movedToolLocalRot;
+    private Vector3 _movedToolLocalScale;
+
+    private Transform _movedElement;
+    private Transform _movedElementParent;
+    private Vector3 _movedElementLocalPos;
+    private Quaternion _movedElementLocalRot;
+    private Vector3 _movedElementLocalScale;
+
     // -----------------------------
     // Synced experiment "truth"
     // -----------------------------
     [UdonSynced] private int _syncedVersion;              // 主要変更カウンタ（選択/開始/リセット/操作者変更）
-    [UdonSynced]     private int _localLastPhase = -99;
+    [UdonSynced] private int _localLastPhase = -99;
 
     private int _syncedOperatorPlayerId = -1;
 
@@ -147,9 +213,9 @@ public class ChemElementSpawner : UdonSharpBehaviour
 
         ApplyVisualFromState(true);
         WriteUI();
-    
+
         _localLastPhase = _syncedPhase;
-}
+    }
 
     // =====================================================
     // Role management (operator / spectator)
@@ -274,6 +340,9 @@ public class ChemElementSpawner : UdonSharpBehaviour
         RequestSerialization();
 
         AppendHistory("SelectEquipment: " + _localTool);
+
+        // ローカル即時反映（自分は OnDeserialization が走らないことがあるため）
+        ApplyVisualFromState(true);
         WriteUI();
     }
 
@@ -414,6 +483,10 @@ public class ChemElementSpawner : UdonSharpBehaviour
         // 同期状態初期化
         _syncedInput = "";
         _syncedTool = "";
+
+        // ローカル即時反映（自分の表示を確実に消す）
+        _localInput = "";
+        _localTool = "";
         _syncedReactionTag = "none";
         _syncedProductFormula = "";
         _syncedSeed = 0;
@@ -519,9 +592,9 @@ public class ChemElementSpawner : UdonSharpBehaviour
                 RequestSerialization();
             }
         }
-    
+
         CheckPhaseTransition();
-}
+    }
 
     private void TickLocalVisual(float dt)
     {
@@ -683,9 +756,9 @@ public class ChemElementSpawner : UdonSharpBehaviour
 
         // 軽い更新（progress/temp等）はここでUI更新
         WriteUI();
-    
+
         CheckPhaseTransition();
-}
+    }
 
     // =====================================================
     // Helpers
@@ -835,8 +908,253 @@ public class ChemElementSpawner : UdonSharpBehaviour
         if (reactionAnimator != null) reactionAnimator.ResetLevels();
     }
 
+
+    // =====================================================
+    // 3D Selection Visuals (Udon-safe)
+    //  - toolModelsRoot / elementModelsRoot の「直下の子」を対象にします（Udon互換のため深い探索はしません）
+    //  - 元素は「選択された器具の ElementEffectAnchorChildName へ」エフェクトとして乗せます
+    // =====================================================
+    private void EnsureSelectionPools()
+    {
+        if (_selectionPoolsReady) return;
+        _selectionPoolsReady = true;
+
+        // Tools
+        if (toolModelsRoot != null)
+        {
+            _toolPoolCount = toolModelsRoot.childCount;
+            if (_toolPoolCount < 0) _toolPoolCount = 0;
+            _toolPool = new Transform[_toolPoolCount];
+            _toolPoolKey = new string[_toolPoolCount];
+
+            for (int i = 0; i < _toolPoolCount; i++)
+            {
+                Transform t = toolModelsRoot.GetChild(i);
+                _toolPool[i] = t;
+                _toolPoolKey[i] = NormalizeKey(t != null ? t.name : "");
+            }
+        }
+
+        // Elements
+        if (elementModelsRoot != null)
+        {
+            _elementPoolCount = elementModelsRoot.childCount;
+            if (_elementPoolCount < 0) _elementPoolCount = 0;
+            _elementPool = new Transform[_elementPoolCount];
+            _elementPoolKey = new string[_elementPoolCount];
+
+            for (int i = 0; i < _elementPoolCount; i++)
+            {
+                Transform t = elementModelsRoot.GetChild(i);
+                _elementPool[i] = t;
+                _elementPoolKey[i] = NormalizeKey(t != null ? t.name : "");
+            }
+        }
+    }
+
+    private string NormalizeKey(string s)
+    {
+        if (s == null) return "";
+        s = s.Trim();
+        // 半角/全角スペース除去（ボタン側の表記揺れ対策）
+        s = s.Replace(" ", "");
+        s = s.Replace("　", "");
+        return s.ToUpper();
+    }
+
+    private int FindIndex(string[] keys, int count, string wantKey)
+    {
+        if (keys == null) return -1;
+        if (count <= 0) return -1;
+        if (string.IsNullOrEmpty(wantKey)) return -1;
+
+        for (int i = 0; i < count; i++)
+        {
+            string k = keys[i];
+            if (k == wantKey) return i;
+        }
+        return -1;
+    }
+
+    private void RestoreMovedTool()
+    {
+        if (_movedTool == null) return;
+        Transform t = _movedTool;
+        t.SetParent(_movedToolParent, false);
+        t.localPosition = _movedToolLocalPos;
+        t.localRotation = _movedToolLocalRot;
+        t.localScale = _movedToolLocalScale;
+
+        _movedTool = null;
+        _movedToolParent = null;
+        _movedToolLocalPos = Vector3.zero;
+        _movedToolLocalRot = Quaternion.identity;
+        _movedToolLocalScale = Vector3.one;
+    }
+
+    private void RestoreMovedElement()
+    {
+        if (_movedElement == null) return;
+        Transform t = _movedElement;
+        t.SetParent(_movedElementParent, false);
+        t.localPosition = _movedElementLocalPos;
+        t.localRotation = _movedElementLocalRot;
+        t.localScale = _movedElementLocalScale;
+
+        _movedElement = null;
+        _movedElementParent = null;
+        _movedElementLocalPos = Vector3.zero;
+        _movedElementLocalRot = Quaternion.identity;
+        _movedElementLocalScale = Vector3.one;
+    }
+
+    private void ApplySelectionVisuals()
+    {
+        if (!enableSelectionVisuals) return;
+
+        EnsureSelectionPools();
+
+        Transform previewAnchor = toolPreviewAnchor != null ? toolPreviewAnchor : containerTransform;
+        if (previewAnchor == null) previewAnchor = transform;
+
+        // -----------------------
+        // Tool selection
+        // -----------------------
+        Transform selectedTool = null;
+        string toolKey = NormalizeKey(_localTool);
+        if (!string.IsNullOrEmpty(toolKey) && _toolPool != null && _toolPoolCount > 0)
+        {
+            int idx = FindIndex(_toolPoolKey, _toolPoolCount, toolKey);
+            if (idx >= 0) selectedTool = _toolPool[idx];
+        }
+
+        // tool visibility
+        if (_toolPool != null && _toolPoolCount > 0)
+        {
+            for (int i = 0; i < _toolPoolCount; i++)
+            {
+                Transform t = _toolPool[i];
+                if (t == null) continue;
+
+                bool active = true;
+                if (hideUnselectedTools)
+                {
+                    active = (selectedTool != null && t == selectedTool);
+                }
+                t.gameObject.SetActive(active);
+            }
+        }
+
+        // tool reposition
+        if (repositionToolToAnchor)
+        {
+            if (_movedTool != null && _movedTool != selectedTool)
+            {
+                RestoreMovedTool();
+            }
+
+            if (selectedTool != null)
+            {
+                if (_movedTool == null)
+                {
+                    _movedTool = selectedTool;
+                    _movedToolParent = selectedTool.parent;
+                    _movedToolLocalPos = selectedTool.localPosition;
+                    _movedToolLocalRot = selectedTool.localRotation;
+                    _movedToolLocalScale = selectedTool.localScale;
+                }
+
+                if (selectedTool.parent != previewAnchor)
+                {
+                    selectedTool.SetParent(previewAnchor, false);
+                }
+                selectedTool.localPosition = toolPreviewLocalPos;
+                selectedTool.localEulerAngles = toolPreviewLocalEuler;
+                selectedTool.localScale = toolPreviewLocalScale;
+            }
+            else
+            {
+                RestoreMovedTool();
+            }
+        }
+
+        // -----------------------
+        // Element selection (effect on tool)
+        // -----------------------
+        Transform selectedElement = null;
+        string elemKey = NormalizeKey(_localInput);
+        if (!string.IsNullOrEmpty(elemKey) && _elementPool != null && _elementPoolCount > 0)
+        {
+            int idx = FindIndex(_elementPoolKey, _elementPoolCount, elemKey);
+            if (idx >= 0) selectedElement = _elementPool[idx];
+        }
+
+        // element visibility
+        if (_elementPool != null && _elementPoolCount > 0)
+        {
+            for (int i = 0; i < _elementPoolCount; i++)
+            {
+                Transform t = _elementPool[i];
+                if (t == null) continue;
+
+                bool active = true;
+                if (hideUnselectedElements)
+                {
+                    active = (selectedElement != null && t == selectedElement);
+                }
+                t.gameObject.SetActive(active);
+            }
+        }
+
+        // attach element to tool anchor
+        if (_movedElement != null && _movedElement != selectedElement)
+        {
+            RestoreMovedElement();
+        }
+
+        Transform elementAnchor = null;
+        if (selectedTool != null)
+        {
+            elementAnchor = selectedTool;
+            if (!string.IsNullOrEmpty(elementEffectAnchorChildName))
+            {
+                Transform a = selectedTool.Find(elementEffectAnchorChildName);
+                if (a != null) elementAnchor = a;
+            }
+        }
+        if (elementAnchor == null) elementAnchor = previewAnchor;
+
+        if (selectedElement != null)
+        {
+            if (_movedElement == null)
+            {
+                _movedElement = selectedElement;
+                _movedElementParent = selectedElement.parent;
+                _movedElementLocalPos = selectedElement.localPosition;
+                _movedElementLocalRot = selectedElement.localRotation;
+                _movedElementLocalScale = selectedElement.localScale;
+            }
+
+            if (selectedElement.parent != elementAnchor)
+            {
+                selectedElement.SetParent(elementAnchor, false);
+            }
+            selectedElement.localPosition = elementEffectLocalPos;
+            selectedElement.localEulerAngles = elementEffectLocalEuler;
+            selectedElement.localScale = elementEffectLocalScale;
+        }
+        else
+        {
+            RestoreMovedElement();
+        }
+    }
+
     private void ApplyVisualFromState(bool force)
     {
+        // 元素/器具の選択を 3D でも見せる（非同期表示）
+        ApplySelectionVisuals();
+
+        // 物性/色などの可視化（既存の sampleVisual 設定がある場合のみ）
         if (sampleVisual == null || elementDb == null) return;
 
         string sym = GetDisplayFormula();
@@ -977,30 +1295,30 @@ public class ChemElementSpawner : UdonSharpBehaviour
     {
         if (!EnsureCanControl()) return;
 
-        heat01  = Mathf.Clamp01(heat01);
-        stir01  = Mathf.Clamp01(stir01);
-        pour01  = Mathf.Clamp01(pour01);
+        heat01 = Mathf.Clamp01(heat01);
+        stir01 = Mathf.Clamp01(stir01);
+        pour01 = Mathf.Clamp01(pour01);
         shake01 = Mathf.Clamp01(shake01);
 
         // 同期負荷軽減：僅差は無視
         const float eps = 0.02f;
         bool changed =
-            Mathf.Abs(_syncedHeat01  - heat01)  > eps ||
-            Mathf.Abs(_syncedStir01  - stir01)  > eps ||
-            Mathf.Abs(_syncedPour01  - pour01)  > eps ||
+            Mathf.Abs(_syncedHeat01 - heat01) > eps ||
+            Mathf.Abs(_syncedStir01 - stir01) > eps ||
+            Mathf.Abs(_syncedPour01 - pour01) > eps ||
             Mathf.Abs(_syncedShake01 - shake01) > eps;
 
         if (!changed) return;
 
-        _syncedHeat01  = heat01;
-        _syncedStir01  = stir01;
-        _syncedPour01  = pour01;
+        _syncedHeat01 = heat01;
+        _syncedStir01 = stir01;
+        _syncedPour01 = pour01;
         _syncedShake01 = shake01;
 
         // 最大値（採点用）も更新
-        if (_syncedHeat01  > _syncedMaxHeat01)  _syncedMaxHeat01  = _syncedHeat01;
-        if (_syncedStir01  > _syncedMaxStir01)  _syncedMaxStir01  = _syncedStir01;
-        if (_syncedPour01  > _syncedMaxPour01)  _syncedMaxPour01  = _syncedPour01;
+        if (_syncedHeat01 > _syncedMaxHeat01) _syncedMaxHeat01 = _syncedHeat01;
+        if (_syncedStir01 > _syncedMaxStir01) _syncedMaxStir01 = _syncedStir01;
+        if (_syncedPour01 > _syncedMaxPour01) _syncedMaxPour01 = _syncedPour01;
         if (_syncedShake01 > _syncedMaxShake01) _syncedMaxShake01 = _syncedShake01;
 
         RequestSerialization();
