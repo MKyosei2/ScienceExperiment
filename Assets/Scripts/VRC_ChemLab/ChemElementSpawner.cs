@@ -30,6 +30,38 @@ public class ChemElementSpawner : UdonSharpBehaviour
     public ChemReactionAnimator reactionAnimator;   // 泡/煙/熱/発光など（ローカル演出）
     public AIRequestSender ai;
 
+
+    [Header("3D Preview / Placement (Safe)")]
+    [Tooltip("器具モデル群の親（推奨: World/ExperimentTable/VR_Props）。UIボード(=Tool)を入れないでください。")]
+    public Transform toolModelsRoot;
+
+    [Tooltip("元素を器具内に配置するアンカー名（器具モデルの子に置く）。")]
+    public string elementEffectAnchorName = "ElementEffectAnchor";
+
+    [Tooltip("アンカーが見つからない場合の代替（未設定なら containerTransform）。")]
+    public Transform elementEffectAnchorFallback;
+
+    [Tooltip("元素選択時に、sampleVisual を器具内アンカーへ移動して表示します。")]
+    public bool placeElementEffectInTool = true;
+
+    [Tooltip("器具選択時に、toolModelsRoot 配下の一致する器具をアクティブ化します（VR_Props のときのみ安全に他を非表示にできます）。")]
+    public bool previewToolOnSelect = true;
+
+    [Tooltip("VR_Props のときだけ、選択器具以外を非表示にします（UIボード消失対策）。")]
+    public bool hideOtherToolsOnlyWhenVRProps = true;
+
+    [Tooltip("sampleVisual の表示オフセット（アンカーのローカル）。")]
+    public Vector3 elementEffectLocalOffset = Vector3.zero;
+
+    [Tooltip("sampleVisual の表示スケール（アンカーのローカル）。")]
+    public Vector3 elementEffectLocalScale = Vector3.one;
+
+    private Transform _activeToolTr;
+    private Transform _activeToolTopTr;
+    private Transform _activeAnchorTr;
+    private string _lastToolApplied = "";
+    private int _tmpScanVisited = 0;
+
     [Header("Education/Game Flow (optional)")]
     public ExperimentOrchestrator orchestrator;
                       // VFX係数生成（ローカル）
@@ -72,38 +104,9 @@ public class ChemElementSpawner : UdonSharpBehaviour
     public float heatNearMeters = 0.20f;
     public float heatFarMeters = 0.80f;
 
-
-    // =====================================================
-    // 3D Preview (Tool + In-Tool Element)
-    // - Tool button: show the selected tool model
-    // - Element button: generate visual inside the selected tool (anchor)
-    // =====================================================
-    [Header("3D Preview (Tool + In-Tool Element)")]
-    [Tooltip("Tool model root. Direct children are treated as tool candidates (name must match toolId).")]
-    public Transform toolModelsRoot;
-
-    [Tooltip("If true, hide tools other than the selected one.")]
-    public bool hideOtherTools = true;
-
-    [Tooltip("Anchor name inside the tool where the element visual will be placed.")]
-    public string elementEffectAnchorName = "ElementEffectAnchor";
-
-    [Tooltip("If the selected tool has no anchor, use this fallback anchor. If null, containerTransform is used.")]
-    public Transform elementEffectAnchorFallback;
-
-    [Tooltip("If true, selecting an element will place the element visual inside the selected tool.")]
-    public bool showElementInToolOnSelect = true;
-
-    [Tooltip("Reparent reactionAnimator under the anchor as well (so particles appear inside the tool).")]
-    public bool reparentVfxToAnchor = true;
-
-    [Header("Select Preview VFX (AI, optional)")]
-    [Tooltip("Run a quick 'AI-like' preview when selecting an element (idle phase only).")]
-    public bool previewVfxOnSelectElement = true;
-
-    [Range(0f, 1f)]
-    public float previewVfxProgress01 = 0.25f;
-
+    // -----------------------------
+    // Synced experiment "truth"
+    // -----------------------------
     [UdonSynced] private int _syncedVersion;              // 主要変更カウンタ（選択/開始/リセット/操作者変更）
     [UdonSynced]     private int _localLastPhase = -99;
 
@@ -152,13 +155,6 @@ public class ChemElementSpawner : UdonSharpBehaviour
     private string _history = "";
     private string _localInput = "";
     private string _localTool = "";
-
-
-// 3D preview local cache
-private string _lastAppliedToolId = "";
-private string _lastAppliedElement = "";
-private Transform _activeTool;
-private Transform _activeAnchor;
 
     // Local temperature (operator simulation + everyone visual smoothing)
     private float _simTempC;
@@ -274,6 +270,11 @@ private Transform _activeAnchor;
         if (sampleVisual != null) sampleVisual.NotifyExperimentReset();
         ApplyVisualFromState(true);
         WriteUI();
+
+
+        // 3D placement: do not touch element table UI
+        ApplyToolPreviewLocal(false);
+        PlaceElementEffectLocal(false);
     }
 
     // =====================================================
@@ -296,12 +297,11 @@ private Transform _activeAnchor;
             sampleVisual.NotifyElementSelected(_localInput);
 
         ApplyVisualFromState(true);
+        // Ensure 3D placement updates immediately for element selection
+        ApplyToolPreviewLocal(false);
+        PlaceElementEffectLocal(true);
         WriteUI();
-    
-        // 3D preview (local immediate)
-        ApplyToolSelectionLocal(true);
-        ApplyElementSelectionLocal(true);
-}
+    }
 
     public void SelectEquipment(string toolId)
     {
@@ -315,12 +315,11 @@ private Transform _activeAnchor;
 
         AppendHistory("SelectEquipment: " + _localTool);
         WriteUI();
-    
-        // 3D preview (local immediate)
-        ApplyToolSelectionLocal(true);
-        // If element already selected, keep it inside the newly selected tool
-        ApplyElementSelectionLocal(true);
-}
+
+
+        ApplyToolPreviewLocal(true);
+        PlaceElementEffectLocal(true);
+    }
 
     /// <summary>
     /// 環境調整（ConditionAdjusterから呼ぶ想定）
@@ -728,13 +727,12 @@ private Transform _activeAnchor;
 
         // 軽い更新（progress/temp等）はここでUI更新
         WriteUI();
-    
-        
-        // 3D preview (sync apply)
-        ApplyToolSelectionLocal(true);
-        ApplyElementSelectionLocal(true);
 
-CheckPhaseTransition();
+        // Ensure previews stay visible for late joiners / remote updates
+        ApplyToolPreviewLocal(false);
+        PlaceElementEffectLocal(false);
+
+        CheckPhaseTransition();
 }
 
     // =====================================================
@@ -885,242 +883,6 @@ CheckPhaseTransition();
         if (reactionAnimator != null) reactionAnimator.ResetLevels();
     }
 
-
-    // =====================================================
-    // 3D Preview helpers (Udon-safe: no tag search, no recursion)
-    // =====================================================
-    private void ApplyToolSelectionLocal(bool force)
-    {
-        if (toolModelsRoot == null) return;
-
-        string id = _syncedTool;
-        if (string.IsNullOrEmpty(id)) id = _localTool;
-        if (id == null) id = "";
-
-        if (!force && id == _lastAppliedToolId) return;
-        _lastAppliedToolId = id;
-
-        string norm = NormalizeId(id);
-
-        // Pass 1: find match
-        Transform matched = null;
-        int c = toolModelsRoot.childCount;
-        if (!string.IsNullOrEmpty(norm))
-        {
-            for (int i = 0; i < c; i++)
-            {
-                Transform child = toolModelsRoot.GetChild(i);
-                if (child == null) continue;
-                if (NormalizeId(child.name) == norm)
-                {
-                    matched = child;
-                    break;
-                }
-            }
-        }
-
-        // Pass 2: apply visibility
-        if (hideOtherTools)
-        {
-            for (int i = 0; i < c; i++)
-            {
-                Transform child = toolModelsRoot.GetChild(i);
-                if (child == null) continue;
-
-                bool active = true;
-                if (!string.IsNullOrEmpty(norm))
-                    active = (child == matched); // if not found, keep all visible
-
-                child.gameObject.SetActive(active);
-            }
-        }
-
-        _activeTool = matched;
-    }
-
-    private void ApplyElementSelectionLocal(bool force)
-    {
-        if (!showElementInToolOnSelect) return;
-        if (sampleVisual == null) return;
-
-        string elem = _syncedInput;
-        if (string.IsNullOrEmpty(elem)) elem = _localInput;
-        if (elem == null) elem = "";
-
-        if (!force && elem == _lastAppliedElement && _activeAnchor != null) return;
-        _lastAppliedElement = elem;
-
-        // Make sure tool selection is applied before resolving anchor
-        ApplyToolSelectionLocal(false);
-
-        _activeAnchor = ResolveAnchor();
-        if (_activeAnchor == null) return;
-
-        // Place sampleVisual inside the tool/anchor
-        Transform svt = sampleVisual.transform;
-        Vector3 prevLocalScale = svt.localScale;
-
-        if (svt.parent != _activeAnchor)
-            svt.SetParent(_activeAnchor, false);
-
-        svt.localPosition = Vector3.zero;
-        svt.localRotation = Quaternion.identity;
-        svt.localScale = prevLocalScale;
-
-        if (!sampleVisual.gameObject.activeSelf)
-            sampleVisual.gameObject.SetActive(true);
-
-        // Generate "real-ish" look (color/state/opacity/etc.) using existing deterministic systems
-        if (elementDb != null)
-            sampleVisual.ApplyElementBySymbol(elementDb, elem, _visualTempC);
-
-        // Keep VFX origin inside the tool, too
-        if (reparentVfxToAnchor && reactionAnimator != null)
-        {
-            Transform rt = reactionAnimator.transform;
-            Vector3 rScale = rt.localScale;
-
-            if (rt.parent != _activeAnchor)
-                rt.SetParent(_activeAnchor, false);
-
-            rt.localPosition = Vector3.zero;
-            rt.localRotation = Quaternion.identity;
-            rt.localScale = rScale;
-        }
-
-        // Optional: quick AI-like preview when selecting an element (idle only)
-        if (previewVfxOnSelectElement && _syncedPhase == 0 && ai != null && reactionAnimator != null)
-        {
-            string toolId = _syncedTool;
-            if (string.IsNullOrEmpty(toolId)) toolId = _localTool;
-            if (toolId == null) toolId = "";
-
-            int seed = ComputeSeedCompat(elem, toolId);
-
-            bool prevOverride = ai.useOverrideSeed;
-            int prevSeed = ai.sessionSeedOverride;
-
-            ai.useOverrideSeed = true;
-            ai.sessionSeedOverride = seed;
-
-            ai.StartSession(elem, toolId);
-            ai.EvaluateAtProgress(previewVfxProgress01);
-
-            reactionAnimator.ApplyPreset(ai.predictedReactionTag, ai, previewVfxProgress01, sampleVisual);
-
-            ai.ResetSession();
-
-            ai.useOverrideSeed = prevOverride;
-            ai.sessionSeedOverride = prevSeed;
-        }
-    }
-
-    private Transform ResolveAnchor()
-    {
-        // Prefer anchor inside selected tool
-        if (_activeTool != null)
-        {
-            Transform a = FindChildByNameDepth3(_activeTool, elementEffectAnchorName);
-            if (a != null) return a;
-
-            // If no explicit anchor, use the tool root itself
-            return _activeTool;
-        }
-
-        // Fallback anchors
-        if (elementEffectAnchorFallback != null) return elementEffectAnchorFallback;
-        if (containerTransform != null) return containerTransform;
-        return transform;
-    }
-
-    private Transform FindChildByNameDepth3(Transform root, string targetName)
-    {
-        if (root == null || string.IsNullOrEmpty(targetName)) return null;
-
-        // depth 1
-        int c1 = root.childCount;
-        for (int i = 0; i < c1; i++)
-        {
-            Transform ch = root.GetChild(i);
-            if (ch != null && ch.name == targetName) return ch;
-        }
-
-        // depth 2
-        for (int i = 0; i < c1; i++)
-        {
-            Transform ch = root.GetChild(i);
-            if (ch == null) continue;
-            int c2 = ch.childCount;
-            for (int j = 0; j < c2; j++)
-            {
-                Transform g = ch.GetChild(j);
-                if (g != null && g.name == targetName) return g;
-            }
-        }
-
-        // depth 3
-        for (int i = 0; i < c1; i++)
-        {
-            Transform ch = root.GetChild(i);
-            if (ch == null) continue;
-            int c2 = ch.childCount;
-            for (int j = 0; j < c2; j++)
-            {
-                Transform g = ch.GetChild(j);
-                if (g == null) continue;
-                int c3 = g.childCount;
-                for (int k = 0; k < c3; k++)
-                {
-                    Transform gg = g.GetChild(k);
-                    if (gg != null && gg.name == targetName) return gg;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    private string NormalizeId(string s)
-    {
-        if (s == null) return "";
-
-        // Remove spaces/underscores/hyphens and uppercase (ASCII)
-        string outStr = "";
-        int len = s.Length;
-        for (int i = 0; i < len; i++)
-        {
-            char c = s[i];
-            if (c == ' ' || c == '\t' || c == '\n' || c == '_' || c == '-') continue;
-
-            // ASCII upper
-            if (c >= 'a' && c <= 'z') c = (char)(c - 32);
-
-            outStr += c;
-        }
-        return outStr;
-    }
-
-    private int ComputeSeedCompat(string a, string b)
-    {
-        int h = 17;
-        h = (h * 31) + HashCompat(a);
-        h = (h * 31) + HashCompat(b);
-        if (h < 0) h = -h;
-        return h;
-    }
-
-    private int HashCompat(string s)
-    {
-        if (s == null) return 0;
-        int hash = 0;
-        int len = s.Length;
-        for (int i = 0; i < len; i++)
-        {
-            hash = (hash * 31) + (int)s[i];
-        }
-        return hash;
-    }
-
     private void ApplyVisualFromState(bool force)
     {
         if (sampleVisual == null || elementDb == null) return;
@@ -1138,6 +900,207 @@ CheckPhaseTransition();
             _lastAppliedPhase = _syncedPhase;
         }
     }
+
+    // =====================================================
+    // 3D Preview helpers (UI-safe)
+    // =====================================================
+    private void EnsurePreviewRefs()
+    {
+        if (containerTransform == null) containerTransform = transform;
+        if (elementEffectAnchorFallback == null) elementEffectAnchorFallback = containerTransform;
+
+        // If incorrectly assigned to UI, clear it
+        if (toolModelsRoot != null && IsLikelyUIRoot(toolModelsRoot))
+            toolModelsRoot = null;
+
+        if (toolModelsRoot != null) return;
+
+        // 1) Try common names / paths
+        Transform found = null;
+
+        found = FindByNameAnywhere(containerTransform, "VR_Props");
+        if (found == null) found = FindByNameAnywhere(containerTransform, "VRProps");
+        if (found == null) found = FindByNameAnywhere(containerTransform, "VR Props");
+        if (found == null) found = FindByNameAnywhere(containerTransform, "Props");
+        if (found == null) found = FindByNameContainsAnywhere2(containerTransform, "VR", "PROPS");
+        if (found == null) found = FindByNameContainsAnywhere1(containerTransform, "PROP");
+
+        // 2) Heuristic: pick a non-UI root with many renderers (limited scan)
+        if (found == null)
+            found = FindBestPropsRootByRenderers(containerTransform.root);
+
+        if (found != null && !IsLikelyUIRoot(found))
+            toolModelsRoot = found;
+    }
+
+    private bool IsVRPropsRoot(Transform root)
+    {
+        if (root == null) return false;
+        string n = root.name;
+        if (string.IsNullOrEmpty(n)) return false;
+        n = n.ToUpper();
+        return n == "VR_PROPS" || n == "VRPROPS" || n.Contains("VR_PROPS") || n.Contains("VRPROPS");
+    }
+
+    private void ApplyToolPreviewLocal(bool force)
+    {
+        if (!previewToolOnSelect) return;
+
+        EnsurePreviewRefs();
+        if (toolModelsRoot == null) return;
+
+        string toolId = string.IsNullOrEmpty(_syncedTool) ? _localTool : _syncedTool;
+        if (toolId == null) toolId = "";
+        string norm = NormalizeId(toolId);
+
+        if (!force && norm == _lastToolApplied) return;
+        _lastToolApplied = norm;
+
+        // Find best tool under toolModelsRoot (VR_Props recommended)
+        _activeToolTr = FindBestToolTransformUnderRoot(toolModelsRoot, norm);
+        _activeToolTopTr = GetTopChildUnderRoot(_activeToolTr, toolModelsRoot);
+
+        int c = toolModelsRoot.childCount;
+        bool canHideOthers = hideOtherToolsOnlyWhenVRProps && IsVRPropsRoot(toolModelsRoot);
+
+        // If we can safely hide others (only real 3D props root), do it.
+        if (canHideOthers && !string.IsNullOrEmpty(norm))
+        {
+            for (int i = 0; i < c; i++)
+            {
+                Transform ch = toolModelsRoot.GetChild(i);
+                if (ch == null) continue;
+                if (!HasAnyRenderer(ch)) continue;
+
+                bool isActive = (_activeToolTopTr != null && ch == _activeToolTopTr);
+                if (ch.gameObject.activeSelf != isActive)
+                    ch.gameObject.SetActive(isActive);
+            }
+        }
+
+        // If nothing matched, restore visibility (avoid hiding boards)
+        if (_activeToolTr == null && canHideOthers)
+        {
+            for (int i = 0; i < c; i++)
+            {
+                Transform ch = toolModelsRoot.GetChild(i);
+                if (ch == null) continue;
+                if (HasAnyRenderer(ch) && !ch.gameObject.activeSelf) ch.gameObject.SetActive(true);
+            }
+        }
+    }
+
+    private void PlaceElementEffectLocal(bool force)
+    {
+        if (!placeElementEffectInTool) return;
+
+        EnsurePreviewRefs();
+        if (sampleVisual == null) return;
+
+        string sym = string.IsNullOrEmpty(_syncedInput) ? _localInput : _syncedInput;
+        if (sym == null) sym = "";
+
+        // If no tool selected, still place at containerTransform
+        _activeAnchorTr = ResolveAnchor();
+
+        if (_activeAnchorTr == null) return;
+
+        // Make sure sampleVisual is visible and positioned correctly
+        GameObject svGo = sampleVisual.gameObject;
+        if (!svGo.activeSelf) svGo.SetActive(true);
+
+        Transform svT = sampleVisual.transform;
+        if (svT.parent != _activeAnchorTr)
+            svT.SetParent(_activeAnchorTr, false);
+
+        svT.localPosition = elementEffectLocalOffset;
+        svT.localRotation = Quaternion.identity;
+        svT.localScale = elementEffectLocalScale;
+
+        EnableAllRenderers(svGo);
+
+        // Apply visual state (color/state) from DB if possible
+        if (elementDb != null)
+        {
+            sampleVisual.ApplyElementBySymbol(elementDb, GetDisplayFormula(), _visualTempC);
+        }
+
+        // Keep the element table / button board intact: we never disable it here.
+    }
+
+    private Transform ResolveAnchor()
+    {
+        EnsurePreviewRefs();
+
+        // Resolve active tool if not yet resolved
+        if (_activeToolTr == null)
+        {
+            string toolId = string.IsNullOrEmpty(_syncedTool) ? _localTool : _syncedTool;
+            if (toolId == null) toolId = "";
+            string norm = NormalizeId(toolId);
+
+            if (toolModelsRoot != null && !string.IsNullOrEmpty(norm))
+            {
+                _activeToolTr = FindBestToolTransformUnderRoot(toolModelsRoot, norm);
+            }
+        }
+
+        // Prefer tool's ElementEffectAnchor
+        if (_activeToolTr != null)
+        {
+            Transform a = FindChildByName(_activeToolTr, elementEffectAnchorName, 6);
+            if (a != null) return a;
+            return _activeToolTr;
+        }
+
+        if (elementEffectAnchorFallback != null) return elementEffectAnchorFallback;
+        if (containerTransform != null) return containerTransform;
+        return transform;
+    }
+
+    private Transform FindChildByName(Transform root, string targetName, int maxDepth)
+    {
+        if (root == null || string.IsNullOrEmpty(targetName) || maxDepth < 0) return null;
+
+        int c = root.childCount;
+        for (int i = 0; i < c; i++)
+        {
+            Transform ch = root.GetChild(i);
+            if (ch != null && ch.name == targetName) return ch;
+        }
+
+        if (maxDepth == 0) return null;
+
+        for (int i = 0; i < c; i++)
+        {
+            Transform found = FindChildByName(root.GetChild(i), targetName, maxDepth - 1);
+            if (found != null) return found;
+        }
+        return null;
+    }
+
+    private bool HasAnyRenderer(Transform tr)
+    {
+        return CountRenderersUnder(tr, 6, 256) > 0;
+    }
+
+    private void EnableAllRenderers(GameObject go)
+    {
+        if (go == null) return;
+        _tmpScanVisited = 0;
+        EnableAllRenderersRec(go.transform, 8, 512);
+    }
+
+    private string NormalizeId(string s)
+    {
+        if (s == null) return "";
+        string t = s.Trim();
+        t = t.Replace(" ", "");
+        t = t.Replace("_", "");
+        t = t.Replace("-", "");
+        return t.ToUpper();
+    }
+
 
     private void WriteUI()
     {
@@ -1330,6 +1293,297 @@ CheckPhaseTransition();
         }
 
         _localLastPhase = _syncedPhase;
+    }
+
+    // =====================================================
+    // Udon-safe helpers (NO tags, NO Resources.* (Editor-only), NO includeInactive overloads)
+    // =====================================================
+
+    private bool IsLikelyUIRoot(Transform tr)
+    {
+        if (tr == null) return false;
+
+        // UI objects usually have RectTransform/Canvas
+        if (tr.GetComponent<RectTransform>() != null) return true;
+        if (tr.GetComponent<Canvas>() != null) return true;
+
+        string n = tr.name;
+        if (string.IsNullOrEmpty(n)) return false;
+        n = n.ToUpper();
+        if (n.Contains("CANVAS")) return true;
+        if (n.Contains("UI")) return true;
+        if (n.Contains("BUTTON")) return true;
+        if (n.Contains("PANEL")) return true;
+
+        return false;
+    }
+
+    private Transform FindByNameAnywhere(Transform context, string exactName)
+    {
+        if (string.IsNullOrEmpty(exactName)) return null;
+
+        // Fast path (scene lookup)
+        GameObject go = GameObject.Find(exactName);
+        if (go != null) return go.transform;
+
+        // Fallback: search from scene root
+        Transform root = (context != null) ? context.root : null;
+        if (root == null) return null;
+
+        _tmpScanVisited = 0;
+        return FindByExactNameRec(root, exactName, 10, 2048);
+    }
+
+    private Transform FindByExactNameRec(Transform tr, string exactName, int depthLeft, int maxNodes)
+    {
+        if (tr == null) return null;
+        if (_tmpScanVisited >= maxNodes) return null;
+        _tmpScanVisited++;
+
+        if (tr.name == exactName) return tr;
+
+        if (depthLeft <= 0) return null;
+
+        int c = tr.childCount;
+        for (int i = 0; i < c; i++)
+        {
+            Transform ch = tr.GetChild(i);
+            Transform f = FindByExactNameRec(ch, exactName, depthLeft - 1, maxNodes);
+            if (f != null) return f;
+        }
+        return null;
+    }
+
+    private Transform FindByNameContainsAnywhere1(Transform context, string tokenUpper)
+    {
+        if (string.IsNullOrEmpty(tokenUpper)) return null;
+        Transform root = (context != null) ? context.root : null;
+        if (root == null) return null;
+
+        _tmpScanVisited = 0;
+        return FindByContainsRec(root, tokenUpper, null, 10, 2048);
+    }
+
+    private Transform FindByNameContainsAnywhere2(Transform context, string tokenUpper1, string tokenUpper2)
+    {
+        if (string.IsNullOrEmpty(tokenUpper1) && string.IsNullOrEmpty(tokenUpper2)) return null;
+        Transform root = (context != null) ? context.root : null;
+        if (root == null) return null;
+
+        _tmpScanVisited = 0;
+        return FindByContainsRec(root, tokenUpper1, tokenUpper2, 10, 2048);
+    }
+
+    private Transform FindByContainsRec(Transform tr, string tokenUpper1, string tokenUpper2, int depthLeft, int maxNodes)
+    {
+        if (tr == null) return null;
+        if (_tmpScanVisited >= maxNodes) return null;
+        _tmpScanVisited++;
+
+        string n = tr.name;
+        if (!string.IsNullOrEmpty(n))
+        {
+            string up = n.ToUpper();
+            bool ok = true;
+
+            if (!string.IsNullOrEmpty(tokenUpper1) && !up.Contains(tokenUpper1)) ok = false;
+            if (!string.IsNullOrEmpty(tokenUpper2) && !up.Contains(tokenUpper2)) ok = false;
+
+            if (ok) return tr;
+        }
+
+        if (depthLeft <= 0) return null;
+
+        int c = tr.childCount;
+        for (int i = 0; i < c; i++)
+        {
+            Transform ch = tr.GetChild(i);
+            Transform f = FindByContainsRec(ch, tokenUpper1, tokenUpper2, depthLeft - 1, maxNodes);
+            if (f != null) return f;
+        }
+        return null;
+    }
+
+    private Transform FindBestPropsRootByRenderers(Transform sceneRoot)
+    {
+        if (sceneRoot == null) return null;
+
+        Transform best = null;
+        int bestCount = 0;
+
+        // Scan limited set: root children + grandchildren as candidates
+        int c0 = sceneRoot.childCount;
+        for (int i = 0; i < c0; i++)
+        {
+            Transform ch0 = sceneRoot.GetChild(i);
+            if (ch0 == null) continue;
+
+            ConsiderPropsCandidate(ch0, ref best, ref bestCount);
+
+            int c1 = ch0.childCount;
+            for (int j = 0; j < c1; j++)
+            {
+                Transform ch1 = ch0.GetChild(j);
+                if (ch1 == null) continue;
+                ConsiderPropsCandidate(ch1, ref best, ref bestCount);
+            }
+        }
+
+        return best;
+    }
+
+    private void ConsiderPropsCandidate(Transform tr, ref Transform best, ref int bestCount)
+    {
+        if (tr == null) return;
+        if (IsLikelyUIRoot(tr)) return;
+
+        string n = tr.name;
+        if (string.IsNullOrEmpty(n)) return;
+        string up = n.ToUpper();
+
+        // Only consider plausible roots by name
+        bool plausible = up.Contains("PROP") || up.Contains("TOOL") || up.Contains("EQUIP") || up.Contains("MODEL") || up.Contains("VR");
+        if (!plausible) return;
+
+        int count = CountRenderersUnder(tr, 5, 1024);
+        if (count > bestCount)
+        {
+            bestCount = count;
+            best = tr;
+        }
+    }
+
+    private int CountRenderersUnder(Transform tr, int maxDepth, int maxNodes)
+    {
+        if (tr == null) return 0;
+        _tmpScanVisited = 0;
+        return CountRenderersUnderRec(tr, maxDepth, maxNodes);
+    }
+
+    private int CountRenderersUnderRec(Transform tr, int depthLeft, int maxNodes)
+    {
+        if (tr == null) return 0;
+        if (_tmpScanVisited >= maxNodes) return 0;
+        _tmpScanVisited++;
+
+        int count = (tr.GetComponent<Renderer>() != null) ? 1 : 0;
+        if (depthLeft <= 0) return count;
+
+        int c = tr.childCount;
+        for (int i = 0; i < c; i++)
+        {
+            count += CountRenderersUnderRec(tr.GetChild(i), depthLeft - 1, maxNodes);
+        }
+        return count;
+    }
+
+    private void EnableAllRenderersRec(Transform tr, int depthLeft, int maxNodes)
+    {
+        if (tr == null) return;
+        if (_tmpScanVisited >= maxNodes) return;
+        _tmpScanVisited++;
+
+        Renderer r = tr.GetComponent<Renderer>();
+        if (r != null) r.enabled = true;
+
+        if (depthLeft <= 0) return;
+
+        int c = tr.childCount;
+        for (int i = 0; i < c; i++)
+        {
+            EnableAllRenderersRec(tr.GetChild(i), depthLeft - 1, maxNodes);
+        }
+    }
+
+    private Transform GetTopChildUnderRoot(Transform leaf, Transform root)
+    {
+        if (leaf == null || root == null) return null;
+        Transform cur = leaf;
+        while (cur != null && cur.parent != null && cur.parent != root)
+        {
+            cur = cur.parent;
+        }
+        if (cur != null && cur.parent == root) return cur;
+        return (leaf.parent == root) ? leaf : null;
+    }
+
+    private Transform FindBestToolTransformUnderRoot(Transform root, string normToolId)
+    {
+        if (root == null) return null;
+        if (string.IsNullOrEmpty(normToolId)) return null;
+
+        Transform best = null;
+        int bestScore = 9999;
+        int bestLenDiff = 9999;
+
+        // 1) Check direct children (recommended structure)
+        int c = root.childCount;
+        for (int i = 0; i < c; i++)
+        {
+            Transform ch = root.GetChild(i);
+            if (ch == null) continue;
+
+            // Ignore obvious UI roots
+            if (IsLikelyUIRoot(ch)) continue;
+
+            string cn = NormalizeId(ch.name);
+            int score = ScoreNameMatch(cn, normToolId);
+            if (score < 9999)
+            {
+                int lenDiff = AbsInt(cn.Length - normToolId.Length);
+                if (score < bestScore || (score == bestScore && lenDiff < bestLenDiff))
+                {
+                    bestScore = score;
+                    bestLenDiff = lenDiff;
+                    best = ch;
+                }
+            }
+        }
+
+        if (best != null) return best;
+
+        // 2) Fallback: limited depth search (in case tools are nested)
+        _tmpScanVisited = 0;
+        return FindBestToolRec(root, normToolId, 4, 2048);
+    }
+
+    private Transform FindBestToolRec(Transform tr, string normToolId, int depthLeft, int maxNodes)
+    {
+        if (tr == null) return null;
+        if (_tmpScanVisited >= maxNodes) return null;
+        _tmpScanVisited++;
+
+        if (!IsLikelyUIRoot(tr))
+        {
+            string cn = NormalizeId(tr.name);
+            if (ScoreNameMatch(cn, normToolId) < 9999 && HasAnyRenderer(tr))
+                return tr;
+        }
+
+        if (depthLeft <= 0) return null;
+
+        int c = tr.childCount;
+        for (int i = 0; i < c; i++)
+        {
+            Transform f = FindBestToolRec(tr.GetChild(i), normToolId, depthLeft - 1, maxNodes);
+            if (f != null) return f;
+        }
+        return null;
+    }
+
+    private int ScoreNameMatch(string normCandidate, string normTarget)
+    {
+        if (string.IsNullOrEmpty(normCandidate) || string.IsNullOrEmpty(normTarget)) return 9999;
+        if (normCandidate == normTarget) return 0;
+        if (normCandidate.StartsWith(normTarget)) return 1;
+        if (normCandidate.Contains(normTarget)) return 2;
+        if (normTarget.Contains(normCandidate)) return 3;
+        return 9999;
+    }
+
+    private int AbsInt(int v)
+    {
+        return (v < 0) ? -v : v;
     }
 
 }

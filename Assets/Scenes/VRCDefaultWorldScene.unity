@@ -481,6 +481,14 @@ MonoBehaviour:
   sampleVisual: {fileID: 126484677}
   reactionAnimator: {fileID: 1546114377}
   ai: {fileID: 1333534138}
+  toolModelsRoot: {fileID: 1530110316}
+  elementEffectAnchorName: ElementEffectAnchor
+  elementEffectAnchorFallback: {fileID: 7973610998064423915}
+  placeElementEffectInTool: 1
+  previewToolOnSelect: 1
+  hideOtherToolsOnlyWhenVRProps: 1
+  elementEffectLocalOffset: {x: 0, y: 0, z: 0}
+  elementEffectLocalScale: {x: 1, y: 1, z: 1}
   orchestrator: {fileID: 417112637}
   hintText: {fileID: 0}
   explainText: {fileID: 0}
@@ -494,18 +502,10 @@ MonoBehaviour:
   thermalResponseCPerSec: 35
   visualTempLerpSpeed: 10
   autoHeatFromProximity: 0
-  containerTransform: {fileID: 1691408958}
+  containerTransform: {fileID: 309057361}
   heatSource: {fileID: 1167089910}
   heatNearMeters: 0.2
   heatFarMeters: 0.8
-  toolModelsRoot: {fileID: 7128316866666698406}
-  hideOtherTools: 1
-  elementEffectAnchorName: ElementEffectAnchor
-  elementEffectAnchorFallback: {fileID: 139136156}
-  showElementInToolOnSelect: 1
-  reparentVfxToAnchor: 1
-  previewVfxOnSelectElement: 1
-  previewVfxProgress01: 0.25
 --- !u!1 &161267112
 GameObject:
   m_ObjectHideFlags: 0
@@ -587,7 +587,8 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 161267114}
-  targets: []
+  targets:
+  - {fileID: 161267112}
   forcePC: 0
   forceVR: 0
 --- !u!1 &186059920
@@ -16261,7 +16262,8 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 617117421}
-  targets: []
+  targets:
+  - {fileID: 617117419}
   forcePC: 0
   forceVR: 0
 --- !u!1 &657449428
@@ -34964,9 +34966,12 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 1271621148}
   pcOn:
   - {fileID: 912846334287871621}
-  pcOff: []
-  vrOn: []
-  vrOff: []
+  pcOff:
+  - {fileID: 1271621144}
+  vrOn:
+  - {fileID: 1271621144}
+  vrOff:
+  - {fileID: 1271621144}
   notifyOnPC:
   - {fileID: 1271621149}
   notifyOnVR:
@@ -41552,7 +41557,9 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1564091085}
-  alsoTakeOwnership: []
+  alsoTakeOwnership:
+  - {fileID: 1564091081}
+  - {fileID: 1350346076}
   spawner: {fileID: 139136158}
 --- !u!114 &1564091087
 MonoBehaviour:
@@ -41597,7 +41604,7 @@ MonoBehaviour:
   DropEventName: 
   ThrowVelocityBoostMinSpeed: 1
   ThrowVelocityBoostScale: 1
-  currentlyHeldBy: {fileID: 0}
+  currentlyHeldBy: {fileID: 7720293247265340900}
   pickupable: 1
   proximity: 2
   version: 1
@@ -41691,6 +41698,7 @@ Transform:
   m_Children:
   - {fileID: 2099333807}
   - {fileID: 126484675}
+  - {fileID: 1888819550}
   m_Father: {fileID: 1530110316}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1591516488
@@ -41797,7 +41805,21 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1591516490}
-  alsoTakeOwnership: []
+  alsoTakeOwnership:
+  - {fileID: 1591516486}
+  - {fileID: 2099333806}
+  - {fileID: 126484674}
+  - {fileID: 856242966}
+  - {fileID: 1289667876}
+  - {fileID: 1437655141}
+  - {fileID: 716722493}
+  - {fileID: 664380157}
+  - {fileID: 1634223834}
+  - {fileID: 429492450}
+  - {fileID: 1028064683}
+  - {fileID: 1494264944}
+  - {fileID: 475507327}
+  - {fileID: 1482338427}
   spawner: {fileID: 139136158}
 --- !u!114 &1591516492
 MonoBehaviour:
@@ -41893,7 +41915,7 @@ MonoBehaviour:
   DropEventName: 
   ThrowVelocityBoostMinSpeed: 1
   ThrowVelocityBoostScale: 1
-  currentlyHeldBy: {fileID: 0}
+  currentlyHeldBy: {fileID: 7720293247265340900}
   pickupable: 1
   proximity: 2
   version: 1
@@ -42127,7 +42149,9 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1624506216}
-  alsoTakeOwnership: []
+  alsoTakeOwnership:
+  - {fileID: 1624506214}
+  - {fileID: 1062556127}
   spawner: {fileID: 139136158}
 --- !u!114 &1624506218
 MonoBehaviour:
@@ -42172,7 +42196,7 @@ MonoBehaviour:
   DropEventName: 
   ThrowVelocityBoostMinSpeed: 1
   ThrowVelocityBoostScale: 1
-  currentlyHeldBy: {fileID: 0}
+  currentlyHeldBy: {fileID: 7720293247265340900}
   pickupable: 1
   proximity: 2
   version: 1
@@ -52262,6 +52286,37 @@ Transform:
   - {fileID: 1656578899}
   m_Father: {fileID: 7720293247265340900}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1888819549
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1888819550}
+  m_Layer: 0
+  m_Name: ElementEffectAnchor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1888819550
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1888819549}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1591516487}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1918434781
 GameObject:
   m_ObjectHideFlags: 0
@@ -52538,12 +52593,15 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2038324838}
-  pcOn: []
-  pcOff: []
+  pcOn:
+  - {fileID: 2038324834}
+  pcOff:
+  - {fileID: 2038324834}
   vrOn:
   - {fileID: 1530110315}
   - {fileID: 309057360}
-  vrOff: []
+  vrOff:
+  - {fileID: 2038324834}
   notifyOnPC:
   - {fileID: 821227041}
   - {fileID: 309057363}
@@ -53894,7 +53952,7 @@ MonoBehaviour:
   Name: 
   NSFW: 0
   SpawnPosition: {x: 0, y: 0, z: 0}
-  SpawnLocation: {fileID: 0}
+  SpawnLocation: {fileID: 7720293247265340900}
   DrawDistance: 0
   useAssignedLayers: 0
   DynamicPrefabs: []
