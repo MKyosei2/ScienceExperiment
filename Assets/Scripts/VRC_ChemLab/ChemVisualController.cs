@@ -444,6 +444,24 @@ public class ChemVisualController : UdonSharpBehaviour
     {
         if (renderers == null) return;
 
+        // ---- Robustness for Udon/CSV data ----
+        // If any parameter becomes NaN/Infinity (e.g. missing data), materials may render invisible.
+        // Sanitize values to guaranteed-visible defaults.
+        if (float.IsNaN(opacity) || float.IsInfinity(opacity)) opacity = 1f;
+        if (float.IsNaN(metallic) || float.IsInfinity(metallic)) metallic = 0f;
+        if (float.IsNaN(smoothness) || float.IsInfinity(smoothness)) smoothness = 0.4f;
+        if (float.IsNaN(emission) || float.IsInfinity(emission)) emission = 0f;
+        if (float.IsNaN(noiseScale) || float.IsInfinity(noiseScale)) noiseScale = 0.25f;
+        if (float.IsNaN(dissolve) || float.IsInfinity(dissolve)) dissolve = 0f;
+
+        if (float.IsNaN(baseColor.r) || float.IsInfinity(baseColor.r) ||
+            float.IsNaN(baseColor.g) || float.IsInfinity(baseColor.g) ||
+            float.IsNaN(baseColor.b) || float.IsInfinity(baseColor.b) ||
+            float.IsNaN(baseColor.a) || float.IsInfinity(baseColor.a))
+        {
+            baseColor = Color.white;
+        }
+
         Color c = baseColor;
         c.a = Mathf.Clamp01(opacity);
 

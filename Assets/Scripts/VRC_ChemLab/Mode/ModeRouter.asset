@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: ModeRouter
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: 5fc7f6a6fb0563547991ebefaa556d9a,
+  serializedUdonProgramAsset: {fileID: 11400000, guid: b6a1f17f82070ac41863842693c53b22,
     type: 2}
   udonAssembly: 
   assemblyError: 

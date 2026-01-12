@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: VROwnershipOnPickup
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: 36615ceba14c91643b07a36aaddba207,
+  serializedUdonProgramAsset: {fileID: 11400000, guid: 16b2c929205e0a2468c9175e256febc3,
     type: 2}
   udonAssembly: 
   assemblyError: 

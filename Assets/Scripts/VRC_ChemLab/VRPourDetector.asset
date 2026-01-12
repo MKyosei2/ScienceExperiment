@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: VRPourDetector
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: b85208b109b50b64eb836e03779ef008,
+  serializedUdonProgramAsset: {fileID: 11400000, guid: 5f2f24526bab90e41b5971c0e54cd30c,
     type: 2}
   udonAssembly: 
   assemblyError: 

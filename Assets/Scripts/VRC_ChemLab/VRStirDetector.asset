@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: VRStirDetector
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: 7097763fd45156a4c805e92100697b32,
+  serializedUdonProgramAsset: {fileID: 11400000, guid: 37b74c4b08ba63145b1e56a988c3eae6,
     type: 2}
   udonAssembly: 
   assemblyError: 

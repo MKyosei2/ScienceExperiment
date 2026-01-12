@@ -1,61 +1,85 @@
-﻿using UdonSharp;
+
+using UdonSharp;
 using UnityEngine;
 
 public class SpawnSelectorButton : UdonSharpBehaviour
 {
-    [Header("Button Settings")]
-    public SelectionCategory category = SelectionCategory.Element;
+    [Header("References (recommended)")]
+    [Tooltip("Assign the ChemElementSpawner directly if possible. If null, this script will try to find it by name.")]
+    public ChemElementSpawner spawner;
 
-    // ボタン ID（元素記号・器具名・条件名）
-    public string idOrName;
+    [Header("Name-based auto-find (Udon-safe)")]
+    [Tooltip("If set, GameObject.Find will be used with this name to locate the spawner object.")]
+    public string spawnerObjectName = "ChemElementSpawner";
 
-    [Header("Reference Targets")]
-    public ChemElementSpawner elementSpawner;
-    public ChemEnvironmentManager environmentManager;
-    public ChemStatusDisplay statusDisplay;
+    [Tooltip("Optional: additional candidate names to try if the primary name is not found.")]
+    public string[] fallbackSpawnerNames = new string[] { "Spawner", "ElementSpawner", "VRC_ChemLab_Spawner" };
+
+    [Tooltip("If assigned, used as the spawner object without searching.")]
+    public GameObject spawnerObjectOverride;
+
+    public void OnPress()
+    {
+        EnsureSpawner();
+        if (spawner != null)
+        {
+            spawner.SpawnElement();
+        }
+        else
+        {
+            Debug.LogError("Spawner not assigned.");
+        }
+    }
 
     public override void Interact()
     {
-        HandlePress();
+        OnPress();
     }
 
-    public void HandlePress()
+    private void EnsureSpawner()
     {
-        if (string.IsNullOrEmpty(idOrName))
+        if (spawner != null) return;
+
+        // 1) explicit override object
+        if (spawnerObjectOverride != null)
         {
-            Debug.LogWarning($"[SpawnSelectorButton] {name} の idOrName が設定されていません。");
-            return;
+            spawner = spawnerObjectOverride.GetComponent<ChemElementSpawner>();
+            if (spawner != null) return;
         }
 
-        switch (category)
+        // 2) try by primary name
+        if (!string.IsNullOrEmpty(spawnerObjectName))
         {
-            case SelectionCategory.Element:
-                if (elementSpawner != null)
-                {
-                    elementSpawner.SelectElement(idOrName);
-                    Debug.Log($"Element Selected: {idOrName}");
-                }
-                break;
-
-            case SelectionCategory.Tool:
-                if (elementSpawner != null)
-                {
-                    elementSpawner.SelectEquipment(idOrName);
-                    Debug.Log($"Equipment Selected: {idOrName}");
-                }
-                break;
-
-            case SelectionCategory.Condition:
-                if (environmentManager != null)
-                {
-                    // TEMP+, TEMP-, HUMID+, PRESS- 等を自動解釈
-                    environmentManager.Modify(idOrName);
-                    Debug.Log($"Condition Modified: {idOrName}");
-                }
-                break;
+            GameObject go = GameObject.Find(spawnerObjectName);
+            if (go != null)
+            {
+                spawner = go.GetComponent<ChemElementSpawner>();
+                if (spawner != null) return;
+            }
         }
 
-        if (statusDisplay != null)
-            statusDisplay.RefreshUI();
+        // 3) try fallback names
+        if (fallbackSpawnerNames != null)
+        {
+            for (int i = 0; i < fallbackSpawnerNames.Length; i++)
+            {
+                string n = fallbackSpawnerNames[i];
+                if (string.IsNullOrEmpty(n)) continue;
+                GameObject go = GameObject.Find(n);
+                if (go == null) continue;
+
+                spawner = go.GetComponent<ChemElementSpawner>();
+                if (spawner != null) return;
+            }
+        }
+
+        // 4) last resort: walk up parents and see if any has the component (no reflection, Udon-safe)
+        Transform t = transform;
+        for (int i = 0; i < 12 && t != null; i++)
+        {
+            spawner = t.GetComponent<ChemElementSpawner>();
+            if (spawner != null) return;
+            t = t.parent;
+        }
     }
 }

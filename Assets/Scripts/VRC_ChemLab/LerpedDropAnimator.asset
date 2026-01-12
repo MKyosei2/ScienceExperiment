@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: LerpedDropAnimator
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: 0ac6d79878f9d18408b252e634aa65b0,
+  serializedUdonProgramAsset: {fileID: 11400000, guid: 65b31e675433760439e8594c60418bb5,
     type: 2}
   udonAssembly: 
   assemblyError: 
