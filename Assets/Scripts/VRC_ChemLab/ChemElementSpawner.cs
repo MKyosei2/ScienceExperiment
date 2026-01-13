@@ -38,6 +38,10 @@ public class ChemElementSpawner : UdonSharpBehaviour
     [Tooltip("(Optional) Prefab-based runtime spawner. If enabled, tools are instantiated and effects are attached as children.")]
     public ChemRuntimeToolSpawner runtimeToolSpawner;
 
+    [Header("Element Effect Runtime")]
+    [Tooltip("If true, a runtime clone of sampleVisual is created and parented under the selected tool. This avoids moving the template object and guarantees the effect becomes a child of the tool.")]
+    public bool cloneSampleVisualIntoTool = true;
+
     [Tooltip("元素を器具内に配置するアンカー名（器具モデルの子に置く）。")]
     public string elementEffectAnchorName = "ElementEffectAnchor";
 
@@ -59,6 +63,24 @@ public class ChemElementSpawner : UdonSharpBehaviour
     [Tooltip("sampleVisual の表示スケール（アンカーのローカル）。")]
     public Vector3 elementEffectLocalScale = Vector3.one;
 
+
+
+    [Header("Effect Fit (gravity & bounds)")]
+    [Tooltip("trueの場合、液体/ガスなどの見た目を重力(Vector3.up)に対して水平に保ちます（器具を傾けても液面が水平っぽく見える）。")]
+    public bool keepEffectLevelToGravity = true;
+
+    [Tooltip("trueの場合、毎フレーム器具のBoundsから『中』の位置へ追従させます（スポーン直後にズレる問題の最終手段）。")]
+    public bool continuouslyFitEffectToTool = true;
+
+    [Range(0.05f, 0.95f)]
+    [Tooltip("器具Boundsの下端=0、上端=1 としたとき、エフェクト中心を置く高さ。0.25〜0.45が無難。")]
+    public float effectFillHeight01 = 0.33f;
+
+    [Tooltip("器具Bounds基準のワールドオフセット（微調整）。")]
+    public Vector3 effectWorldOffset = Vector3.zero;
+
+    [Tooltip("器具Boundsサイズを基準にしたスケール係数（x,zを少し小さめにすると『内側』に収まりやすい）。")]
+    public Vector3 effectBoundsScale = new Vector3(0.85f, 0.55f, 0.85f);
 
     [Header("Auto BEAKER on element select")]
     [Tooltip("元素ボタン押下時、器具未選択なら自動で BEAKER を選択して表示します。")]
@@ -96,6 +118,12 @@ public class ChemElementSpawner : UdonSharpBehaviour
     private Transform _placedToolOrigParent;
     private int _placedToolOrigSiblingIndex;
     private bool _hasPlacedToolOrig = false;
+
+    // --- Runtime element visual instance (guarantee it becomes a child of the tool) ---
+    private ChemVisualController _runtimeSampleVisual;
+    private Transform _runtimeSampleVisualTr;
+    private GameObject _runtimeSampleVisualGo;
+    private bool _templateSampleHidden = false;
     [Header("Education/Game Flow (optional)")]
     public ExperimentOrchestrator orchestrator;
                       // VFX係数生成（ローカル）
@@ -595,6 +623,9 @@ public class ChemElementSpawner : UdonSharpBehaviour
         // 見た目：温度に応じて固液気を切替（非同期）
         ApplyVisualContinuous();
 
+// エフェクトを器具の『中』へ追従（重力に水平）
+        TickEffectFitLocal();
+
         // フェーズ遷移を検出してローカル演出へ通知（主にcomplete）
         if (_syncedPhase != _lastAppliedPhase)
         {
@@ -978,7 +1009,14 @@ public class ChemElementSpawner : UdonSharpBehaviour
     // =====================================================
     private void EnsurePreviewRefs()
     {
-        if (containerTransform == null) containerTransform = transform;
+        // Prefer placing previews in the ExperimentTable zone (VR_StartZone) if it exists.
+        if (containerTransform == null)
+        {
+            Transform z = FindByNameAnywhere(transform.root, "VR_StartZone");
+            if (z == null) z = FindByNameAnywhere(transform.root, "StartZone");
+            if (z == null) z = FindByNameAnywhere(transform.root, "Zone");
+            containerTransform = (z != null) ? z : transform;
+        }
         if (elementEffectAnchorFallback == null) elementEffectAnchorFallback = containerTransform;
 
         // If incorrectly assigned to UI, clear it
@@ -1196,7 +1234,7 @@ _placedToolTopTr.position = _placedToolOrigPos;
     }
 
 
-    private     void PlaceElementEffectLocal(bool force)
+    private void PlaceElementEffectLocal(bool force)
     {
         if (!placeElementEffectInTool) return;
 
@@ -1236,31 +1274,29 @@ _placedToolTopTr.position = _placedToolOrigPos;
 
         _activeAnchorTr = parentTr;
 
-        // Make sure sampleVisual is visible
-        GameObject svGo = sampleVisual.gameObject;
+        // --- IMPORTANT ---
+        // Instead of moving the template sampleVisual object around (which often remains stuck near UI),
+        // clone it once and always parent the runtime clone under the selected tool.
+        ChemVisualController vis = GetOrCreateRuntimeSampleVisual(parentTr);
+        if (vis == null) return;
+
+        GameObject svGo = vis.gameObject;
         if (!svGo.activeSelf) svGo.SetActive(true);
 
-        Transform svT = sampleVisual.transform;
+        Transform svT = vis.transform;
         if (svT.parent != parentTr)
             svT.SetParent(parentTr, false);
 
-        // If we have no explicit anchor, compute a "liquid-like" position from tool bounds
-        Vector3 localPos = elementEffectLocalOffset;
-        if (anchor == null && toolTop != null)
-        {
-            Bounds b;
-            if (TryGetRenderableBounds(toolTop, out b))
-            {
-                // Place around lower-middle of the container volume (looks like inside)
-                float y = b.min.y + b.size.y * 0.35f;
-                Vector3 wp = new Vector3(b.center.x, y, b.center.z);
-                localPos += toolTop.InverseTransformPoint(wp);
-            }
-        }
+        // 初期配置：Boundsから『中』へ寄せ、スケールも器具サイズへ合わせる
+        TickEffectFitLocal();
 
-        svT.localPosition = localPos;
-        svT.localRotation = Quaternion.identity;
-        svT.localScale = elementEffectLocalScale;
+        // まだ器具が解決できない場合の最低限フォールバック
+        if (!continuouslyFitEffectToTool)
+        {
+            svT.localPosition = elementEffectLocalOffset;
+            svT.localRotation = Quaternion.identity;
+            svT.localScale = elementEffectLocalScale;
+        }
 
         EnableAllRenderers(svGo);
         if (forceVisibleOnSelect)
@@ -1271,9 +1307,47 @@ _placedToolTopTr.position = _placedToolOrigPos;
 
         // Apply visual state (color/state) from DB if possible
         if (elementDb != null)
+            vis.ApplyElementBySymbol(elementDb, GetDisplayFormula(), _visualTempC);
+    }
+
+    private ChemVisualController GetOrCreateRuntimeSampleVisual(Transform desiredParent)
+    {
+        // If cloning is disabled, fall back to using the template directly.
+        if (!cloneSampleVisualIntoTool)
+            return sampleVisual;
+
+        if (sampleVisual == null) return null;
+
+        // Hide the template so it doesn't remain floating somewhere else.
+        if (!_templateSampleHidden)
         {
-            sampleVisual.ApplyElementBySymbol(elementDb, GetDisplayFormula(), _visualTempC);
+            // Udon does not support exceptions; keep it simple.
+            sampleVisual.gameObject.SetActive(false);
+            _templateSampleHidden = true;
         }
+
+        // Create runtime instance once
+        if (_runtimeSampleVisualGo == null)
+        {
+            GameObject inst = VRCInstantiate(sampleVisual.gameObject);
+            if (inst == null) return null;
+
+            inst.name = "SampleVisual_Runtime";
+            _runtimeSampleVisualGo = inst;
+            _runtimeSampleVisualTr = inst.transform;
+
+            _runtimeSampleVisual = inst.GetComponent<ChemVisualController>();
+            if (_runtimeSampleVisual == null)
+                _runtimeSampleVisual = inst.GetComponentInChildren<ChemVisualController>(true);
+
+            inst.SetActive(true);
+        }
+
+        // Always parent to the currently active tool/anchor
+        if (_runtimeSampleVisualTr != null && desiredParent != null && _runtimeSampleVisualTr.parent != desiredParent)
+            _runtimeSampleVisualTr.SetParent(desiredParent, false);
+
+        return _runtimeSampleVisual;
     }
 
     private bool TryGetRenderableBounds(Transform root, out Bounds bounds)
@@ -1306,8 +1380,61 @@ _placedToolTopTr.position = _placedToolOrigPos;
                 bounds.Encapsulate(r.bounds);
             }
         }
+
         return has;
     }
+
+        
+    // =====================================================
+    // Effect fit helpers (local-only)
+    // =====================================================
+    private void TickEffectFitLocal()
+    {
+        if (!continuouslyFitEffectToTool) return;
+
+        // runtime clone が無いなら何もしない（テンプレ移動方式でもOK）
+        ChemVisualController vis = null;
+        if (cloneSampleVisualIntoTool)
+        {
+            vis = _runtimeSampleVisual;
+            if (vis == null || _runtimeSampleVisualTr == null) return;
+        }
+        else
+        {
+            vis = sampleVisual;
+            if (vis == null) return;
+        }
+
+        // アクティブ器具が無いなら何もしない
+        if (_activeToolTopTr == null && _activeToolTr == null) return;
+
+        Transform toolTop = (_activeToolTopTr != null) ? _activeToolTopTr : _activeToolTr;
+        if (toolTop == null) return;
+
+        Bounds b;
+        if (!TryGetRenderableBounds(toolTop, out b)) return;
+
+        Transform t = vis.transform;
+
+        // 位置：Bounds中心XYを使って『中』へ
+        float y = b.min.y + b.size.y * Mathf.Clamp01(effectFillHeight01);
+        Vector3 wp = new Vector3(b.center.x, y, b.center.z) + effectWorldOffset;
+
+        t.position = wp;
+
+        // 回転：重力に対して水平（器具を傾けても液面が水平っぽく見える）
+        if (keepEffectLevelToGravity)
+        {
+            // ワールドUp固定。前方はワールド前方で固定（液体表現ならこれで十分）
+            t.rotation = Quaternion.identity;
+        }
+
+        // スケール：器具のサイズに合わせて収める（内側に入るように係数を掛ける）
+        Vector3 size = b.size;
+        Vector3 s = new Vector3(size.x * effectBoundsScale.x, size.y * effectBoundsScale.y, size.z * effectBoundsScale.z);
+        t.localScale = Vector3.Scale(elementEffectLocalScale, s);
+    }
+
 
     private Transform ResolveAnchor()
     {
