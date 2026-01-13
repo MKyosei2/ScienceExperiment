@@ -1057,7 +1057,7 @@ public class ChemElementSpawner : UdonSharpBehaviour
         if (!previewToolOnSelect) return;
 
         EnsurePreviewRefs();
-        if (toolModelsRoot == null && (runtimeToolSpawner == null || !runtimeToolSpawner.enablePrefabSpawn)) return;
+        if (toolModelsRoot == null && runtimeToolSpawner == null) return;
 
         string toolId = string.IsNullOrEmpty(_syncedTool) ? _localTool : _syncedTool;
         if (toolId == null) toolId = "";
@@ -1066,17 +1066,28 @@ public class ChemElementSpawner : UdonSharpBehaviour
         if (!force && norm == _lastToolApplied) return;
         _lastToolApplied = norm;
 
-        // If prefab-based spawner is enabled, instantiate tool into the zone first.
-        if (runtimeToolSpawner != null && runtimeToolSpawner.enablePrefabSpawn && containerTransform != null && !string.IsNullOrEmpty(norm))
+        // 1) ★最優先：ChemRuntimeToolSpawner(Inspector設定) の同名Prefabがあれば必ずそれを使う
+        //    enablePrefabSpawn のON/OFFには依存しない（Inspector設定を最優先）
+        if (runtimeToolSpawner != null && containerTransform != null && !string.IsNullOrEmpty(norm))
         {
             Transform spawned = runtimeToolSpawner.SpawnTool(norm, containerTransform, autoBeakerWorldOffset);
             if (spawned != null)
             {
                 _activeToolTr = spawned;
                 _activeToolTopTr = spawned;
+
+                // 既存モデルが同時に見えると「Prefabを使っていない」と誤認されるため、
+                // 可能なら同名の既存モデルだけ非表示にする（UIなどの誤検出を避けるため renderer 持ちだけ）
+                if (toolModelsRoot != null)
+                {
+                    Transform ex = FindBestToolTransformUnderRoot(toolModelsRoot, norm);
+                    Transform exTop = GetTopChildUnderRoot(ex, toolModelsRoot);
+                    Transform toHide = (exTop != null) ? exTop : ex;
+                    if (toHide != null && HasAnyRenderer(toHide) && toHide.gameObject.activeSelf)
+                        toHide.gameObject.SetActive(false);
+                }
             }
         }
-
         // Find best tool under toolModelsRoot (VR_Props recommended)
         if (_activeToolTr == null)
             _activeToolTr = FindBestToolTransformUnderRoot(toolModelsRoot, norm);
@@ -1589,8 +1600,9 @@ _placedToolTopTr.position = _placedToolOrigPos;
     private void EnsureAutoBeakerOnElement()
     {
         if (!autoSpawnBeakerOnElement) return;
+        if (string.IsNullOrEmpty(autoBeakerToolId)) return;
 
-        // If tool already selected, do nothing
+        // tool selection state
         bool hasTool = !string.IsNullOrEmpty(_syncedTool) || !string.IsNullOrEmpty(_localTool);
         if (!hasTool)
         {
@@ -1598,13 +1610,38 @@ _placedToolTopTr.position = _placedToolOrigPos;
             _syncedTool = autoBeakerToolId;
         }
 
-        // Ensure toolModelsRoot chain is active
-        if (toolModelsRoot != null) ActivateParents(toolModelsRoot);
+        EnsurePreviewRefs();
 
-        // Resolve tool transform and activate it (non-destructive)
-        if (toolModelsRoot != null && !string.IsNullOrEmpty(autoBeakerToolId))
+        string norm = NormalizeId(autoBeakerToolId);
+
+        // ★最優先：Inspector登録Prefab（同名）を必ずスポーン
+        if (runtimeToolSpawner != null && containerTransform != null && !string.IsNullOrEmpty(norm))
         {
-            string norm = NormalizeId(autoBeakerToolId);
+            Transform spawned = runtimeToolSpawner.SpawnTool(norm, containerTransform, autoBeakerWorldOffset);
+            if (spawned != null)
+            {
+                _activeToolTr = spawned;
+                _activeToolTopTr = spawned;
+
+                // 既存モデルが同時に見えると混乱するので、可能なら同名既存モデルだけ隠す
+                if (toolModelsRoot != null)
+                {
+                    Transform ex = FindBestToolTransformUnderRoot(toolModelsRoot, norm);
+                    Transform exTop = GetTopChildUnderRoot(ex, toolModelsRoot);
+                    Transform toHide = (exTop != null) ? exTop : ex;
+                    if (toHide != null && HasAnyRenderer(toHide) && toHide.gameObject.activeSelf)
+                        toHide.gameObject.SetActive(false);
+                }
+
+                return;
+            }
+        }
+
+        // Prefabが無い/一致しない場合のみ、既存モデルにフォールバック
+        if (toolModelsRoot != null)
+        {
+            ActivateParents(toolModelsRoot);
+
             _activeToolTr = FindBestToolTransformUnderRoot(toolModelsRoot, norm);
             _activeToolTopTr = GetTopChildUnderRoot(_activeToolTr, toolModelsRoot);
 
@@ -1613,8 +1650,6 @@ _placedToolTopTr.position = _placedToolOrigPos;
             {
                 ActivateParents(top);
                 if (!top.gameObject.activeSelf) top.gameObject.SetActive(true);
-
-                // Place to container zone using the same path as normal selection
                 PlaceSelectedToolAtContainerLocal();
             }
         }

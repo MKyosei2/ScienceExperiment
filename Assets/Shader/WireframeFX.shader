@@ -1,6 +1,3 @@
-﻿// Upgrade NOTE: commented out 'float3 _WorldSpaceCameraPos', a built-in variable
-// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-
 Shader "VRC Lab/WireframeFX"
 {
     Properties
@@ -20,89 +17,132 @@ Shader "VRC Lab/WireframeFX"
 
     SubShader
     {
-        Tags { "Queue"="Transparent" "RenderType"="Transparent" }
+        Tags { "Queue"="Transparent+10" "RenderType"="Transparent" }
         LOD 100
-        Cull Off
         ZWrite Off
-        Blend SrcAlpha OneMinusSrcAlpha
+        ZTest LEqual
+
+        CGINCLUDE
+        #pragma target 2.0
+        #include "UnityCG.cginc"
+
+        fixed4 _GlassColor;
+        float _GlassAlpha;
+
+        fixed4 _WireColor;
+        float _WireOpacity;
+
+        float _GridScale;
+        float _GridWidth;
+
+        float _RimPower;
+        float _RimStrength;
+
+        struct appdata
+        {
+            float4 vertex : POSITION;
+            float3 normal : NORMAL;
+        };
+
+        struct v2f
+        {
+            float4 pos : SV_POSITION;
+            float3 posW : TEXCOORD0;
+            float3 nrmW : TEXCOORD1;
+        };
+
+        v2f vert(appdata v)
+        {
+            v2f o;
+            o.pos = UnityObjectToClipPos(v.vertex);
+            o.posW = mul(unity_ObjectToWorld, v.vertex).xyz;
+            o.nrmW = UnityObjectToWorldNormal(v.normal);
+            return o;
+        }
+
+        float GridLine(float3 posW, float scale, float width)
+        {
+            float3 p = posW * scale;
+            float3 f = abs(frac(p) - 0.5);
+            float d = min(f.x, min(f.y, f.z));
+            return 1.0 - step(width, d);
+        }
+
+        float WireMask(v2f i)
+        {
+            float3 n = normalize(i.nrmW);
+            float3 v = normalize(_WorldSpaceCameraPos - i.posW);
+
+            float rim = pow(1.0 - saturate(dot(n, v)), _RimPower) * _RimStrength;
+            rim = saturate(rim);
+
+            float grid = GridLine(i.posW, _GridScale, _GridWidth);
+
+            return saturate(max(grid, rim));
+        }
+
+        fixed4 fragGlass(v2f i) : SV_Target
+        {
+            float m = WireMask(i);
+
+            fixed3 glassRgb = _GlassColor.rgb;
+            glassRgb += _WireColor.rgb * (m * 0.12);
+
+            return fixed4(saturate(glassRgb), saturate(_GlassAlpha));
+        }
+
+        fixed4 fragWire(v2f i) : SV_Target
+        {
+            float m = WireMask(i);
+            float w = saturate(_WireOpacity) * m * _WireColor.a;
+
+            return fixed4(_WireColor.rgb * w, 0);
+        }
+        ENDCG
+
+        // ---- Glass (Back -> Front) ----
+        Pass
+        {
+            Name "GlassBack"
+            Cull Front
+            Blend SrcAlpha OneMinusSrcAlpha
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment fragGlass
+            ENDCG
+        }
 
         Pass
         {
+            Name "GlassFront"
+            Cull Back
+            Blend SrcAlpha OneMinusSrcAlpha
             CGPROGRAM
-            #pragma target 2.0
             #pragma vertex vert
-            #pragma fragment frag
+            #pragma fragment fragGlass
+            ENDCG
+        }
 
-            #include "UnityCG.cginc"   // ★必須：組み込み行列・カメラ位置などを使う
+        // ---- Wire (Additive, Back -> Front) ----
+        Pass
+        {
+            Name "WireBack"
+            Cull Front
+            Blend One One
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment fragWire
+            ENDCG
+        }
 
-            fixed4 _GlassColor;
-            float _GlassAlpha;
-
-            fixed4 _WireColor;
-            float _WireOpacity;
-
-            float _GridScale;
-            float _GridWidth;
-
-            float _RimPower;
-            float _RimStrength;
-
-            struct appdata
-            {
-                float4 vertex : POSITION;
-                float3 normal : NORMAL;
-            };
-
-            struct v2f
-            {
-                float4 pos : SV_POSITION;
-                float3 posW : TEXCOORD0;
-                float3 nrmW : TEXCOORD1;
-            };
-
-            v2f vert(appdata v)
-            {
-                v2f o;
-                o.pos = UnityObjectToClipPos(v.vertex);
-
-                float3 posW = mul(unity_ObjectToWorld, v.vertex).xyz;
-                o.posW = posW;
-
-                // 非一様スケール厳密ではないが提出優先でOK
-                o.nrmW = UnityObjectToWorldNormal(v.normal);
-                return o;
-            }
-
-            float GridLine(float3 posW, float scale, float width)
-            {
-                float3 p = posW * scale;
-                float3 f = abs(frac(p) - 0.5);
-                float d = min(f.x, min(f.y, f.z));
-                return 1.0 - step(width, d);
-            }
-
-            fixed4 frag(v2f i) : SV_Target
-            {
-                float3 n = normalize(i.nrmW);
-                float3 v = normalize(_WorldSpaceCameraPos - i.posW);
-
-                fixed4 glass = _GlassColor;
-                glass.a = saturate(_GlassAlpha);
-
-                float rim = pow(1.0 - saturate(dot(n, v)), _RimPower) * _RimStrength;
-                rim = saturate(rim);
-
-                float grid = GridLine(i.posW, _GridScale, _GridWidth);
-                float wireMask = saturate(max(grid, rim));
-
-                fixed4 wire = _WireColor;
-                wire.a = saturate(_WireOpacity) * wireMask * _WireColor.a;
-
-                fixed4 outCol = glass;
-                outCol.rgb = saturate(outCol.rgb + wire.rgb * wire.a);
-                outCol.a = saturate(max(glass.a, wire.a));
-                return outCol;
-            }
+        Pass
+        {
+            Name "WireFront"
+            Cull Back
+            Blend One One
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment fragWire
             ENDCG
         }
     }
