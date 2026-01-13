@@ -56,6 +56,27 @@ public class ChemElementSpawner : UdonSharpBehaviour
     [Tooltip("sampleVisual の表示スケール（アンカーのローカル）。")]
     public Vector3 elementEffectLocalScale = Vector3.one;
 
+
+    [Header("Auto BEAKER on element select")]
+    [Tooltip("元素ボタン押下時、器具未選択なら自動で BEAKER を選択して表示します。")]
+    public bool autoSpawnBeakerOnElement = true;
+
+    [Tooltip("自動選択する器具ID（toolModelsRoot配下の名前に部分一致させます）。例: BEAKER")]
+    public string autoBeakerToolId = "BEAKER";
+
+    [Tooltip("自動選択したBEAKERを containerTransform(VR_StartZone) の位置に移動します（親子付けは変えません）。")]
+    public bool autoPlaceBeakerAtContainer = true;
+
+    [Tooltip("BEAKERを containerTransform に置く際のワールドオフセット。")]
+    public Vector3 autoBeakerWorldOffset = new Vector3(0f, 0.02f, 0f);
+
+    [Header("Force visibility (debug-safe)")]
+    [Tooltip("選択時に、BEAKER/SampleVisual の Renderer/Particle/Layer を強制的に可視化します。")]
+    public bool forceVisibleOnSelect = true;
+
+    [Tooltip("強制的に設定するLayer。0=Default。")]
+    public int forceVisibleLayer = 0;
+
     private Transform _activeToolTr;
     private Transform _activeToolTopTr;
     private Transform _activeAnchorTr;
@@ -297,6 +318,7 @@ public class ChemElementSpawner : UdonSharpBehaviour
             sampleVisual.NotifyElementSelected(_localInput);
 
         ApplyVisualFromState(true);
+        EnsureAutoBeakerOnElement();
         // Ensure 3D placement updates immediately for element selection
         ApplyToolPreviewLocal(false);
         PlaceElementEffectLocal(true);
@@ -1018,6 +1040,11 @@ public class ChemElementSpawner : UdonSharpBehaviour
         svT.localScale = elementEffectLocalScale;
 
         EnableAllRenderers(svGo);
+        if (forceVisibleOnSelect)
+        {
+            ForceVisibleHierarchy(svGo.transform);
+            if (_activeToolTr != null) ForceVisibleHierarchy(_activeToolTr);
+        }
 
         // Apply visual state (color/state) from DB if possible
         if (elementDb != null)
@@ -1053,7 +1080,7 @@ public class ChemElementSpawner : UdonSharpBehaviour
             return _activeToolTr;
         }
 
-        if (elementEffectAnchorFallback != null) return elementEffectAnchorFallback;
+        if (elementEffectAnchorFallback != null && !IsUiLikeTransform(elementEffectAnchorFallback)) return elementEffectAnchorFallback;
         if (containerTransform != null) return containerTransform;
         return transform;
     }
@@ -1083,6 +1110,124 @@ public class ChemElementSpawner : UdonSharpBehaviour
     {
         return CountRenderersUnder(tr, 6, 256) > 0;
     }
+
+    private void EnsureAutoBeakerOnElement()
+    {
+        if (!autoSpawnBeakerOnElement) return;
+
+        // If tool already selected, do nothing
+        bool hasTool = !string.IsNullOrEmpty(_syncedTool) || !string.IsNullOrEmpty(_localTool);
+        if (!hasTool)
+        {
+            _localTool = autoBeakerToolId;
+            _syncedTool = autoBeakerToolId;
+        }
+
+        // Ensure toolModelsRoot chain is active
+        if (toolModelsRoot != null) ActivateParents(toolModelsRoot);
+
+        // Resolve BEAKER transform and activate it
+        if (toolModelsRoot != null && !string.IsNullOrEmpty(autoBeakerToolId))
+        {
+            string norm = NormalizeId(autoBeakerToolId);
+            _activeToolTr = FindBestToolTransformUnderRoot(toolModelsRoot, norm);
+            if (_activeToolTr != null)
+            {
+                ActivateParents(_activeToolTr);
+                if (!_activeToolTr.gameObject.activeSelf) _activeToolTr.gameObject.SetActive(true);
+
+                if (autoPlaceBeakerAtContainer && containerTransform != null)
+                {
+                    _activeToolTr.position = containerTransform.position + autoBeakerWorldOffset;
+                    _activeToolTr.rotation = containerTransform.rotation;
+                }
+            }
+        }
+    }
+
+    private void ActivateParents(Transform tr)
+    {
+        Transform t = tr;
+        int guard = 64;
+        while (t != null && guard-- > 0)
+        {
+            if (!t.gameObject.activeSelf) t.gameObject.SetActive(true);
+            t = t.parent;
+        }
+    }
+
+    private bool IsUiLikeTransform(Transform tr)
+    {
+        if (tr == null) return false;
+
+        int layer = tr.gameObject.layer;
+        // Typical UI layer is 5; project-specific UI layer might be 13
+        if (layer == 5 || layer == 13) return true;
+
+        // RectTransform present => UI
+        RectTransform rt = tr.GetComponent<RectTransform>();
+        if (rt != null) return true;
+
+        string n = tr.name;
+        if (n == null) n = "";
+        string ln = n.ToLower();
+        if (ln.IndexOf("button") >= 0) return true;
+        if (ln.IndexOf("selector") >= 0) return true;
+        if (ln.IndexOf("ui") >= 0) return true;
+        if (ln.IndexOf("periodic") >= 0) return true;
+
+        // Under a UI root?
+        Transform p = tr.parent;
+        int g = 12;
+        while (p != null && g-- > 0)
+        {
+            string pn = p.name;
+            if (pn == null) pn = "";
+            string pl = pn.ToLower();
+            if (pl == "ui" || pl.IndexOf("selector") >= 0) return true;
+            p = p.parent;
+        }
+        return false;
+    }
+
+    private void ForceVisibleHierarchy(Transform root)
+    {
+        if (root == null) return;
+
+        // Force layer recursively (limited depth to keep safe)
+        ForceLayerRec(root, forceVisibleLayer, 10);
+
+        // Enable all renderers
+        Renderer[] rs = root.GetComponentsInChildren<Renderer>(true);
+        for (int i = 0; i < rs.Length; i++)
+        {
+            if (rs[i] != null) rs[i].enabled = true;
+        }
+
+        // Play particles
+        ParticleSystem[] ps = root.GetComponentsInChildren<ParticleSystem>(true);
+        for (int i = 0; i < ps.Length; i++)
+        {
+            ParticleSystem p = ps[i];
+            if (p == null) continue;
+            var em = p.emission;
+            em.enabled = true;
+            if (!p.isPlaying) p.Play(true);
+        }
+    }
+
+    private void ForceLayerRec(Transform root, int layer, int maxDepth)
+    {
+        if (root == null || maxDepth < 0) return;
+        root.gameObject.layer = layer;
+        if (maxDepth == 0) return;
+        int c = root.childCount;
+        for (int i = 0; i < c; i++)
+        {
+            ForceLayerRec(root.GetChild(i), layer, maxDepth - 1);
+        }
+    }
+
 
     private void EnableAllRenderers(GameObject go)
     {

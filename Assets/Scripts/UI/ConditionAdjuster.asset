@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: ConditionAdjuster
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: d18d9f776c93fc14abf1d678a3d41f96,
+  serializedUdonProgramAsset: {fileID: 11400000, guid: 7905b5f3ad3b63f489e93f1922ac7aeb,
     type: 2}
   udonAssembly: 
   assemblyError: 

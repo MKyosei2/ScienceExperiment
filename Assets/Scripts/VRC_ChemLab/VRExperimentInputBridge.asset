@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: VRExperimentInputBridge
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: 8b336cff9561db64596897d8c49f1c90,
+  serializedUdonProgramAsset: {fileID: 11400000, guid: 010a01d91c58ade4eadd90e36400ac86,
     type: 2}
   udonAssembly: 
   assemblyError: 

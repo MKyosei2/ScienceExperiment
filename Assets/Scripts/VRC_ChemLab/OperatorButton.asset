@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: OperatorButton
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: 9c29e3c118d045142bcbf9dc39f9d748,
+  serializedUdonProgramAsset: {fileID: 11400000, guid: 94ba024f6e2a2674f8380e2caf06f38e,
     type: 2}
   udonAssembly: 
   assemblyError: 

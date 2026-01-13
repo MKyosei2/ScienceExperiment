@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: EnvUISyncBridge
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: cbd7b0cc347f2ae46b2f9679bb55f875,
+  serializedUdonProgramAsset: {fileID: 11400000, guid: af3388e7fc7639341868331c0454b36b,
     type: 2}
   udonAssembly: 
   assemblyError: 
