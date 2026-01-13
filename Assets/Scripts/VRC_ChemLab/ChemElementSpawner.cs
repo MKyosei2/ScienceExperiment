@@ -35,6 +35,9 @@ public class ChemElementSpawner : UdonSharpBehaviour
     [Tooltip("器具モデル群の親（推奨: World/ExperimentTable/VR_Props）。UIボード(=Tool)を入れないでください。")]
     public Transform toolModelsRoot;
 
+    [Tooltip("(Optional) Prefab-based runtime spawner. If enabled, tools are instantiated and effects are attached as children.")]
+    public ChemRuntimeToolSpawner runtimeToolSpawner;
+
     [Tooltip("元素を器具内に配置するアンカー名（器具モデルの子に置く）。")]
     public string elementEffectAnchorName = "ElementEffectAnchor";
 
@@ -62,7 +65,7 @@ public class ChemElementSpawner : UdonSharpBehaviour
     public bool autoSpawnBeakerOnElement = true;
 
     [Tooltip("自動選択する器具ID（toolModelsRoot配下の名前に部分一致させます）。例: BEAKER")]
-    public string autoBeakerToolId = "BEAKER";
+    public string autoBeakerToolId = "CONICAL_FLASK";
 
     [Tooltip("自動選択したBEAKERを containerTransform(VR_StartZone) の位置に移動します（親子付けは変えません）。")]
     public bool autoPlaceBeakerAtContainer = true;
@@ -83,6 +86,16 @@ public class ChemElementSpawner : UdonSharpBehaviour
     private string _lastToolApplied = "";
     private int _tmpScanVisited = 0;
 
+
+    // --- Tool placement (non-destructive) ---
+    // We never re-parent tools; we only move the selected tool's TOP transform under toolModelsRoot
+    // to the containerTransform (VR_StartZone) and restore it when selection changes / reset.
+    private Transform _placedToolTopTr;
+    private Vector3 _placedToolOrigPos;
+    private Quaternion _placedToolOrigRot;
+    private Transform _placedToolOrigParent;
+    private int _placedToolOrigSiblingIndex;
+    private bool _hasPlacedToolOrig = false;
     [Header("Education/Game Flow (optional)")]
     public ExperimentOrchestrator orchestrator;
                       // VFX係数生成（ローカル）
@@ -185,6 +198,7 @@ public class ChemElementSpawner : UdonSharpBehaviour
     private void Start()
     {
         if (containerTransform == null) containerTransform = transform;
+        AutoWireSceneRefs();
 
         // 初期環境を同期変数へ取り込み（オフライン/単独テスト向け）
         PullEnvironmentForSync(true);
@@ -203,6 +217,41 @@ public class ChemElementSpawner : UdonSharpBehaviour
     
         _localLastPhase = _syncedPhase;
 }
+
+    // -------------------------------------------------
+    // Auto-wiring (no inspector required)
+    // -------------------------------------------------
+    private void AutoWireSceneRefs()
+    {
+        // containerTransform: prefer VR_StartZone (ExperimentTable上のZone)
+        if (containerTransform == null || containerTransform == transform)
+        {
+            GameObject zoneGo = GameObject.Find("VR_StartZone");
+            if (zoneGo != null) containerTransform = zoneGo.transform;
+        }
+
+        // toolModelsRoot: prefer VR_Props (3D props root)
+        if (toolModelsRoot == null)
+        {
+            GameObject propsGo = GameObject.Find("VR_Props");
+            if (propsGo != null) toolModelsRoot = propsGo.transform;
+        }
+
+        // fallback anchor
+        if (elementEffectAnchorFallback == null && containerTransform != null)
+            elementEffectAnchorFallback = containerTransform;
+
+        // UdonSharpでは user-defined type に対する typeof() が使えないため、ジェネリック版を使用
+        if (runtimeToolSpawner == null)
+            runtimeToolSpawner = GetComponent<ChemRuntimeToolSpawner>();
+
+        // If environment ref is missing but present in scene, try to find it
+        if (environment == null)
+        {
+            GameObject envGo = GameObject.Find("ChemEnvironmentManager");
+            if (envGo != null) environment = envGo.GetComponent<ChemEnvironmentManager>();
+        }
+    }
 
     // =====================================================
     // Role management (operator / spectator)
@@ -510,6 +559,7 @@ public class ChemElementSpawner : UdonSharpBehaviour
 
         AppendHistory("ResetExperiment");
         StopLocalSession();
+        RestorePlacedToolLocal(false);
         if (sampleVisual != null) sampleVisual.NotifyExperimentReset();
         ApplyVisualFromState(true);
         WriteUI();
@@ -969,7 +1019,7 @@ public class ChemElementSpawner : UdonSharpBehaviour
         if (!previewToolOnSelect) return;
 
         EnsurePreviewRefs();
-        if (toolModelsRoot == null) return;
+        if (toolModelsRoot == null && (runtimeToolSpawner == null || !runtimeToolSpawner.enablePrefabSpawn)) return;
 
         string toolId = string.IsNullOrEmpty(_syncedTool) ? _localTool : _syncedTool;
         if (toolId == null) toolId = "";
@@ -978,9 +1028,41 @@ public class ChemElementSpawner : UdonSharpBehaviour
         if (!force && norm == _lastToolApplied) return;
         _lastToolApplied = norm;
 
+        // If prefab-based spawner is enabled, instantiate tool into the zone first.
+        if (runtimeToolSpawner != null && runtimeToolSpawner.enablePrefabSpawn && containerTransform != null && !string.IsNullOrEmpty(norm))
+        {
+            Transform spawned = runtimeToolSpawner.SpawnTool(norm, containerTransform, autoBeakerWorldOffset);
+            if (spawned != null)
+            {
+                _activeToolTr = spawned;
+                _activeToolTopTr = spawned;
+            }
+        }
+
         // Find best tool under toolModelsRoot (VR_Props recommended)
-        _activeToolTr = FindBestToolTransformUnderRoot(toolModelsRoot, norm);
+        if (_activeToolTr == null)
+            _activeToolTr = FindBestToolTransformUnderRoot(toolModelsRoot, norm);
         _activeToolTopTr = GetTopChildUnderRoot(_activeToolTr, toolModelsRoot);
+
+
+        // Fallback: some tools (e.g., CONICAL_FLASK) may not be under VR_Props. Try global name lookup.
+        if (_activeToolTr == null && !string.IsNullOrEmpty(toolId))
+        {
+            GameObject g = GameObject.Find(toolId);
+            if (g == null) g = GameObject.Find(norm);
+            if (g == null) g = GameObject.Find(toolId + "_Pickup");
+            if (g == null && norm != toolId) g = GameObject.Find(norm + "_Pickup");
+
+            if (g != null)
+            {
+                Transform gt = g.transform;
+                if (HasAnyRenderer(gt))
+                {
+                    _activeToolTr = gt;
+                    _activeToolTopTr = gt;
+                }
+            }
+        }
 
         int c = toolModelsRoot.childCount;
         bool canHideOthers = hideOtherToolsOnlyWhenVRProps && IsVRPropsRoot(toolModelsRoot);
@@ -1010,32 +1092,173 @@ public class ChemElementSpawner : UdonSharpBehaviour
                 if (HasAnyRenderer(ch) && !ch.gameObject.activeSelf) ch.gameObject.SetActive(true);
             }
         }
+    
+
+        // Move the selected tool to the experiment container zone (VR_StartZone) safely
+        PlaceSelectedToolAtContainerLocal();
+}
+
+    private void PlaceSelectedToolAtContainerLocal()
+    {
+        // Reuse existing option flag to avoid adding inspector work
+        if (!autoPlaceBeakerAtContainer) 
+        {
+            // If placement is disabled, still restore if we previously moved something
+            RestorePlacedToolLocal(false);
+            return;
+        }
+
+        EnsurePreviewRefs();
+        if (containerTransform == null)
+        {
+            RestorePlacedToolLocal(false);
+            return;
+        }
+
+        // Determine current selected tool
+        string toolId = string.IsNullOrEmpty(_syncedTool) ? _localTool : _syncedTool;
+        if (toolId == null) toolId = "";
+        string norm = NormalizeId(toolId);
+
+        // If no tool selected, restore any moved tool
+        if (string.IsNullOrEmpty(norm))
+        {
+            RestorePlacedToolLocal(false);
+            return;
+        }
+
+        // Ensure we have active tool resolved
+        if (_activeToolTr == null && toolModelsRoot != null)
+        {
+            _activeToolTr = FindBestToolTransformUnderRoot(toolModelsRoot, norm);
+            _activeToolTopTr = GetTopChildUnderRoot(_activeToolTr, toolModelsRoot);
+        }
+
+        Transform top = (_activeToolTopTr != null) ? _activeToolTopTr : _activeToolTr;
+        if (top == null) 
+        {
+            RestorePlacedToolLocal(false);
+            return;
+        }
+
+        // If player is holding it, don't force-move (prevents breaking interactions)
+        VRC_Pickup pickup = top.GetComponent<VRC_Pickup>();
+        if (pickup != null && pickup.IsHeld) return;
+
+        // If switching tools, restore previous
+        if (_placedToolTopTr != null && _placedToolTopTr != top)
+        {
+            RestorePlacedToolLocal(false);
+        }
+
+        // Cache original transform once
+        if (_placedToolTopTr == null)
+        {
+            _placedToolTopTr = top;
+            _placedToolOrigParent = top.parent;
+            _placedToolOrigSiblingIndex = top.GetSiblingIndex();
+            _placedToolOrigPos = top.position;
+            _placedToolOrigRot = top.rotation;
+            _hasPlacedToolOrig = true;
+        }
+
+        // Place at container zone (VR_StartZone)
+        if (top.parent != containerTransform) top.SetParent(containerTransform, true);
+        top.position = containerTransform.position + autoBeakerWorldOffset;
+        top.rotation = containerTransform.rotation;
+
+        ActivateParents(top);
+        if (!top.gameObject.activeSelf) top.gameObject.SetActive(true);
     }
 
-    private void PlaceElementEffectLocal(bool force)
+    private void RestorePlacedToolLocal(bool deactivateIfHidden)
+    {
+        if (_placedToolTopTr == null || !_hasPlacedToolOrig) return;
+
+        // If held, don't teleport it back; let the player drop it first
+        VRC_Pickup pickup = _placedToolTopTr.GetComponent<VRC_Pickup>();
+        if (pickup != null && pickup.IsHeld) return;
+
+                if (_placedToolOrigParent != null) {
+            _placedToolTopTr.SetParent(_placedToolOrigParent, true);
+            _placedToolTopTr.SetSiblingIndex(_placedToolOrigSiblingIndex);
+        }
+
+_placedToolTopTr.position = _placedToolOrigPos;
+        _placedToolTopTr.rotation = _placedToolOrigRot;
+
+        if (deactivateIfHidden && _placedToolTopTr.gameObject.activeSelf)
+            _placedToolTopTr.gameObject.SetActive(false);
+
+        _placedToolTopTr = null;
+        _placedToolOrigParent = null;
+        _hasPlacedToolOrig = false;
+    }
+
+
+    private     void PlaceElementEffectLocal(bool force)
     {
         if (!placeElementEffectInTool) return;
 
         EnsurePreviewRefs();
         if (sampleVisual == null) return;
 
-        string sym = string.IsNullOrEmpty(_syncedInput) ? _localInput : _syncedInput;
-        if (sym == null) sym = "";
+        // Make sure we have an active tool resolved (needed for anchor placement)
+        if (_activeToolTr == null)
+        {
+            ApplyToolPreviewLocal(true);
+        }
 
-        // If no tool selected, still place at containerTransform
-        _activeAnchorTr = ResolveAnchor();
+        Transform toolTop = (_activeToolTopTr != null) ? _activeToolTopTr : _activeToolTr;
 
-        if (_activeAnchorTr == null) return;
+        // Resolve anchor inside the tool if possible
+        Transform anchor = null;
+        if (toolTop != null)
+        {
+            string normAnchor = NormalizeId(elementEffectAnchorName);
+            if (!string.IsNullOrEmpty(normAnchor))
+                anchor = FindChildByNormContains(toolTop, normAnchor, 8, 1024);
 
-        // Make sure sampleVisual is visible and positioned correctly
+            if (anchor == null)
+                anchor = FindChildByAnyName(toolTop, _commonAnchorNames, 8, 1024);
+        }
+
+        // If anchor still not found, we will attach to toolTop and compute a reasonable local position from bounds.
+        Transform parentTr = (anchor != null) ? anchor : toolTop;
+
+        if (parentTr == null)
+        {
+            // Final fallback: keep it at container
+            _activeAnchorTr = ResolveAnchor();
+            if (_activeAnchorTr == null) return;
+            parentTr = _activeAnchorTr;
+        }
+
+        _activeAnchorTr = parentTr;
+
+        // Make sure sampleVisual is visible
         GameObject svGo = sampleVisual.gameObject;
         if (!svGo.activeSelf) svGo.SetActive(true);
 
         Transform svT = sampleVisual.transform;
-        if (svT.parent != _activeAnchorTr)
-            svT.SetParent(_activeAnchorTr, false);
+        if (svT.parent != parentTr)
+            svT.SetParent(parentTr, false);
 
-        svT.localPosition = elementEffectLocalOffset;
+        // If we have no explicit anchor, compute a "liquid-like" position from tool bounds
+        Vector3 localPos = elementEffectLocalOffset;
+        if (anchor == null && toolTop != null)
+        {
+            Bounds b;
+            if (TryGetRenderableBounds(toolTop, out b))
+            {
+                // Place around lower-middle of the container volume (looks like inside)
+                float y = b.min.y + b.size.y * 0.35f;
+                Vector3 wp = new Vector3(b.center.x, y, b.center.z);
+                localPos += toolTop.InverseTransformPoint(wp);
+            }
+        }
+
+        svT.localPosition = localPos;
         svT.localRotation = Quaternion.identity;
         svT.localScale = elementEffectLocalScale;
 
@@ -1051,8 +1274,39 @@ public class ChemElementSpawner : UdonSharpBehaviour
         {
             sampleVisual.ApplyElementBySymbol(elementDb, GetDisplayFormula(), _visualTempC);
         }
+    }
 
-        // Keep the element table / button board intact: we never disable it here.
+    private bool TryGetRenderableBounds(Transform root, out Bounds bounds)
+    {
+        bounds = new Bounds(Vector3.zero, Vector3.zero);
+        if (root == null) return false;
+
+        Renderer[] rs = root.GetComponentsInChildren<Renderer>(true);
+        if (rs == null || rs.Length == 0) return false;
+
+        bool has = false;
+        int n = rs.Length;
+        for (int i = 0; i < n; i++)
+        {
+            Renderer r = rs[i];
+            if (r == null) continue;
+            if (!r.enabled) continue;
+
+            // Skip UI-ish renderers (very common cause of "effect goes to canvas area")
+            Transform t = r.transform;
+            if (t != null && IsLikelyUIRoot(t)) continue;
+
+            if (!has)
+            {
+                bounds = r.bounds;
+                has = true;
+            }
+            else
+            {
+                bounds.Encapsulate(r.bounds);
+            }
+        }
+        return has;
     }
 
     private Transform ResolveAnchor()
@@ -1069,14 +1323,26 @@ public class ChemElementSpawner : UdonSharpBehaviour
             if (toolModelsRoot != null && !string.IsNullOrEmpty(norm))
             {
                 _activeToolTr = FindBestToolTransformUnderRoot(toolModelsRoot, norm);
+                _activeToolTopTr = GetTopChildUnderRoot(_activeToolTr, toolModelsRoot);
             }
         }
 
-        // Prefer tool's ElementEffectAnchor
+        // Prefer tool's explicit anchor first
         if (_activeToolTr != null)
         {
             Transform a = FindChildByName(_activeToolTr, elementEffectAnchorName, 6);
             if (a != null) return a;
+
+            // Case-insensitive / normalized search
+            string normAnchor = NormalizeId(elementEffectAnchorName);
+            a = FindChildByNormContains(_activeToolTr, normAnchor, 6, 512);
+            if (a != null) return a;
+
+            // Common container/contents anchors (robust fallback)
+            a = FindChildByAnyName(_activeToolTr, _commonAnchorNames, 6, 512);
+            if (a != null) return a;
+
+            // Fallback to tool root
             return _activeToolTr;
         }
 
@@ -1106,6 +1372,82 @@ public class ChemElementSpawner : UdonSharpBehaviour
         return null;
     }
 
+    // Common anchor name candidates inside tool prefabs (beaker/flask etc.)
+    private string[] _commonAnchorNames = new string[]
+    {
+        "LIQUID", "LIQUIDSURFACE", "LIQUID_SURFACE", "LIQUIDCONTAINER", "LIQUID_CONTAINER",
+        "CONTENTS", "CONTENT", "INSIDE", "INNER", "FILL", "FLUID", "WATER",
+        "EFFECTANCHOR", "ANCHOR", "POUR", "SPOUT", "MOUTH"
+    };
+
+    private Transform FindChildByNormContains(Transform root, string normTarget, int maxDepth, int maxNodes)
+    {
+        if (root == null || string.IsNullOrEmpty(normTarget) || maxDepth < 0) return null;
+        if (maxNodes <= 0) return null;
+
+        int c = root.childCount;
+        for (int i = 0; i < c; i++)
+        {
+            if (maxNodes-- <= 0) return null;
+
+            Transform ch = root.GetChild(i);
+            if (ch == null) continue;
+
+            string nn = NormalizeId(ch.name);
+            if (!string.IsNullOrEmpty(nn) && (nn == normTarget || nn.Contains(normTarget) || normTarget.Contains(nn)))
+                return ch;
+        }
+
+        if (maxDepth == 0) return null;
+
+        for (int i = 0; i < c; i++)
+        {
+            if (maxNodes-- <= 0) return null;
+            Transform found = FindChildByNormContains(root.GetChild(i), normTarget, maxDepth - 1, maxNodes);
+            if (found != null) return found;
+        }
+        return null;
+    }
+
+    private Transform FindChildByAnyName(Transform root, string[] candidates, int maxDepth, int maxNodes)
+    {
+        if (root == null || candidates == null || candidates.Length == 0 || maxDepth < 0) return null;
+        if (maxNodes <= 0) return null;
+
+        int c = root.childCount;
+        for (int i = 0; i < c; i++)
+        {
+            if (maxNodes-- <= 0) return null;
+
+            Transform ch = root.GetChild(i);
+            if (ch == null) continue;
+
+            string nn = NormalizeId(ch.name);
+            if (string.IsNullOrEmpty(nn)) continue;
+
+            for (int k = 0; k < candidates.Length; k++)
+            {
+                string cand = candidates[k];
+                if (string.IsNullOrEmpty(cand)) continue;
+                string nc = NormalizeId(cand);
+                if (string.IsNullOrEmpty(nc)) continue;
+                if (nn == nc || nn.Contains(nc) || nc.Contains(nn))
+                    return ch;
+            }
+        }
+
+        if (maxDepth == 0) return null;
+
+        for (int i = 0; i < c; i++)
+        {
+            if (maxNodes-- <= 0) return null;
+            Transform found = FindChildByAnyName(root.GetChild(i), candidates, maxDepth - 1, maxNodes);
+            if (found != null) return found;
+        }
+        return null;
+    }
+
+
     private bool HasAnyRenderer(Transform tr)
     {
         return CountRenderersUnder(tr, 6, 256) > 0;
@@ -1126,21 +1468,21 @@ public class ChemElementSpawner : UdonSharpBehaviour
         // Ensure toolModelsRoot chain is active
         if (toolModelsRoot != null) ActivateParents(toolModelsRoot);
 
-        // Resolve BEAKER transform and activate it
+        // Resolve tool transform and activate it (non-destructive)
         if (toolModelsRoot != null && !string.IsNullOrEmpty(autoBeakerToolId))
         {
             string norm = NormalizeId(autoBeakerToolId);
             _activeToolTr = FindBestToolTransformUnderRoot(toolModelsRoot, norm);
-            if (_activeToolTr != null)
-            {
-                ActivateParents(_activeToolTr);
-                if (!_activeToolTr.gameObject.activeSelf) _activeToolTr.gameObject.SetActive(true);
+            _activeToolTopTr = GetTopChildUnderRoot(_activeToolTr, toolModelsRoot);
 
-                if (autoPlaceBeakerAtContainer && containerTransform != null)
-                {
-                    _activeToolTr.position = containerTransform.position + autoBeakerWorldOffset;
-                    _activeToolTr.rotation = containerTransform.rotation;
-                }
+            Transform top = (_activeToolTopTr != null) ? _activeToolTopTr : _activeToolTr;
+            if (top != null)
+            {
+                ActivateParents(top);
+                if (!top.gameObject.activeSelf) top.gameObject.SetActive(true);
+
+                // Place to container zone using the same path as normal selection
+                PlaceSelectedToolAtContainerLocal();
             }
         }
     }

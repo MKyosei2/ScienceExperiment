@@ -483,6 +483,7 @@ MonoBehaviour:
   reactionAnimator: {fileID: 1546114377}
   ai: {fileID: 1333534138}
   toolModelsRoot: {fileID: 1530110316}
+  runtimeToolSpawner: {fileID: 1812213036}
   elementEffectAnchorName: ElementEffectAnchor
   elementEffectAnchorFallback: {fileID: 309057361}
   placeElementEffectInTool: 1
@@ -491,7 +492,7 @@ MonoBehaviour:
   elementEffectLocalOffset: {x: 0, y: 0.08, z: 0}
   elementEffectLocalScale: {x: 0.18, y: 0.18, z: 0.18}
   autoSpawnBeakerOnElement: 1
-  autoBeakerToolId: BEAKER
+  autoBeakerToolId: CONICAL_FLASK
   autoPlaceBeakerAtContainer: 1
   autoBeakerWorldOffset: {x: 0, y: 0.02, z: 0}
   forceVisibleOnSelect: 1
@@ -47449,6 +47450,119 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     vectorLabel1_3: W
+--- !u!1 &1812213033
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1812213034}
+  - component: {fileID: 1812213036}
+  - component: {fileID: 1812213035}
+  m_Layer: 0
+  m_Name: ChemRuntimeToolSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1812213034
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1812213033}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1862082919}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1812213035
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1812213033}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45115577ef41a5b4ca741ed302693907, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactTextPlacement: {fileID: 0}
+  interactText: Use
+  interactTextGO: {fileID: 0}
+  proximity: 2
+  SynchronizePosition: 0
+  AllowCollisionOwnershipTransfer: 0
+  Reliable: 0
+  _syncMethod: 2
+  serializedProgramAsset: {fileID: 11400000, guid: c8791f861b1fd1846a163575d135167c,
+    type: 2}
+  programSource: {fileID: 11400000, guid: e02cf6effba43df41b76162c6e4ed856, type: 2}
+  serializedPublicVariablesBytesString: Ai8AAAAAATIAAABWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgAuAFUAZABvAG4AVgBhAHIAaQBhAGIAbABlAFQAYQBiAGwAZQAsACAAVgBSAEMALgBVAGQAbwBuAC4AQwBvAG0AbQBvAG4AAAAAAAYBAAAAAAAAACcBBAAAAHQAeQBwAGUAAWgAAABTAHkAcwB0AGUAbQAuAEMAbwBsAGwAZQBjAHQAaQBvAG4AcwAuAEcAZQBuAGUAcgBpAGMALgBMAGkAcwB0AGAAMQBbAFsAVgBSAEMALgBVAGQAbwBuAC4AQwBvAG0AbQBvAG4ALgBJAG4AdABlAHIAZgBhAGMAZQBzAC4ASQBVAGQAbwBuAFYAYQByAGkAYQBiAGwAZQAsACAAVgBSAEMALgBVAGQAbwBuAC4AQwBvAG0AbQBvAG4AXQBdACwAIABtAHMAYwBvAHIAbABpAGIAAQEJAAAAVgBhAHIAaQBhAGIAbABlAHMALwEAAAABaAAAAFMAeQBzAHQAZQBtAC4AQwBvAGwAbABlAGMAdABpAG8AbgBzAC4ARwBlAG4AZQByAGkAYwAuAEwAaQBzAHQAYAAxAFsAWwBWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgAuAEkAbgB0AGUAcgBmAGEAYwBlAHMALgBJAFUAZABvAG4AVgBhAHIAaQBhAGIAbABlACwAIABWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgBdAF0ALAAgAG0AcwBjAG8AcgBsAGkAYgABAAAABgEAAAAAAAAAAi8CAAAAAUkAAABWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgAuAFUAZABvAG4AVgBhAHIAaQBhAGIAbABlAGAAMQBbAFsAUwB5AHMAdABlAG0ALgBJAG4AdAAzADIALAAgAG0AcwBjAG8AcgBsAGkAYgBdAF0ALAAgAFYAUgBDAC4AVQBkAG8AbgAuAEMAbwBtAG0AbwBuAAIAAAAGAgAAAAAAAAAnAQQAAAB0AHkAcABlAAEXAAAAUwB5AHMAdABlAG0ALgBTAHQAcgBpAG4AZwAsACAAbQBzAGMAbwByAGwAaQBiACcBCgAAAFMAeQBtAGIAbwBsAE4AYQBtAGUAAR8AAABfAF8AXwBVAGQAbwBuAFMAaABhAHIAcABCAGUAaABhAHYAaQBvAHUAcgBWAGUAcgBzAGkAbwBuAF8AXwBfACcBBAAAAHQAeQBwAGUAARYAAABTAHkAcwB0AGUAbQAuAEkAbgB0ADMAMgAsACAAbQBzAGMAbwByAGwAaQBiABcBBQAAAFYAYQBsAHUAZQACAAAABwUHBQcF
+  publicVariablesUnityEngineObjects: []
+  publicVariablesSerializationDataFormat: 0
+--- !u!114 &1812213036
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1812213033}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 754bee5d12e5d5b4db12954d078aaf94, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  _udonSharpBackingUdonBehaviour: {fileID: 1812213035}
+  enablePrefabSpawn: 0
+  toolPrefabs:
+  - {fileID: 5544213426052059733, guid: b2359d19007f035408b9b6b9707433f4, type: 3}
+  - {fileID: 4472821586059878317, guid: e46518ee83a4b0140997fce090c6c25c, type: 3}
+  - {fileID: 8746406110628965935, guid: c321b943e0a66784cb2d22b5dee14754, type: 3}
+  - {fileID: 5537854028982867059, guid: 624847c0d7fa6464b9fa1b3916e1729c, type: 3}
+  - {fileID: 2745288790635248535, guid: de4818d2e36b795428be9bcf1340b298, type: 3}
+  - {fileID: 3639406707597398848, guid: 65b0e94f0b14d1845bc77356551de35f, type: 3}
+  - {fileID: 5335520312554060584, guid: d8691b0271cc29c49a37ea9961e06af0, type: 3}
+  - {fileID: 4601773878930850260, guid: fc78ebca08f40e842bfe55eb7fac6ece, type: 3}
+  - {fileID: 9219127356436164973, guid: 6ac5039d3d4fed343968fb2207aff89d, type: 3}
+  - {fileID: 7616937022494632615, guid: 5d02187c4d73d5941a93132d1132cf1d, type: 3}
+  - {fileID: 5506037117814235542, guid: aff4c28c6a7ba3f47a3319a8f84d1581, type: 3}
+  - {fileID: 4558185309078791135, guid: 004d5637210143246a9a59b8c27747e8, type: 3}
+  - {fileID: 9205441108093476934, guid: feeda118364d5e942b395b06e9432add, type: 3}
+  - {fileID: 2495184080384337898, guid: 17489361f883ee741bf5ea9637780f21, type: 3}
+  toolIds:
+  - BEAKER
+  - CLAISEN_FLASK
+  - CONICAL_FLASK
+  - EAR-SHAPED_FLASK
+  - FLORENCE_FLASK
+  - Gasburner
+  - KJELDAHL_FLASK
+  - RETORT_FLASK
+  - ROUND-BOTTOM_FLASK
+  - SCHLENK_FLASK
+  - Spoit
+  - STRAUS_FLASK
+  - Test tube
+  - VOLUMETARIC_FLASK
+  destroyPrevious: 1
 --- !u!1 &1812972310
 GameObject:
   m_ObjectHideFlags: 0
@@ -52408,6 +52522,7 @@ Transform:
   - {fileID: 1024289143}
   - {fileID: 1656578899}
   - {fileID: 2025034845}
+  - {fileID: 1812213034}
   m_Father: {fileID: 7720293247265340900}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1885374278
@@ -55252,6 +55367,10 @@ MonoBehaviour:
     - VRC.Udon.UdonBehaviour
   - gameObject: {fileID: 2025034844}
     ID: 285
+    SerializedTypeNames:
+    - VRC.Udon.UdonBehaviour
+  - gameObject: {fileID: 1812213033}
+    ID: 286
     SerializedTypeNames:
     - VRC.Udon.UdonBehaviour
   portraitCameraPositionOffset: {x: 0, y: 0, z: 0}

@@ -46,11 +46,17 @@ public class SpawnSelectorButton : UdonSharpBehaviour
                 break;
 
             case SelectionCategory.Condition:
-                if (environmentManager != null)
+                // 条件は「同期の真実」を持つ Spawner 経由で更新する（視覚/温度モデルにも反映）
+                if (elementSpawner != null)
                 {
-                    // TEMP+, TEMP-, HUMID+, PRESS- 等を自動解釈
+                    elementSpawner.ModifyEnvironment(idOrName);
+                    Debug.Log($"Condition Modified (Spawner): {idOrName}");
+                }
+                else if (environmentManager != null)
+                {
+                    // フォールバック（Spawner未設定時のみ）
                     environmentManager.Modify(idOrName);
-                    Debug.Log($"Condition Modified: {idOrName}");
+                    Debug.Log($"Condition Modified (EnvOnly): {idOrName}");
                 }
                 break;
         }
