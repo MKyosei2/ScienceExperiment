@@ -1298,16 +1298,22 @@ _placedToolTopTr.position = _placedToolOrigPos;
             svT.localScale = elementEffectLocalScale;
         }
 
+        // The runtime clone might be configured before its Start() runs; force-init to be safe.
+        vis.EnsureInitialized();
+
+        // Apply visual state (color/state) from DB if possible
+        if (elementDb != null)
+            vis.ApplyElementBySymbol(elementDb, GetDisplayFormula(), _visualTempC);
+
+        // Ensure shader + particle VFX are actually visible.
         EnableAllRenderers(svGo);
+        PlayAllParticles(svGo, true);
+
         if (forceVisibleOnSelect)
         {
             ForceVisibleHierarchy(svGo.transform);
             if (_activeToolTr != null) ForceVisibleHierarchy(_activeToolTr);
         }
-
-        // Apply visual state (color/state) from DB if possible
-        if (elementDb != null)
-            vis.ApplyElementBySymbol(elementDb, GetDisplayFormula(), _visualTempC);
     }
 
     private ChemVisualController GetOrCreateRuntimeSampleVisual(Transform desiredParent)
@@ -1697,12 +1703,51 @@ _placedToolTopTr.position = _placedToolOrigPos;
         }
     }
 
+    /// <summary>
+    /// Make sure all ParticleSystems under a root are emitting and playing.
+    /// This is intentionally separate from ForceVisibleHierarchy so we can use it
+    /// without touching layers.
+    /// </summary>
+    private void PlayAllParticles(GameObject rootGo, bool restart)
+    {
+        if (rootGo == null) return;
+
+        ParticleSystem[] ps = rootGo.GetComponentsInChildren<ParticleSystem>(true);
+        for (int i = 0; i < ps.Length; i++)
+        {
+            ParticleSystem p = ps[i];
+            if (p == null) continue;
+
+            var em = p.emission;
+            em.enabled = true;
+
+            // Ensure its renderer is enabled as well
+            ParticleSystemRenderer pr = p.GetComponent<ParticleSystemRenderer>();
+            if (pr != null) pr.enabled = true;
+
+            if (restart)
+            {
+                // Clear + Play gives the most reliable result when the prefab was inactive at instantiation.
+                p.Clear(true);
+                p.Play(true);
+            }
+            else
+            {
+                if (!p.isPlaying) p.Play(true);
+            }
+        }
+    }
+
 
     private void EnableAllRenderers(GameObject go)
     {
         if (go == null) return;
         _tmpScanVisited = 0;
         EnableAllRenderersRec(go.transform, 8, 512);
+
+        // Also ensure particle systems are actually emitting.
+        // (They often do not auto-play when cloned from an inactive template.)
+        PlayAllParticles(go, false);
     }
 
     private string NormalizeId(string s)

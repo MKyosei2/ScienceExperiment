@@ -116,8 +116,24 @@ public class ChemVisualController : UdonSharpBehaviour
     private string[] _tmpSyms;
     private int[] _tmpCounts;
 
+    // When a prefab is cloned at runtime and immediately configured, Unity/Udon may call
+    // our methods before Start() runs. We therefore expose an explicit initializer.
+    private bool _initialized;
+
     private void Start()
     {
+        EnsureInitialized();
+    }
+
+    /// <summary>
+    /// Safe initialization entry-point.
+    /// Call this before ApplyElementBySymbol() when the object was spawned/cloned at runtime.
+    /// </summary>
+    public void EnsureInitialized()
+    {
+        if (_initialized) return;
+        _initialized = true;
+
         if (solidObj == null) solidObj = FindChild("Solid");
         if (liquidObj == null) liquidObj = FindChild("Liquid");
         if (gasObj == null) gasObj = FindChild("Gas");
