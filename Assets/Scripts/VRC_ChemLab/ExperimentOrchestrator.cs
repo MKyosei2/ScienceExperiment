@@ -20,7 +20,18 @@ public class ExperimentOrchestrator : UdonSharpBehaviour
     public ChemEnvironmentManager environmentManager;
     public EnvUISyncBridge uiSync;
 
-    [Header("Mission Data (can be overwritten via Importer)")]
+    
+
+    [Header("Presentation Lock (single experiment)")]
+    [Tooltip("If true, mission is locked to the Hydrogen + Chlorine -> HCl presentation experiment.")]
+    public bool forceSingleMission = true;
+
+    [Tooltip("Forced goal product formula when forceSingleMission is true. Default: HCl")]
+    public string forcedMissionGoalProductFormula = "HCl";
+
+    [Tooltip("Overwrite mission[0] to the forced presentation mission on Start.")]
+    public bool overwriteMissionZeroForPresentation = true;
+[Header("Mission Data (can be overwritten via Importer)")]
     public string[] missionTitles;
     [TextArea] public string[] missionPrompts;
     public string[] missionGoalProductFormula; // 例: "H2O", "NaCl"
@@ -71,6 +82,7 @@ public class ExperimentOrchestrator : UdonSharpBehaviour
         }
 
         EnsureMissionDefaults();
+        ApplyPresentationMissionLock();
         RefreshAllDisplaysLocal();
     }
 
@@ -181,6 +193,7 @@ public class ExperimentOrchestrator : UdonSharpBehaviour
 
     public void _MissionNext()
     {
+        if (forceSingleMission) return;
         if (!CanControlMission()) return;
         EnsureMissionDefaults();
         EnsureOwner();
@@ -245,7 +258,9 @@ public class ExperimentOrchestrator : UdonSharpBehaviour
             _lastSeenMissionPhase = _missionPhase;
             RefreshAllDisplaysLocal();
         }
-    }
+    
+        ApplyPresentationMissionLock();
+}
 
     // ============ Internals ============
     private void EnsureOwner()
@@ -558,4 +573,39 @@ public class ExperimentOrchestrator : UdonSharpBehaviour
 
         missionRequireComplete = new int[] { 1, 1, 1, 1 };
     }
+
+
+    private void ApplyPresentationMissionLock()
+    {
+        if (!forceSingleMission) return;
+
+        EnsureMissionDefaults();
+
+        // Optionally overwrite mission 0 so even if the inspector arrays are custom, presentation is stable.
+        if (overwriteMissionZeroForPresentation)
+        {
+            if (missionTitles != null && missionTitles.Length > 0) missionTitles[0] = "Hydrogen + Chlorine (Photo Explosion)";
+            if (missionPrompts != null && missionPrompts.Length > 0) missionPrompts[0] = "Mix H2 and Cl2, then trigger light to form HCl.";
+            if (missionGoalProductFormula != null && missionGoalProductFormula.Length > 0) missionGoalProductFormula[0] = forcedMissionGoalProductFormula;
+            if (missionRequiredToolId != null && missionRequiredToolId.Length > 0) missionRequiredToolId[0] = ""; // keep unblocked
+            if (missionMinTempC != null && missionMinTempC.Length > 0) missionMinTempC[0] = -273f;
+            if (missionMaxTempC != null && missionMaxTempC.Length > 0) missionMaxTempC[0] = 9999f;
+        }
+
+        // Lock mission index to 0
+        if (Networking.IsOwner(gameObject))
+        {
+            _missionIndex = 0;
+            _missionPhase = 0;
+            RequestSerialization();
+        }
+        else
+        {
+            EnsureOwner();
+            _missionIndex = 0;
+            _missionPhase = 0;
+            RequestSerialization();
+        }
+    }
+
 }

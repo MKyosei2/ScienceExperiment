@@ -38,6 +38,17 @@ public class ReactionPredictor : UdonSharpBehaviour
             reactionTag = "none";
             explain = "入力が空です。";
             return;
+
+        // Presentation special-case: Hydrogen + Chlorine (light) -> HCl
+        string inNorm = input.ToUpperInvariant().Replace(" ", "").Replace("_", "").Replace("-", "");
+        if ((inNorm.Contains("H2") && inNorm.Contains("CL2")) || inNorm.Contains("H2+CL2") || inNorm.Contains("CL2+H2"))
+        {
+            productFormula = NormalizeIfKnown("HCl");
+            reactionTag = "photo_explosion";
+            explain = "光でラジカル反応が進み、塩化水素(HCl)が生成されます。";
+            return;
+        }
+
         }
 
         bool looksCompound = LooksLikeCompound(input);

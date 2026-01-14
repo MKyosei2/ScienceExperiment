@@ -1019,6 +1019,18 @@ public class ChemElementSpawner : UdonSharpBehaviour
         }
         if (elementEffectAnchorFallback == null) elementEffectAnchorFallback = containerTransform;
 
+        // Tool templates root: prefer toolModelsRoot (Hierarchyの「Tool」) を Spawner に渡す
+        if (runtimeToolSpawner != null && runtimeToolSpawner.toolTemplatesRoot == null)
+        {
+            if (toolModelsRoot != null) runtimeToolSpawner.toolTemplatesRoot = toolModelsRoot;
+            else
+            {
+                Transform t = FindByNameAnywhere(transform.root, "Tool");
+                if (t != null) runtimeToolSpawner.toolTemplatesRoot = t;
+            }
+        }
+
+
         // If incorrectly assigned to UI, clear it
         if (toolModelsRoot != null && IsLikelyUIRoot(toolModelsRoot))
             toolModelsRoot = null;
@@ -1057,8 +1069,8 @@ public class ChemElementSpawner : UdonSharpBehaviour
         if (!previewToolOnSelect) return;
 
         EnsurePreviewRefs();
-        if (toolModelsRoot == null && runtimeToolSpawner == null) return;
 
+        // Determine tool id
         string toolId = string.IsNullOrEmpty(_syncedTool) ? _localTool : _syncedTool;
         if (toolId == null) toolId = "";
         string norm = NormalizeId(toolId);
@@ -1066,86 +1078,214 @@ public class ChemElementSpawner : UdonSharpBehaviour
         if (!force && norm == _lastToolApplied) return;
         _lastToolApplied = norm;
 
-        // 1) ★最優先：ChemRuntimeToolSpawner(Inspector設定) の同名Prefabがあれば必ずそれを使う
-        //    enablePrefabSpawn のON/OFFには依存しない（Inspector設定を最優先）
-        if (runtimeToolSpawner != null && containerTransform != null && !string.IsNullOrEmpty(norm))
+        // Clear current clone if no tool
+        if (string.IsNullOrEmpty(norm))
         {
-            Transform spawned = runtimeToolSpawner.SpawnTool(norm, containerTransform, autoBeakerWorldOffset);
-            if (spawned != null)
-            {
-                _activeToolTr = spawned;
-                _activeToolTopTr = spawned;
-
-                // 既存モデルが同時に見えると「Prefabを使っていない」と誤認されるため、
-                // 可能なら同名の既存モデルだけ非表示にする（UIなどの誤検出を避けるため renderer 持ちだけ）
-                if (toolModelsRoot != null)
-                {
-                    Transform ex = FindBestToolTransformUnderRoot(toolModelsRoot, norm);
-                    Transform exTop = GetTopChildUnderRoot(ex, toolModelsRoot);
-                    Transform toHide = (exTop != null) ? exTop : ex;
-                    if (toHide != null && HasAnyRenderer(toHide) && toHide.gameObject.activeSelf)
-                        toHide.gameObject.SetActive(false);
-                }
-            }
-        }
-        // Find best tool under toolModelsRoot (VR_Props recommended)
-        if (_activeToolTr == null)
-            _activeToolTr = FindBestToolTransformUnderRoot(toolModelsRoot, norm);
-        _activeToolTopTr = GetTopChildUnderRoot(_activeToolTr, toolModelsRoot);
-
-
-        // Fallback: some tools (e.g., CONICAL_FLASK) may not be under VR_Props. Try global name lookup.
-        if (_activeToolTr == null && !string.IsNullOrEmpty(toolId))
-        {
-            GameObject g = GameObject.Find(toolId);
-            if (g == null) g = GameObject.Find(norm);
-            if (g == null) g = GameObject.Find(toolId + "_Pickup");
-            if (g == null && norm != toolId) g = GameObject.Find(norm + "_Pickup");
-
-            if (g != null)
-            {
-                Transform gt = g.transform;
-                if (HasAnyRenderer(gt))
-                {
-                    _activeToolTr = gt;
-                    _activeToolTopTr = gt;
-                }
-            }
+            ClearActiveToolClone();
+            return;
         }
 
-        int c = toolModelsRoot.childCount;
-        bool canHideOthers = hideOtherToolsOnlyWhenVRProps && IsVRPropsRoot(toolModelsRoot);
-
-        // If we can safely hide others (only real 3D props root), do it.
-        if (canHideOthers && !string.IsNullOrEmpty(norm))
+        // Ensure spawner has a correct template root (prefer Hierarchy "Tool")
+        Transform templatesRoot = FindToolTemplatesRoot();
+        if (runtimeToolSpawner != null && templatesRoot != null)
         {
-            for (int i = 0; i < c; i++)
-            {
-                Transform ch = toolModelsRoot.GetChild(i);
-                if (ch == null) continue;
-                if (!HasAnyRenderer(ch)) continue;
+            runtimeToolSpawner.toolTemplatesRoot = templatesRoot;
+            // Do NOT hide / deactivate templates during presentation
+            runtimeToolSpawner.hideTemplateRenderers = false;
+            runtimeToolSpawner.deactivateTemplateObject = false;
+        }
 
-                bool isActive = (_activeToolTopTr != null && ch == _activeToolTopTr);
-                if (ch.gameObject.activeSelf != isActive)
-                    ch.gameObject.SetActive(isActive);
+        // Always spawn a clone (never "bring" an existing object)
+        Transform spawned = null;
+
+        // Choose a real spawn point on the experiment table (SnapPoints) if available.
+        // NOTE: containerTransform in this project is VR_StartZone; spawning there looks like "nothing spawned".
+        Transform spawnParent = ResolveToolSpawnParent(norm);
+
+        if (runtimeToolSpawner != null && spawnParent != null)
+        {
+            spawned = runtimeToolSpawner.SpawnTool(norm, spawnParent, autoBeakerWorldOffset, true);
+        }
+        else
+        {
+            // Direct fallback clone if spawner is missing
+            spawned = SpawnToolCloneDirect(norm, spawnParent != null ? spawnParent : containerTransform, autoBeakerWorldOffset);
+        }
+
+        if (spawned == null)
+        {
+            // keep nothing rather than moving an existing tool
+            ClearActiveToolClone();
+            return;
+        }
+
+        _activeToolTr = spawned;
+        _activeToolTopTr = spawned;
+    }
+
+    // =====================================================
+    // Tool Clone Helpers (Presentation-stable)
+    // =====================================================
+
+    private Transform _cachedToolTemplatesRoot;
+
+    // SnapPoints cache (ExperimentTable/Zones/SnapPoints)
+    private Transform _cachedSnapPointsRoot;
+    private Transform _cachedBeakerPoint;
+    private Transform _cachedBurnerPoint;
+    private Transform _cachedPourPoint;
+
+    private Transform ResolveToolSpawnParent(string toolIdNorm)
+    {
+        // Cache SnapPoints once
+        if (_cachedSnapPointsRoot == null)
+        {
+            // Prefer table area if it exists
+            Transform table = FindByNameAnywhere(transform.root, "ExperimentTable");
+            Transform searchRoot = table != null ? table : transform.root;
+
+            _cachedSnapPointsRoot = FindByNameAnywhere(searchRoot, "SnapPoints");
+            if (_cachedSnapPointsRoot != null)
+            {
+                _cachedPourPoint = FindByNameAnywhere(_cachedSnapPointsRoot, "PourTargetPoint");
+                _cachedBurnerPoint = FindByNameAnywhere(_cachedSnapPointsRoot, "BurnerPoint");
+                _cachedBeakerPoint = FindByNameAnywhere(_cachedSnapPointsRoot, "BeakerPoint");
             }
         }
 
-        // If nothing matched, restore visibility (avoid hiding boards)
-        if (_activeToolTr == null && canHideOthers)
+        // If SnapPoints exist, route tools to the correct point.
+        if (_cachedSnapPointsRoot != null)
         {
-            for (int i = 0; i < c; i++)
+            string n = toolIdNorm == null ? "" : toolIdNorm;
+
+            // Burner
+            if (n.IndexOf("GASBURNER") >= 0 || n.IndexOf("BURNER") >= 0)
+                return _cachedBurnerPoint != null ? _cachedBurnerPoint : _cachedSnapPointsRoot;
+
+            // Pour / pipette / spoit
+            if (n.IndexOf("SPOIT") >= 0 || n.IndexOf("POUR") >= 0)
+                return _cachedPourPoint != null ? _cachedPourPoint : _cachedSnapPointsRoot;
+
+            // Default: beaker/flasks/etc
+            return _cachedBeakerPoint != null ? _cachedBeakerPoint : _cachedSnapPointsRoot;
+        }
+
+        // Fallback to existing containerTransform (currently VR_StartZone in the provided scene)
+        if (containerTransform != null) return containerTransform;
+        return transform;
+    }
+
+
+    private void ClearActiveToolClone()
+    {
+        if (_activeToolTr != null)
+        {
+            Object.Destroy(_activeToolTr.gameObject);
+        }
+        _activeToolTr = null;
+        _activeToolTopTr = null;
+    }
+
+    private Transform FindToolTemplatesRoot()
+    {
+        if (_cachedToolTemplatesRoot != null) return _cachedToolTemplatesRoot;
+
+        // In this project, the 3D tool templates live under "Selectors/Tool" (used for the button models).
+        // Using GameObject.Find("Tool") alone can accidentally grab a wrong object if duplicates exist.
+        GameObject selectors = GameObject.Find("Selectors");
+        if (selectors != null)
+        {
+            Transform t = FindByNameAnywhere(selectors.transform, "Tool");
+            if (t != null)
             {
-                Transform ch = toolModelsRoot.GetChild(i);
-                if (ch == null) continue;
-                if (HasAnyRenderer(ch) && !ch.gameObject.activeSelf) ch.gameObject.SetActive(true);
+                _cachedToolTemplatesRoot = t;
+                return _cachedToolTemplatesRoot;
             }
         }
-    
 
-        // Move the selected tool to the experiment container zone (VR_StartZone) safely
-        PlaceSelectedToolAtContainerLocal();
-}
+        GameObject g = GameObject.Find("Tool");
+        if (g == null) g = GameObject.Find("Tools");
+        if (g == null) g = GameObject.Find("ToolTemplates");
+        if (g == null) g = GameObject.Find("Tool Templates");
+        if (g != null)
+        {
+            _cachedToolTemplatesRoot = g.transform;
+            return _cachedToolTemplatesRoot;
+        }
+
+        // last resort: use toolModelsRoot if present
+        if (toolModelsRoot != null)
+        {
+            _cachedToolTemplatesRoot = toolModelsRoot;
+            return _cachedToolTemplatesRoot;
+        }
+
+        return null;
+    }
+
+    private Transform SpawnToolCloneDirect(string toolIdNorm, Transform parent, Vector3 worldOffset)
+    {
+        if (parent == null) return null;
+
+        Transform root = FindToolTemplatesRoot();
+        if (root == null) return null;
+
+        Transform template = FindTemplateInDescendants(root, toolIdNorm);
+        if (template == null) return null;
+
+        GameObject go = VRCInstantiate(template.gameObject);
+        if (go == null) return null;
+
+        go.transform.SetParent(parent, true);
+        go.transform.position = parent.position + worldOffset;
+        go.transform.rotation = parent.rotation;
+        if (!go.activeSelf) go.SetActive(true);
+        return go.transform;
+    }
+
+    private Transform FindTemplateInDescendants(Transform root, string toolIdNorm)
+    {
+        Transform[] all = root.GetComponentsInChildren<Transform>(true);
+        if (all == null) return null;
+
+        int n = all.Length;
+        for (int i = 0; i < n; i++)
+        {
+            Transform t = all[i];
+            if (t == null) continue;
+            if (t == root) continue;
+
+            string baseName = StripUnitySuffixLocal(t.name);
+            string normName = NormalizeId(baseName);
+
+            if (normName == toolIdNorm) return t;
+            if (NormalizeId(baseName + "_PICKUP") == toolIdNorm) return t;
+
+            if (normName.EndsWith("_PICKUP"))
+            {
+                string noPickup = normName.Replace("_PICKUP", "");
+                if (NormalizeId(noPickup) == toolIdNorm) return t;
+            }
+        }
+        return null;
+    }
+
+    private string StripUnitySuffixLocal(string s)
+    {
+        if (string.IsNullOrEmpty(s)) return "";
+        s = s.Trim();
+
+        int p = s.LastIndexOf('(');
+        if (p > 0 && s.EndsWith(")"))
+        {
+            if (s[p - 1] == ' ')
+            {
+                s = s.Substring(0, p - 1).Trim();
+            }
+        }
+        return s;
+    }
+
 
     private void PlaceSelectedToolAtContainerLocal()
     {
@@ -1600,9 +1740,8 @@ _placedToolTopTr.position = _placedToolOrigPos;
     private void EnsureAutoBeakerOnElement()
     {
         if (!autoSpawnBeakerOnElement) return;
-        if (string.IsNullOrEmpty(autoBeakerToolId)) return;
 
-        // tool selection state
+        // If tool already selected, do nothing
         bool hasTool = !string.IsNullOrEmpty(_syncedTool) || !string.IsNullOrEmpty(_localTool);
         if (!hasTool)
         {
@@ -1610,38 +1749,13 @@ _placedToolTopTr.position = _placedToolOrigPos;
             _syncedTool = autoBeakerToolId;
         }
 
-        EnsurePreviewRefs();
+        // Ensure toolModelsRoot chain is active
+        if (toolModelsRoot != null) ActivateParents(toolModelsRoot);
 
-        string norm = NormalizeId(autoBeakerToolId);
-
-        // ★最優先：Inspector登録Prefab（同名）を必ずスポーン
-        if (runtimeToolSpawner != null && containerTransform != null && !string.IsNullOrEmpty(norm))
+        // Resolve tool transform and activate it (non-destructive)
+        if (toolModelsRoot != null && !string.IsNullOrEmpty(autoBeakerToolId))
         {
-            Transform spawned = runtimeToolSpawner.SpawnTool(norm, containerTransform, autoBeakerWorldOffset);
-            if (spawned != null)
-            {
-                _activeToolTr = spawned;
-                _activeToolTopTr = spawned;
-
-                // 既存モデルが同時に見えると混乱するので、可能なら同名既存モデルだけ隠す
-                if (toolModelsRoot != null)
-                {
-                    Transform ex = FindBestToolTransformUnderRoot(toolModelsRoot, norm);
-                    Transform exTop = GetTopChildUnderRoot(ex, toolModelsRoot);
-                    Transform toHide = (exTop != null) ? exTop : ex;
-                    if (toHide != null && HasAnyRenderer(toHide) && toHide.gameObject.activeSelf)
-                        toHide.gameObject.SetActive(false);
-                }
-
-                return;
-            }
-        }
-
-        // Prefabが無い/一致しない場合のみ、既存モデルにフォールバック
-        if (toolModelsRoot != null)
-        {
-            ActivateParents(toolModelsRoot);
-
+            string norm = NormalizeId(autoBeakerToolId);
             _activeToolTr = FindBestToolTransformUnderRoot(toolModelsRoot, norm);
             _activeToolTopTr = GetTopChildUnderRoot(_activeToolTr, toolModelsRoot);
 
@@ -1650,6 +1764,8 @@ _placedToolTopTr.position = _placedToolOrigPos;
             {
                 ActivateParents(top);
                 if (!top.gameObject.activeSelf) top.gameObject.SetActive(true);
+
+                // Place to container zone using the same path as normal selection
                 PlaceSelectedToolAtContainerLocal();
             }
         }
