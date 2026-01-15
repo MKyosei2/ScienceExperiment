@@ -1282,6 +1282,9 @@ MonoBehaviour:
   spawner: {fileID: 139136158}
   environmentManager: {fileID: 376516164}
   uiSync: {fileID: 7635422273635429504}
+  forceSingleMission: 1
+  forcedMissionGoalProductFormula: HCl
+  overwriteMissionZeroForPresentation: 1
   missionTitles: []
   missionPrompts: []
   missionGoalProductFormula: []
@@ -47537,6 +47540,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1812213035}
+  toolTemplatesRoot: {fileID: 0}
   enablePrefabSpawn: 1
   toolPrefabs:
   - {fileID: 5544213426052059733, guid: b2359d19007f035408b9b6b9707433f4, type: 3}
@@ -47568,6 +47572,8 @@ MonoBehaviour:
   - STRAUS_FLASK
   - Test tube
   - VOLUMETARIC_FLASK
+  hideTemplateRenderers: 1
+  deactivateTemplateObject: 0
   destroyPrevious: 1
 --- !u!1 &1812972310
 GameObject:

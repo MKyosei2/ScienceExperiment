@@ -26,6 +26,16 @@ public class ChemReactionAnimator : UdonSharpBehaviour
     [Tooltip("Fog: 気体/昇華の霧")]
     public ParticleSystem fogParticles;
 
+    [Header("Particle Rates (optional)")]
+    [Tooltip("Max emission rate for foam particles")]
+    public float foamRateMax = 25f;
+    [Tooltip("Max emission rate for smoke particles")]
+    public float smokeRateMax = 20f;
+    [Tooltip("Max emission rate for spark particles")]
+    public float sparkRateMax = 90f;
+    [Tooltip("Max emission rate for compound particles")]
+    public float compoundRateMax = 18f;
+
     [Header("Glow (optional)")]
     public Renderer[] glowRenderers;
     public string emissionProperty = "_EmissionColor";
@@ -57,10 +67,10 @@ public class ChemReactionAnimator : UdonSharpBehaviour
         Apply();
 
         // compound particles
-        ApplyParticle(glintParticles, 0f);
-        ApplyParticle(precipitateParticles, 0f);
-        ApplyParticle(bubbleParticles, 0f);
-        ApplyParticle(fogParticles, 0f);
+        ApplyParticle(glintParticles, 0f, compoundRateMax);
+        ApplyParticle(precipitateParticles, 0f, compoundRateMax);
+        ApplyParticle(bubbleParticles, 0f, compoundRateMax);
+        ApplyParticle(fogParticles, 0f, compoundRateMax);
     }
 
     /// <summary>
@@ -92,7 +102,15 @@ public class ChemReactionAnimator : UdonSharpBehaviour
         _smoke = Mathf.Clamp01(ai.fxSmoke);
 
         // タグで軽く補正（任意）
-        if (reactionTag == "none")
+        if (reactionTag == "photo_explosion")
+        {
+            // strong, visible burst
+            _spark = Mathf.Clamp01(_spark * 1.4f + 0.25f);
+            _smoke = Mathf.Clamp01(_smoke * 1.2f + 0.20f);
+            _glow  = Mathf.Clamp01(_glow  * 1.1f + 0.15f);
+            _heat  = Mathf.Clamp01(_heat  * 1.1f + 0.10f);
+        }
+        else if (reactionTag == "none")
         {
             _glow *= 0.2f;
             _foam *= 0.2f;
@@ -120,9 +138,9 @@ public class ChemReactionAnimator : UdonSharpBehaviour
     private void Apply()
     {
         // 基本粒子
-        ApplyParticle(foamParticles, _foam);
-        ApplyParticle(smokeParticles, _smoke);
-        ApplyParticle(sparkParticles, _spark);
+        ApplyParticle(foamParticles, _foam, foamRateMax);
+        ApplyParticle(smokeParticles, _smoke, smokeRateMax);
+        ApplyParticle(sparkParticles, _spark, sparkRateMax);
 
         // 発光（EmissionColor）
         if (glowRenderers != null)
@@ -150,18 +168,18 @@ public class ChemReactionAnimator : UdonSharpBehaviour
         // stop all if none
         if (preset == 0 || level01 <= 0.01f)
         {
-            ApplyParticle(glintParticles, 0f);
-            ApplyParticle(precipitateParticles, 0f);
-            ApplyParticle(bubbleParticles, 0f);
-            ApplyParticle(fogParticles, 0f);
+            ApplyParticle(glintParticles, 0f, compoundRateMax);
+            ApplyParticle(precipitateParticles, 0f, compoundRateMax);
+            ApplyParticle(bubbleParticles, 0f, compoundRateMax);
+            ApplyParticle(fogParticles, 0f, compoundRateMax);
             return;
         }
 
         // default stop others
-        ApplyParticle(glintParticles, 0f);
-        ApplyParticle(precipitateParticles, 0f);
-        ApplyParticle(bubbleParticles, 0f);
-        ApplyParticle(fogParticles, 0f);
+        ApplyParticle(glintParticles, 0f, compoundRateMax);
+        ApplyParticle(precipitateParticles, 0f, compoundRateMax);
+        ApplyParticle(bubbleParticles, 0f, compoundRateMax);
+        ApplyParticle(fogParticles, 0f, compoundRateMax);
 
         if (preset == ChemVisualController.PT_GLINT)
         {
@@ -199,23 +217,30 @@ public class ChemReactionAnimator : UdonSharpBehaviour
             }
         }
 
-        ApplyParticle(ps, level01);
+        ApplyParticle(ps, level01, compoundRateMax);
     }
 
-    private void ApplyParticle(ParticleSystem ps, float level01)
+    private void ApplyParticle(ParticleSystem ps, float level01, float rateMax)
     {
         if (ps == null) return;
-        if (level01 <= 0.01f)
+
+        float lv = Mathf.Clamp01(level01);
+        var emission = ps.emission;
+
+        if (lv <= 0.01f)
         {
-            if (ps.isPlaying) ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            emission.enabled = false;
+            emission.rateOverTime = 0f;
+            if (ps.isPlaying) ps.Stop();
             return;
         }
 
-        if (!ps.isPlaying) ps.Play();
-        var emission = ps.emission;
         emission.enabled = true;
-        emission.rateOverTime = 10f * Mathf.Clamp01(level01);
+        emission.rateOverTime = Mathf.Max(0f, rateMax) * lv;
+
+        if (!ps.isPlaying) ps.Play();
     }
+
 
     private void ApplyFloatToRenderers(Renderer[] rs, string prop, float v)
     {

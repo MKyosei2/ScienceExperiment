@@ -100,6 +100,19 @@ public class AIRequestSender : UdonSharpBehaviour
             fxSmoke = 0.15f * (0.5f + 0.5f * _v1);
             fxSpark = 0f;
         }
+
+else if (predictedReactionTag == "photo_explosion")
+{
+    // Strong, highly visible preset for Hydrogen + Chlorine (light) demo
+    // Make it obvious even in bright worlds.
+    fxSpark = EaseInOut(p) * (0.85f + 0.15f * _v1);
+    fxSmoke = EaseInOut(p) * (0.65f + 0.35f * _v2);
+    fxGlow  = EaseInOut(p) * (0.70f + 0.30f * _v3);
+    fxHeat  = EaseInOut(p) * (0.80f + 0.20f * _v2);
+    fxFoam  = 0.05f * (0.5f + 0.5f * _v1);
+    fxWave  = 0.10f * (0.5f + 0.5f * _v3);
+}
+
         else
         {
             fxHeat = 0.05f;

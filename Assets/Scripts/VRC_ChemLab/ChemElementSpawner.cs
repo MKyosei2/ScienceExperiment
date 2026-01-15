@@ -102,6 +102,50 @@ public class ChemElementSpawner : UdonSharpBehaviour
     [Tooltip("強制的に設定するLayer。0=Default。")]
     public int forceVisibleLayer = 0;
 
+
+
+[Header("Runtime Spawn (Multi-instance)")]
+[Tooltip("If true, every button press spawns a NEW instance (tools/elements do NOT replace previous ones).")]
+public bool spawnNewInstancePerPress = true;
+
+[Tooltip("Container tool used when an element button is pressed (ex: CONICAL_FLASK).")]
+public string elementContainerToolId = "CONICAL_FLASK";
+
+[Tooltip("Optional parent for spawned runtime objects (keeps hierarchy tidy). If null, uses ExperimentTable when found, otherwise world root.")]
+public Transform runtimeSpawnParent;
+
+[Tooltip("Optional explicit ExperimentTable root. If null, we auto-find a GameObject named 'ExperimentTable'.")]
+public Transform experimentTableRoot;
+
+[Tooltip("Random spawn radius (meters) around the spawn center.")]
+public float spawnRadiusMeters = 0.85f;
+
+[Tooltip("Minimum distance from the previous spawn (meters).")]
+public float spawnMinSeparation = 0.25f;
+
+[Tooltip("World Y offset added to spawn position.")]
+public float spawnYOffset = 0.02f;
+
+[Tooltip("Max retries to avoid spawning at the same spot.")]
+public int spawnRetryCount = 16;
+
+[Header("Per-Tool Reaction VFX (Clone)")]
+[Tooltip("Template VFX under ExperimentTable/Effects/ReactionVFX. If null, auto-resolve at runtime.")]
+public GameObject reactionVfxTemplate;
+
+[Tooltip("Spawned VFX is parented under this anchor name inside the tool (fallback: tool root).")]
+public string reactionVfxAnchorName = "ReactionVFXAnchor";
+
+[Header("Preview Materials (Udon-safe)")]
+[Tooltip("Optional explicit GlassMaster material. If null, auto-detect from templates.")]
+public Material glassMasterMaterial;
+
+[Tooltip("Optional explicit WireframeFX material. If null, auto-detect from templates.")]
+public Material wireframeFxMaterial;
+
+private Vector3 _lastSpawnPos;
+private int _runtimeSpawnSerial;
+
     private Transform _activeToolTr;
     private Transform _activeToolTopTr;
     private Transform _activeAnchorTr;
@@ -380,44 +424,52 @@ public class ChemElementSpawner : UdonSharpBehaviour
     // =====================================================
     public void SelectElement(string symbolOrFormula)
     {
-        if (!EnsureCanControl()) return;
+        
 
-        _localInput = (symbolOrFormula == null) ? "" : symbolOrFormula.Trim();
-        _syncedInput = _localInput;
+if (!EnsureCanControl()) return;
 
-        _syncedVersion++;
-        RequestSerialization();
+_localInput = (symbolOrFormula == null) ? "" : symbolOrFormula.Trim();
+_syncedInput = _localInput;
 
-        AppendHistory("SelectElement: " + _localInput);
+_syncedVersion++;
+RequestSerialization();
 
-        // 非同期演出：器具に投入されるように見せる（ローカル即時）
-        if (sampleVisual != null)
-            sampleVisual.NotifyElementSelected(_localInput);
+AppendHistory("SelectElement: " + _localInput);
 
-        ApplyVisualFromState(true);
-        EnsureAutoBeakerOnElement();
-        // Ensure 3D placement updates immediately for element selection
-        ApplyToolPreviewLocal(false);
-        PlaceElementEffectLocal(true);
-        WriteUI();
+// Spawn a NEW conical flask with this element every press (no limits).
+if (spawnNewInstancePerPress)
+{
+    SpawnElementContainerInstance(_localInput);
+}
+
+// Keep UI/state updates for experiment controls
+if (sampleVisual != null)
+    sampleVisual.NotifyElementSelected(_localInput);
+
+ApplyVisualFromState(true);
+WriteUI();
     }
 
     public void SelectEquipment(string toolId)
     {
-        if (!EnsureCanControl()) return;
+        
 
-        _localTool = (toolId == null) ? "" : toolId.Trim();
-        _syncedTool = _localTool;
+if (!EnsureCanControl()) return;
 
-        _syncedVersion++;
-        RequestSerialization();
+_localTool = (toolId == null) ? "" : toolId.Trim();
+_syncedTool = _localTool;
 
-        AppendHistory("SelectEquipment: " + _localTool);
-        WriteUI();
+_syncedVersion++;
+RequestSerialization();
 
+AppendHistory("SelectEquipment: " + _localTool);
+WriteUI();
 
-        ApplyToolPreviewLocal(true);
-        PlaceElementEffectLocal(true);
+// Spawn a NEW tool instance every press (no limits).
+if (spawnNewInstancePerPress)
+{
+    SpawnToolInstance(_localTool, true);
+}
     }
 
     /// <summary>
@@ -1097,19 +1149,14 @@ public class ChemElementSpawner : UdonSharpBehaviour
 
         // Always spawn a clone (never "bring" an existing object)
         Transform spawned = null;
-
-        // Choose a real spawn point on the experiment table (SnapPoints) if available.
-        // NOTE: containerTransform in this project is VR_StartZone; spawning there looks like "nothing spawned".
-        Transform spawnParent = ResolveToolSpawnParent(norm);
-
-        if (runtimeToolSpawner != null && spawnParent != null)
+        if (runtimeToolSpawner != null && containerTransform != null)
         {
-            spawned = runtimeToolSpawner.SpawnTool(norm, spawnParent, autoBeakerWorldOffset, true);
+            spawned = runtimeToolSpawner.SpawnTool(norm, containerTransform, autoBeakerWorldOffset, true);
         }
         else
         {
             // Direct fallback clone if spawner is missing
-            spawned = SpawnToolCloneDirect(norm, spawnParent != null ? spawnParent : containerTransform, autoBeakerWorldOffset);
+            spawned = SpawnToolCloneDirect(norm, containerTransform, autoBeakerWorldOffset);
         }
 
         if (spawned == null)
@@ -1129,53 +1176,6 @@ public class ChemElementSpawner : UdonSharpBehaviour
 
     private Transform _cachedToolTemplatesRoot;
 
-    // SnapPoints cache (ExperimentTable/Zones/SnapPoints)
-    private Transform _cachedSnapPointsRoot;
-    private Transform _cachedBeakerPoint;
-    private Transform _cachedBurnerPoint;
-    private Transform _cachedPourPoint;
-
-    private Transform ResolveToolSpawnParent(string toolIdNorm)
-    {
-        // Cache SnapPoints once
-        if (_cachedSnapPointsRoot == null)
-        {
-            // Prefer table area if it exists
-            Transform table = FindByNameAnywhere(transform.root, "ExperimentTable");
-            Transform searchRoot = table != null ? table : transform.root;
-
-            _cachedSnapPointsRoot = FindByNameAnywhere(searchRoot, "SnapPoints");
-            if (_cachedSnapPointsRoot != null)
-            {
-                _cachedPourPoint = FindByNameAnywhere(_cachedSnapPointsRoot, "PourTargetPoint");
-                _cachedBurnerPoint = FindByNameAnywhere(_cachedSnapPointsRoot, "BurnerPoint");
-                _cachedBeakerPoint = FindByNameAnywhere(_cachedSnapPointsRoot, "BeakerPoint");
-            }
-        }
-
-        // If SnapPoints exist, route tools to the correct point.
-        if (_cachedSnapPointsRoot != null)
-        {
-            string n = toolIdNorm == null ? "" : toolIdNorm;
-
-            // Burner
-            if (n.IndexOf("GASBURNER") >= 0 || n.IndexOf("BURNER") >= 0)
-                return _cachedBurnerPoint != null ? _cachedBurnerPoint : _cachedSnapPointsRoot;
-
-            // Pour / pipette / spoit
-            if (n.IndexOf("SPOIT") >= 0 || n.IndexOf("POUR") >= 0)
-                return _cachedPourPoint != null ? _cachedPourPoint : _cachedSnapPointsRoot;
-
-            // Default: beaker/flasks/etc
-            return _cachedBeakerPoint != null ? _cachedBeakerPoint : _cachedSnapPointsRoot;
-        }
-
-        // Fallback to existing containerTransform (currently VR_StartZone in the provided scene)
-        if (containerTransform != null) return containerTransform;
-        return transform;
-    }
-
-
     private void ClearActiveToolClone()
     {
         if (_activeToolTr != null)
@@ -1189,19 +1189,6 @@ public class ChemElementSpawner : UdonSharpBehaviour
     private Transform FindToolTemplatesRoot()
     {
         if (_cachedToolTemplatesRoot != null) return _cachedToolTemplatesRoot;
-
-        // In this project, the 3D tool templates live under "Selectors/Tool" (used for the button models).
-        // Using GameObject.Find("Tool") alone can accidentally grab a wrong object if duplicates exist.
-        GameObject selectors = GameObject.Find("Selectors");
-        if (selectors != null)
-        {
-            Transform t = FindByNameAnywhere(selectors.transform, "Tool");
-            if (t != null)
-            {
-                _cachedToolTemplatesRoot = t;
-                return _cachedToolTemplatesRoot;
-            }
-        }
 
         GameObject g = GameObject.Find("Tool");
         if (g == null) g = GameObject.Find("Tools");
@@ -2395,5 +2382,361 @@ _placedToolTopTr.position = _placedToolOrigPos;
     {
         return (v < 0) ? -v : v;
     }
+
+
+
+// =====================================================
+// Multi-instance spawning (Udon-safe, no Shader.Find, no FindObjectsOfType, no try/catch)
+// =====================================================
+
+private Transform ResolveExperimentTableRoot()
+{
+    if (experimentTableRoot != null) return experimentTableRoot;
+    GameObject g = GameObject.Find("ExperimentTable");
+    if (g != null) experimentTableRoot = g.transform;
+    return experimentTableRoot;
+}
+
+private Transform ResolveRuntimeSpawnParent()
+{
+    if (runtimeSpawnParent != null) return runtimeSpawnParent;
+    Transform t = ResolveExperimentTableRoot();
+    if (t != null) return t;
+    return null;
+}
+
+private Vector3 GetRandomSpawnPosition()
+{
+    Transform centerTr = ResolveExperimentTableRoot();
+    Vector3 center = (centerTr != null) ? centerTr.position : (containerTransform != null ? containerTransform.position : transform.position);
+
+    Vector3 pos = center;
+    for (int i = 0; i < spawnRetryCount; i++)
+    {
+        Vector2 r = Random.insideUnitCircle * spawnRadiusMeters;
+        pos = new Vector3(center.x + r.x, center.y + spawnYOffset, center.z + r.y);
+
+        if ((_lastSpawnPos - pos).sqrMagnitude >= (spawnMinSeparation * spawnMinSeparation))
+        {
+            _lastSpawnPos = pos;
+            return pos;
+        }
+    }
+
+    // fallback (even if close)
+    _lastSpawnPos = pos;
+    return pos;
+}
+
+private string NormalizeIdRuntime(string s)
+{
+    if (string.IsNullOrEmpty(s)) return "";
+    s = s.Trim().ToUpperInvariant();
+    s = s.Replace(" ", "").Replace("_", "").Replace("-", "");
+    return s;
+}
+
+private string StripUnitySuffixRuntime(string s)
+{
+    if (string.IsNullOrEmpty(s)) return "";
+    s = s.Trim();
+    int p = s.LastIndexOf('(');
+    if (p > 0 && s.EndsWith(")"))
+    {
+        if (s[p - 1] == ' ')
+            s = s.Substring(0, p - 1).Trim();
+    }
+    return s;
+}
+
+private Transform FindTemplateUnder(Transform root, string toolIdNorm)
+{
+    if (root == null) return null;
+    Transform[] all = root.GetComponentsInChildren<Transform>(true);
+    if (all == null) return null;
+
+    for (int i = 0; i < all.Length; i++)
+    {
+        Transform t = all[i];
+        if (t == null || t == root) continue;
+        string n = NormalizeIdRuntime(StripUnitySuffixRuntime(t.name));
+        if (n == toolIdNorm) return t;
+
+        // common suffix variants
+        string n2 = NormalizeIdRuntime(StripUnitySuffixRuntime(t.name) + "_PICKUP");
+        if (n2 == toolIdNorm) return t;
+    }
+    return null;
+}
+
+private Transform FindToolTemplate(string toolId)
+{
+    string norm = NormalizeIdRuntime(toolId);
+    if (string.IsNullOrEmpty(norm)) return null;
+
+    Transform root = null;
+    if (runtimeToolSpawner != null && runtimeToolSpawner.toolTemplatesRoot != null)
+        root = runtimeToolSpawner.toolTemplatesRoot;
+
+    if (root == null)
+    {
+        GameObject g = GameObject.Find("Tool");
+        if (g == null) g = GameObject.Find("Tools");
+        if (g == null) g = GameObject.Find("ToolTemplates");
+        if (g != null) root = g.transform;
+    }
+
+    Transform tFound = FindTemplateUnder(root, norm);
+    if (tFound != null) return tFound;
+
+    // fallback: search toolModelsRoot if configured
+    if (toolModelsRoot != null)
+    {
+        Transform f2 = FindTemplateUnder(toolModelsRoot, norm);
+        if (f2 != null) return f2;
+    }
+
+    return null;
+}
+
+private bool IsWireMaterial(Material m)
+{
+    if (m == null) return false;
+    string n = m.name == null ? "" : m.name.ToUpperInvariant();
+    if (n.Contains("WIREFRAME") || n.Contains("WIREFRAMEFX")) return true;
+    Shader sh = m.shader;
+    if (sh != null)
+    {
+        string sn = sh.name == null ? "" : sh.name.ToUpperInvariant();
+        if (sn.Contains("WIREFRAME")) return true;
+    }
+    return false;
+}
+
+private bool IsGlassMaterial(Material m)
+{
+    if (m == null) return false;
+    string n = m.name == null ? "" : m.name.ToUpperInvariant();
+    if (n.Contains("GLASSMASTER") || (n.Contains("GLASS") && !n.Contains("WIREFRAME"))) return true;
+    Shader sh = m.shader;
+    if (sh != null)
+    {
+        string sn = sh.name == null ? "" : sh.name.ToUpperInvariant();
+        if (sn.Contains("GLASS")) return true;
+    }
+    return false;
+}
+
+private void CachePreviewMaterialsIfNeeded(Transform searchRoot)
+{
+    if (glassMasterMaterial != null && wireframeFxMaterial != null) return;
+    if (searchRoot == null) return;
+
+    Renderer[] rs = searchRoot.GetComponentsInChildren<Renderer>(true);
+    if (rs == null) return;
+
+    for (int i = 0; i < rs.Length; i++)
+    {
+        Renderer r = rs[i];
+        if (r == null) continue;
+        Material[] ms = r.sharedMaterials;
+        if (ms == null) continue;
+
+        for (int j = 0; j < ms.Length; j++)
+        {
+            Material m = ms[j];
+            if (m == null) continue;
+
+            if (glassMasterMaterial == null && IsGlassMaterial(m)) glassMasterMaterial = m;
+            if (wireframeFxMaterial == null && IsWireMaterial(m)) wireframeFxMaterial = m;
+
+            if (glassMasterMaterial != null && wireframeFxMaterial != null) return;
+        }
+    }
+}
+
+private void ApplyToolMaterialMode(GameObject toolGo, bool elementMode)
+{
+    if (toolGo == null) return;
+
+    // Ensure we have materials cached (search templates root first, then the tool itself)
+    Transform root = null;
+    if (runtimeToolSpawner != null && runtimeToolSpawner.toolTemplatesRoot != null) root = runtimeToolSpawner.toolTemplatesRoot;
+    if (root == null && toolModelsRoot != null) root = toolModelsRoot;
+    CachePreviewMaterialsIfNeeded(root);
+    CachePreviewMaterialsIfNeeded(toolGo.transform);
+
+    Renderer[] rs = toolGo.GetComponentsInChildren<Renderer>(true);
+    if (rs == null) return;
+
+    for (int i = 0; i < rs.Length; i++)
+    {
+        Renderer r = rs[i];
+        if (r == null) continue;
+
+        Material[] ms = r.sharedMaterials;
+        if (ms == null || ms.Length == 0) continue;
+
+        bool changed = false;
+        for (int j = 0; j < ms.Length; j++)
+        {
+            Material m = ms[j];
+            if (elementMode)
+            {
+                if (IsWireMaterial(m) && glassMasterMaterial != null)
+                {
+                    ms[j] = glassMasterMaterial;
+                    changed = true;
+                }
+            }
+            else
+            {
+                if (IsGlassMaterial(m) && wireframeFxMaterial != null)
+                {
+                    ms[j] = wireframeFxMaterial;
+                    changed = true;
+                }
+            }
+        }
+
+        if (changed)
+        {
+            r.sharedMaterials = ms;
+        }
+    }
+}
+
+private Transform FindChildByNameRuntime(Transform root, string childName)
+{
+    if (root == null || string.IsNullOrEmpty(childName)) return null;
+    Transform[] all = root.GetComponentsInChildren<Transform>(true);
+    if (all == null) return null;
+    for (int i = 0; i < all.Length; i++)
+    {
+        Transform t = all[i];
+        if (t == null) continue;
+        if (t.name == childName) return t;
+    }
+    return null;
+}
+
+private GameObject ResolveReactionVfxTemplate()
+{
+    if (reactionVfxTemplate != null) return reactionVfxTemplate;
+
+    Transform table = ResolveExperimentTableRoot();
+    if (table == null) return null;
+
+    Transform effects = FindChildByNameRuntime(table, "Effects");
+    if (effects == null) effects = table;
+
+    Transform vfx = FindChildByNameRuntime(effects, "ReactionVFX");
+    if (vfx != null)
+    {
+        reactionVfxTemplate = vfx.gameObject;
+        // keep template hidden to avoid double visuals
+        if (reactionVfxTemplate.activeSelf) reactionVfxTemplate.SetActive(false);
+    }
+    return reactionVfxTemplate;
+}
+
+private void AttachReactionVfxClone(GameObject toolGo)
+{
+    if (toolGo == null) return;
+
+    GameObject tpl = ResolveReactionVfxTemplate();
+    if (tpl == null) return;
+
+    GameObject vfxGo = VRCInstantiate(tpl);
+    if (vfxGo == null) return;
+
+    Transform anchor = FindChildByNameRuntime(toolGo.transform, reactionVfxAnchorName);
+    if (anchor == null) anchor = toolGo.transform;
+
+    vfxGo.transform.SetParent(anchor, false);
+    vfxGo.transform.localPosition = Vector3.zero;
+    vfxGo.transform.localRotation = Quaternion.identity;
+    vfxGo.transform.localScale = Vector3.one;
+
+    if (!vfxGo.activeSelf) vfxGo.SetActive(true);
+
+    // If the spawner has a reactionAnimator reference, point it to this instance (per-tool)
+    ChemReactionAnimator anim = vfxGo.GetComponent<ChemReactionAnimator>();
+    if (anim != null)
+    {
+        reactionAnimator = anim;
+    }
+}
+
+private void AttachElementVisualClone(GameObject toolGo, string elementSymbol)
+{
+    if (toolGo == null) return;
+    if (sampleVisual == null) return;
+    if (elementDb == null) return;
+
+    GameObject visGo = VRCInstantiate(sampleVisual.gameObject);
+    if (visGo == null) return;
+
+    Transform anchor = FindChildByNameRuntime(toolGo.transform, elementEffectAnchorName);
+    if (anchor == null) anchor = toolGo.transform;
+
+    visGo.transform.SetParent(anchor, false);
+    visGo.transform.localPosition = elementEffectLocalOffset;
+    visGo.transform.localRotation = Quaternion.identity;
+    visGo.transform.localScale = elementEffectLocalScale;
+
+    if (!visGo.activeSelf) visGo.SetActive(true);
+
+    // UdonSharpでは user-defined type に対する typeof() が使用できないため、ジェネリック版を使用
+    ChemVisualController vc = visGo.GetComponent<ChemVisualController>();
+    if (vc != null)
+    {
+        vc.EnsureInitialized();
+        vc.NotifyElementSelected(elementSymbol);
+        vc.ApplyElementBySymbol(elementDb, elementSymbol, _syncedTempC);
+    }
+}
+
+private GameObject SpawnToolInstance(string toolId, bool toolButtonMode)
+{
+    Transform template = FindToolTemplate(toolId);
+    if (template == null) return null;
+
+    GameObject go = VRCInstantiate(template.gameObject);
+    if (go == null) return null;
+
+    _runtimeSpawnSerial++;
+    go.name = template.name + "_RUNTIME_" + _runtimeSpawnSerial;
+
+    Transform parent = ResolveRuntimeSpawnParent();
+    if (parent != null) go.transform.SetParent(parent, true);
+
+    go.transform.position = GetRandomSpawnPosition();
+    go.transform.rotation = (parent != null) ? parent.rotation : Quaternion.identity;
+
+    if (!go.activeSelf) go.SetActive(true);
+
+    // tool button => wireframe mode; element mode handled elsewhere
+    ApplyToolMaterialMode(go, false);
+
+    // Attach per-tool reaction VFX clone
+    AttachReactionVfxClone(go);
+
+    return go;
+}
+
+private void SpawnElementContainerInstance(string elementSymbol)
+{
+    // Spawn a new container (conical flask) and apply element visuals into it.
+    GameObject go = SpawnToolInstance(elementContainerToolId, false);
+    if (go == null) return;
+
+    // Element button => Glass + element visual ON
+    ApplyToolMaterialMode(go, true);
+    AttachElementVisualClone(go, elementSymbol);
+
+    // Also point current selection for experiment start (optional)
+    _syncedTool = elementContainerToolId;
+}
 
 }
