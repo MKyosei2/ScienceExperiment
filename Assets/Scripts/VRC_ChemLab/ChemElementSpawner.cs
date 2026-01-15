@@ -980,6 +980,12 @@ if (spawnNewInstancePerPress)
             ai.sessionSeedOverride = _syncedSeed;
             ai.StartSession(_syncedInput, _syncedTool);
 
+            // Force the AI visual preset to match the synced 'truth' (predictor result)
+            ai.predictedProductFormula = _syncedProductFormula;
+            ai.predictedReactionTag = _syncedReactionTag;
+            ai.EvaluateAtProgress(_syncedProgress01);
+
+
             // spectatorは外部progressで追従させる
             if (!IsOperatorLocal())
             {
@@ -1190,18 +1196,55 @@ if (spawnNewInstancePerPress)
     {
         if (_cachedToolTemplatesRoot != null) return _cachedToolTemplatesRoot;
 
+        // 1) Scene-level names (but NEVER pick UI Canvas objects named "Tool")
         GameObject g = GameObject.Find("Tool");
-        if (g == null) g = GameObject.Find("Tools");
-        if (g == null) g = GameObject.Find("ToolTemplates");
-        if (g == null) g = GameObject.Find("Tool Templates");
+        if (g != null && IsLikelyUIRoot(g.transform)) g = null;
+
+        if (g == null)
+        {
+            g = GameObject.Find("Tools");
+            if (g != null && IsLikelyUIRoot(g.transform)) g = null;
+        }
+
+        if (g == null)
+        {
+            g = GameObject.Find("ToolTemplates");
+            if (g != null && IsLikelyUIRoot(g.transform)) g = null;
+        }
+
+        if (g == null)
+        {
+            g = GameObject.Find("Tool Templates");
+            if (g != null && IsLikelyUIRoot(g.transform)) g = null;
+        }
+
         if (g != null)
         {
             _cachedToolTemplatesRoot = g.transform;
             return _cachedToolTemplatesRoot;
         }
 
-        // last resort: use toolModelsRoot if present
-        if (toolModelsRoot != null)
+        // 2) Under ExperimentTable (common layout)
+        Transform et = ResolveExperimentTableRoot();
+        if (et != null)
+        {
+            Transform[] all = et.GetComponentsInChildren<Transform>(true);
+            if (all != null)
+            {
+                for (int i = 0; i < all.Length; i++)
+                {
+                    Transform t = all[i];
+                    if (t == null) continue;
+                    if (t.name != "Tool" && t.name != "Tools" && t.name != "ToolTemplates" && t.name != "Tool Templates") continue;
+                    if (IsLikelyUIRoot(t)) continue;
+                    _cachedToolTemplatesRoot = t;
+                    return _cachedToolTemplatesRoot;
+                }
+            }
+        }
+
+        // 3) last resort: use toolModelsRoot if present (3D side)
+        if (toolModelsRoot != null && !IsLikelyUIRoot(toolModelsRoot))
         {
             _cachedToolTemplatesRoot = toolModelsRoot;
             return _cachedToolTemplatesRoot;
@@ -2414,7 +2457,19 @@ private Vector3 GetRandomSpawnPosition()
     for (int i = 0; i < spawnRetryCount; i++)
     {
         Vector2 r = Random.insideUnitCircle * spawnRadiusMeters;
-        pos = new Vector3(center.x + r.x, center.y + spawnYOffset, center.z + r.y);
+        pos = new Vector3(center.x + r.x, center.y + 0.8f, center.z + r.y);
+
+        // Raycast down to find a stable surface (table / floor)
+        RaycastHit hit;
+        if (Physics.Raycast(pos, Vector3.down, out hit, 3.0f))
+        {
+            pos.y = hit.point.y + Mathf.Max(0.02f, spawnYOffset);
+        }
+        else
+        {
+            // fallback: keep it slightly above center
+            pos.y = center.y + 0.25f + spawnYOffset;
+        }
 
         if ((_lastSpawnPos - pos).sqrMagnitude >= (spawnMinSeparation * spawnMinSeparation))
         {
@@ -2566,6 +2621,9 @@ private void ApplyToolMaterialMode(GameObject toolGo, bool elementMode)
     CachePreviewMaterialsIfNeeded(root);
     CachePreviewMaterialsIfNeeded(toolGo.transform);
 
+    Material target = elementMode ? glassMasterMaterial : wireframeFxMaterial;
+    if (target == null) return;
+
     Renderer[] rs = toolGo.GetComponentsInChildren<Renderer>(true);
     if (rs == null) return;
 
@@ -2574,35 +2632,16 @@ private void ApplyToolMaterialMode(GameObject toolGo, bool elementMode)
         Renderer r = rs[i];
         if (r == null) continue;
 
+        // Don't overwrite particle materials (VFX are handled separately)
+        if (r.GetComponent<ParticleSystemRenderer>() != null) continue;
+
         Material[] ms = r.sharedMaterials;
         if (ms == null || ms.Length == 0) continue;
 
-        bool changed = false;
         for (int j = 0; j < ms.Length; j++)
-        {
-            Material m = ms[j];
-            if (elementMode)
-            {
-                if (IsWireMaterial(m) && glassMasterMaterial != null)
-                {
-                    ms[j] = glassMasterMaterial;
-                    changed = true;
-                }
-            }
-            else
-            {
-                if (IsGlassMaterial(m) && wireframeFxMaterial != null)
-                {
-                    ms[j] = wireframeFxMaterial;
-                    changed = true;
-                }
-            }
-        }
+            ms[j] = target;
 
-        if (changed)
-        {
-            r.sharedMaterials = ms;
-        }
+        r.sharedMaterials = ms;
     }
 }
 
@@ -2674,6 +2713,13 @@ private void AttachElementVisualClone(GameObject toolGo, string elementSymbol)
     if (sampleVisual == null) return;
     if (elementDb == null) return;
 
+    // Hide the template visual so it doesn't remain floating somewhere in the scene
+    if (!_templateSampleHidden)
+    {
+        sampleVisual.gameObject.SetActive(false);
+        _templateSampleHidden = true;
+    }
+
     GameObject visGo = VRCInstantiate(sampleVisual.gameObject);
     if (visGo == null) return;
 
@@ -2687,7 +2733,11 @@ private void AttachElementVisualClone(GameObject toolGo, string elementSymbol)
 
     if (!visGo.activeSelf) visGo.SetActive(true);
 
-    // UdonSharpでは user-defined type に対する typeof() が使用できないため、ジェネリック版を使用
+    // Ensure renderers/particles are visible
+    EnableAllRenderers(visGo);
+    PlayAllParticles(visGo, true);
+    if (forceVisibleOnSelect) ForceVisibleHierarchy(visGo.transform);
+
     ChemVisualController vc = visGo.GetComponent<ChemVisualController>();
     if (vc != null)
     {
@@ -2711,8 +2761,23 @@ private GameObject SpawnToolInstance(string toolId, bool toolButtonMode)
     Transform parent = ResolveRuntimeSpawnParent();
     if (parent != null) go.transform.SetParent(parent, true);
 
+    // Place it on top of the table/floor via raycast (prevents sinking / weird intersections)
     go.transform.position = GetRandomSpawnPosition();
-    go.transform.rotation = (parent != null) ? parent.rotation : Quaternion.identity;
+
+    // Preserve template world rotation (do NOT overwrite with parent rotation)
+    go.transform.rotation = template.rotation;
+
+    // Preserve template world scale under parent (prevents "shape broken" when parent scale != 1)
+    if (parent != null)
+    {
+        Vector3 tScale = template.lossyScale;
+        Vector3 pScale = parent.lossyScale;
+        Vector3 local = go.transform.localScale;
+        local.x = (pScale.x != 0f) ? (tScale.x / pScale.x) : local.x;
+        local.y = (pScale.y != 0f) ? (tScale.y / pScale.y) : local.y;
+        local.z = (pScale.z != 0f) ? (tScale.z / pScale.z) : local.z;
+        go.transform.localScale = local;
+    }
 
     if (!go.activeSelf) go.SetActive(true);
 

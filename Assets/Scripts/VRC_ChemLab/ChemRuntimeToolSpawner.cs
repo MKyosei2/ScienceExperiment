@@ -68,26 +68,38 @@ public class ChemRuntimeToolSpawner : UdonSharpBehaviour
             }
             _spawned = null;
             _spawnedId = null;
-        }
-
-        // find template under hierarchy root
+        }        // find template under hierarchy root (UI-safe)
         Transform templateTr = FindTemplateTransform(norm);
         if (templateTr == null)
         {
-            // NOTE: toolIdNorm is scoped inside FindTemplateTransform; log the normalized id here.
             Debug.LogWarning("[ChemRuntimeToolSpawner] Tool template not found for id: " + toolId + " (norm=" + norm + ")");
             return null;
         }
 
-        if (hideTemplateRenderers) DisableAllRenderers(templateTr);
-        if (deactivateTemplateObject) templateTr.gameObject.SetActive(false);
-
+        // Instantiate FIRST (so we don't copy disabled renderers into the clone)
         GameObject go = VRCInstantiate(templateTr.gameObject);
         if (go == null) return null;
 
+        // Optionally hide/deactivate the template AFTER cloning
+        if (hideTemplateRenderers) DisableAllRenderers(templateTr);
+        if (deactivateTemplateObject) templateTr.gameObject.SetActive(false);
+
+        // Parent + placement
         go.transform.SetParent(parent, true);
         go.transform.position = parent.position + worldOffset;
-        go.transform.rotation = parent.rotation;
+
+        // Preserve template world-scale under parent (prevents "shape broken" when parent scale != 1)
+        Vector3 tScale = templateTr.lossyScale;
+        Vector3 pScale = parent.lossyScale;
+        Vector3 local = go.transform.localScale;
+        local.x = (pScale.x != 0f) ? (tScale.x / pScale.x) : local.x;
+        local.y = (pScale.y != 0f) ? (tScale.y / pScale.y) : local.y;
+        local.z = (pScale.z != 0f) ? (tScale.z / pScale.z) : local.z;
+        go.transform.localScale = local;
+
+        // Ensure clone is visible
+        EnableAllRenderers(go.transform);
+
         if (!go.activeSelf) go.SetActive(true);
 
         _spawned = go;
@@ -103,13 +115,25 @@ public class ChemRuntimeToolSpawner : UdonSharpBehaviour
     {
         Transform root = toolTemplatesRoot;
 
-        // Auto-resolve root if not set (prefer "Tool" / "Tools" / "ToolTemplates")
+        // Auto-resolve root if not set (UI-safe: never pick Canvas/RectTransform)
         if (root == null)
         {
-            GameObject g = GameObject.Find("Tool");
-            if (g == null) g = GameObject.Find("Tools");
-            if (g == null) g = GameObject.Find("ToolTemplates");
-            if (g != null) root = g.transform;
+            // 1) Direct names (scene-level)
+            root = ResolveNonUIRootByName("Tool");
+            if (root == null) root = ResolveNonUIRootByName("Tools");
+            if (root == null) root = ResolveNonUIRootByName("ToolTemplates");
+
+            // 2) Under ExperimentTable (common layout)
+            if (root == null)
+            {
+                GameObject et = GameObject.Find("ExperimentTable");
+                if (et != null)
+                {
+                    root = FindNonUIChildByExactName(et.transform, "Tool");
+                    if (root == null) root = FindNonUIChildByExactName(et.transform, "Tools");
+                    if (root == null) root = FindNonUIChildByExactName(et.transform, "ToolTemplates");
+                }
+            }
         }
 
         if (root == null) return null;
@@ -159,6 +183,67 @@ public class ChemRuntimeToolSpawner : UdonSharpBehaviour
             if (rs[i] == null) continue;
             rs[i].enabled = false;
         }
+    }
+
+    private void EnableAllRenderers(Transform tr)
+    {
+        if (tr == null) return;
+        Renderer[] rs = tr.GetComponentsInChildren<Renderer>(true);
+        if (rs == null) return;
+        for (int i = 0; i < rs.Length; i++)
+        {
+            if (rs[i] == null) continue;
+            rs[i].enabled = true;
+        }
+    }
+
+    private bool IsLikelyUIRoot(Transform tr)
+    {
+        if (tr == null) return false;
+        if (tr.GetComponent<RectTransform>() != null) return true;
+        if (tr.GetComponent<Canvas>() != null) return true;
+        string n = tr.name;
+        if (string.IsNullOrEmpty(n)) return false;
+        n = n.ToUpper();
+        if (n.Contains("CANVAS") || n.Contains("UI") || n.Contains("PANEL") || n.Contains("BUTTON")) return true;
+        return false;
+    }
+
+    private bool HasAnyRenderer(Transform tr)
+    {
+        if (tr == null) return false;
+        Renderer r = tr.GetComponent<Renderer>();
+        if (r != null) return true;
+        Renderer[] rs = tr.GetComponentsInChildren<Renderer>(true);
+        return rs != null && rs.Length > 0;
+    }
+
+    private Transform ResolveNonUIRootByName(string name)
+    {
+        if (string.IsNullOrEmpty(name)) return null;
+        GameObject g = GameObject.Find(name);
+        if (g == null) return null;
+        Transform t = g.transform;
+        if (IsLikelyUIRoot(t)) return null;
+        if (!HasAnyRenderer(t)) return null;
+        return t;
+    }
+
+    private Transform FindNonUIChildByExactName(Transform root, string exactName)
+    {
+        if (root == null || string.IsNullOrEmpty(exactName)) return null;
+        Transform[] all = root.GetComponentsInChildren<Transform>(true);
+        if (all == null) return null;
+        for (int i = 0; i < all.Length; i++)
+        {
+            Transform t = all[i];
+            if (t == null) continue;
+            if (t.name != exactName) continue;
+            if (IsLikelyUIRoot(t)) continue;
+            if (!HasAnyRenderer(t)) continue;
+            return t;
+        }
+        return null;
     }
 
     private string StripUnitySuffix(string s)

@@ -42,7 +42,7 @@ public class ReactionPredictor : UdonSharpBehaviour
 
         // Presentation special-case: Hydrogen + Chlorine (light) -> HCl
         string inNorm = input.ToUpperInvariant().Replace(" ", "").Replace("_", "").Replace("-", "");
-        if ((inNorm.Contains("H2") && inNorm.Contains("CL2")) || inNorm.Contains("H2+CL2") || inNorm.Contains("CL2+H2") || (inNorm.Contains("H") && inNorm.Contains("CL")))
+        if ((inNorm.Contains("H2") && inNorm.Contains("CL2")) || inNorm.Contains("H2+CL2") || inNorm.Contains("CL2+H2"))
         {
             productFormula = NormalizeIfKnown("HCl");
             reactionTag = "photo_explosion";
