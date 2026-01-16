@@ -37,6 +37,47 @@ public class ChemRuntimeToolSpawner : UdonSharpBehaviour
     private GameObject _spawned;
     private string _spawnedId;
 
+    // =====================================================
+    // Multi-instance API (used by ChemElementSpawner)
+    // =====================================================
+    /// <summary>
+    /// Always instantiates a NEW tool instance (does NOT replace/destroy previous ones).
+    /// Prefab mode is preferred when toolPrefabs are assigned.
+    /// </summary>
+    public GameObject InstantiateTool(string toolId)
+    {
+        string norm = NormalizeId(toolId);
+        if (string.IsNullOrEmpty(norm)) return null;
+
+        // Treat prefab mode as enabled when prefabs exist, even if the inspector bool is stale.
+        bool usePrefab = (toolPrefabs != null && toolPrefabs.Length > 0);
+
+        // 1) Prefab mode
+        if (usePrefab)
+        {
+            GameObject prefab = GetPrefabById(norm);
+            if (prefab != null)
+            {
+                GameObject go = VRCInstantiate(prefab);
+                if (go != null)
+                {
+                    EnsureCloneVisible(go.transform);
+                    if (!go.activeSelf) go.SetActive(true);
+                    return go;
+                }
+            }
+        }
+
+        // 2) Template mode
+        Transform templateTr = FindTemplateTransform(norm);
+        if (templateTr == null) return null;
+        GameObject clone = VRCInstantiate(templateTr.gameObject);
+        if (clone == null) return null;
+        EnsureCloneVisible(clone.transform);
+        if (!clone.activeSelf) clone.SetActive(true);
+        return clone;
+    }
+
     /// <summary>
     /// toolId と同名のテンプレ( toolTemplatesRoot 配下 )を複製して parent に配置する。
     /// </summary>
@@ -272,5 +313,54 @@ public class ChemRuntimeToolSpawner : UdonSharpBehaviour
         s = s.Replace("_", "");
         s = s.Replace("-", "");
         return s.ToUpper();
+    }
+
+    // =====================================================
+    // Prefab helpers (Udon-safe)
+    // =====================================================
+    private GameObject GetPrefabById(string toolIdNorm)
+    {
+        if (toolPrefabs == null || toolPrefabs.Length == 0) return null;
+
+        // If toolIds is available, use it.
+        if (toolIds != null && toolIds.Length == toolPrefabs.Length)
+        {
+            int n = toolIds.Length;
+            for (int i = 0; i < n; i++)
+            {
+                string id = toolIds[i];
+                if (string.IsNullOrEmpty(id)) continue;
+                if (NormalizeId(id) == toolIdNorm)
+                    return toolPrefabs[i];
+            }
+        }
+
+        // Fallback: match prefab.name
+        int m = toolPrefabs.Length;
+        for (int i = 0; i < m; i++)
+        {
+            GameObject p = toolPrefabs[i];
+            if (p == null) continue;
+            if (NormalizeId(p.name) == toolIdNorm) return p;
+        }
+        return null;
+    }
+
+    private void EnsureCloneVisible(Transform root)
+    {
+        if (root == null) return;
+        // Make sure renderers are enabled (some prefabs ship disabled)
+        EnableAllRenderers(root);
+
+        // Make sure colliders are enabled too
+        Collider[] cs = root.GetComponentsInChildren<Collider>(true);
+        if (cs != null)
+        {
+            for (int i = 0; i < cs.Length; i++)
+            {
+                if (cs[i] == null) continue;
+                cs[i].enabled = true;
+            }
+        }
     }
 }

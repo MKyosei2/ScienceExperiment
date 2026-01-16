@@ -140,7 +140,7 @@ public class ChemVisualController : UdonSharpBehaviour
 
         if (targetRenderers == null || targetRenderers.Length == 0)
         {
-            targetRenderers = GetComponentsInChildren<Renderer>(true);
+            targetRenderers = GetComponentsInChildren<Renderer>();
         }
 
         // ProductToken auto find
@@ -154,7 +154,7 @@ public class ChemVisualController : UdonSharpBehaviour
         {
             if (productTokenRenderers == null || productTokenRenderers.Length == 0)
             {
-                productTokenRenderers = productTokenObj.GetComponentsInChildren<Renderer>(true);
+                productTokenRenderers = productTokenObj.GetComponentsInChildren<Renderer>();
             }
             productTokenObj.SetActive(false);
             _tokenActive = false;

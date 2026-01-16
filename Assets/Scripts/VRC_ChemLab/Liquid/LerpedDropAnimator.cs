@@ -32,7 +32,7 @@ public class LerpedDropAnimator : UdonSharpBehaviour
         if (tokenRenderers == null || tokenRenderers.Length == 0)
         {
             if (tokenObject != null)
-                tokenRenderers = tokenObject.GetComponentsInChildren<Renderer>(true);
+                tokenRenderers = tokenObject.GetComponentsInChildren<Renderer>();
         }
     }
 

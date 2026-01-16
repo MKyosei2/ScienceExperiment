@@ -436,11 +436,10 @@ RequestSerialization();
 
 AppendHistory("SelectElement: " + _localInput);
 
-// Spawn a NEW conical flask with this element every press (no limits).
-if (spawnNewInstancePerPress)
-{
-    SpawnElementContainerInstance(_localInput);
-}
+// Always spawn a NEW container instance every press.
+// NOTE: Unity serialization sets newly-added bool fields on existing components to
+// their type default (false). We cannot rely on inspector state here.
+SpawnElementContainerInstance(_localInput);
 
 // Keep UI/state updates for experiment controls
 if (sampleVisual != null)
@@ -465,11 +464,8 @@ RequestSerialization();
 AppendHistory("SelectEquipment: " + _localTool);
 WriteUI();
 
-// Spawn a NEW tool instance every press (no limits).
-if (spawnNewInstancePerPress)
-{
-    SpawnToolInstance(_localTool, true);
-}
+// Always spawn a NEW tool instance every press.
+SpawnToolInstance(_localTool, true);
     }
 
     /// <summary>
@@ -2749,14 +2745,37 @@ private void AttachElementVisualClone(GameObject toolGo, string elementSymbol)
 
 private GameObject SpawnToolInstance(string toolId, bool toolButtonMode)
 {
-    Transform template = FindToolTemplate(toolId);
-    if (template == null) return null;
+    // Prefer prefab spawning via runtimeToolSpawner when available.
+    Transform template = null;
+    GameObject go = null;
 
-    GameObject go = VRCInstantiate(template.gameObject);
-    if (go == null) return null;
+    if (runtimeToolSpawner != null)
+    {
+        // InstantiateTool spawns a NEW instance and does not replace previous ones.
+        go = runtimeToolSpawner.InstantiateTool(toolId);
+    }
+
+    // Fallback: clone from hierarchy templates under toolModelsRoot / ToolTemplates
+    if (go == null)
+    {
+        template = FindToolTemplate(toolId);
+        if (template == null)
+        {
+            Debug.LogWarning("[ChemElementSpawner] SpawnToolInstance failed. Tool template/prefab not found: " + toolId);
+            return null;
+        }
+        go = VRCInstantiate(template.gameObject);
+    }
+
+    if (go == null)
+    {
+        Debug.LogWarning("[ChemElementSpawner] SpawnToolInstance failed. VRCInstantiate returned null for: " + toolId);
+        return null;
+    }
 
     _runtimeSpawnSerial++;
-    go.name = template.name + "_RUNTIME_" + _runtimeSpawnSerial;
+    string baseName = (template != null) ? template.name : toolId;
+    go.name = baseName + "_RUNTIME_" + _runtimeSpawnSerial;
 
     Transform parent = ResolveRuntimeSpawnParent();
     if (parent != null) go.transform.SetParent(parent, true);
@@ -2764,11 +2783,16 @@ private GameObject SpawnToolInstance(string toolId, bool toolButtonMode)
     // Place it on top of the table/floor via raycast (prevents sinking / weird intersections)
     go.transform.position = GetRandomSpawnPosition();
 
-    // Preserve template world rotation (do NOT overwrite with parent rotation)
-    go.transform.rotation = template.rotation;
+    // Preserve template world rotation when cloning from a scene template.
+    if (template != null)
+    {
+        // do NOT overwrite with parent rotation
+        go.transform.rotation = template.rotation;
+    }
 
     // Preserve template world scale under parent (prevents "shape broken" when parent scale != 1)
-    if (parent != null)
+    // Template mode only (prefabs have no scene lossyScale reference).
+    if (parent != null && template != null)
     {
         Vector3 tScale = template.lossyScale;
         Vector3 pScale = parent.lossyScale;
@@ -2792,8 +2816,14 @@ private GameObject SpawnToolInstance(string toolId, bool toolButtonMode)
 
 private void SpawnElementContainerInstance(string elementSymbol)
 {
-    // Spawn a new container (conical flask) and apply element visuals into it.
-    GameObject go = SpawnToolInstance(elementContainerToolId, false);
+    // Spawn a new container (conical flask by default) and apply element visuals into it.
+    // elementContainerToolId is a newly-added field in this branch and may be empty on existing scenes,
+    // so fall back to the already-existing autoBeakerToolId / CONICAL_FLASK.
+    string containerId = elementContainerToolId;
+    if (string.IsNullOrEmpty(containerId)) containerId = autoBeakerToolId;
+    if (string.IsNullOrEmpty(containerId)) containerId = "CONICAL_FLASK";
+
+    GameObject go = SpawnToolInstance(containerId, false);
     if (go == null) return;
 
     // Element button => Glass + element visual ON
@@ -2801,7 +2831,7 @@ private void SpawnElementContainerInstance(string elementSymbol)
     AttachElementVisualClone(go, elementSymbol);
 
     // Also point current selection for experiment start (optional)
-    _syncedTool = elementContainerToolId;
+    _syncedTool = containerId;
 }
 
 }

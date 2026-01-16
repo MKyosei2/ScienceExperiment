@@ -148,7 +148,7 @@ namespace VRC_ChemLab
 
             if (forceLayerRecursively)
             {
-                Transform[] trs = root.GetComponentsInChildren<Transform>(true);
+                Transform[] trs = root.GetComponentsInChildren<Transform>();
                 for (int i = 0; i < trs.Length; i++)
                 {
                     Transform t = trs[i];
@@ -163,7 +163,7 @@ namespace VRC_ChemLab
 
             if (forceRenderersEnabled)
             {
-                Renderer[] rs = root.GetComponentsInChildren<Renderer>(true);
+                Renderer[] rs = root.GetComponentsInChildren<Renderer>();
                 for (int i = 0; i < rs.Length; i++)
                 {
                     Renderer r = rs[i];
@@ -174,7 +174,7 @@ namespace VRC_ChemLab
 
             if (forceParticlesPlay)
             {
-                ParticleSystem[] ps = root.GetComponentsInChildren<ParticleSystem>(true);
+                ParticleSystem[] ps = root.GetComponentsInChildren<ParticleSystem>();
                 for (int i = 0; i < ps.Length; i++)
                 {
                     ParticleSystem p = ps[i];
