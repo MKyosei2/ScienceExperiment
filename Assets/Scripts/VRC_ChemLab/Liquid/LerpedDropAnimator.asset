@@ -12,12 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: LerpedDropAnimator
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: 5f7e333fe25635146a0a1bc538f073ff,
-    type: 2}
+  serializedUdonProgramAsset: {fileID: 0}
   udonAssembly: 
   assemblyError: 
-  sourceCsScript: {fileID: 11500000, guid: 09bb74b51bfb09347a324c0e61ea75ca, type: 3}
-  scriptVersion: 2
+  sourceCsScript: {fileID: 0}
+  scriptVersion: 0
   compiledVersion: 0
   behaviourSyncMode: 0
   hasInteractEvent: 0

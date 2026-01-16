@@ -1501,11 +1501,15 @@ _placedToolTopTr.position = _placedToolOrigPos;
 
         if (sampleVisual == null) return null;
 
-        // Hide the template so it doesn't remain floating somewhere else.
+        // Hide a *scene instance* template so it doesn't remain floating somewhere else.
+        // NOTE: sampleVisual is often a Prefab asset reference. In that case activeInHierarchy is false and
+        // we must NOT deactivate it (VRCInstantiate template must remain valid in VRChat).
         if (!_templateSampleHidden)
         {
-            // Udon does not support exceptions; keep it simple.
-            sampleVisual.gameObject.SetActive(false);
+            if (sampleVisual != null && sampleVisual.gameObject != null && sampleVisual.gameObject.activeInHierarchy)
+            {
+                sampleVisual.gameObject.SetActive(false);
+            }
             _templateSampleHidden = true;
         }
 
@@ -2436,50 +2440,69 @@ private Transform ResolveExperimentTableRoot()
     return experimentTableRoot;
 }
 
-private Transform ResolveRuntimeSpawnParent()
-{
-    if (runtimeSpawnParent != null) return runtimeSpawnParent;
-    Transform t = ResolveExperimentTableRoot();
-    if (t != null) return t;
-    return null;
-}
-
-private Vector3 GetRandomSpawnPosition()
-{
-    Transform centerTr = ResolveExperimentTableRoot();
-    Vector3 center = (centerTr != null) ? centerTr.position : (containerTransform != null ? containerTransform.position : transform.position);
-
-    Vector3 pos = center;
-    for (int i = 0; i < spawnRetryCount; i++)
+    private Transform ResolveRuntimeSpawnParent()
     {
-        Vector2 r = Random.insideUnitCircle * spawnRadiusMeters;
-        pos = new Vector3(center.x + r.x, center.y + 0.8f, center.z + r.y);
+        if (runtimeSpawnParent != null) return runtimeSpawnParent;
 
-        // Raycast down to find a stable surface (table / floor)
+        Transform t = ResolveExperimentTableRoot();
+        if (t != null) return t;
+
+        if (containerTransform != null) return containerTransform;
+
+        return transform;
+    }
+
+    private Vector3 GetRandomSpawnPosition()
+    {
+        // Prefer container zone (VR_StartZone) so spawns are always near the player/table.
+        Transform centerTr = (containerTransform != null) ? containerTransform : ResolveExperimentTableRoot();
+        Vector3 center = (centerTr != null) ? centerTr.position : transform.position;
+
+        // Deterministic golden-angle spiral (no Random dependency)
+        int idx = _runtimeSpawnSerial;
+        if (idx < 1) idx = 1;
+        float angle = idx * 2.3999632f; // radians
+        float r = 0.18f * Mathf.Sqrt(idx);
+        if (r > spawnRadiusMeters) r = spawnRadiusMeters;
+
+        float ox = Mathf.Cos(angle) * r;
+        float oz = Mathf.Sin(angle) * r;
+
+        Vector3 pos;
+        if (centerTr != null)
+            pos = center + centerTr.right * ox + centerTr.forward * oz;
+        else
+            pos = center + new Vector3(ox, 0f, oz);
+
+        // Start ray from above
+        Vector3 rayStart = pos + Vector3.up * 1.0f;
         RaycastHit hit;
-        if (Physics.Raycast(pos, Vector3.down, out hit, 3.0f))
+        if (Physics.Raycast(rayStart, Vector3.down, out hit, 3.0f))
         {
             pos.y = hit.point.y + Mathf.Max(0.02f, spawnYOffset);
         }
         else
         {
-            // fallback: keep it slightly above center
-            pos.y = center.y + 0.25f + spawnYOffset;
+            pos.y = center.y + 0.10f + spawnYOffset;
         }
 
-        if ((_lastSpawnPos - pos).sqrMagnitude >= (spawnMinSeparation * spawnMinSeparation))
+        // Ensure minimum separation from last spawn (push outward if needed)
+        float minSqr = spawnMinSeparation * spawnMinSeparation;
+        if ((_lastSpawnPos - pos).sqrMagnitude < minSqr)
         {
-            _lastSpawnPos = pos;
-            return pos;
+            Vector3 dir = pos - center;
+            dir.y = 0f;
+            if (dir.sqrMagnitude < 0.0001f)
+                dir = (centerTr != null) ? centerTr.right : Vector3.right;
+            dir.Normalize();
+            pos += dir * spawnMinSeparation;
         }
+
+        _lastSpawnPos = pos;
+        return pos;
     }
 
-    // fallback (even if close)
-    _lastSpawnPos = pos;
-    return pos;
-}
-
-private string NormalizeIdRuntime(string s)
+    private string NormalizeIdRuntime(string s)
 {
     if (string.IsNullOrEmpty(s)) return "";
     s = s.Trim().ToUpperInvariant();
@@ -2550,7 +2573,41 @@ private Transform FindToolTemplate(string toolId)
     return null;
 }
 
-private bool IsWireMaterial(Material m)
+    private GameObject ResolveToolPrefab(string toolId)
+    {
+        if (runtimeToolSpawner == null) return null;
+        GameObject[] prefabs = runtimeToolSpawner.toolPrefabs;
+        if (prefabs == null || prefabs.Length == 0) return null;
+
+        string norm = NormalizeIdRuntime(toolId);
+        if (string.IsNullOrEmpty(norm)) return null;
+
+        // Prefer explicit ids if provided
+        string[] ids = runtimeToolSpawner.toolIds;
+        if (ids != null && ids.Length == prefabs.Length)
+        {
+            int n = ids.Length;
+            for (int i = 0; i < n; i++)
+            {
+                string id = ids[i];
+                if (string.IsNullOrEmpty(id)) continue;
+                if (NormalizeIdRuntime(id) == norm) return prefabs[i];
+            }
+        }
+
+        // Fallback: match by prefab name
+        int m2 = prefabs.Length;
+        for (int i = 0; i < m2; i++)
+        {
+            GameObject p = prefabs[i];
+            if (p == null) continue;
+            if (NormalizeIdRuntime(p.name) == norm) return p;
+        }
+
+        return null;
+    }
+
+    private bool IsWireMaterial(Material m)
 {
     if (m == null) return false;
     string n = m.name == null ? "" : m.name.ToUpperInvariant();
@@ -2709,14 +2766,19 @@ private void AttachElementVisualClone(GameObject toolGo, string elementSymbol)
     if (sampleVisual == null) return;
     if (elementDb == null) return;
 
-    // Hide the template visual so it doesn't remain floating somewhere in the scene
-    if (!_templateSampleHidden)
-    {
-        sampleVisual.gameObject.SetActive(false);
-        _templateSampleHidden = true;
-    }
+        // Hide a *scene instance* template so it doesn't remain floating somewhere else.
+        // NOTE: sampleVisual is often a Prefab asset reference. In that case activeInHierarchy is false and
+        // we must NOT deactivate it (VRCInstantiate template must remain valid in VRChat).
+        if (!_templateSampleHidden)
+        {
+            if (sampleVisual != null && sampleVisual.gameObject != null && sampleVisual.gameObject.activeInHierarchy)
+            {
+                sampleVisual.gameObject.SetActive(false);
+            }
+            _templateSampleHidden = true;
+        }
 
-    GameObject visGo = VRCInstantiate(sampleVisual.gameObject);
+        GameObject visGo = VRCInstantiate(sampleVisual.gameObject);
     if (visGo == null) return;
 
     Transform anchor = FindChildByNameRuntime(toolGo.transform, elementEffectAnchorName);
@@ -2743,78 +2805,92 @@ private void AttachElementVisualClone(GameObject toolGo, string elementSymbol)
     }
 }
 
-private GameObject SpawnToolInstance(string toolId, bool toolButtonMode)
-{
-    // Prefer prefab spawning via runtimeToolSpawner when available.
-    Transform template = null;
-    GameObject go = null;
-
-    if (runtimeToolSpawner != null)
+    private GameObject SpawnToolInstance(string toolId, bool toolButtonMode)
     {
-        // InstantiateTool spawns a NEW instance and does not replace previous ones.
-        go = runtimeToolSpawner.InstantiateTool(toolId);
-    }
+        if (string.IsNullOrEmpty(toolId)) return null;
 
-    // Fallback: clone from hierarchy templates under toolModelsRoot / ToolTemplates
-    if (go == null)
-    {
-        template = FindToolTemplate(toolId);
-        if (template == null)
+        GameObject go = null;
+        GameObject prefab = null;
+        Transform template = null;
+
+        // 1) Prefer prefab spawning (most reliable in VRChat/Udon)
+        prefab = ResolveToolPrefab(toolId);
+        if (prefab != null)
         {
-            Debug.LogWarning("[ChemElementSpawner] SpawnToolInstance failed. Tool template/prefab not found: " + toolId);
+            go = VRCInstantiate(prefab);
+        }
+
+        // 2) Fallback: clone from hierarchy templates (Tool/ToolTemplates etc)
+        if (go == null)
+        {
+            template = FindToolTemplate(toolId);
+            if (template != null)
+                go = VRCInstantiate(template.gameObject);
+        }
+
+        if (go == null)
+        {
+            Debug.LogWarning("[ChemElementSpawner] SpawnToolInstance failed. toolId=" + toolId);
             return null;
         }
-        go = VRCInstantiate(template.gameObject);
+
+        // Name + serial
+        int serial = ++_runtimeSpawnSerial;
+        string baseName = (template != null) ? template.name : (prefab != null ? prefab.name : toolId);
+        go.name = baseName + "_RUNTIME_" + serial;
+
+        // Parent under runtime root if possible
+        Transform parent = ResolveRuntimeSpawnParent();
+        if (parent != null)
+            go.transform.SetParent(parent, true);
+
+        // Placement (deterministic near container)
+        go.transform.position = GetRandomSpawnPosition();
+
+        // Rotation: prefer template, else container
+        if (template != null)
+            go.transform.rotation = template.rotation;
+        else if (containerTransform != null)
+            go.transform.rotation = containerTransform.rotation;
+
+        // Preserve template world-scale under parent (prevents "shape broken" when parent scale != 1)
+        if (parent != null && template != null)
+        {
+            Vector3 tScale = template.lossyScale;
+            Vector3 pScale = parent.lossyScale;
+            Vector3 local = go.transform.localScale;
+            local.x = (pScale.x != 0f) ? (tScale.x / pScale.x) : local.x;
+            local.y = (pScale.y != 0f) ? (tScale.y / pScale.y) : local.y;
+            local.z = (pScale.z != 0f) ? (tScale.z / pScale.z) : local.z;
+            go.transform.localScale = local;
+        }
+
+        if (!go.activeSelf) go.SetActive(true);
+
+        // Tool button => wireframe. (Element spawn will apply Glass later.)
+        if (toolButtonMode)
+            ApplyToolMaterialMode(go, false);
+
+        // Attach per-tool ReactionVFX (optional template)
+        AttachReactionVfxClone(go);
+
+        // Ensure visible
+        EnableAllRenderers(go);
+        if (forceVisibleOnSelect) ForceVisibleHierarchy(go.transform);
+
+        // Safety: stop initial physics burst
+        Rigidbody rb = go.GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            rb.WakeUp();
+        }
+
+        return go;
     }
 
-    if (go == null)
-    {
-        Debug.LogWarning("[ChemElementSpawner] SpawnToolInstance failed. VRCInstantiate returned null for: " + toolId);
-        return null;
-    }
-
-    _runtimeSpawnSerial++;
-    string baseName = (template != null) ? template.name : toolId;
-    go.name = baseName + "_RUNTIME_" + _runtimeSpawnSerial;
-
-    Transform parent = ResolveRuntimeSpawnParent();
-    if (parent != null) go.transform.SetParent(parent, true);
-
-    // Place it on top of the table/floor via raycast (prevents sinking / weird intersections)
-    go.transform.position = GetRandomSpawnPosition();
-
-    // Preserve template world rotation when cloning from a scene template.
-    if (template != null)
-    {
-        // do NOT overwrite with parent rotation
-        go.transform.rotation = template.rotation;
-    }
-
-    // Preserve template world scale under parent (prevents "shape broken" when parent scale != 1)
-    // Template mode only (prefabs have no scene lossyScale reference).
-    if (parent != null && template != null)
-    {
-        Vector3 tScale = template.lossyScale;
-        Vector3 pScale = parent.lossyScale;
-        Vector3 local = go.transform.localScale;
-        local.x = (pScale.x != 0f) ? (tScale.x / pScale.x) : local.x;
-        local.y = (pScale.y != 0f) ? (tScale.y / pScale.y) : local.y;
-        local.z = (pScale.z != 0f) ? (tScale.z / pScale.z) : local.z;
-        go.transform.localScale = local;
-    }
-
-    if (!go.activeSelf) go.SetActive(true);
-
-    // tool button => wireframe mode; element mode handled elsewhere
-    ApplyToolMaterialMode(go, false);
-
-    // Attach per-tool reaction VFX clone
-    AttachReactionVfxClone(go);
-
-    return go;
-}
-
-private void SpawnElementContainerInstance(string elementSymbol)
+    private void SpawnElementContainerInstance(string elementSymbol)
 {
     // Spawn a new container (conical flask by default) and apply element visuals into it.
     // elementContainerToolId is a newly-added field in this branch and may be empty on existing scenes,
