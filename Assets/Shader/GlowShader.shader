@@ -7,7 +7,7 @@ Shader "ChemLab/GlowShader"
     }
     SubShader
     {
-        Tags { "RenderType"="Transparent" "Queue"="3001" }
+        Tags { "RenderType"="Transparent" "Queue"="Transparent+1" }
         Blend One One
         ZWrite Off
         Cull Back

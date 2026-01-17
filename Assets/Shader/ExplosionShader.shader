@@ -8,7 +8,7 @@ Shader "ChemLab/ExplosionShader"
 
     SubShader
     {
-        Tags { "RenderType"="Transparent" "Queue"="3002" }
+        Tags { "RenderType"="Transparent" "Queue"="Transparent+2" }
         Blend One One
         ZWrite Off
         Cull Off

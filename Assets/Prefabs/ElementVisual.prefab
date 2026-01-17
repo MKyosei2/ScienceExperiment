@@ -17,7 +17,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &6291823369044579239
 Transform:
   m_ObjectHideFlags: 0
@@ -140,10 +140,13 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 0}
-  solidObj: {fileID: 0}
-  liquidObj: {fileID: 0}
-  gasObj: {fileID: 0}
-  targetRenderers: []
+  solidObj: {fileID: 1065129724665592854}
+  liquidObj: {fileID: 3932610490891152208}
+  gasObj: {fileID: 4174975983623766821}
+  targetRenderers:
+  - {fileID: 4408520676876197979}
+  - {fileID: 9137033622971859501}
+  - {fileID: 6174070450157185099}
   propBaseColor: _BaseColor
   propColorFallback: _Color
   propOpacity: _Opacity

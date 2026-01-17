@@ -3095,8 +3095,22 @@ private GameObject SpawnToolInstance(string toolId, bool toolButtonMode)
     string baseName = (template != null) ? template.name : (prefab != null ? prefab.name : toolId);
     go.name = baseName + "_RUNTIME_" + _runtimeSpawnSerial;
 
+    // Capture desired world-scale BEFORE parenting (important because ExperimentTable is scaled)
+    Vector3 desiredWorldScale = (template != null) ? template.lossyScale : go.transform.lossyScale;
+
     Transform parent = ResolveRuntimeSpawnParent();
-    if (parent != null) go.transform.SetParent(parent, true);
+    if (parent != null)
+    {
+        go.transform.SetParent(parent, true);
+
+        // Preserve desired world-scale under parent (prevents "shape broken" / "invisible" when parent scale != 1)
+        Vector3 pScale = parent.lossyScale;
+        Vector3 local = go.transform.localScale;
+        local.x = (pScale.x != 0f) ? (desiredWorldScale.x / pScale.x) : local.x;
+        local.y = (pScale.y != 0f) ? (desiredWorldScale.y / pScale.y) : local.y;
+        local.z = (pScale.z != 0f) ? (desiredWorldScale.z / pScale.z) : local.z;
+        go.transform.localScale = local;
+    }
 
     // Place it on top of the table/floor via raycast (prevents sinking / weird intersections)
     go.transform.position = GetRandomSpawnPosition();
@@ -3106,19 +3120,6 @@ private GameObject SpawnToolInstance(string toolId, bool toolButtonMode)
     {
         // do NOT overwrite with parent rotation
         go.transform.rotation = template.rotation;
-    }
-
-    // Preserve template world scale under parent (prevents "shape broken" when parent scale != 1)
-    // Template mode only (prefabs have no scene lossyScale reference).
-    if (parent != null && template != null)
-    {
-        Vector3 tScale = template.lossyScale;
-        Vector3 pScale = parent.lossyScale;
-        Vector3 local = go.transform.localScale;
-        local.x = (pScale.x != 0f) ? (tScale.x / pScale.x) : local.x;
-        local.y = (pScale.y != 0f) ? (tScale.y / pScale.y) : local.y;
-        local.z = (pScale.z != 0f) ? (tScale.z / pScale.z) : local.z;
-        go.transform.localScale = local;
     }
 
     if (!go.activeSelf) go.SetActive(true);

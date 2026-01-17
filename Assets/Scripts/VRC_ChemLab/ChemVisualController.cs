@@ -278,7 +278,6 @@ public class ChemVisualController : UdonSharpBehaviour
         if (isElement)
         {
             recipeSource = "element";
-            baseColor = db.GetColor(sym);
             mp = db.GetMP(sym);
             bp = db.GetBP(sym);
             hazard = db.GetHazard(sym);
@@ -287,19 +286,24 @@ public class ChemVisualController : UdonSharpBehaviour
             if (float.IsNaN(mp) || float.IsInfinity(mp)) mp = 25f;
             if (float.IsNaN(bp) || float.IsInfinity(bp)) bp = 100f;
 
-            float metal01 = db.GetIsMetal(sym) ? 1f : 0f;
-            archetype = db.GetIsMetal(sym) ? ARCH_METAL : ARCH_CRYSTAL;
-            particlePreset = db.GetIsMetal(sym) ? PT_GLINT : PT_NONE;
-
-            opacity = 0.98f;
-            metallic = metal01;
-            smoothness = db.GetIsMetal(sym) ? 0.65f : 0.40f;
-            emission = (hazard & ChemElementDatabase.HAZ_RADIOACTIVE) != 0 ? 0.20f : 0.03f;
-            noiseScale = 0.25f;
-            fogDensity = 0.60f;
-            bubbleRate = 0f;
-            viscosity = 1f;
-            density = 1f;
+            // NEW: Prefer data-driven element VFX profile in ChemElementDatabase.
+            // If arrays are missing, this falls back to sensible defaults.
+            Color accentUnused;
+            db.TryGetElementVfxRecipe(
+                sym,
+                out baseColor,
+                out accentUnused,
+                out archetype,
+                out particlePreset,
+                out opacity,
+                out metallic,
+                out smoothness,
+                out emission,
+                out noiseScale,
+                out fogDensity,
+                out bubbleRate,
+                out viscosity,
+                out density);
 
             inference = db.GetNameJa(sym);
         }

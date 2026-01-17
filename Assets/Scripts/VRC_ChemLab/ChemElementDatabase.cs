@@ -13,6 +13,23 @@ using UnityEngine;
 /// </summary>
 public class ChemElementDatabase : UdonSharpBehaviour
 {
+    // -------------------------------------------------
+    // Shared int codes (match ChemVisualController)
+    // -------------------------------------------------
+    // Archetype
+    public const int ARCH_CRYSTAL = 0;
+    public const int ARCH_POWDER = 1;
+    public const int ARCH_METAL = 2;
+    public const int ARCH_LIQUID = 3;
+    public const int ARCH_GASFOG = 4;
+
+    // Particle preset
+    public const int PT_NONE = 0;
+    public const int PT_GLINT = 1;
+    public const int PT_PRECIPITATE = 2;
+    public const int PT_BUBBLE = 3;
+    public const int PT_FOG = 4;
+
     [Header("Core Element Data (parallel arrays)")]
     public string[] Symbols;         // "H" "He" ...
     public Color[] DisplayColors;    // 見た目色
@@ -77,6 +94,35 @@ public class ChemElementDatabase : UdonSharpBehaviour
     [Range(0f, 2f)] public float[] CompoundBubbleRate;
     [Range(0f, 2f)] public float[] CompoundViscosity;
     [Range(0f, 2f)] public float[] CompoundDensity;
+
+    // =====================================================
+    // Element VFX Profile (optional, parallel arrays)
+    // =====================================================
+    // NOTE:
+    // - These arrays must be the same length/order as Symbols.
+    // - They are intended to drive ONE shared visual prefab (common structure).
+    // - If missing, visuals should fall back to simple defaults derived from
+    //   DisplayColors / HazardFlags / IsMetal / MP/BP.
+
+    [Header("Element VFX Profile (optional, parallel arrays)")]
+    [Tooltip("0=Crystal,1=Powder,2=Metal,3=Liquid,4=GasFog (match ChemVisualController)")]
+    public int[] ElementVfxArchetype;
+
+    [Tooltip("0=None,1=Glint,2=Precipitate,3=Bubble,4=Fog (match ChemVisualController)")]
+    public int[] ElementVfxParticlePreset;
+
+    public Color[] ElementVfxBaseColor;
+    public Color[] ElementVfxAccentColor;
+
+    [Range(0f, 1f)] public float[] ElementVfxOpacity;
+    [Range(0f, 1f)] public float[] ElementVfxMetallic;
+    [Range(0f, 1f)] public float[] ElementVfxSmoothness;
+    [Range(0f, 5f)] public float[] ElementVfxEmission;
+    [Range(0f, 5f)] public float[] ElementVfxNoiseScale;
+    [Range(0f, 2f)] public float[] ElementVfxFogDensity;
+    [Range(0f, 2f)] public float[] ElementVfxBubbleRate;
+    [Range(0f, 2f)] public float[] ElementVfxViscosity;
+    [Range(0f, 2f)] public float[] ElementVfxDensity;
 
     // =====================================================
     // Element helpers
@@ -179,6 +225,155 @@ public class ChemElementDatabase : UdonSharpBehaviour
         int i = IndexOf(symbol);
         if (i < 0 || TypicalValence == null || i >= TypicalValence.Length) return 0;
         return TypicalValence[i];
+    }
+
+    // =====================================================
+    // Element VFX profile helper
+    // =====================================================
+
+    /// <summary>
+    /// Element VFX recipe.
+    /// Returns true if the element exists in Symbols.
+    /// Missing/short arrays will fall back to safe defaults.
+    /// </summary>
+    public bool TryGetElementVfxRecipe(
+        string symbol,
+        out Color baseColor,
+        out Color accentColor,
+        out int archetype,
+        out int particlePreset,
+        out float opacity,
+        out float metallic,
+        out float smoothness,
+        out float emission,
+        out float noiseScale,
+        out float fogDensity,
+        out float bubbleRate,
+        out float viscosity,
+        out float density
+    )
+    {
+        int i = IndexOf(symbol);
+        if (i < 0)
+        {
+            baseColor = Color.white;
+            accentColor = Color.white;
+            archetype = ARCH_CRYSTAL;
+            particlePreset = PT_NONE;
+            opacity = 1f;
+            metallic = 0f;
+            smoothness = 0.4f;
+            emission = 0f;
+            noiseScale = 0.25f;
+            fogDensity = 0.6f;
+            bubbleRate = 0f;
+            viscosity = 1f;
+            density = 1f;
+            return false;
+        }
+
+        // Base colors
+        if (ElementVfxBaseColor != null && i < ElementVfxBaseColor.Length)
+            baseColor = ElementVfxBaseColor[i];
+        else if (DisplayColors != null && i < DisplayColors.Length)
+            baseColor = DisplayColors[i];
+        else
+            baseColor = Color.white;
+
+        bool isMetal = (IsMetal != null && i < IsMetal.Length) ? IsMetal[i] : false;
+        int hazard = (HazardFlags != null && i < HazardFlags.Length) ? HazardFlags[i] : 0;
+
+        if (ElementVfxAccentColor != null && i < ElementVfxAccentColor.Length)
+            accentColor = ElementVfxAccentColor[i];
+        else
+            accentColor = Color.Lerp(baseColor, isMetal ? Color.gray : Color.white, isMetal ? 0.15f : 0.35f);
+
+        // Archetype / particle preset
+        if (ElementVfxArchetype != null && i < ElementVfxArchetype.Length)
+            archetype = ElementVfxArchetype[i];
+        else
+        {
+            // Derive from MP/BP at room temp
+            float mp = (MeltingPointC != null && i < MeltingPointC.Length) ? MeltingPointC[i] : float.PositiveInfinity;
+            float bp = (BoilingPointC != null && i < BoilingPointC.Length) ? BoilingPointC[i] : float.PositiveInfinity;
+            if (float.IsNaN(mp) || float.IsInfinity(mp)) mp = 25f;
+            if (float.IsNaN(bp) || float.IsInfinity(bp)) bp = 100f;
+
+            float room = 25f;
+            if (isMetal) archetype = ARCH_METAL;
+            else if (room >= bp) archetype = ARCH_GASFOG;
+            else if (room >= mp) archetype = ARCH_LIQUID;
+            else archetype = ARCH_CRYSTAL;
+        }
+
+        if (ElementVfxParticlePreset != null && i < ElementVfxParticlePreset.Length)
+            particlePreset = ElementVfxParticlePreset[i];
+        else
+        {
+            if (archetype == ARCH_METAL) particlePreset = PT_GLINT;
+            else if (archetype == ARCH_LIQUID) particlePreset = PT_BUBBLE;
+            else if (archetype == ARCH_GASFOG) particlePreset = PT_FOG;
+            else particlePreset = PT_NONE;
+        }
+
+        // Numeric params (fallbacks are chosen to be visible by default)
+        opacity = (ElementVfxOpacity != null && i < ElementVfxOpacity.Length)
+            ? ElementVfxOpacity[i]
+            : (archetype == ARCH_GASFOG ? 0.12f : (archetype == ARCH_LIQUID ? 0.22f : 0.98f));
+
+        metallic = (ElementVfxMetallic != null && i < ElementVfxMetallic.Length)
+            ? ElementVfxMetallic[i]
+            : (isMetal ? 1f : 0f);
+
+        smoothness = (ElementVfxSmoothness != null && i < ElementVfxSmoothness.Length)
+            ? ElementVfxSmoothness[i]
+            : (isMetal ? 0.65f : 0.40f);
+
+        if (ElementVfxEmission != null && i < ElementVfxEmission.Length)
+            emission = ElementVfxEmission[i];
+        else
+        {
+            // Slight emission so it's never "invisible" on dark maps
+            emission = 0.03f;
+            if ((hazard & HAZ_RADIOACTIVE) != 0) emission = 0.35f;
+            else if ((hazard & HAZ_OXIDIZER) != 0) emission = 0.18f;
+            else if ((hazard & HAZ_FLAMMABLE) != 0) emission = 0.14f;
+            else if ((hazard & HAZ_CORROSIVE) != 0) emission = 0.10f;
+            else if ((hazard & HAZ_TOXIC) != 0) emission = 0.08f;
+        }
+
+        noiseScale = (ElementVfxNoiseScale != null && i < ElementVfxNoiseScale.Length)
+            ? ElementVfxNoiseScale[i]
+            : (archetype == ARCH_GASFOG ? 1.1f : (archetype == ARCH_LIQUID ? 0.45f : 0.25f));
+
+        fogDensity = (ElementVfxFogDensity != null && i < ElementVfxFogDensity.Length)
+            ? ElementVfxFogDensity[i]
+            : (archetype == ARCH_GASFOG ? 1.2f : 0.6f);
+
+        bubbleRate = (ElementVfxBubbleRate != null && i < ElementVfxBubbleRate.Length)
+            ? ElementVfxBubbleRate[i]
+            : (archetype == ARCH_LIQUID ? 0.25f : 0f);
+
+        viscosity = (ElementVfxViscosity != null && i < ElementVfxViscosity.Length)
+            ? ElementVfxViscosity[i]
+            : (archetype == ARCH_LIQUID ? 1.0f : 1.0f);
+
+        density = (ElementVfxDensity != null && i < ElementVfxDensity.Length)
+            ? ElementVfxDensity[i]
+            : 1.0f;
+
+        // Clamp just in case
+        opacity = Mathf.Clamp01(opacity);
+        metallic = Mathf.Clamp01(metallic);
+        smoothness = Mathf.Clamp01(smoothness);
+        if (emission < 0f) emission = 0f;
+        if (noiseScale < 0f) noiseScale = 0f;
+        if (fogDensity < 0f) fogDensity = 0f;
+        if (bubbleRate < 0f) bubbleRate = 0f;
+        if (viscosity < 0f) viscosity = 0f;
+        if (density < 0f) density = 0f;
+
+        return true;
     }
 
     // =====================================================
