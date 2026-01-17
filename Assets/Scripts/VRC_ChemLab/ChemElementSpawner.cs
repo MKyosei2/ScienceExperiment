@@ -2985,18 +2985,8 @@ private void AttachElementVisualClone(GameObject toolGo, string elementSymbol)
     visGo.transform.SetParent(anchor, false);
     visGo.transform.localRotation = Quaternion.identity;
 
-    // Place inside tool bounds if possible
-    Vector3 localPos = elementEffectLocalOffset;
-    Bounds tb;
-    if (TryGetRenderableBounds(toolGo.transform, out tb))
-    {
-        Vector3 w = tb.center + effectWorldOffset;
-        w.y = tb.min.y + tb.size.y * effectFillHeight01 + effectWorldOffset.y;
-        localPos = anchor.InverseTransformPoint(w);
-    }
-    visGo.transform.localPosition = localPos;
-
-    // Preserve world-scale when reparented
+    // Preserve world-scale when reparented as the baseline,
+    // but allow later scale-down to fit VFXVolume.
     Vector3 pScale = anchor.lossyScale;
     Vector3 local = visGo.transform.localScale;
     local.x = (pScale.x != 0f) ? (desiredWorldScale.x / pScale.x) : local.x;
@@ -3004,6 +2994,37 @@ private void AttachElementVisualClone(GameObject toolGo, string elementSymbol)
     local.z = (pScale.z != 0f) ? (desiredWorldScale.z / pScale.z) : local.z;
     visGo.transform.localScale = local;
 
+	    // Place inside VFXVolume if present (preferred), else fallback to tool bounds
+	    Vector3 localPos = elementEffectLocalOffset;
+	    BoxCollider vfxBox;
+	    if (TryGetVfxVolumeBox(anchor, out vfxBox))
+	    {
+	        // BoxCollider is in anchor local space
+	        Vector3 c = vfxBox.center;
+	        Vector3 s = vfxBox.size;
+	
+	        // fill height inside the box
+	        c.y = vfxBox.center.y - (s.y * 0.5f) + (s.y * Mathf.Clamp01(effectFillHeight01));
+	        localPos = c;
+	    }
+	    else
+	    {
+	        Bounds tb;
+	        if (TryGetRenderableBounds(toolGo.transform, out tb))
+	        {
+	            Vector3 w = tb.center + effectWorldOffset;
+	            w.y = tb.min.y + tb.size.y * effectFillHeight01 + effectWorldOffset.y;
+	            localPos = anchor.InverseTransformPoint(w);
+	        }
+	    }
+	    visGo.transform.localPosition = localPos;
+
+	    // Constrain particles + scale-down-to-fit (never scale up)
+	    if (TryGetVfxVolumeBox(anchor, out vfxBox))
+	    {
+	        ConfigureParticlesToBox(visGo, vfxBox);
+	        ScaleDownVisualToFitBox(visGo, anchor, vfxBox);
+	    }
     if (!visGo.activeSelf) visGo.SetActive(true);
 
     // Ensure visibility
@@ -3095,22 +3116,8 @@ private GameObject SpawnToolInstance(string toolId, bool toolButtonMode)
     string baseName = (template != null) ? template.name : (prefab != null ? prefab.name : toolId);
     go.name = baseName + "_RUNTIME_" + _runtimeSpawnSerial;
 
-    // Capture desired world-scale BEFORE parenting (important because ExperimentTable is scaled)
-    Vector3 desiredWorldScale = (template != null) ? template.lossyScale : go.transform.lossyScale;
-
     Transform parent = ResolveRuntimeSpawnParent();
-    if (parent != null)
-    {
-        go.transform.SetParent(parent, true);
-
-        // Preserve desired world-scale under parent (prevents "shape broken" / "invisible" when parent scale != 1)
-        Vector3 pScale = parent.lossyScale;
-        Vector3 local = go.transform.localScale;
-        local.x = (pScale.x != 0f) ? (desiredWorldScale.x / pScale.x) : local.x;
-        local.y = (pScale.y != 0f) ? (desiredWorldScale.y / pScale.y) : local.y;
-        local.z = (pScale.z != 0f) ? (desiredWorldScale.z / pScale.z) : local.z;
-        go.transform.localScale = local;
-    }
+    if (parent != null) go.transform.SetParent(parent, true);
 
     // Place it on top of the table/floor via raycast (prevents sinking / weird intersections)
     go.transform.position = GetRandomSpawnPosition();
@@ -3120,6 +3127,19 @@ private GameObject SpawnToolInstance(string toolId, bool toolButtonMode)
     {
         // do NOT overwrite with parent rotation
         go.transform.rotation = template.rotation;
+    }
+
+    // Preserve template world scale under parent (prevents "shape broken" when parent scale != 1)
+    // Template mode only (prefabs have no scene lossyScale reference).
+    if (parent != null && template != null)
+    {
+        Vector3 tScale = template.lossyScale;
+        Vector3 pScale = parent.lossyScale;
+        Vector3 local = go.transform.localScale;
+        local.x = (pScale.x != 0f) ? (tScale.x / pScale.x) : local.x;
+        local.y = (pScale.y != 0f) ? (tScale.y / pScale.y) : local.y;
+        local.z = (pScale.z != 0f) ? (tScale.z / pScale.z) : local.z;
+        go.transform.localScale = local;
     }
 
     if (!go.activeSelf) go.SetActive(true);
@@ -3156,6 +3176,142 @@ private void SpawnElementContainerInstance(string elementSymbol)
 
     // Also point current selection for experiment start (optional)
     _syncedTool = containerId;
+}
+
+// ------------------------------
+// VFX volume helpers (constrain element visuals inside tool volume)
+// ------------------------------
+
+private bool TryGetVfxVolumeBox(Transform anchor, out BoxCollider box)
+{
+    box = null;
+    if (anchor == null) return false;
+
+    Transform t = FindChildByNameRuntime(anchor, "VFXVolume");
+    if (t == null) return false;
+
+    box = (BoxCollider)t.GetComponent(typeof(BoxCollider));
+    return box != null;
+}
+
+private void ConfigureParticlesToBox(GameObject root, BoxCollider box)
+{
+    if (root == null || box == null) return;
+
+    ParticleSystem[] ps = root.GetComponentsInChildren<ParticleSystem>(true);
+    int len = (ps != null) ? ps.Length : 0;
+    for (int i = 0; i < len; i++)
+    {
+        ParticleSystem p = ps[i];
+        if (p == null) continue;
+
+        var main = p.main;
+        main.simulationSpace = ParticleSystemSimulationSpace.Local;
+
+        // Hard caps so the effect never floods the whole scene.
+        float minDim = Mathf.Min(box.size.x, Mathf.Min(box.size.y, box.size.z));
+        float maxDim = Mathf.Max(box.size.x, Mathf.Max(box.size.y, box.size.z));
+        float maxSpeed = Mathf.Max(0.02f, minDim * 0.18f);
+        float maxSize = Mathf.Max(0.01f, minDim * 0.22f);
+        float maxLifetime = Mathf.Clamp(maxDim * 1.4f, 0.35f, 1.10f);
+
+        // Clamp main values (handle both constant and random-between-two-constants).
+        main.startSpeed = ClampCurve(main.startSpeed, 0f, maxSpeed);
+        main.startSize = ClampCurve(main.startSize, 0.005f, maxSize);
+        main.startLifetime = ClampCurve(main.startLifetime, 0.10f, maxLifetime);
+        if (main.maxParticles > 0) main.maxParticles = Mathf.Min(main.maxParticles, 2500);
+
+        var shape = p.shape;
+        shape.enabled = true;
+        shape.shapeType = ParticleSystemShapeType.Box;
+        shape.position = box.center;
+        shape.scale = box.size;
+
+        // Disable modules that push particles far outside the volume.
+        var vel = p.velocityOverLifetime; vel.enabled = false;
+        var force = p.forceOverLifetime; force.enabled = false;
+        var noise = p.noise; noise.enabled = false;
+        var inherit = p.inheritVelocity; inherit.enabled = false;
+        var ext = p.externalForces; ext.enabled = false;
+
+        // Limit velocity to keep things inside.
+        var limit = p.limitVelocityOverLifetime;
+        limit.enabled = true;
+        limit.dampen = 0.55f;
+        limit.limit = maxSpeed;
+
+        // Clamp emission too (some presets use insane rates).
+        var em = p.emission;
+        if (em.enabled)
+        {
+            em.rateOverTime = ClampCurve(em.rateOverTime, 0f, 1200f);
+        }
+
+        // Renderer clamp (billboards can become huge).
+        ParticleSystemRenderer pr = (ParticleSystemRenderer)p.GetComponent(typeof(ParticleSystemRenderer));
+        if (pr != null) pr.maxParticleSize = Mathf.Min(pr.maxParticleSize, 0.5f);
+    }
+}
+
+// Clamp ParticleSystem.MinMaxCurve while keeping UdonSharp compatibility.
+private ParticleSystem.MinMaxCurve ClampCurve(ParticleSystem.MinMaxCurve c, float min, float max)
+{
+    ParticleSystemCurveMode mode = c.mode;
+    if (mode == ParticleSystemCurveMode.Constant)
+    {
+        c.constant = Mathf.Clamp(c.constant, min, max);
+        return c;
+    }
+    if (mode == ParticleSystemCurveMode.TwoConstants)
+    {
+        c.constantMin = Mathf.Clamp(c.constantMin, min, max);
+        c.constantMax = Mathf.Clamp(c.constantMax, min, max);
+        return c;
+    }
+
+    // Curves are hard to safely bound in Udon at runtime; replace with a safe constant.
+    c.mode = ParticleSystemCurveMode.Constant;
+    c.constant = Mathf.Clamp(max, min, max);
+    return c;
+}
+
+private void ScaleDownVisualToFitBox(GameObject visGo, Transform anchor, BoxCollider box)
+{
+    if (visGo == null || anchor == null || box == null) return;
+
+    Renderer[] rs = visGo.GetComponentsInChildren<Renderer>(true);
+    if (rs == null || rs.Length == 0) return;
+
+    Bounds b = rs[0].bounds;
+    for (int i = 1; i < rs.Length; i++)
+    {
+        if (rs[i] == null) continue;
+        b.Encapsulate(rs[i].bounds);
+    }
+
+    // Convert world bounds size into anchor-local scale-ish size
+    Vector3 localSize = anchor.InverseTransformVector(b.size);
+    localSize.x = Mathf.Abs(localSize.x);
+    localSize.y = Mathf.Abs(localSize.y);
+    localSize.z = Mathf.Abs(localSize.z);
+
+    Vector3 vol = box.size;
+    vol.x = Mathf.Max(0.001f, vol.x);
+    vol.y = Mathf.Max(0.001f, vol.y);
+    vol.z = Mathf.Max(0.001f, vol.z);
+
+    float fx = vol.x / Mathf.Max(0.001f, localSize.x);
+    float fy = vol.y / Mathf.Max(0.001f, localSize.y);
+    float fz = vol.z / Mathf.Max(0.001f, localSize.z);
+
+    float f = Mathf.Min(fx, Mathf.Min(fy, fz)) * 0.95f;
+
+    // Never scale up; only scale down when overflowing
+    if (f < 1f)
+    {
+        Vector3 s = visGo.transform.localScale;
+        visGo.transform.localScale = new Vector3(s.x * f, s.y * f, s.z * f);
+    }
 }
 
 }
