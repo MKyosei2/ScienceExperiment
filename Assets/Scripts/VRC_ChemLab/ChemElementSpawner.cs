@@ -143,6 +143,15 @@ public Material glassMasterMaterial;
 [Tooltip("Optional explicit WireframeFX material. If null, auto-detect from templates.")]
 public Material wireframeFxMaterial;
 
+// Runtime material instances (avoid modifying shared assets)
+private Material _runtimeElementGlassMaterial;
+private Material _runtimeFallbackVisibleGlassMaterial;
+
+// Cached scene template for SampleVisual (important: prefab ElementVisual has no backing UdonBehaviour, so it stays invisible)
+private GameObject _cachedSampleVisualTemplateGo;
+private bool _cachedSampleVisualTemplateSearched;
+
+
 private Vector3 _lastSpawnPos;
 private int _runtimeSpawnSerial;
 
@@ -323,6 +332,28 @@ private int _runtimeSpawnSerial;
             GameObject envGo = GameObject.Find("ChemEnvironmentManager");
             if (envGo != null) environment = envGo.GetComponent<ChemEnvironmentManager>();
         }
+
+
+        // Auto-wire SampleVisual (scene template with backing UdonBehaviour)
+        // IMPORTANT: Prefab 'ElementVisual' has all states disabled and often has no backing UdonBehaviour,
+        // so runtime-instantiated prefabs can remain invisible. We prefer the scene object named 'SampleVisual'.
+        if (sampleVisual == null || sampleVisual.gameObject == null || sampleVisual.gameObject.name != "SampleVisual")
+        {
+            GameObject svGo = GameObject.Find("SampleVisual");
+            if (svGo != null)
+            {
+                ChemVisualController sv = svGo.GetComponent<ChemVisualController>();
+                if (sv != null) sampleVisual = sv;
+            }
+        }
+
+        // Auto-wire ExperimentTable root for runtime spawning
+        if (experimentTableRoot == null)
+        {
+            GameObject tableGo = GameObject.Find("ExperimentTable");
+            if (tableGo != null) experimentTableRoot = tableGo.transform;
+        }
+        if (runtimeSpawnParent == null && experimentTableRoot != null) runtimeSpawnParent = experimentTableRoot;
     }
 
     // =====================================================
@@ -1266,6 +1297,11 @@ SpawnToolInstance(_localTool, true);
         go.transform.position = parent.position + worldOffset;
         go.transform.rotation = parent.rotation;
         if (!go.activeSelf) go.SetActive(true);
+
+    // Force all descendants active (templates sometimes keep render children disabled).
+    ForceActiveDescendants(go.transform, 4096);
+
+    if (forceVisibleOnSelect) ForceVisibleHierarchy(go.transform);
         return go.transform;
     }
 
@@ -1501,15 +1537,11 @@ _placedToolTopTr.position = _placedToolOrigPos;
 
         if (sampleVisual == null) return null;
 
-        // Hide a *scene instance* template so it doesn't remain floating somewhere else.
-        // NOTE: sampleVisual is often a Prefab asset reference. In that case activeInHierarchy is false and
-        // we must NOT deactivate it (VRCInstantiate template must remain valid in VRChat).
+        // Hide the template so it doesn't remain floating somewhere else.
         if (!_templateSampleHidden)
         {
-            if (sampleVisual != null && sampleVisual.gameObject != null && sampleVisual.gameObject.activeInHierarchy)
-            {
-                sampleVisual.gameObject.SetActive(false);
-            }
+            // Udon does not support exceptions; keep it simple.
+            sampleVisual.gameObject.SetActive(false);
             _templateSampleHidden = true;
         }
 
@@ -1869,6 +1901,31 @@ _placedToolTopTr.position = _placedToolOrigPos;
             var em = p.emission;
             em.enabled = true;
             if (!p.isPlaying) p.Play(true);
+        }
+    }
+
+
+    /// <summary>
+    /// Force-enable all descendant GameObjects (Udon-safe). Useful when templates have children disabled,
+    /// which would otherwise make renderers/particles never show.
+    /// </summary>
+    private void ForceActiveDescendants(Transform root, int maxNodes)
+    {
+        if (root == null) return;
+
+        Transform[] trs = root.GetComponentsInChildren<Transform>(true);
+        if (trs == null) return;
+
+        int n = trs.Length;
+        if (maxNodes > 0 && n > maxNodes) n = maxNodes;
+
+        for (int i = 0; i < n; i++)
+        {
+            Transform t = trs[i];
+            if (t == null) continue;
+            GameObject g = t.gameObject;
+            if (g == null) continue;
+            if (!g.activeSelf) g.SetActive(true);
         }
     }
 
@@ -2440,74 +2497,89 @@ private Transform ResolveExperimentTableRoot()
     return experimentTableRoot;
 }
 
-    private Transform ResolveRuntimeSpawnParent()
+private Transform ResolveRuntimeSpawnParent()
+{
+    if (runtimeSpawnParent != null) return runtimeSpawnParent;
+    Transform t = ResolveExperimentTableRoot();
+    if (t != null) return t;
+    return null;
+}
+
+private Vector3 GetRandomSpawnPosition()
+{
+    Transform centerTr = ResolveExperimentTableRoot();
+    Vector3 center = (centerTr != null) ? centerTr.position : (containerTransform != null ? containerTransform.position : transform.position);
+
+    Vector3 pos = center;
+    for (int i = 0; i < spawnRetryCount; i++)
     {
-        if (runtimeSpawnParent != null) return runtimeSpawnParent;
+        Vector2 r = Random.insideUnitCircle * spawnRadiusMeters;
+        pos = new Vector3(center.x + r.x, center.y + 0.8f, center.z + r.y);
 
-        Transform t = ResolveExperimentTableRoot();
-        if (t != null) return t;
-
-        if (containerTransform != null) return containerTransform;
-
-        return transform;
-    }
-
-    private Vector3 GetRandomSpawnPosition()
-    {
-        // Prefer container zone (VR_StartZone) so spawns are always near the player/table.
-        Transform centerTr = (containerTransform != null) ? containerTransform : ResolveExperimentTableRoot();
-        Vector3 center = (centerTr != null) ? centerTr.position : transform.position;
-
-        // Deterministic golden-angle spiral (no Random dependency)
-        int idx = _runtimeSpawnSerial;
-        if (idx < 1) idx = 1;
-        float angle = idx * 2.3999632f; // radians
-        float r = 0.18f * Mathf.Sqrt(idx);
-        if (r > spawnRadiusMeters) r = spawnRadiusMeters;
-
-        float ox = Mathf.Cos(angle) * r;
-        float oz = Mathf.Sin(angle) * r;
-
-        Vector3 pos;
-        if (centerTr != null)
-            pos = center + centerTr.right * ox + centerTr.forward * oz;
-        else
-            pos = center + new Vector3(ox, 0f, oz);
-
-        // Start ray from above
-        Vector3 rayStart = pos + Vector3.up * 1.0f;
+        // Raycast down to find a stable surface (table / floor)
         RaycastHit hit;
-        if (Physics.Raycast(rayStart, Vector3.down, out hit, 3.0f))
+        if (Physics.Raycast(pos, Vector3.down, out hit, 3.0f))
         {
             pos.y = hit.point.y + Mathf.Max(0.02f, spawnYOffset);
         }
         else
         {
-            pos.y = center.y + 0.10f + spawnYOffset;
+            // fallback: keep it slightly above center
+            pos.y = center.y + 0.25f + spawnYOffset;
         }
 
-        // Ensure minimum separation from last spawn (push outward if needed)
-        float minSqr = spawnMinSeparation * spawnMinSeparation;
-        if ((_lastSpawnPos - pos).sqrMagnitude < minSqr)
+        if ((_lastSpawnPos - pos).sqrMagnitude >= (spawnMinSeparation * spawnMinSeparation))
         {
-            Vector3 dir = pos - center;
-            dir.y = 0f;
-            if (dir.sqrMagnitude < 0.0001f)
-                dir = (centerTr != null) ? centerTr.right : Vector3.right;
-            dir.Normalize();
-            pos += dir * spawnMinSeparation;
+            _lastSpawnPos = pos;
+            return pos;
         }
-
-        _lastSpawnPos = pos;
-        return pos;
     }
 
-    private string NormalizeIdRuntime(string s)
+    // fallback (even if close)
+    _lastSpawnPos = pos;
+    return pos;
+}
+
+private string NormalizeIdRuntime(string s)
 {
     if (string.IsNullOrEmpty(s)) return "";
     s = s.Trim().ToUpperInvariant();
     s = s.Replace(" ", "").Replace("_", "").Replace("-", "");
     return s;
+}
+
+
+
+private GameObject GetToolPrefabByIdRuntime(string toolId)
+{
+    if (runtimeToolSpawner == null) return null;
+    if (runtimeToolSpawner.toolPrefabs == null || runtimeToolSpawner.toolIds == null) return null;
+
+    string want = NormalizeIdRuntime(toolId);
+    int n = runtimeToolSpawner.toolIds.Length;
+    if (runtimeToolSpawner.toolPrefabs.Length < n) n = runtimeToolSpawner.toolPrefabs.Length;
+
+    for (int i = 0; i < n; i++)
+    {
+        string id = runtimeToolSpawner.toolIds[i];
+        if (NormalizeIdRuntime(id) == want)
+        {
+            return runtimeToolSpawner.toolPrefabs[i];
+        }
+    }
+    return null;
+}
+
+private void HideTemplateVisualIfInHierarchy(GameObject templateGo)
+{
+    if (templateGo == null) return;
+
+    // Only disable if it is an actual scene object (prefab assets are not in the hierarchy).
+    if (templateGo.activeInHierarchy && !_templateSampleHidden)
+    {
+        templateGo.SetActive(false);
+        _templateSampleHidden = true;
+    }
 }
 
 private string StripUnitySuffixRuntime(string s)
@@ -2573,41 +2645,7 @@ private Transform FindToolTemplate(string toolId)
     return null;
 }
 
-    private GameObject ResolveToolPrefab(string toolId)
-    {
-        if (runtimeToolSpawner == null) return null;
-        GameObject[] prefabs = runtimeToolSpawner.toolPrefabs;
-        if (prefabs == null || prefabs.Length == 0) return null;
-
-        string norm = NormalizeIdRuntime(toolId);
-        if (string.IsNullOrEmpty(norm)) return null;
-
-        // Prefer explicit ids if provided
-        string[] ids = runtimeToolSpawner.toolIds;
-        if (ids != null && ids.Length == prefabs.Length)
-        {
-            int n = ids.Length;
-            for (int i = 0; i < n; i++)
-            {
-                string id = ids[i];
-                if (string.IsNullOrEmpty(id)) continue;
-                if (NormalizeIdRuntime(id) == norm) return prefabs[i];
-            }
-        }
-
-        // Fallback: match by prefab name
-        int m2 = prefabs.Length;
-        for (int i = 0; i < m2; i++)
-        {
-            GameObject p = prefabs[i];
-            if (p == null) continue;
-            if (NormalizeIdRuntime(p.name) == norm) return p;
-        }
-
-        return null;
-    }
-
-    private bool IsWireMaterial(Material m)
+private bool IsWireMaterial(Material m)
 {
     if (m == null) return false;
     string n = m.name == null ? "" : m.name.ToUpperInvariant();
@@ -2663,19 +2701,100 @@ private void CachePreviewMaterialsIfNeeded(Transform searchRoot)
     }
 }
 
+private void TrySetFloat(Material m, string prop, float value)
+{
+    if (m == null) return;
+    if (!m.HasProperty(prop)) return;
+    m.SetFloat(prop, value);
+}
+
+private void TrySetColorAlphaMin(Material m, string prop, float alphaMin)
+{
+    if (m == null) return;
+    if (!m.HasProperty(prop)) return;
+    Color c = m.GetColor(prop);
+    if (c.a < alphaMin)
+    {
+        c.a = alphaMin;
+        m.SetColor(prop, c);
+    }
+}
+
+private void MakeGlassVisible(Material m)
+{
+    if (m == null) return;
+
+    // Common color/opacity properties across shaders
+    TrySetColorAlphaMin(m, "_MainColor", 0.08f);
+    TrySetColorAlphaMin(m, "_BaseColor", 0.08f);
+    TrySetColorAlphaMin(m, "_Color", 0.08f);
+    TrySetColorAlphaMin(m, "_GlassTint", 0.08f);
+
+    if (m.HasProperty("_Opacity"))
+    {
+        float o = m.GetFloat("_Opacity");
+        if (o < 0.08f) m.SetFloat("_Opacity", 0.08f);
+    }
+    if (m.HasProperty("_Alpha"))
+    {
+        float a = m.GetFloat("_Alpha");
+        if (a < 0.08f) m.SetFloat("_Alpha", 0.08f);
+    }
+}
+
+private Material GetWireMaterialRuntime()
+{
+    // Tool-button preview uses WireframeFX when available.
+    if (wireframeFxMaterial != null) return wireframeFxMaterial;
+
+    // Fallback: GlassMaster (shared). Udon does NOT allow new Material(...)
+    if (_runtimeFallbackVisibleGlassMaterial != null) return _runtimeFallbackVisibleGlassMaterial;
+    if (glassMasterMaterial == null) return null;
+
+    MakeGlassVisible(glassMasterMaterial);
+    _runtimeFallbackVisibleGlassMaterial = glassMasterMaterial;
+    return _runtimeFallbackVisibleGlassMaterial;
+}
+
+private Material GetElementGlassMaterialRuntime()
+{
+    // Element-button preview should be transparent (no wireframe).
+    if (_runtimeElementGlassMaterial != null) return _runtimeElementGlassMaterial;
+
+    // Prefer GlassMaster when available.
+    if (glassMasterMaterial != null)
+    {
+        MakeGlassVisible(glassMasterMaterial);
+        _runtimeElementGlassMaterial = glassMasterMaterial;
+        return _runtimeElementGlassMaterial;
+    }
+
+    // Last resort: reuse WireframeFX but disable wire globally on the shared material.
+    if (wireframeFxMaterial != null)
+    {
+        TrySetFloat(wireframeFxMaterial, "_WireEnable", 0f);
+        TrySetFloat(wireframeFxMaterial, "_WireOpacity", 0f);
+        TrySetFloat(wireframeFxMaterial, "_WireThickness", 0f);
+        TrySetFloat(wireframeFxMaterial, "_WireWidth", 0f);
+        TrySetFloat(wireframeFxMaterial, "_WireWidthPx", 0f);
+        TrySetFloat(wireframeFxMaterial, "_ShowBase", 1f);
+        MakeGlassVisible(wireframeFxMaterial);
+
+        _runtimeElementGlassMaterial = wireframeFxMaterial;
+        return _runtimeElementGlassMaterial;
+    }
+
+    return null;
+}
+
 private void ApplyToolMaterialMode(GameObject toolGo, bool elementMode)
 {
     if (toolGo == null) return;
 
-    // Ensure we have materials cached (search templates root first, then the tool itself)
-    Transform root = null;
-    if (runtimeToolSpawner != null && runtimeToolSpawner.toolTemplatesRoot != null) root = runtimeToolSpawner.toolTemplatesRoot;
-    if (root == null && toolModelsRoot != null) root = toolModelsRoot;
-    CachePreviewMaterialsIfNeeded(root);
-    CachePreviewMaterialsIfNeeded(toolGo.transform);
-
-    Material target = elementMode ? glassMasterMaterial : wireframeFxMaterial;
-    if (target == null) return;
+    // IMPORTANT (Udon-safe):
+    // - Do NOT create new Material()
+    // - Do NOT mutate shared materials globally
+    // We instead use Renderer.materials to get per-renderer instances, then tweak properties.
 
     Renderer[] rs = toolGo.GetComponentsInChildren<Renderer>(true);
     if (rs == null) return;
@@ -2688,13 +2807,50 @@ private void ApplyToolMaterialMode(GameObject toolGo, bool elementMode)
         // Don't overwrite particle materials (VFX are handled separately)
         if (r.GetComponent<ParticleSystemRenderer>() != null) continue;
 
-        Material[] ms = r.sharedMaterials;
+        Material[] ms = r.materials; // per-renderer instances
         if (ms == null || ms.Length == 0) continue;
 
         for (int j = 0; j < ms.Length; j++)
-            ms[j] = target;
+        {
+            Material m = ms[j];
+            if (m == null) continue;
 
-        r.sharedMaterials = ms;
+            if (elementMode)
+            {
+                // Element mode: transparent glass, no wireframe
+                if (m.HasProperty("_WireEnable")) m.SetFloat("_WireEnable", 0f);
+                if (m.HasProperty("_WireOpacity")) m.SetFloat("_WireOpacity", 0f);
+                if (m.HasProperty("_WireThickness")) m.SetFloat("_WireThickness", 0f);
+                if (m.HasProperty("_WireWidth")) m.SetFloat("_WireWidth", 0f);
+                if (m.HasProperty("_WireWidthPx")) m.SetFloat("_WireWidthPx", 0f);
+                if (m.HasProperty("_ShowBase")) m.SetFloat("_ShowBase", 1f);
+
+                MakeGlassVisible(m);
+                if (m.HasProperty("_Opacity"))
+                {
+                    float o = m.GetFloat("_Opacity");
+                    if (o < 0.08f) m.SetFloat("_Opacity", 0.08f);
+                }
+            }
+            else
+            {
+                // Tool mode: keep wireframe if the shader supports it
+                if (m.HasProperty("_WireEnable")) m.SetFloat("_WireEnable", 1f);
+                if (m.HasProperty("_WireOpacity"))
+                {
+                    float o = m.GetFloat("_WireOpacity");
+                    if (o <= 0f) m.SetFloat("_WireOpacity", 1f);
+                }
+                if (m.HasProperty("_WireThickness"))
+                {
+                    float t = m.GetFloat("_WireThickness");
+                    if (t <= 0f) m.SetFloat("_WireThickness", 1f);
+                }
+            }
+        }
+
+        r.materials = ms;
+        r.enabled = true;
     }
 }
 
@@ -2709,6 +2865,38 @@ private Transform FindChildByNameRuntime(Transform root, string childName)
         if (t == null) continue;
         if (t.name == childName) return t;
     }
+    return null;
+}
+
+
+private GameObject ResolveSampleVisualTemplateRuntime()
+{
+    if (_cachedSampleVisualTemplateSearched) return _cachedSampleVisualTemplateGo;
+    _cachedSampleVisualTemplateSearched = true;
+
+    // Prefer the in-scene template named "SampleVisual" (has backing UdonBehaviour and VFX rig)
+    GameObject svGo = GameObject.Find("SampleVisual");
+    if (svGo != null)
+    {
+        _cachedSampleVisualTemplateGo = svGo;
+        return _cachedSampleVisualTemplateGo;
+    }
+
+    // Next: whatever is assigned to sampleVisual
+    if (sampleVisual != null && sampleVisual.gameObject != null)
+    {
+        _cachedSampleVisualTemplateGo = sampleVisual.gameObject;
+        return _cachedSampleVisualTemplateGo;
+    }
+
+    // Fallback: prefab list (ElementVisual)
+    GameObject prefab = GetToolPrefabByIdRuntime("ElementVisual");
+    if (prefab != null)
+    {
+        _cachedSampleVisualTemplateGo = prefab;
+        return _cachedSampleVisualTemplateGo;
+    }
+
     return null;
 }
 
@@ -2763,134 +2951,193 @@ private void AttachReactionVfxClone(GameObject toolGo)
 private void AttachElementVisualClone(GameObject toolGo, string elementSymbol)
 {
     if (toolGo == null) return;
-    if (sampleVisual == null) return;
     if (elementDb == null) return;
 
-        // Hide a *scene instance* template so it doesn't remain floating somewhere else.
-        // NOTE: sampleVisual is often a Prefab asset reference. In that case activeInHierarchy is false and
-        // we must NOT deactivate it (VRCInstantiate template must remain valid in VRChat).
-        if (!_templateSampleHidden)
-        {
-            if (sampleVisual != null && sampleVisual.gameObject != null && sampleVisual.gameObject.activeInHierarchy)
-            {
-                sampleVisual.gameObject.SetActive(false);
-            }
-            _templateSampleHidden = true;
-        }
+    GameObject templateGo = ResolveSampleVisualTemplateRuntime();
 
-        GameObject visGo = VRCInstantiate(sampleVisual.gameObject);
-    if (visGo == null) return;
+    // Fallback to the old ElementVisual prefab if SampleVisual is missing
+    if (templateGo == null)
+    {
+        GameObject visPrefab = GetToolPrefabByIdRuntime("ElementVisual");
+        if (visPrefab != null) templateGo = visPrefab;
+        else if (sampleVisual != null) templateGo = sampleVisual.gameObject;
+    }
+
+    if (templateGo == null)
+    {
+        Debug.LogWarning("[ChemElementSpawner] Element visual template missing (SampleVisual / ElementVisual).");
+        return;
+    }
+
+    GameObject visGo = VRCInstantiate(templateGo);
+    if (visGo == null)
+    {
+        Debug.LogWarning("[ChemElementSpawner] VRCInstantiate failed for element visual.");
+        return;
+    }
 
     Transform anchor = FindChildByNameRuntime(toolGo.transform, elementEffectAnchorName);
     if (anchor == null) anchor = toolGo.transform;
 
+    // Keep the template's world scale (important for complex SampleVisual rigs)
+    Vector3 desiredWorldScale = visGo.transform.lossyScale;
+
     visGo.transform.SetParent(anchor, false);
-    visGo.transform.localPosition = elementEffectLocalOffset;
     visGo.transform.localRotation = Quaternion.identity;
-    visGo.transform.localScale = elementEffectLocalScale;
+
+    // Place inside tool bounds if possible
+    Vector3 localPos = elementEffectLocalOffset;
+    Bounds tb;
+    if (TryGetRenderableBounds(toolGo.transform, out tb))
+    {
+        Vector3 w = tb.center + effectWorldOffset;
+        w.y = tb.min.y + tb.size.y * effectFillHeight01 + effectWorldOffset.y;
+        localPos = anchor.InverseTransformPoint(w);
+    }
+    visGo.transform.localPosition = localPos;
+
+    // Preserve world-scale when reparented
+    Vector3 pScale = anchor.lossyScale;
+    Vector3 local = visGo.transform.localScale;
+    local.x = (pScale.x != 0f) ? (desiredWorldScale.x / pScale.x) : local.x;
+    local.y = (pScale.y != 0f) ? (desiredWorldScale.y / pScale.y) : local.y;
+    local.z = (pScale.z != 0f) ? (desiredWorldScale.z / pScale.z) : local.z;
+    visGo.transform.localScale = local;
 
     if (!visGo.activeSelf) visGo.SetActive(true);
 
-    // Ensure renderers/particles are visible
+    // Ensure visibility
+    ForceActiveDescendants(visGo.transform, 8192);
     EnableAllRenderers(visGo);
     PlayAllParticles(visGo, true);
     if (forceVisibleOnSelect) ForceVisibleHierarchy(visGo.transform);
 
+    // Apply element state/colors (works when the template has backing UdonBehaviour).
     ChemVisualController vc = visGo.GetComponent<ChemVisualController>();
+    if (vc == null) vc = visGo.GetComponentInChildren<ChemVisualController>(true);
+
     if (vc != null)
     {
         vc.EnsureInitialized();
         vc.NotifyElementSelected(elementSymbol);
         vc.ApplyElementBySymbol(elementDb, elementSymbol, _syncedTempC);
+
+        // Failsafe: if all three states are inactive, force a visible state.
+        if ((vc.solidObj == null || !vc.solidObj.activeSelf) &&
+            (vc.liquidObj == null || !vc.liquidObj.activeSelf) &&
+            (vc.gasObj == null || !vc.gasObj.activeSelf))
+        {
+            vc.SetState(ChemElementState.Solid);
+        }
+
+        EnableAllRenderers(visGo);
+        PlayAllParticles(visGo, false);
+        if (forceVisibleOnSelect) ForceVisibleHierarchy(visGo.transform);
+    }
+    else
+    {
+        // Very last-resort: manually enable something named Solid/Liquid/Gas (for ElementVisual prefab).
+        Transform s = FindChildByNameRuntime(visGo.transform, "Solid");
+        Transform l = FindChildByNameRuntime(visGo.transform, "Liquid");
+        Transform g = FindChildByNameRuntime(visGo.transform, "Gas");
+
+        if (s != null) s.gameObject.SetActive(false);
+        if (l != null) l.gameObject.SetActive(false);
+        if (g != null) g.gameObject.SetActive(false);
+
+        if (s != null) s.gameObject.SetActive(true);
+        else if (l != null) l.gameObject.SetActive(true);
+        else if (g != null) g.gameObject.SetActive(true);
+        EnableAllRenderers(visGo);
+        if (forceVisibleOnSelect) ForceVisibleHierarchy(visGo.transform);
     }
 }
 
-    private GameObject SpawnToolInstance(string toolId, bool toolButtonMode)
+
+private GameObject SpawnToolInstance(string toolId, bool toolButtonMode)
+{
+    // IMPORTANT: Do NOT call runtimeToolSpawner.InstantiateTool() here.
+    // That method can be configured to destroy/replace previous instances.
+    // We want unlimited spawns per button press, so we instantiate prefabs directly.
+    Transform template = null;
+    GameObject go = null;
+
+    // Prefer cloning an in-scene template (has correct renderers/colliders/Udon backing).
+    // Prefab assets can be missing backing UdonBehaviours in some setups.
+    template = FindToolTemplate(toolId);
+    if (template != null)
     {
-        if (string.IsNullOrEmpty(toolId)) return null;
-
-        GameObject go = null;
-        GameObject prefab = null;
-        Transform template = null;
-
-        // 1) Prefer prefab spawning (most reliable in VRChat/Udon)
-        prefab = ResolveToolPrefab(toolId);
-        if (prefab != null)
-        {
-            go = VRCInstantiate(prefab);
-        }
-
-        // 2) Fallback: clone from hierarchy templates (Tool/ToolTemplates etc)
-        if (go == null)
-        {
-            template = FindToolTemplate(toolId);
-            if (template != null)
-                go = VRCInstantiate(template.gameObject);
-        }
-
-        if (go == null)
-        {
-            Debug.LogWarning("[ChemElementSpawner] SpawnToolInstance failed. toolId=" + toolId);
-            return null;
-        }
-
-        // Name + serial
-        int serial = ++_runtimeSpawnSerial;
-        string baseName = (template != null) ? template.name : (prefab != null ? prefab.name : toolId);
-        go.name = baseName + "_RUNTIME_" + serial;
-
-        // Parent under runtime root if possible
-        Transform parent = ResolveRuntimeSpawnParent();
-        if (parent != null)
-            go.transform.SetParent(parent, true);
-
-        // Placement (deterministic near container)
-        go.transform.position = GetRandomSpawnPosition();
-
-        // Rotation: prefer template, else container
-        if (template != null)
-            go.transform.rotation = template.rotation;
-        else if (containerTransform != null)
-            go.transform.rotation = containerTransform.rotation;
-
-        // Preserve template world-scale under parent (prevents "shape broken" when parent scale != 1)
-        if (parent != null && template != null)
-        {
-            Vector3 tScale = template.lossyScale;
-            Vector3 pScale = parent.lossyScale;
-            Vector3 local = go.transform.localScale;
-            local.x = (pScale.x != 0f) ? (tScale.x / pScale.x) : local.x;
-            local.y = (pScale.y != 0f) ? (tScale.y / pScale.y) : local.y;
-            local.z = (pScale.z != 0f) ? (tScale.z / pScale.z) : local.z;
-            go.transform.localScale = local;
-        }
-
-        if (!go.activeSelf) go.SetActive(true);
-
-        // Tool button => wireframe. (Element spawn will apply Glass later.)
-        if (toolButtonMode)
-            ApplyToolMaterialMode(go, false);
-
-        // Attach per-tool ReactionVFX (optional template)
-        AttachReactionVfxClone(go);
-
-        // Ensure visible
-        EnableAllRenderers(go);
-        if (forceVisibleOnSelect) ForceVisibleHierarchy(go.transform);
-
-        // Safety: stop initial physics burst
-        Rigidbody rb = go.GetComponent<Rigidbody>();
-        if (rb != null)
-        {
-            rb.velocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
-            rb.WakeUp();
-        }
-
-        return go;
+        go = VRCInstantiate(template.gameObject);
     }
 
-    private void SpawnElementContainerInstance(string elementSymbol)
+    // Fallback: prefab list (runtimeToolSpawner.toolPrefabs)
+    GameObject prefab = null;
+    if (go == null)
+    {
+        prefab = GetToolPrefabByIdRuntime(toolId);
+        if (prefab != null)
+            go = VRCInstantiate(prefab);
+    }
+
+    if (go == null)
+    {
+        Debug.LogWarning("[ChemElementSpawner] SpawnToolInstance failed. Tool template/prefab not found: " + toolId);
+        return null;
+    }
+
+    if (go == null)
+    {
+        Debug.LogWarning("[ChemElementSpawner] SpawnToolInstance failed. VRCInstantiate returned null for: " + toolId);
+        return null;
+    }
+
+    _runtimeSpawnSerial++;
+    string baseName = (template != null) ? template.name : (prefab != null ? prefab.name : toolId);
+    go.name = baseName + "_RUNTIME_" + _runtimeSpawnSerial;
+
+    Transform parent = ResolveRuntimeSpawnParent();
+    if (parent != null) go.transform.SetParent(parent, true);
+
+    // Place it on top of the table/floor via raycast (prevents sinking / weird intersections)
+    go.transform.position = GetRandomSpawnPosition();
+
+    // Preserve template world rotation when cloning from a scene template.
+    if (template != null)
+    {
+        // do NOT overwrite with parent rotation
+        go.transform.rotation = template.rotation;
+    }
+
+    // Preserve template world scale under parent (prevents "shape broken" when parent scale != 1)
+    // Template mode only (prefabs have no scene lossyScale reference).
+    if (parent != null && template != null)
+    {
+        Vector3 tScale = template.lossyScale;
+        Vector3 pScale = parent.lossyScale;
+        Vector3 local = go.transform.localScale;
+        local.x = (pScale.x != 0f) ? (tScale.x / pScale.x) : local.x;
+        local.y = (pScale.y != 0f) ? (tScale.y / pScale.y) : local.y;
+        local.z = (pScale.z != 0f) ? (tScale.z / pScale.z) : local.z;
+        go.transform.localScale = local;
+    }
+
+    if (!go.activeSelf) go.SetActive(true);
+
+    // Force all descendants active (templates sometimes keep render children disabled).
+    ForceActiveDescendants(go.transform, 4096);
+
+    if (forceVisibleOnSelect) ForceVisibleHierarchy(go.transform);
+
+    // tool button => wireframe mode; element mode handled elsewhere
+    ApplyToolMaterialMode(go, false);
+
+    // Attach per-tool reaction VFX clone
+    AttachReactionVfxClone(go);
+
+    return go;
+}
+
+private void SpawnElementContainerInstance(string elementSymbol)
 {
     // Spawn a new container (conical flask by default) and apply element visuals into it.
     // elementContainerToolId is a newly-added field in this branch and may be empty on existing scenes,
