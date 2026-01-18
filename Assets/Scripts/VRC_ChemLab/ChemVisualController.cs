@@ -123,6 +123,15 @@ public class ChemVisualController : UdonSharpBehaviour
     private void Start()
     {
         EnsureInitialized();
+
+        // IMPORTANT: The project keeps a scene-fixed SampleVisual under
+        // ExperimentTable/VR_StartZone/ElementEffectAnchor/SampleVisual as a TEMPLATE.
+        // That template must NOT emit particles or render, otherwise the world gets
+        // flooded ("overflow"). Runtime clones will be enabled by the spawner.
+        if (IsSceneTemplateSampleVisual())
+        {
+            MuteAsSceneTemplate();
+        }
     }
 
     /// <summary>
@@ -722,8 +731,6 @@ public class ChemVisualController : UdonSharpBehaviour
         if (string.IsNullOrEmpty(formula)) return 0;
 
         string f = db.NormalizeFormula(formula);
-        // Udon runtime can return null here in some edge cases; guard before touching Length.
-        if (string.IsNullOrEmpty(f)) return 0;
         int len = f.Length;
 
         int unique = 0;
@@ -838,6 +845,53 @@ public class ChemVisualController : UdonSharpBehaviour
     {
         Transform t = transform.Find(childName);
         return t != null ? t.gameObject : null;
+    }
+
+    // -----------------------------
+    // Scene template protection
+    // -----------------------------
+    private bool IsSceneTemplateSampleVisual()
+    {
+        // Runtime clones are typically "SampleVisual(Clone)".
+        if (gameObject == null) return false;
+        if (gameObject.name != "SampleVisual") return false;
+
+        // Must be under an ElementEffectAnchor somewhere in the parent chain.
+        Transform p = transform;
+        int guard = 0;
+        while (p != null && guard < 32)
+        {
+            if (p.name == "ElementEffectAnchor") return true;
+            p = p.parent;
+            guard++;
+        }
+        return false;
+    }
+
+    private void MuteAsSceneTemplate()
+    {
+        // Stop any particles + hide renderers on the template. Runtime clones are enabled by the spawner.
+        ParticleSystem[] ps = GetComponentsInChildren<ParticleSystem>(true);
+        if (ps != null)
+        {
+            for (int i = 0; i < ps.Length; i++)
+            {
+                if (ps[i] == null) continue;
+                var em = ps[i].emission;
+                em.enabled = false;
+                ps[i].Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            }
+        }
+
+        Renderer[] rs = GetComponentsInChildren<Renderer>(true);
+        if (rs != null)
+        {
+            for (int i = 0; i < rs.Length; i++)
+            {
+                if (rs[i] == null) continue;
+                rs[i].enabled = false;
+            }
+        }
     }
 
     private string ExtractSymbol(ChemElementDatabase db, string input)
