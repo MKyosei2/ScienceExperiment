@@ -53,6 +53,53 @@ public class ChemReactionAnimator : UdonSharpBehaviour
 
     private float _heat, _foam, _glow, _wave, _spark, _smoke;
 
+    [Header("Auto Resolve (optional)")]
+    [Tooltip("Inspector参照が未設定でも動くように、子階層からRenderers/Particlesを自動収集します。")]
+    public bool autoResolveOnStart = true;
+
+    private bool _initialized;
+    private Material _localParticleMasterMaterial;
+
+    private void Start()
+    {
+        if (autoResolveOnStart) EnsureInitialized();
+    }
+
+    private void EnsureInitialized()
+    {
+        if (_initialized) return;
+        _initialized = true;
+
+        // ---- particles ----
+        if (foamParticles == null) foamParticles = FindParticleByNameContains("Foam");
+        if (smokeParticles == null) smokeParticles = FindParticleByNameContains("Smoke");
+        if (sparkParticles == null) sparkParticles = FindParticleByNameContains("Spark");
+
+        if (glintParticles == null) glintParticles = FindParticleByNameContains("Glint");
+        if (precipitateParticles == null) precipitateParticles = FindParticleByNameContains("Precip");
+        if (bubbleParticles == null) bubbleParticles = FindParticleByNameContains("Bubble");
+        if (fogParticles == null) fogParticles = FindParticleByNameContains("Fog");
+
+        // Ensure particle materials exist (some prefabs ship with material=None)
+        EnsureParticleMaterial(foamParticles);
+        EnsureParticleMaterial(smokeParticles);
+        EnsureParticleMaterial(sparkParticles);
+        EnsureParticleMaterial(glintParticles);
+        EnsureParticleMaterial(precipitateParticles);
+        EnsureParticleMaterial(bubbleParticles);
+        EnsureParticleMaterial(fogParticles);
+
+        // ---- renderers ----
+        if (glowRenderers == null || glowRenderers.Length == 0)
+            glowRenderers = FindRenderersWithProperty(emissionProperty);
+
+        if (heatRenderers == null || heatRenderers.Length == 0)
+            heatRenderers = FindRenderersWithProperty(heatProperty);
+
+        if (waveRenderers == null || waveRenderers.Length == 0)
+            waveRenderers = FindRenderersWithProperty(waveProperty);
+    }
+
     // ---- public setters ----
     public void SetHeatLevel(float v)  { _heat = Mathf.Clamp01(v);  Apply(); }
     public void SetFoamLevel(float v)  { _foam = Mathf.Clamp01(v);  Apply(); }
@@ -87,6 +134,8 @@ public class ChemReactionAnimator : UdonSharpBehaviour
     /// </summary>
     public void ApplyPreset(string reactionTag, AIRequestSender ai, float progress01, ChemVisualController visual)
     {
+        EnsureInitialized();
+
         if (ai == null)
         {
             ResetLevels();
@@ -128,11 +177,39 @@ public class ChemReactionAnimator : UdonSharpBehaviour
             c = visual.lastSelectedColor;
         }
 
+        // Also color the base particles (foam/smoke/spark) from the selected element/compound color.
+        // This keeps particle colors consistent with ChemElementDatabase / ChemVisualController.
+        ApplyBaseParticleColor(c);
+
         float p = Mathf.Clamp01(progress01);
         // intensity is mostly progress, but also reflect AI strengths
         float intensity = Mathf.Clamp01(0.35f * p + 0.25f * _foam + 0.25f * _smoke + 0.15f * _glow);
 
         ApplyCompoundParticles(preset, c, intensity);
+    }
+
+    private void ApplyBaseParticleColor(Color c)
+    {
+        // Keep it simple: match the element/compound color.
+        ApplyParticleColor(foamParticles, c);
+        ApplyParticleColor(smokeParticles, c);
+        ApplyParticleColor(sparkParticles, c);
+    }
+
+    private void ApplyParticleColor(ParticleSystem ps, Color c)
+    {
+        if (ps == null) return;
+
+        var main = ps.main;
+        main.startColor = c;
+
+        ParticleSystemRenderer r = ps.GetComponent<ParticleSystemRenderer>();
+        if (r == null) return;
+        Material m = r.material;
+        if (m == null) return;
+
+        if (m.HasProperty("_BaseColor")) m.SetColor("_BaseColor", c);
+        if (m.HasProperty("_Color")) m.SetColor("_Color", c);
     }
 
     private void Apply()
@@ -251,7 +328,122 @@ public class ChemReactionAnimator : UdonSharpBehaviour
             if (r == null) continue;
             Material m = r.material;
             if (m == null) continue;
-            if (m.HasProperty(prop)) m.SetFloat(prop, v);
+            if (m.HasProperty(prop))
+            {
+                m.SetFloat(prop, v);
+            }
+            else
+            {
+                // Fallbacks (some materials use different property names)
+                if (prop == heatProperty)
+                {
+                    if (m.HasProperty("_HeatStrength")) m.SetFloat("_HeatStrength", v);
+                    else if (m.HasProperty("_EmissionStrength")) m.SetFloat("_EmissionStrength", v);
+                }
+                else if (prop == waveProperty)
+                {
+                    if (m.HasProperty("_WaveStrength")) m.SetFloat("_WaveStrength", v);
+                }
+            }
         }
+    }
+
+    // =====================================================
+    // Auto resolve helpers (safe defaults)
+    // =====================================================
+    private ParticleSystem FindParticleByNameContains(string key)
+    {
+        if (string.IsNullOrEmpty(key)) return null;
+        string ku = key.ToUpper();
+
+        ParticleSystem[] ps = GetComponentsInChildren<ParticleSystem>(true);
+        if (ps == null) return null;
+
+        for (int i = 0; i < ps.Length; i++)
+        {
+            ParticleSystem p = ps[i];
+            if (p == null) continue;
+            string n = p.gameObject.name;
+            if (string.IsNullOrEmpty(n)) continue;
+
+            string nu = n.ToUpper();
+            if (nu.IndexOf(ku) >= 0) return p;
+
+            // a few JP keyword fallbacks for common terms
+            if (ku == "FOAM" && nu.IndexOf("AWA") >= 0) return p; // 泡
+            if (ku == "SMOKE" && (nu.IndexOf("KEMURI") >= 0 || nu.IndexOf("SMOKE") >= 0)) return p; // 煙
+            if (ku == "SPARK" && (nu.IndexOf("HIKARI") >= 0 || nu.IndexOf("SPARK") >= 0)) return p; // 光/火花
+        }
+
+        return null;
+    }
+
+    private Renderer[] FindRenderersWithProperty(string prop)
+    {
+        if (string.IsNullOrEmpty(prop)) return null;
+
+        Renderer[] rs = GetComponentsInChildren<Renderer>(true);
+        if (rs == null) return null;
+
+        // count first (Udon-friendly; avoid List allocations)
+        int count = 0;
+        for (int i = 0; i < rs.Length; i++)
+        {
+            Renderer r = rs[i];
+            if (r == null) continue;
+            Material m = r.sharedMaterial;
+            if (m == null) continue;
+            if (m.HasProperty(prop)) count++;
+        }
+
+        if (count == 0) return null;
+
+        Renderer[] outRs = new Renderer[count];
+        int j = 0;
+        for (int i = 0; i < rs.Length; i++)
+        {
+            Renderer r = rs[i];
+            if (r == null) continue;
+            Material m = r.sharedMaterial;
+            if (m == null) continue;
+            if (m.HasProperty(prop))
+            {
+                outRs[j] = r;
+                j++;
+                if (j >= count) break;
+            }
+        }
+        return outRs;
+    }
+
+    private void EnsureParticleMaterial(ParticleSystem ps)
+    {
+        if (ps == null) return;
+        ParticleSystemRenderer pr = ps.GetComponent<ParticleSystemRenderer>();
+        if (pr == null) return;
+        if (pr.sharedMaterial != null) return;
+
+        Material master = GetLocalParticleMasterMaterial();
+        if (master != null) pr.sharedMaterial = master;
+    }
+
+    private Material GetLocalParticleMasterMaterial()
+    {
+        if (_localParticleMasterMaterial != null) return _localParticleMasterMaterial;
+
+        ParticleSystemRenderer[] prs = GetComponentsInChildren<ParticleSystemRenderer>(true);
+        if (prs == null) return null;
+
+        for (int i = 0; i < prs.Length; i++)
+        {
+            ParticleSystemRenderer pr = prs[i];
+            if (pr == null) continue;
+            Material m = pr.sharedMaterial;
+            if (m == null) continue;
+            _localParticleMasterMaterial = m;
+            return _localParticleMasterMaterial;
+        }
+
+        return null;
     }
 }

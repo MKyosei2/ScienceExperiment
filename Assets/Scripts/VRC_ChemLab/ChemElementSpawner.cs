@@ -155,6 +155,12 @@ private bool _cachedSampleVisualTemplateSearched;
 private Vector3 _lastSpawnPos;
 private int _runtimeSpawnSerial;
 
+    // Reusable property block for particle clipping (keep particles visually inside glassware)
+    private MaterialPropertyBlock _particleMpb;
+
+    // Fallback particle material (fix: some prefabs ship with ParticleSystemRenderer.material = None)
+    private Material _particleMasterMaterial;
+
     private Transform _activeToolTr;
     private Transform _activeToolTopTr;
     private Transform _activeAnchorTr;
@@ -3166,6 +3172,57 @@ private void MuteTemplateVisual(GameObject templateGo)
     }
 }
 
+/// <summary>
+/// Some particle prefabs ship with ParticleSystemRenderer.material = None.
+/// In that case, even if we set startColor / MPB, the VFX becomes invisible.
+/// This method resolves a reasonable "master" particle material that already exists in the scene
+/// (preferably the ChemLab particle shader) and we reuse it for missing particle renderers.
+/// </summary>
+private Material GetParticleMasterMaterial()
+{
+    if (_particleMasterMaterial != null) return _particleMasterMaterial;
+
+    // 1) Prefer the SampleVisual template (even if muted/inactive)
+    if (sampleVisual != null)
+    {
+        ParticleSystemRenderer[] prs = sampleVisual.GetComponentsInChildren<ParticleSystemRenderer>(true);
+        if (prs != null)
+        {
+            for (int i = 0; i < prs.Length; i++)
+            {
+                ParticleSystemRenderer pr = prs[i];
+                if (pr == null) continue;
+                Material m = pr.sharedMaterial;
+                if (m == null) continue;
+                string sn = (m.shader != null) ? m.shader.name : "";
+                if (!string.IsNullOrEmpty(sn) && sn.IndexOf("ChemLab/Particle") >= 0)
+                {
+                    _particleMasterMaterial = m;
+                    return _particleMasterMaterial;
+                }
+            }
+            // fallback: any particle material under sampleVisual
+            for (int i = 0; i < prs.Length; i++)
+            {
+                ParticleSystemRenderer pr = prs[i];
+                if (pr == null) continue;
+                Material m = pr.sharedMaterial;
+                if (m == null) continue;
+                _particleMasterMaterial = m;
+                return _particleMasterMaterial;
+            }
+        }
+    }
+
+    // NOTE:
+    // UdonSharp does not expose Object.FindObjectsOfType(Type).
+    // We intentionally avoid a scene-wide scan here.
+    // If you need a master particle material, assign one in the inspector
+    // or ensure SampleVisual has a ParticleSystemRenderer with a material.
+
+    return null;
+}
+
 private void ConstrainParticlesToVfxVolume(GameObject visGo, BoxCollider vfxBox, Vector3 capWorldSize)
 {
     if (visGo == null || vfxBox == null) return;
@@ -3254,6 +3311,40 @@ private void ConstrainParticlesToVfxVolume(GameObject visGo, BoxCollider vfxBox,
         limit.enabled = true;
         limit.limit = maxSpeed;
         limit.dampen = 0.75f;
+
+        // Additional clamp: ensure travel distance stays within the volume
+        float safeTravel = minDim * 0.45f;
+        float spd = main.startSpeed.constant;
+        float life = main.startLifetime.constant;
+        if (spd > 0.001f)
+        {
+            float maxTravel = spd * life;
+            if (maxTravel > safeTravel)
+            {
+                life = Mathf.Max(0.1f, safeTravel / spd);
+                main.startLifetime = Mathf.Min(life, maxLife);
+            }
+        }
+
+        // Shader-side clip box (particles remain invisible outside the glassware)
+        ParticleSystemRenderer pr = p.GetComponent<ParticleSystemRenderer>();
+        if (pr != null)
+        {
+            // Fix: if the particle renderer has no material assigned, it becomes invisible.
+            // Reuse an existing ChemLab particle material from the scene.
+            if (pr.sharedMaterial == null)
+            {
+                Material pm = GetParticleMasterMaterial();
+                if (pm != null) pr.sharedMaterial = pm;
+            }
+
+            if (_particleMpb == null) _particleMpb = new MaterialPropertyBlock();
+            _particleMpb.Clear();
+            _particleMpb.SetFloat("_UseClip", 1f);
+            _particleMpb.SetVector("_ClipCenter", new Vector4(wCenter.x, wCenter.y, wCenter.z, 0f));
+            _particleMpb.SetVector("_ClipExtents", new Vector4(wSize.x * 0.5f, wSize.y * 0.5f, wSize.z * 0.5f, 0f));
+            pr.SetPropertyBlock(_particleMpb);
+        }
     }
 }
 
@@ -3326,6 +3417,37 @@ private void ConstrainParticlesToWorldBox(GameObject visGo, Vector3 worldCenter,
         limit.enabled = true;
         limit.limit = maxSpeed;
         limit.dampen = 0.75f;
+
+        float safeTravel = minDim * 0.45f;
+        float spd = main.startSpeed.constant;
+        float life = main.startLifetime.constant;
+        if (spd > 0.001f)
+        {
+            float maxTravel = spd * life;
+            if (maxTravel > safeTravel)
+            {
+                life = Mathf.Max(0.1f, safeTravel / spd);
+                main.startLifetime = Mathf.Min(life, maxLife);
+            }
+        }
+
+        ParticleSystemRenderer pr = p.GetComponent<ParticleSystemRenderer>();
+        if (pr != null)
+        {
+            // Fix: if the particle renderer has no material assigned, it becomes invisible.
+            if (pr.sharedMaterial == null)
+            {
+                Material pm = GetParticleMasterMaterial();
+                if (pm != null) pr.sharedMaterial = pm;
+            }
+
+            if (_particleMpb == null) _particleMpb = new MaterialPropertyBlock();
+            _particleMpb.Clear();
+            _particleMpb.SetFloat("_UseClip", 1f);
+            _particleMpb.SetVector("_ClipCenter", new Vector4(worldCenter.x, worldCenter.y, worldCenter.z, 0f));
+            _particleMpb.SetVector("_ClipExtents", new Vector4(wSize.x * 0.5f, wSize.y * 0.5f, wSize.z * 0.5f, 0f));
+            pr.SetPropertyBlock(_particleMpb);
+        }
     }
 }
 
@@ -3466,7 +3588,46 @@ private GameObject SpawnToolInstance(string toolId, bool toolButtonMode)
     // Attach per-tool reaction VFX clone
     AttachReactionVfxClone(go);
 
+    // IMPORTANT:
+    // Runtime-spawned tools must NOT behave like UI buttons.
+    // Some in-scene templates are also used as selector buttons (SpawnSelectorButton / SelectorObject / etc.).
+    // If those scripts remain enabled on the runtime clone, clicking the spawned object will trigger
+    // SelectElement/SelectEquipment again, causing infinite spawning.
+    DisableRuntimeSpawnInteractions(go);
+
     return go;
+}
+
+private void DisableRuntimeSpawnInteractions(GameObject root)
+{
+    if (root == null) return;
+
+    // Disable known "button" behaviours (keep pickup/physics intact).
+    // NOTE: We avoid reflection/typeof due to UdonSharp restrictions.
+    SpawnSelectorButton[] spawnBtns = root.GetComponentsInChildren<SpawnSelectorButton>(true);
+    for (int i = 0; i < spawnBtns.Length; i++) if (spawnBtns[i] != null) spawnBtns[i].enabled = false;
+
+    SelectorObject[] selectorObjs = root.GetComponentsInChildren<SelectorObject>(true);
+    for (int i = 0; i < selectorObjs.Length; i++) if (selectorObjs[i] != null) selectorObjs[i].enabled = false;
+
+    SelectionActionController[] actionCtrls = root.GetComponentsInChildren<SelectionActionController>(true);
+    for (int i = 0; i < actionCtrls.Length; i++) if (actionCtrls[i] != null) actionCtrls[i].enabled = false;
+
+    ValueAdjustButton[] valueBtns = root.GetComponentsInChildren<ValueAdjustButton>(true);
+    for (int i = 0; i < valueBtns.Length; i++) if (valueBtns[i] != null) valueBtns[i].enabled = false;
+
+    StartExperimentButton[] startBtns = root.GetComponentsInChildren<StartExperimentButton>(true);
+    for (int i = 0; i < startBtns.Length; i++) if (startBtns[i] != null) startBtns[i].enabled = false;
+
+    ResetExperimentButton[] resetBtns = root.GetComponentsInChildren<ResetExperimentButton>(true);
+    for (int i = 0; i < resetBtns.Length; i++) if (resetBtns[i] != null) resetBtns[i].enabled = false;
+
+    OperatorButton[] opBtns = root.GetComponentsInChildren<OperatorButton>(true);
+    for (int i = 0; i < opBtns.Length; i++) if (opBtns[i] != null) opBtns[i].enabled = false;
+
+    // UI folder scripts (may exist on templates)
+    ConditionAdjuster[] condAdj = root.GetComponentsInChildren<ConditionAdjuster>(true);
+    for (int i = 0; i < condAdj.Length; i++) if (condAdj[i] != null) condAdj[i].enabled = false;
 }
 
 private void SpawnElementContainerInstance(string elementSymbol)

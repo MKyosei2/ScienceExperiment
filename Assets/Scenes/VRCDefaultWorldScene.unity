@@ -1357,6 +1357,8 @@ MonoBehaviour:
   shake: {fileID: 0}
   useSpawnerHeat01: 1
   sendInterval: 0.2
+  autoResolveDetectors: 1
+  resolveInterval: 1
 --- !u!1 &856242966 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5205953352035401704, guid: 9fc891b4972bab648b46aa051fa2c2a9,
@@ -2943,6 +2945,7 @@ MonoBehaviour:
   hideTemplateRenderers: 1
   deactivateTemplateObject: 0
   destroyPrevious: 1
+  disableSpawnInteractionsOnClones: 1
 --- !u!1 &1821020396
 GameObject:
   m_ObjectHideFlags: 0
@@ -5944,18 +5947,33 @@ PrefabInstance:
       propertyPath: m_Name
       value: VR_StartZone
       objectReference: {fileID: 0}
+    - target: {fileID: 994726352610630805, guid: 9fc891b4972bab648b46aa051fa2c2a9,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1051553660399173006, guid: 9fc891b4972bab648b46aa051fa2c2a9,
         type: 3}
       propertyPath: serializationData.Prefab
       value: 
       objectReference: {fileID: 1051553660399173006, guid: 9fc891b4972bab648b46aa051fa2c2a9,
         type: 3}
+    - target: {fileID: 1256529798028132655, guid: 9fc891b4972bab648b46aa051fa2c2a9,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1712280318968332697, guid: 9fc891b4972bab648b46aa051fa2c2a9,
         type: 3}
       propertyPath: serializationData.Prefab
       value: 
       objectReference: {fileID: 1712280318968332697, guid: 9fc891b4972bab648b46aa051fa2c2a9,
         type: 3}
+    - target: {fileID: 2028921490172328154, guid: 9fc891b4972bab648b46aa051fa2c2a9,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2907397626886010504, guid: 9fc891b4972bab648b46aa051fa2c2a9,
         type: 3}
       propertyPath: serializationData.Prefab
@@ -6047,6 +6065,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 5947709849876509656, guid: 9fc891b4972bab648b46aa051fa2c2a9,
         type: 3}
+    - target: {fileID: 6858917995977934974, guid: 9fc891b4972bab648b46aa051fa2c2a9,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7462115459688095743, guid: 9fc891b4972bab648b46aa051fa2c2a9,
         type: 3}
       propertyPath: serializationData.Prefab

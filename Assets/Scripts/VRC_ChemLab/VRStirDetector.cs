@@ -11,6 +11,10 @@ public class VRStirDetector : UdonSharpBehaviour
     [Header("Runtime")]
     [SerializeField] private float stir01;
 
+    [Header("Detection Fallback")]
+    [Tooltip("ChemLiquidVolumeMarker が無い場合でも、Collider名に 'Liquid'/'VFXVolume' が含まれると液体として扱います。")]
+    public bool allowNameBasedLiquidDetection = true;
+
     private Vector3 prevPos;
     private float inLiquidUntil;
 
@@ -49,6 +53,21 @@ public class VRStirDetector : UdonSharpBehaviour
         if (other.GetComponent<ChemLiquidVolumeMarker>() != null)
         {
             inLiquidUntil = Time.time + 0.15f;
+            return;
+        }
+
+        // Fallback by name (common in prefabs where marker script was forgotten)
+        if (allowNameBasedLiquidDetection)
+        {
+            string n = other.gameObject.name;
+            if (!string.IsNullOrEmpty(n))
+            {
+                string u = n.ToUpper();
+                if (u.IndexOf("LIQUID") >= 0 || u.IndexOf("VFXVOLUME") >= 0)
+                {
+                    inLiquidUntil = Time.time + 0.15f;
+                }
+            }
         }
     }
 

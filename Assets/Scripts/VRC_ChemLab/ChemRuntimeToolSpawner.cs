@@ -34,6 +34,10 @@ public class ChemRuntimeToolSpawner : UdonSharpBehaviour
     [Tooltip("前回生成した複製を破棄してから新規生成します。")]
     public bool destroyPrevious = true;
 
+    [Header("Runtime Safety")]
+    [Tooltip("ONにすると、生成した複製からUI/ボタン用のスクリプトを無効化します。\n(生成物を触っただけで同じ場所に複製される現象の対策)")]
+    public bool disableSpawnInteractionsOnClones = true;
+
     private GameObject _spawned;
     private string _spawnedId;
 
@@ -62,6 +66,7 @@ public class ChemRuntimeToolSpawner : UdonSharpBehaviour
                 if (go != null)
                 {
                     EnsureCloneVisible(go.transform);
+                    if (disableSpawnInteractionsOnClones) DisableRuntimeSpawnInteractions(go);
                     if (!go.activeSelf) go.SetActive(true);
                     return go;
                 }
@@ -74,6 +79,7 @@ public class ChemRuntimeToolSpawner : UdonSharpBehaviour
         GameObject clone = VRCInstantiate(templateTr.gameObject);
         if (clone == null) return null;
         EnsureCloneVisible(clone.transform);
+        if (disableSpawnInteractionsOnClones) DisableRuntimeSpawnInteractions(clone);
         if (!clone.activeSelf) clone.SetActive(true);
         return clone;
     }
@@ -140,6 +146,8 @@ public class ChemRuntimeToolSpawner : UdonSharpBehaviour
 
         // Ensure clone is visible
         EnableAllRenderers(go.transform);
+
+        if (disableSpawnInteractionsOnClones) DisableRuntimeSpawnInteractions(go);
 
         if (!go.activeSelf) go.SetActive(true);
 
@@ -344,6 +352,40 @@ public class ChemRuntimeToolSpawner : UdonSharpBehaviour
             if (NormalizeId(p.name) == toolIdNorm) return p;
         }
         return null;
+    }
+
+    /// <summary>
+    /// Runtimeで生成した複製が、UIボタンのように振る舞ってしまうのを防ぎます。
+    /// (例: SpawnSelectorButton / SelectorObject が残っていて、触っただけでその場で再生成される)
+    /// </summary>
+    private void DisableRuntimeSpawnInteractions(GameObject root)
+    {
+        if (root == null) return;
+
+        // Disable known "button" behaviours (keep pickup/physics intact)
+        SpawnSelectorButton[] spawnBtns = root.GetComponentsInChildren<SpawnSelectorButton>(true);
+        for (int i = 0; i < spawnBtns.Length; i++) if (spawnBtns[i] != null) spawnBtns[i].enabled = false;
+
+        SelectorObject[] selectorObjs = root.GetComponentsInChildren<SelectorObject>(true);
+        for (int i = 0; i < selectorObjs.Length; i++) if (selectorObjs[i] != null) selectorObjs[i].enabled = false;
+
+        SelectionActionController[] actionCtrls = root.GetComponentsInChildren<SelectionActionController>(true);
+        for (int i = 0; i < actionCtrls.Length; i++) if (actionCtrls[i] != null) actionCtrls[i].enabled = false;
+
+        ValueAdjustButton[] valueBtns = root.GetComponentsInChildren<ValueAdjustButton>(true);
+        for (int i = 0; i < valueBtns.Length; i++) if (valueBtns[i] != null) valueBtns[i].enabled = false;
+
+        StartExperimentButton[] startBtns = root.GetComponentsInChildren<StartExperimentButton>(true);
+        for (int i = 0; i < startBtns.Length; i++) if (startBtns[i] != null) startBtns[i].enabled = false;
+
+        ResetExperimentButton[] resetBtns = root.GetComponentsInChildren<ResetExperimentButton>(true);
+        for (int i = 0; i < resetBtns.Length; i++) if (resetBtns[i] != null) resetBtns[i].enabled = false;
+
+        OperatorButton[] opBtns = root.GetComponentsInChildren<OperatorButton>(true);
+        for (int i = 0; i < opBtns.Length; i++) if (opBtns[i] != null) opBtns[i].enabled = false;
+
+        ConditionAdjuster[] condAdj = root.GetComponentsInChildren<ConditionAdjuster>(true);
+        for (int i = 0; i < condAdj.Length; i++) if (condAdj[i] != null) condAdj[i].enabled = false;
     }
 
     private void EnsureCloneVisible(Transform root)

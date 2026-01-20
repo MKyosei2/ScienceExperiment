@@ -7,6 +7,10 @@ public class VRPourDetector : UdonSharpBehaviour
     public Transform spout;
     public Transform target;
 
+    [Header("Auto Resolve (optional)")]
+    [Tooltip("spout/target が未設定でも動くように自動探索します。")]
+    public bool autoResolve = true;
+
     [Header("Pour Conditions")]
     public float startAngleDeg = 35f;  // これ以上傾けたら出始める
     public float fullAngleDeg = 85f;  // これでPour01=1
@@ -16,6 +20,27 @@ public class VRPourDetector : UdonSharpBehaviour
     public float smooth = 10f;
 
     [SerializeField] private float pour01;
+
+    private void Start()
+    {
+        if (!autoResolve) return;
+
+        // target: scene object 'PourTargetPoint' (exists in the default scene)
+        if (target == null)
+        {
+            GameObject t = GameObject.Find("PourTargetPoint");
+            if (t != null) target = t.transform;
+        }
+
+        // spout: prefer children named like Spout/Mouth/Pour
+        if (spout == null)
+        {
+            spout = FindChildByNameContains(transform, "spout");
+            if (spout == null) spout = FindChildByNameContains(transform, "mouth");
+            if (spout == null) spout = FindChildByNameContains(transform, "pour");
+            if (spout == null) spout = transform; // fallback
+        }
+    }
 
     private void Update()
     {
@@ -38,4 +63,23 @@ public class VRPourDetector : UdonSharpBehaviour
     }
 
     public float Get01() { return pour01; }
+
+    private Transform FindChildByNameContains(Transform root, string key)
+    {
+        if (root == null || string.IsNullOrEmpty(key)) return null;
+        string ku = key.ToUpper();
+
+        Transform[] all = root.GetComponentsInChildren<Transform>(true);
+        if (all == null) return null;
+        for (int i = 0; i < all.Length; i++)
+        {
+            Transform t = all[i];
+            if (t == null) continue;
+            if (t == root) continue;
+            string n = t.name;
+            if (string.IsNullOrEmpty(n)) continue;
+            if (n.ToUpper().IndexOf(ku) >= 0) return t;
+        }
+        return null;
+    }
 }

@@ -52,7 +52,24 @@ public class ElementVFXForceReadable : UdonSharpBehaviour
         {
             MeshFilter src = (MeshFilter)vfxMesh.GetComponent(typeof(MeshFilter));
             if (src != null && src.sharedMesh != null)
+            {
+                // Copy mesh
                 targetMeshFilter.sharedMesh = src.sharedMesh;
+
+                // Also copy transform so the shader volume matches the instrument shape/size.
+                // (The VFXVolumeMesh itself is already slightly shrunk by the spawner.)
+                Transform dstTr = targetMeshFilter.transform;
+                dstTr.position = vfxMesh.position;
+                dstTr.rotation = vfxMesh.rotation;
+
+                Vector3 parentLossy = dstTr.parent != null ? dstTr.parent.lossyScale : Vector3.one;
+                Vector3 targetLossy = vfxMesh.lossyScale;
+                Vector3 local = dstTr.localScale;
+                if (parentLossy.x != 0f) local.x = targetLossy.x / parentLossy.x;
+                if (parentLossy.y != 0f) local.y = targetLossy.y / parentLossy.y;
+                if (parentLossy.z != 0f) local.z = targetLossy.z / parentLossy.z;
+                dstTr.localScale = local;
+            }
         }
 
         // 3) VFXVolume(BoxCollider) 容積から粒子密度を決める（拡大しないで満杯感）

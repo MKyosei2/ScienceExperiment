@@ -46,6 +46,10 @@ public class ChemVisualController : UdonSharpBehaviour
     [Header("Renderer Targets (optional)")]
     public Renderer[] targetRenderers;
 
+    [Header("Particles (optional)")]
+    [Tooltip("ParticleSystemも元素カラーに追従させます(ParticleSystem.main.startColor を更新)。")]
+    public bool applyColorToParticles = true;
+
     [Header("Shader Property Names (optional)")]
     public string propBaseColor = "_BaseColor";
     public string propColorFallback = "_Color";
@@ -111,6 +115,9 @@ public class ChemVisualController : UdonSharpBehaviour
     private float _lastEmission;
     private float _lastNoiseScale;
 
+    // Particles under this visual (optional)
+    private ParticleSystem[] _particleSystems;
+
     // temp buffers for formula parsing
     private const int MAX_ELEMS = 12;
     private string[] _tmpSyms;
@@ -147,10 +154,21 @@ public class ChemVisualController : UdonSharpBehaviour
         if (liquidObj == null) liquidObj = FindChild("Liquid");
         if (gasObj == null) gasObj = FindChild("Gas");
 
+        // Collect all renderers under this visual (including inactive children).
+        // NOTE: Some prefabs assign targetRenderers manually and may forget ParticleSystemRenderer,
+        // which results in particles staying a constant color.
+        Renderer[] childRenderers = GetComponentsInChildren<Renderer>(true);
         if (targetRenderers == null || targetRenderers.Length == 0)
         {
-            targetRenderers = GetComponentsInChildren<Renderer>();
+            targetRenderers = childRenderers;
         }
+        else
+        {
+            targetRenderers = MergeUniqueRenderers(targetRenderers, childRenderers);
+        }
+
+        // Cache particle systems (optional)
+        _particleSystems = GetComponentsInChildren<ParticleSystem>(true);
 
         // ProductToken auto find
         if (productTokenObj == null)
@@ -171,6 +189,56 @@ public class ChemVisualController : UdonSharpBehaviour
 
         _tmpSyms = new string[MAX_ELEMS];
         _tmpCounts = new int[MAX_ELEMS];
+    }
+
+    private Renderer[] MergeUniqueRenderers(Renderer[] a, Renderer[] b)
+    {
+        if (a == null || a.Length == 0) return b;
+        if (b == null || b.Length == 0) return a;
+
+        int count = a.Length;
+        for (int i = 0; i < b.Length; i++)
+        {
+            Renderer r = b[i];
+            if (r == null) continue;
+            bool exists = false;
+            for (int j = 0; j < a.Length; j++)
+            {
+                if (a[j] == r)
+                {
+                    exists = true;
+                    break;
+                }
+            }
+            if (!exists) count++;
+        }
+
+        if (count == a.Length) return a;
+
+        Renderer[] merged = new Renderer[count];
+        for (int i = 0; i < a.Length; i++) merged[i] = a[i];
+
+        int idx = a.Length;
+        for (int i = 0; i < b.Length; i++)
+        {
+            Renderer r = b[i];
+            if (r == null) continue;
+            bool exists = false;
+            for (int j = 0; j < a.Length; j++)
+            {
+                if (a[j] == r)
+                {
+                    exists = true;
+                    break;
+                }
+            }
+            if (!exists)
+            {
+                merged[idx] = r;
+                idx++;
+            }
+        }
+        return merged;
     }
 
     // called by spawner (async)
@@ -463,6 +531,26 @@ public class ChemVisualController : UdonSharpBehaviour
         _lastNoiseScale = noiseScale;
 
         ApplyRecipeToRenderers(targetRenderers, baseColor, opacity, metallic, smoothness, emission, noiseScale, dissolve);
+
+        // Ensure particle start color follows the element (fix: particles staying constant color)
+        if (applyColorToParticles) ApplyColorToParticleSystems(baseColor, opacity);
+    }
+
+    private void ApplyColorToParticleSystems(Color baseColor, float opacity)
+    {
+        if (_particleSystems == null || _particleSystems.Length == 0) return;
+
+        Color c = baseColor;
+        c.a = Mathf.Clamp01(opacity);
+
+        for (int i = 0; i < _particleSystems.Length; i++)
+        {
+            ParticleSystem ps = _particleSystems[i];
+            if (ps == null) continue;
+
+            var main = ps.main;
+            main.startColor = c;
+        }
     }
 
     private void ApplyRecipeToRenderers(Renderer[] renderers, Color baseColor, float opacity, float metallic, float smoothness, float emission, float noiseScale, float dissolve)
@@ -552,6 +640,7 @@ public class ChemVisualController : UdonSharpBehaviour
         out string note
     )
     {
+        if (formula == null) formula = "";
         hazard = db.GetHazardForFormulaOrElement(formula);
 
         int n = ParseFormulaToBuffers(db, formula);
@@ -730,7 +819,12 @@ public class ChemVisualController : UdonSharpBehaviour
 
         if (string.IsNullOrEmpty(formula)) return 0;
 
-        string f = db.NormalizeFormula(formula);
+        string f = formula;
+        if (f == null) return 0;
+        f = f.Trim();
+        f = f.Replace(" ", "");
+        f = f.Replace("·", ".");
+        if (string.IsNullOrEmpty(f)) return 0;
         int len = f.Length;
 
         int unique = 0;

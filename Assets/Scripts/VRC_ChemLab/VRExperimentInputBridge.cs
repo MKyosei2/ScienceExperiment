@@ -16,8 +16,16 @@ public class VRExperimentInputBridge : UdonSharpBehaviour
     [Header("Sync")]
     public float sendInterval = 0.20f;
 
+    [Header("Auto Resolve (optional)")]
+    [Tooltip("Inspector参照が未設定でも動くように、容器付近からDetectorを自動探索します。")]
+    public bool autoResolveDetectors = true;
+
+    [Tooltip("自動探索の実行間隔(秒)。Updateごとに探索すると重いため間引きします。")]
+    public float resolveInterval = 1.0f;
+
     private bool active;
     private float nextSendAt;
+    private float nextResolveAt;
 
     public void OnModeVR() { active = true; }
     public void OnModePC()
@@ -32,6 +40,13 @@ public class VRExperimentInputBridge : UdonSharpBehaviour
         if (!active) return;
         if (spawner == null) return;
 
+        // Auto resolve missing detectors (safe fallback)
+        if (autoResolveDetectors && Time.time >= nextResolveAt)
+        {
+            nextResolveAt = Time.time + Mathf.Max(0.2f, resolveInterval);
+            TryAutoResolveDetectors();
+        }
+
         // 他人が操作者なら送らない（ログ汚染防止）
         if (spawner.HasOperator() && !spawner.IsOperatorLocal()) return;
 
@@ -45,5 +60,30 @@ public class VRExperimentInputBridge : UdonSharpBehaviour
         float heat01 = useSpawnerHeat01 ? spawner.GetHeat01() : 0f;
 
         spawner.SetOps01(heat01, stir01, pour01, shake01);
+    }
+
+    private void TryAutoResolveDetectors()
+    {
+        // Prefer searching around the experiment container (VR_StartZone)
+		Transform searchRoot = (spawner != null && spawner.containerTransform != null) ? spawner.containerTransform : null;
+		if (searchRoot == null) searchRoot = transform.root;
+		if (searchRoot == null) searchRoot = transform;
+
+        if (stir == null)
+        {
+			// UdonSharpBehaviour does not support generic method declarations,
+			// so we keep this resolution simple & explicit.
+			stir = searchRoot.GetComponentInChildren<VRStirDetector>(true);
+        }
+
+        if (pour == null)
+        {
+			pour = searchRoot.GetComponentInChildren<VRPourDetector>(true);
+        }
+
+        if (shake == null)
+        {
+			shake = searchRoot.GetComponentInChildren<VRShakeDetector>(true);
+        }
     }
 }
