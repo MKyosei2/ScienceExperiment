@@ -946,19 +946,33 @@ public class ChemVisualController : UdonSharpBehaviour
     // -----------------------------
     private bool IsSceneTemplateSampleVisual()
     {
-        // Runtime clones are typically "SampleVisual(Clone)".
+        // This method exists ONLY to mute the single scene-template object at:
+        //   ExperimentTable/VR_StartZone/ElementEffectAnchor/SampleVisual
+        // We must NOT accidentally mute runtime-spawned visuals, otherwise effects disappear.
+
         if (gameObject == null) return false;
         if (gameObject.name != "SampleVisual") return false;
 
-        // Must be under an ElementEffectAnchor somewhere in the parent chain.
+        bool underElementEffectAnchor = false;
+        bool underStartZoneOrTable = false;
+
         Transform p = transform;
         int guard = 0;
-        while (p != null && guard < 32)
+        while (p != null && guard < 64)
         {
-            if (p.name == "ElementEffectAnchor") return true;
+            string n = p.name;
+            if (n == "ElementEffectAnchor") underElementEffectAnchor = true;
+            if (n == "VR_StartZone" || n == "ExperimentTable") underStartZoneOrTable = true;
+
+            // Early out once we have enough evidence
+            if (underElementEffectAnchor && underStartZoneOrTable) return true;
+
             p = p.parent;
             guard++;
         }
+
+        // If it's under an ElementEffectAnchor but NOT under the table/start zone,
+        // it's almost certainly a runtime clone and must stay active.
         return false;
     }
 

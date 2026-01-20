@@ -1514,7 +1514,14 @@ _placedToolTopTr.position = _placedToolOrigPos;
         {
             svT.localPosition = elementEffectLocalOffset;
             svT.localRotation = Quaternion.identity;
-            svT.localScale = elementEffectLocalScale;
+            // Compensate parent scale so the effect stays visible even under scaled tools
+            Vector3 p = (svT.parent != null) ? svT.parent.lossyScale : Vector3.one;
+            Vector3 desiredWorld = elementEffectLocalScale;
+            Vector3 ls = desiredWorld;
+            if (p.x != 0f) ls.x = desiredWorld.x / p.x;
+            if (p.y != 0f) ls.y = desiredWorld.y / p.y;
+            if (p.z != 0f) ls.z = desiredWorld.z / p.z;
+            svT.localScale = ls;
         }
 
         // The runtime clone might be configured before its Start() runs; force-init to be safe.
@@ -1657,7 +1664,16 @@ _placedToolTopTr.position = _placedToolOrigPos;
         // スケール：器具のサイズに合わせて収める（内側に入るように係数を掛ける）
         Vector3 size = b.size;
         Vector3 s = new Vector3(size.x * effectBoundsScale.x, size.y * effectBoundsScale.y, size.z * effectBoundsScale.z);
-        t.localScale = Vector3.Scale(elementEffectLocalScale, s);
+        // NOTE: b.size is in WORLD space. If the tool hierarchy is scaled (e.g. 0.01),
+        // setting localScale directly will make the effect almost invisible.
+        // We convert the desired WORLD scale into a localScale that compensates parent lossyScale.
+        Vector3 desiredWorldScale = Vector3.Scale(elementEffectLocalScale, s);
+        Vector3 parentLossy = (t.parent != null) ? t.parent.lossyScale : Vector3.one;
+        Vector3 localScale = desiredWorldScale;
+        if (parentLossy.x != 0f) localScale.x = desiredWorldScale.x / parentLossy.x;
+        if (parentLossy.y != 0f) localScale.y = desiredWorldScale.y / parentLossy.y;
+        if (parentLossy.z != 0f) localScale.z = desiredWorldScale.z / parentLossy.z;
+        t.localScale = localScale;
     }
 
 
@@ -1956,6 +1972,29 @@ _placedToolTopTr.position = _placedToolOrigPos;
     {
         if (rootGo == null) return;
 
+        // Some ParticleSystem prefabs (especially when cloned from inactive templates)
+        // end up with ParticleSystemRenderer.sharedMaterial = null, making the effect invisible.
+        // Resolve a reasonable master material and assign it to missing particle renderers.
+        Material masterMat = GetParticleMasterMaterial();
+        if (masterMat == null)
+        {
+            // Fallback: find any particle renderer under this instance that already has a material.
+            ParticleSystemRenderer[] prs = rootGo.GetComponentsInChildren<ParticleSystemRenderer>(true);
+            if (prs != null)
+            {
+                for (int i = 0; i < prs.Length; i++)
+                {
+                    ParticleSystemRenderer pr0 = prs[i];
+                    if (pr0 == null) continue;
+                    if (pr0.sharedMaterial != null)
+                    {
+                        masterMat = pr0.sharedMaterial;
+                        break;
+                    }
+                }
+            }
+        }
+
         ParticleSystem[] ps = rootGo.GetComponentsInChildren<ParticleSystem>(true);
         for (int i = 0; i < ps.Length; i++)
         {
@@ -1967,7 +2006,17 @@ _placedToolTopTr.position = _placedToolOrigPos;
 
             // Ensure its renderer is enabled as well
             ParticleSystemRenderer pr = p.GetComponent<ParticleSystemRenderer>();
-            if (pr != null) pr.enabled = true;
+            if (pr != null)
+            {
+                pr.enabled = true;
+
+                // If the renderer has no material, the particles will not be visible.
+                // Assign the resolved master material.
+                if (pr.sharedMaterial == null && masterMat != null)
+                {
+                    pr.sharedMaterial = masterMat;
+                }
+            }
 
             if (restart)
             {
@@ -2946,9 +2995,23 @@ private void AttachReactionVfxClone(GameObject toolGo)
     vfxGo.transform.SetParent(anchor, false);
     vfxGo.transform.localPosition = Vector3.zero;
     vfxGo.transform.localRotation = Quaternion.identity;
-    vfxGo.transform.localScale = Vector3.one;
+    // Compensate anchor scaling so VFX stays visible under scaled tools
+    Vector3 desiredWorld = (tpl != null) ? tpl.transform.lossyScale : Vector3.one;
+    if (desiredWorld.x < 0.05f && desiredWorld.y < 0.05f && desiredWorld.z < 0.05f) desiredWorld = Vector3.one;
+    Vector3 aScale = anchor.lossyScale;
+    Vector3 ls = vfxGo.transform.localScale;
+    ls.x = (aScale.x != 0f) ? (desiredWorld.x / aScale.x) : ls.x;
+    ls.y = (aScale.y != 0f) ? (desiredWorld.y / aScale.y) : ls.y;
+    ls.z = (aScale.z != 0f) ? (desiredWorld.z / aScale.z) : ls.z;
+    vfxGo.transform.localScale = ls;
 
     if (!vfxGo.activeSelf) vfxGo.SetActive(true);
+
+    // Ensure VFX is actually visible (templates sometimes ship with disabled children/renderers)
+    ForceActiveDescendants(vfxGo.transform, 256);
+    EnableAllRenderers(vfxGo);
+    PlayAllParticles(vfxGo, true);
+    if (forceVisibleOnSelect) ForceVisibleHierarchy(vfxGo.transform);
 
     // If the spawner has a reactionAnimator reference, point it to this instance (per-tool)
     ChemReactionAnimator anim = vfxGo.GetComponent<ChemReactionAnimator>();
@@ -2997,12 +3060,34 @@ private void AttachElementVisualClone(GameObject toolGo, string elementSymbol)
     visGo.transform.localRotation = Quaternion.identity;
 
     // IMPORTANT:
-    // Do NOT preserve template world-scale here.
-    // Parent scales in the tool hierarchy can be very small (eg 0.01), which would blow up the local scale.
-    // That was the main reason particles "overflow" and cover the whole scene.
-    Vector3 ls = elementEffectLocalScale;
-    if (ls.x == 0f && ls.y == 0f && ls.z == 0f) ls = Vector3.one;
-    visGo.transform.localScale = ls;
+    // Preserve a *reasonable WORLD scale* so the effect stays visible even when
+    // the tool hierarchy is scaled (many lab tools are imported at 0.01).
+    // We still contain the particles with VFXVolume + module clamping, so this won't "overflow".
+    // Choose a reasonable *WORLD* scale for the visual.
+    // Many lab tools are imported under a scaled parent (e.g. 0.01), so relying on the template lossyScale
+    // can make the VFX tiny and effectively invisible.
+    Vector3 targetWorldScale = elementEffectLocalScale;
+    if (targetWorldScale.x == 0f && targetWorldScale.y == 0f && targetWorldScale.z == 0f)
+        targetWorldScale = Vector3.one;
+
+    // If the in-scene template is already at a reasonable world size, use it.
+    if (templateGo != null)
+    {
+        Vector3 t = templateGo.transform.lossyScale;
+        // Ignore very small templates (commonly under 0.01 roots)
+        if (t.x >= 0.05f && t.y >= 0.05f && t.z >= 0.05f)
+            targetWorldScale = t;
+    }
+
+    // NaN guard
+    if (targetWorldScale.x != targetWorldScale.x) targetWorldScale = Vector3.one;
+
+    Vector3 aScale = anchor.lossyScale;
+    Vector3 localScale = visGo.transform.localScale;
+    localScale.x = (aScale.x != 0f) ? (targetWorldScale.x / aScale.x) : localScale.x;
+    localScale.y = (aScale.y != 0f) ? (targetWorldScale.y / aScale.y) : localScale.y;
+    localScale.z = (aScale.z != 0f) ? (targetWorldScale.z / aScale.z) : localScale.z;
+    visGo.transform.localScale = localScale;
 
     // Prefer VFXVolume(BoxCollider) under the anchor; it defines the container volume.
     BoxCollider vfxBox;
@@ -3602,32 +3687,128 @@ private void DisableRuntimeSpawnInteractions(GameObject root)
 {
     if (root == null) return;
 
-    // Disable known "button" behaviours (keep pickup/physics intact).
-    // NOTE: We avoid reflection/typeof due to UdonSharp restrictions.
+    // Runtime-spawned objects should be *pickable*, but must NOT behave like UI.
+    // Some templates are shared with UI buttons. If those scripts remain active, clicking the spawned object
+    // will run selection/spawn logic again (appears as "it duplicated" or "teleported" to a random spot).
+    //
+    // Important: In VRChat/Udon, disabling a behaviour is not always enough to prevent Interact() from firing
+    // in edge cases (depending on how the interaction is routed). Therefore we also clear references/commands.
+
     SpawnSelectorButton[] spawnBtns = root.GetComponentsInChildren<SpawnSelectorButton>(true);
-    for (int i = 0; i < spawnBtns.Length; i++) if (spawnBtns[i] != null) spawnBtns[i].enabled = false;
+    for (int i = 0; i < spawnBtns.Length; i++)
+    {
+        SpawnSelectorButton b = spawnBtns[i];
+        if (b == null) continue;
+        b.idOrName = "";
+        b.elementSpawner = null;
+        b.environmentManager = null;
+        b.statusDisplay = null;
+        b.enabled = false;
+    }
 
     SelectorObject[] selectorObjs = root.GetComponentsInChildren<SelectorObject>(true);
-    for (int i = 0; i < selectorObjs.Length; i++) if (selectorObjs[i] != null) selectorObjs[i].enabled = false;
+    for (int i = 0; i < selectorObjs.Length; i++)
+    {
+        SelectorObject s = selectorObjs[i];
+        if (s == null) continue;
+        s.selected = null;
+        s.idOverride = "";
+        s.parentToZoneOnSelect = false;
+        s.zoneForThisCategory = null;
+        s.enabled = false;
+    }
 
     SelectionActionController[] actionCtrls = root.GetComponentsInChildren<SelectionActionController>(true);
-    for (int i = 0; i < actionCtrls.Length; i++) if (actionCtrls[i] != null) actionCtrls[i].enabled = false;
+    for (int i = 0; i < actionCtrls.Length; i++)
+    {
+        SelectionActionController a = actionCtrls[i];
+        if (a == null) continue;
+        a.buttons = null;
+        a.enabled = false;
+    }
 
     ValueAdjustButton[] valueBtns = root.GetComponentsInChildren<ValueAdjustButton>(true);
-    for (int i = 0; i < valueBtns.Length; i++) if (valueBtns[i] != null) valueBtns[i].enabled = false;
+    for (int i = 0; i < valueBtns.Length; i++)
+    {
+        ValueAdjustButton v = valueBtns[i];
+        if (v == null) continue;
+        v.env = null;
+        v.command = "";
+        v.enabled = false;
+    }
 
     StartExperimentButton[] startBtns = root.GetComponentsInChildren<StartExperimentButton>(true);
-    for (int i = 0; i < startBtns.Length; i++) if (startBtns[i] != null) startBtns[i].enabled = false;
+    for (int i = 0; i < startBtns.Length; i++)
+    {
+        StartExperimentButton st = startBtns[i];
+        if (st == null) continue;
+        st.spawner = null;
+        st.enabled = false;
+    }
 
     ResetExperimentButton[] resetBtns = root.GetComponentsInChildren<ResetExperimentButton>(true);
-    for (int i = 0; i < resetBtns.Length; i++) if (resetBtns[i] != null) resetBtns[i].enabled = false;
+    for (int i = 0; i < resetBtns.Length; i++)
+    {
+        ResetExperimentButton r = resetBtns[i];
+        if (r == null) continue;
+        r.spawner = null;
+        r.envManager = null;
+        r.uiSync = null;
+        r.enabled = false;
+    }
 
     OperatorButton[] opBtns = root.GetComponentsInChildren<OperatorButton>(true);
-    for (int i = 0; i < opBtns.Length; i++) if (opBtns[i] != null) opBtns[i].enabled = false;
+    for (int i = 0; i < opBtns.Length; i++)
+    {
+        OperatorButton o = opBtns[i];
+        if (o == null) continue;
+        o.spawner = null;
+        o.mode = "";
+        o.enabled = false;
+    }
 
     // UI folder scripts (may exist on templates)
     ConditionAdjuster[] condAdj = root.GetComponentsInChildren<ConditionAdjuster>(true);
-    for (int i = 0; i < condAdj.Length; i++) if (condAdj[i] != null) condAdj[i].enabled = false;
+    for (int i = 0; i < condAdj.Length; i++)
+    {
+        ConditionAdjuster c = condAdj[i];
+        if (c == null) continue;
+        c.env = null;
+        c.spawner = null;
+        c.command = "";
+        c.enabled = false;
+    }
+
+    // Build/runtime fallback:
+    // Some UI button scripts may appear as plain UdonBehaviours in Udon runtime.
+    // Avoid using GetProgramVariable() for detection (it logs errors when the variable doesn't exist).
+    // Instead, disable UdonBehaviours/colliders that live under obvious UI-like transforms.
+    DisableUiLikeUdonBehaviours(root);
+}
+
+private void DisableUiLikeUdonBehaviours(GameObject root)
+{
+    if (root == null) return;
+
+    UdonBehaviour[] ubs = root.GetComponentsInChildren<UdonBehaviour>(true);
+    for (int i = 0; i < ubs.Length; i++)
+    {
+        UdonBehaviour ub = ubs[i];
+        if (ub == null) continue;
+        if (!IsUiLikeTransform(ub.transform)) continue;
+        ub.enabled = false;
+    }
+
+    // Desktop click still triggers Interact on colliders even if the behaviour is disabled in some cases,
+    // so also disable colliders that belong to UI-like nodes.
+    Collider[] cols = root.GetComponentsInChildren<Collider>(true);
+    for (int i = 0; i < cols.Length; i++)
+    {
+        Collider c = cols[i];
+        if (c == null) continue;
+        if (!IsUiLikeTransform(c.transform)) continue;
+        c.enabled = false;
+    }
 }
 
 private void SpawnElementContainerInstance(string elementSymbol)

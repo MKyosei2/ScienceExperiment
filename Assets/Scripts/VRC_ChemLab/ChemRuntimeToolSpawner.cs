@@ -1,6 +1,8 @@
 using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
+using VRC.SDK3.Components;
+using VRC.Udon;
 
 /// <summary>
 /// ChemRuntimeToolSpawner (Udon-safe)
@@ -188,8 +190,14 @@ public class ChemRuntimeToolSpawner : UdonSharpBehaviour
         if (root == null) return null;
 
         // Search all descendants (including inactive) because templates may be in categories.
+        // IMPORTANT:
+        //  - Never pick UI/menu/button objects as "tool templates".
+        //  - Prefer actual pick-up tools (VRC_Pickup) when multiple names match.
         Transform[] all = root.GetComponentsInChildren<Transform>(true);
         if (all == null) return null;
+
+        Transform best = null;
+        int bestScore = -999999;
 
         int n = all.Length;
         for (int i = 0; i < n; i++)
@@ -198,28 +206,54 @@ public class ChemRuntimeToolSpawner : UdonSharpBehaviour
             if (t == null) continue;
             if (t == root) continue;
 
+            // Skip any UI-like nodes entirely
+            if (IsUiLikeTransform(t)) continue;
+            if (t.GetComponent<RectTransform>() != null) continue;
+            if (t.GetComponent<Canvas>() != null) continue;
+
             string name = StripUnitySuffix(t.name);
             string normName = NormalizeId(name);
-            if (normName == toolIdNorm) return t;
+
+            bool nameMatch = (normName == toolIdNorm);
+            bool baseMatch = false;
 
             // If template has a Pickup suffix, allow matching the base id (e.g. "BEAKER" matches "Beaker_Pickup")
-            if (normName.EndsWith("PICKUP"))
+            if (!nameMatch && normName.EndsWith("PICKUP"))
             {
                 string baseName = normName.Substring(0, normName.Length - 6);
-                if (baseName == toolIdNorm) return t;
+                baseMatch = (baseName == toolIdNorm);
             }
 
             // If requested id includes PICKUP but template doesn't, allow matching as well.
-            if (toolIdNorm.EndsWith("PICKUP"))
+            if (!nameMatch && !baseMatch && toolIdNorm.EndsWith("PICKUP"))
             {
                 string reqBase = toolIdNorm.Substring(0, toolIdNorm.Length - 6);
-                if (normName == reqBase) return t;
+                baseMatch = (normName == reqBase);
             }
 
-            // Some projects use PICKUP capitalization variations already handled by NormalizeId// Some projects use "_PICKUP" capitalization variations already handled by NormalizeId
+            if (!nameMatch && !baseMatch) continue;
+
+            int score = 0;
+            // Exact match beats base-match
+            if (nameMatch) score += 50;
+            if (baseMatch) score += 20;
+
+            // Prefer actual tools (pickup)
+            if (t.GetComponent<VRC_Pickup>() != null) score += 100;
+            if (t.GetComponent<Rigidbody>() != null) score += 10;
+            if (t.GetComponent<Collider>() != null) score += 5;
+
+            // Avoid weird helper sub-objects as templates
+            if (t.childCount > 0) score += 2;
+
+            if (score > bestScore)
+            {
+                bestScore = score;
+                best = t;
+            }
         }
 
-        return null;
+        return best;
     }
 
     private void DisableAllRenderers(Transform tr)
@@ -362,30 +396,155 @@ public class ChemRuntimeToolSpawner : UdonSharpBehaviour
     {
         if (root == null) return;
 
-        // Disable known "button" behaviours (keep pickup/physics intact)
+        // -----------------------------------------------------------------
+        // IMPORTANT:
+        // In VRChat, Interact events can still be routed even if a behaviour
+        // is disabled. So we do BOTH:
+        //  1) disable the behaviour
+        //  2) clear its references / ids so it becomes inert
+        // -----------------------------------------------------------------
+
+        // SpawnSelectorButton (element/tool/condition selector)
         SpawnSelectorButton[] spawnBtns = root.GetComponentsInChildren<SpawnSelectorButton>(true);
-        for (int i = 0; i < spawnBtns.Length; i++) if (spawnBtns[i] != null) spawnBtns[i].enabled = false;
+        for (int i = 0; i < spawnBtns.Length; i++)
+        {
+            SpawnSelectorButton b = spawnBtns[i];
+            if (b == null) continue;
+            b.idOrName = "";
+            b.elementSpawner = null;
+            b.environmentManager = null;
+            b.statusDisplay = null;
+            b.enabled = false;
+        }
 
+        // SelectorObject (adds selection into SelectedObjectHolder)
         SelectorObject[] selectorObjs = root.GetComponentsInChildren<SelectorObject>(true);
-        for (int i = 0; i < selectorObjs.Length; i++) if (selectorObjs[i] != null) selectorObjs[i].enabled = false;
+        for (int i = 0; i < selectorObjs.Length; i++)
+        {
+            SelectorObject s = selectorObjs[i];
+            if (s == null) continue;
+            s.selected = null;
+            s.zoneForThisCategory = null;
+            s.idOverride = "";
+            s.enabled = false;
+        }
 
+        // SelectionActionController (calls button.Interact())
         SelectionActionController[] actionCtrls = root.GetComponentsInChildren<SelectionActionController>(true);
-        for (int i = 0; i < actionCtrls.Length; i++) if (actionCtrls[i] != null) actionCtrls[i].enabled = false;
+        for (int i = 0; i < actionCtrls.Length; i++)
+        {
+            SelectionActionController a = actionCtrls[i];
+            if (a == null) continue;
+            a.buttons = null;
+            a.enabled = false;
+        }
 
+        // ValueAdjustButton (env.Modify())
         ValueAdjustButton[] valueBtns = root.GetComponentsInChildren<ValueAdjustButton>(true);
-        for (int i = 0; i < valueBtns.Length; i++) if (valueBtns[i] != null) valueBtns[i].enabled = false;
+        for (int i = 0; i < valueBtns.Length; i++)
+        {
+            ValueAdjustButton v = valueBtns[i];
+            if (v == null) continue;
+            v.env = null;
+            v.command = "";
+            v.enabled = false;
+        }
 
+        // Start/Reset/Operator buttons
         StartExperimentButton[] startBtns = root.GetComponentsInChildren<StartExperimentButton>(true);
-        for (int i = 0; i < startBtns.Length; i++) if (startBtns[i] != null) startBtns[i].enabled = false;
+        for (int i = 0; i < startBtns.Length; i++)
+        {
+            StartExperimentButton b = startBtns[i];
+            if (b == null) continue;
+            b.spawner = null;
+            b.enabled = false;
+        }
 
         ResetExperimentButton[] resetBtns = root.GetComponentsInChildren<ResetExperimentButton>(true);
-        for (int i = 0; i < resetBtns.Length; i++) if (resetBtns[i] != null) resetBtns[i].enabled = false;
+        for (int i = 0; i < resetBtns.Length; i++)
+        {
+            ResetExperimentButton b = resetBtns[i];
+            if (b == null) continue;
+            b.spawner = null;
+            b.enabled = false;
+        }
 
         OperatorButton[] opBtns = root.GetComponentsInChildren<OperatorButton>(true);
-        for (int i = 0; i < opBtns.Length; i++) if (opBtns[i] != null) opBtns[i].enabled = false;
+        for (int i = 0; i < opBtns.Length; i++)
+        {
+            OperatorButton b = opBtns[i];
+            if (b == null) continue;
+            b.spawner = null;
+            b.mode = "";
+            b.enabled = false;
+        }
 
+        // ConditionAdjuster (UI side)
         ConditionAdjuster[] condAdj = root.GetComponentsInChildren<ConditionAdjuster>(true);
-        for (int i = 0; i < condAdj.Length; i++) if (condAdj[i] != null) condAdj[i].enabled = false;
+        for (int i = 0; i < condAdj.Length; i++)
+        {
+            ConditionAdjuster c = condAdj[i];
+            if (c == null) continue;
+            c.env = null;
+            c.spawner = null;
+            c.command = "";
+            c.enabled = false;
+        }
+
+    
+        // Build/runtime fallback:
+        // In Udon runtime, UI button scripts can appear as plain UdonBehaviours.
+        // Disable any UdonBehaviours/Colliders that live under UI-like transforms.
+        DisableUiLikeUdonBehaviours(root);
+
+    }
+
+    private void DisableUiLikeUdonBehaviours(GameObject root)
+    {
+        if (root == null) return;
+
+        UdonBehaviour[] ubs = root.GetComponentsInChildren<UdonBehaviour>(true);
+        if (ubs != null)
+        {
+            for (int i = 0; i < ubs.Length; i++)
+            {
+                UdonBehaviour ub = ubs[i];
+                if (ub == null) continue;
+                if (!IsUiLikeTransform(ub.transform)) continue;
+                ub.enabled = false;
+            }
+        }
+
+        Collider[] cols = root.GetComponentsInChildren<Collider>(true);
+        if (cols != null)
+        {
+            for (int i = 0; i < cols.Length; i++)
+            {
+                Collider col = cols[i];
+                if (col == null) continue;
+                if (!IsUiLikeTransform(col.transform)) continue;
+                col.enabled = false;
+            }
+        }
+    }
+
+    private bool IsUiLikeTransform(Transform t)
+    {
+        int guard = 0;
+        while (t != null && guard < 32)
+        {
+            string n = t.name;
+            if (!string.IsNullOrEmpty(n))
+            {
+                if (n.Contains("Button") || n.Contains("Buttons") || n.Contains("UI") || n.Contains("Selector") || n.Contains("Panel") || n.Contains("Canvas") || n.Contains("Menu"))
+                {
+                    return true;
+                }
+            }
+            t = t.parent;
+            guard++;
+        }
+        return false;
     }
 
     private void EnsureCloneVisible(Transform root)
