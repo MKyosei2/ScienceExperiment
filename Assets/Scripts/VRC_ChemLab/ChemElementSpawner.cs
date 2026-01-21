@@ -164,6 +164,9 @@ private int _runtimeSpawnSerial;
     private Transform _activeToolTr;
     private Transform _activeToolTopTr;
     private Transform _activeAnchorTr;
+    // Last tool instance the user interacted with (runtime-spawn mode).
+    // ToolMotionOpsEstimator / tilt inputs should use this transform.
+    private Transform _activeToolForOps;
     private string _lastToolApplied = "";
     private int _tmpScanVisited = 0;
 
@@ -787,9 +790,12 @@ SpawnToolInstance(_localTool, true);
         }
 
         // 演出適用（ローカル）
+        // IMPORTANT: when SampleVisual is used as a template and cloned into the tool,
+        // the *runtime clone* holds the latest selected color/preset.
+        // Passing the scene-template would cause all particles to stay the same color.
         if (reactionAnimator != null && ai != null)
         {
-            reactionAnimator.ApplyPreset(_syncedReactionTag, ai, _syncedProgress01, sampleVisual);
+            reactionAnimator.ApplyPreset(_syncedReactionTag, ai, _syncedProgress01, GetCurrentVisualController());
         }
     }
 
@@ -864,10 +870,11 @@ SpawnToolInstance(_localTool, true);
 
     private void ApplyVisualContinuous()
     {
-        if (sampleVisual == null || elementDb == null) return;
+        ChemVisualController vis = GetCurrentVisualController();
+        if (vis == null || elementDb == null) return;
 
         string sym = GetDisplayFormula();
-        sampleVisual.ApplyElementBySymbol(elementDb, sym, _visualTempC);
+        vis.ApplyElementBySymbol(elementDb, sym, _visualTempC);
     }
 
     // =====================================================
@@ -1582,6 +1589,16 @@ _placedToolTopTr.position = _placedToolOrigPos;
         return _runtimeSampleVisual;
     }
 
+    /// <summary>
+    /// 現在「見た目として使っている」ChemVisualController を返す。
+    /// cloneSampleVisualIntoTool=true の場合はランタイムクローンを優先する。
+    /// </summary>
+    private ChemVisualController GetCurrentVisualController()
+    {
+        if (cloneSampleVisualIntoTool && _runtimeSampleVisual != null) return _runtimeSampleVisual;
+        return sampleVisual;
+    }
+
     private bool TryGetRenderableBounds(Transform root, out Bounds bounds)
     {
         bounds = new Bounds(Vector3.zero, Vector3.zero);
@@ -2169,6 +2186,22 @@ _placedToolTopTr.position = _placedToolOrigPos;
     public float GetStir01() { return _syncedStir01; }
     public float GetPour01() { return _syncedPour01; }
     public float GetShake01() { return _syncedShake01; }
+
+    /// <summary>
+    /// ToolMotionOpsEstimator 等が参照する「現在アクティブな器具」のTransform。
+    /// - ランタイムスポーン方式では最後にスポーン/選択された器具を返す
+    /// - プレビュー方式では toolModelsRoot から解決した器具を返す
+    /// </summary>
+    public Transform GetActiveToolTransform()
+    {
+        if (_activeToolForOps != null) return _activeToolForOps;
+
+        if (_activeToolTopTr != null) return _activeToolTopTr;
+        if (_activeToolTr != null) return _activeToolTr;
+
+        if (containerTransform != null) return containerTransform;
+        return transform;
+    }
 
     // =====================================================
     // Public ops setter (VR/physical input)
@@ -3679,6 +3712,12 @@ private GameObject SpawnToolInstance(string toolId, bool toolButtonMode)
     // If those scripts remain enabled on the runtime clone, clicking the spawned object will trigger
     // SelectElement/SelectEquipment again, causing infinite spawning.
     DisableRuntimeSpawnInteractions(go);
+
+    // Mark as active tool for VR motion estimation / continuous ops.
+    // In runtime-spawn mode we treat the latest spawned tool as the active one.
+    _activeToolForOps = go.transform;
+    _activeToolTr = go.transform;
+    _activeToolTopTr = null;
 
     return go;
 }

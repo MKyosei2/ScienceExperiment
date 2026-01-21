@@ -606,6 +606,22 @@ public class ChemVisualController : UdonSharpBehaviour
             if (!string.IsNullOrEmpty(propEmissionColor) && m.HasProperty(propEmissionColor))
                 m.SetColor(propEmissionColor, Color.white * emission);
 
+            // Standard/URP系のEmissionはキーワードがOFFだと見えない事があるため、
+            // 可能なら _EMISSION を有効化する(安全な範囲で)。
+            if (m.HasProperty("_EmissionColor"))
+            {
+                if (emission > 0.001f)
+                {
+                    m.EnableKeyword("_EMISSION");
+                    m.globalIlluminationFlags = MaterialGlobalIlluminationFlags.RealtimeEmissive;
+                }
+                else
+                {
+                    // 0 の時は負荷軽減のためOFF
+                    m.DisableKeyword("_EMISSION");
+                }
+            }
+
             // noise / dissolve
             if (!string.IsNullOrEmpty(propNoiseScale) && m.HasProperty(propNoiseScale))
                 m.SetFloat(propNoiseScale, noiseScale);
