@@ -164,11 +164,94 @@ private int _runtimeSpawnSerial;
     private Transform _activeToolTr;
     private Transform _activeToolTopTr;
     private Transform _activeAnchorTr;
-    // Last tool instance the user interacted with (runtime-spawn mode).
-    // ToolMotionOpsEstimator / tilt inputs should use this transform.
-    private Transform _activeToolForOps;
     private string _lastToolApplied = "";
     private int _tmpScanVisited = 0;
+
+    // =====================================================
+    // Runtime spawn tracking (for reliable Reset)
+    // =====================================================
+    private GameObject[] _runtimeSpawned = new GameObject[128];
+    private int _runtimeSpawnedCount = 0;
+
+    private void RegisterRuntimeSpawn(GameObject go)
+    {
+        if (go == null) return;
+        if (_runtimeSpawnedCount >= _runtimeSpawned.Length) return;
+        _runtimeSpawned[_runtimeSpawnedCount++] = go;
+    }
+
+    private void DestroyAllRuntimeSpawns()
+    {
+        for (int i = 0; i < _runtimeSpawnedCount; i++)
+        {
+            GameObject g = _runtimeSpawned[i];
+            if (g != null) Destroy(g);
+            _runtimeSpawned[i] = null;
+        }
+        _runtimeSpawnedCount = 0;
+    }
+
+    private void AutoWireSceneRefs()
+    {
+        // Tool spawner
+        if (runtimeToolSpawner == null)
+        {
+            runtimeToolSpawner = GetComponent<ChemRuntimeToolSpawner>();
+            if (runtimeToolSpawner == null)
+            {
+                GameObject g = GameObject.Find("ChemRuntimeToolSpawner");
+                if (g != null) runtimeToolSpawner = g.GetComponent<ChemRuntimeToolSpawner>();
+            }
+        }
+
+        // Databases
+        if (elementDb == null)
+        {
+            GameObject g = GameObject.Find("ChemElementDatabase");
+            if (g != null) elementDb = g.GetComponent<ChemElementDatabase>();
+        }
+        if (reactionDb == null)
+        {
+            GameObject g = GameObject.Find("ChemicalReactionDatabase");
+            if (g != null) reactionDb = g.GetComponent<ChemicalReactionDatabase>();
+        }
+
+        // Experiment table root for spawn positioning
+        if (experimentTableRoot == null)
+        {
+            GameObject g = GameObject.Find("ExperimentTable");
+            if (g != null) experimentTableRoot = g.transform;
+        }
+
+        // Container anchor for previews (fallback)
+        if (containerTransform == null)
+        {
+            Transform z = null;
+            GameObject gz = GameObject.Find("VR_StartZone");
+            if (gz != null) z = gz.transform;
+            if (z == null)
+            {
+                GameObject gz2 = GameObject.Find("StartZone");
+                if (gz2 != null) z = gz2.transform;
+            }
+            if (z == null) z = experimentTableRoot;
+            containerTransform = (z != null) ? z : transform;
+        }
+
+        if (elementEffectAnchorFallback == null) elementEffectAnchorFallback = containerTransform;
+    }
+
+    // ToolMotionOpsEstimator helper
+    public Transform GetActiveToolTransform()
+    {
+        return _activeToolTr != null ? _activeToolTr : (containerTransform != null ? containerTransform : transform);
+    }
+
+    void Start()
+    {
+        AutoWireSceneRefs();
+        EnsurePreviewRefs();
+    }
 
 
     // --- Tool placement (non-destructive) ---
@@ -285,7 +368,7 @@ private int _runtimeSpawnSerial;
     private float _visualTempC;
     private bool _tempInitialized;
 
-    private void Start()
+    private void Start_Duplicate_DO_NOT_USE()
     {
         if (containerTransform == null) containerTransform = transform;
         AutoWireSceneRefs();
@@ -311,7 +394,7 @@ private int _runtimeSpawnSerial;
     // -------------------------------------------------
     // Auto-wiring (no inspector required)
     // -------------------------------------------------
-    private void AutoWireSceneRefs()
+    private void AutoWireSceneRefs_Duplicate_DO_NOT_USE()
     {
         // containerTransform: prefer VR_StartZone (ExperimentTable上のZone)
         if (containerTransform == null || containerTransform == transform)
@@ -377,7 +460,7 @@ private int _runtimeSpawnSerial;
 
     public bool HasOperator()
     {
-        return _syncedOperatorPlayerId >= 0;
+        return _syncedOperatorPlayerId > 0;
     }
 
     private bool EnsureCanControl()
@@ -386,7 +469,7 @@ private int _runtimeSpawnSerial;
         if (lp == null) return true;
 
         // operator未選択なら、押した人を操作者にする（自動取得）
-        if (_syncedOperatorPlayerId < 0)
+        if (_syncedOperatorPlayerId <= 0)
         {
             ClaimOperator(lp);
             return true;
@@ -464,6 +547,9 @@ private int _runtimeSpawnSerial;
     // =====================================================
     public void SelectElement(string symbolOrFormula)
     {
+        AutoWireSceneRefs();
+        EnsurePreviewRefs();
+
         
 
 if (!EnsureCanControl()) return;
@@ -491,6 +577,9 @@ WriteUI();
 
     public void SelectEquipment(string toolId)
     {
+        AutoWireSceneRefs();
+        EnsurePreviewRefs();
+
         
 
 if (!EnsureCanControl()) return;
@@ -640,7 +729,13 @@ SpawnToolInstance(_localTool, true);
 
     public void _ResetExperiment()
     {
+        AutoWireSceneRefs();
+        EnsurePreviewRefs();
+
         if (!EnsureCanControl()) return;
+
+        // Destroy any runtime-spawned tools/effects (submission-safe reset)
+        DestroyAllRuntimeSpawns();
 
         // 同期状態初期化
         _syncedInput = "";
@@ -790,12 +885,9 @@ SpawnToolInstance(_localTool, true);
         }
 
         // 演出適用（ローカル）
-        // IMPORTANT: when SampleVisual is used as a template and cloned into the tool,
-        // the *runtime clone* holds the latest selected color/preset.
-        // Passing the scene-template would cause all particles to stay the same color.
         if (reactionAnimator != null && ai != null)
         {
-            reactionAnimator.ApplyPreset(_syncedReactionTag, ai, _syncedProgress01, GetCurrentVisualController());
+            reactionAnimator.ApplyPreset(_syncedReactionTag, ai, _syncedProgress01, sampleVisual);
         }
     }
 
@@ -870,11 +962,10 @@ SpawnToolInstance(_localTool, true);
 
     private void ApplyVisualContinuous()
     {
-        ChemVisualController vis = GetCurrentVisualController();
-        if (vis == null || elementDb == null) return;
+        if (sampleVisual == null || elementDb == null) return;
 
         string sym = GetDisplayFormula();
-        vis.ApplyElementBySymbol(elementDb, sym, _visualTempC);
+        sampleVisual.ApplyElementBySymbol(elementDb, sym, _visualTempC);
     }
 
     // =====================================================
@@ -1589,16 +1680,6 @@ _placedToolTopTr.position = _placedToolOrigPos;
         return _runtimeSampleVisual;
     }
 
-    /// <summary>
-    /// 現在「見た目として使っている」ChemVisualController を返す。
-    /// cloneSampleVisualIntoTool=true の場合はランタイムクローンを優先する。
-    /// </summary>
-    private ChemVisualController GetCurrentVisualController()
-    {
-        if (cloneSampleVisualIntoTool && _runtimeSampleVisual != null) return _runtimeSampleVisual;
-        return sampleVisual;
-    }
-
     private bool TryGetRenderableBounds(Transform root, out Bounds bounds)
     {
         bounds = new Bounds(Vector3.zero, Vector3.zero);
@@ -2186,22 +2267,6 @@ _placedToolTopTr.position = _placedToolOrigPos;
     public float GetStir01() { return _syncedStir01; }
     public float GetPour01() { return _syncedPour01; }
     public float GetShake01() { return _syncedShake01; }
-
-    /// <summary>
-    /// ToolMotionOpsEstimator 等が参照する「現在アクティブな器具」のTransform。
-    /// - ランタイムスポーン方式では最後にスポーン/選択された器具を返す
-    /// - プレビュー方式では toolModelsRoot から解決した器具を返す
-    /// </summary>
-    public Transform GetActiveToolTransform()
-    {
-        if (_activeToolForOps != null) return _activeToolForOps;
-
-        if (_activeToolTopTr != null) return _activeToolTopTr;
-        if (_activeToolTr != null) return _activeToolTr;
-
-        if (containerTransform != null) return containerTransform;
-        return transform;
-    }
 
     // =====================================================
     // Public ops setter (VR/physical input)
@@ -3713,11 +3778,7 @@ private GameObject SpawnToolInstance(string toolId, bool toolButtonMode)
     // SelectElement/SelectEquipment again, causing infinite spawning.
     DisableRuntimeSpawnInteractions(go);
 
-    // Mark as active tool for VR motion estimation / continuous ops.
-    // In runtime-spawn mode we treat the latest spawned tool as the active one.
-    _activeToolForOps = go.transform;
-    _activeToolTr = go.transform;
-    _activeToolTopTr = null;
+    RegisterRuntimeSpawn(go);
 
     return go;
 }

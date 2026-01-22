@@ -15,6 +15,23 @@ public class ResetExperimentButton : UdonSharpBehaviour
 
     public void _OnClick()
     {
+        // Auto-wire missing references (scene inspector links may be lost)
+        if (spawner == null)
+        {
+            GameObject g = GameObject.Find("ChemElementSpawner");
+            if (g != null) spawner = g.GetComponent<ChemElementSpawner>();
+        }
+        if (envManager == null)
+        {
+            GameObject g2 = GameObject.Find("ChemEnvironmentManager");
+            if (g2 != null) envManager = g2.GetComponent<ChemEnvironmentManager>();
+        }
+        if (uiSync == null)
+        {
+            GameObject g3 = GameObject.Find("EnvUISyncBridge");
+            if (g3 != null) uiSync = g3.GetComponent<EnvUISyncBridge>();
+        }
+
         if (spawner != null)
             spawner.SendCustomEvent("_ResetExperiment");
 

@@ -60,11 +60,6 @@ public class ChemReactionAnimator : UdonSharpBehaviour
     private bool _initialized;
     private Material _localParticleMasterMaterial;
 
-    // One-time constraint (prevents particles from flying outside the glassware)
-    private bool _volumeConstrained;
-    private Vector3 _cachedWCenter;
-    private Vector3 _cachedWSize;
-
     private void Start()
     {
         if (autoResolveOnStart) EnsureInitialized();
@@ -141,13 +136,6 @@ public class ChemReactionAnimator : UdonSharpBehaviour
     {
         EnsureInitialized();
 
-        // Constrain particles to the current tool volume once (prevents particles leaving the glassware).
-        // We do it lazily here because the animator is often cloned/parented at runtime.
-        if (!_volumeConstrained)
-        {
-            ConstrainParticlesToContainerVolume(visual);
-        }
-
         if (ai == null)
         {
             ResetLevels();
@@ -199,7 +187,6 @@ public class ChemReactionAnimator : UdonSharpBehaviour
 
         ApplyCompoundParticles(preset, c, intensity);
     }
-
 
     private void ApplyBaseParticleColor(Color c)
     {
@@ -427,152 +414,6 @@ public class ChemReactionAnimator : UdonSharpBehaviour
             }
         }
         return outRs;
-    }
-
-    // =====================================================
-    // Particle volume constraint (fix: particles leak outside tool)
-    // =====================================================
-    private void ConstrainParticlesToContainerVolume(ChemVisualController visual)
-    {
-        // Determine a reasonable container volume.
-        // Prefer a BoxCollider named "VFXVolume" under the tool, otherwise fall back to renderer bounds.
-        Transform refTr = (visual != null) ? visual.transform : transform;
-
-        BoxCollider box = FindVfxVolumeBox(refTr);
-        if (box != null)
-        {
-            _cachedWCenter = box.transform.TransformPoint(box.center);
-            _cachedWSize = AbsVec3(box.transform.TransformVector(box.size));
-        }
-        else
-        {
-            Bounds b;
-            if (!TryGetWorldBounds(refTr, out b))
-            {
-                _volumeConstrained = true;
-                return;
-            }
-            _cachedWCenter = b.center;
-            _cachedWSize = b.size;
-        }
-
-        // Safety clamp
-        float hardMax = 0.45f;
-        _cachedWSize.x = Mathf.Min(Mathf.Max(0.001f, _cachedWSize.x), hardMax);
-        _cachedWSize.y = Mathf.Min(Mathf.Max(0.001f, _cachedWSize.y), hardMax);
-        _cachedWSize.z = Mathf.Min(Mathf.Max(0.001f, _cachedWSize.z), hardMax);
-
-        // Apply to every particle system we control
-        ConstrainOne(foamParticles);
-        ConstrainOne(smokeParticles);
-        ConstrainOne(sparkParticles);
-        ConstrainOne(glintParticles);
-        ConstrainOne(precipitateParticles);
-        ConstrainOne(bubbleParticles);
-        ConstrainOne(fogParticles);
-
-        _volumeConstrained = true;
-    }
-
-    private void ConstrainOne(ParticleSystem ps)
-    {
-        if (ps == null) return;
-
-        var main = ps.main;
-        main.simulationSpace = ParticleSystemSimulationSpace.Local;
-        main.maxParticles = Mathf.Min(2000, Mathf.Max(64, main.maxParticles));
-
-        Vector3 localCenter = ps.transform.InverseTransformPoint(_cachedWCenter);
-        Vector3 localSize = AbsVec3(ps.transform.InverseTransformVector(_cachedWSize));
-
-        var shape = ps.shape;
-        shape.enabled = true;
-        shape.shapeType = ParticleSystemShapeType.Box;
-        shape.position = localCenter;
-        shape.scale = localSize;
-
-        // Kill outward push modules that often cause overflow
-        var vel = ps.velocityOverLifetime; vel.enabled = false;
-        var force = ps.forceOverLifetime; force.enabled = false;
-        var noise = ps.noise; noise.enabled = false;
-        var inherit = ps.inheritVelocity; inherit.enabled = false;
-
-        // Clamp speed/lifetime so particles die inside
-        float minDim = Mathf.Min(localSize.x, Mathf.Min(localSize.y, localSize.z));
-        if (minDim < 0.001f) minDim = 0.001f;
-
-        float maxSpeed = Mathf.Max(0.05f, minDim * 0.65f);
-        if (main.startSpeed.constant > maxSpeed) main.startSpeed = maxSpeed;
-
-        float maxLife = (minDim < 0.15f) ? 0.6f : 0.9f;
-        if (main.startLifetime.constant > maxLife) main.startLifetime = maxLife;
-
-        var limit = ps.limitVelocityOverLifetime;
-        limit.enabled = true;
-        limit.limit = maxSpeed;
-        limit.dampen = 0.75f;
-    }
-
-    private BoxCollider FindVfxVolumeBox(Transform t)
-    {
-        if (t == null) return null;
-
-        // Search up the hierarchy a bit
-        Transform p = t;
-        for (int depth = 0; depth < 12 && p != null; depth++)
-        {
-            BoxCollider[] boxes = p.GetComponentsInChildren<BoxCollider>(true);
-            if (boxes != null)
-            {
-                for (int i = 0; i < boxes.Length; i++)
-                {
-                    BoxCollider b = boxes[i];
-                    if (b == null) continue;
-                    string n = b.name;
-                    if (n == null) n = "";
-                    string u = n.ToUpper();
-                    if (u == "VFXVOLUME" || u.IndexOf("VFXVOLUME") >= 0 || u.IndexOf("VOLUME") >= 0)
-                        return b;
-                }
-            }
-            p = p.parent;
-        }
-        return null;
-    }
-
-    private bool TryGetWorldBounds(Transform root, out Bounds bounds)
-    {
-        bounds = new Bounds(Vector3.zero, Vector3.zero);
-        if (root == null) return false;
-
-        Renderer[] rs = root.GetComponentsInChildren<Renderer>(true);
-        if (rs == null || rs.Length == 0) return false;
-
-        bool has = false;
-        for (int i = 0; i < rs.Length; i++)
-        {
-            Renderer r = rs[i];
-            if (r == null) continue;
-            if (!r.enabled) continue;
-            if (!has)
-            {
-                bounds = r.bounds;
-                has = true;
-            }
-            else
-            {
-                bounds.Encapsulate(r.bounds);
-            }
-        }
-        return has;
-    }
-
-    private Vector3 AbsVec3(Vector3 v)
-    {
-        v.x = Mathf.Abs(v.x);
-        v.y = Mathf.Abs(v.y);
-        v.z = Mathf.Abs(v.z);
-        return v;
     }
 
     private void EnsureParticleMaterial(ParticleSystem ps)

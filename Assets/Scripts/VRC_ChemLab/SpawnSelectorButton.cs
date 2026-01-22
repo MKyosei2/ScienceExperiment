@@ -27,6 +27,30 @@ public class SpawnSelectorButton : UdonSharpBehaviour
             return;
         }
 
+
+        // Auto-wire scene references if missing (scene inspector links can be lost)
+        if (elementSpawner == null)
+        {
+            GameObject g = GameObject.Find("ChemElementSpawner");
+            if (g != null) elementSpawner = g.GetComponent<ChemElementSpawner>();
+        }
+        if (environmentManager == null)
+        {
+            GameObject g2 = GameObject.Find("ChemEnvironmentManager");
+            if (g2 != null) environmentManager = g2.GetComponent<ChemEnvironmentManager>();
+        }
+        if (statusDisplay == null)
+        {
+            GameObject g3 = GameObject.Find("ChemStatusDisplay");
+            if (g3 != null) statusDisplay = g3.GetComponent<ChemStatusDisplay>();
+        }
+
+        if (elementSpawner == null)
+        {
+            Debug.LogError($"[SpawnSelectorButton] ChemElementSpawner が見つからないため処理できません: {name}");
+            return;
+        }
+
         switch (category)
         {
             case SelectionCategory.Element:

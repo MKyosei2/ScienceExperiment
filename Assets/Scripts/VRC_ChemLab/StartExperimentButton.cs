@@ -7,6 +7,12 @@ public class StartExperimentButton : UdonSharpBehaviour
 
     public override void Interact()
     {
+        if (spawner == null)
+        {
+            GameObject g = GameObject.Find("ChemElementSpawner");
+            if (g != null) spawner = g.GetComponent<ChemElementSpawner>();
+        }
+
         if (spawner != null)
         {
             Debug.Log("[StartExperimentButton] Experiment Started!");

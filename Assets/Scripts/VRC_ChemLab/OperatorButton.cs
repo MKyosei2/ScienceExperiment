@@ -8,11 +8,19 @@ using UnityEngine;
 /// </summary>
 public class OperatorButton : UdonSharpBehaviour
 {
+    private void EnsureSpawnerRef()
+    {
+        if (spawner != null) return;
+        GameObject go = GameObject.Find("ChemElementSpawner");
+        if (go != null) spawner = go.GetComponent<ChemElementSpawner>();
+    }
+
     public ChemElementSpawner spawner;
     public string mode = "claim"; // "claim" or "release"
 
     public override void Interact()
     {
+        EnsureSpawnerRef();
         if (spawner == null) return;
 
         if (mode == "release")
