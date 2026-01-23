@@ -3200,27 +3200,38 @@ private void AttachElementVisualClone(GameObject toolGo, string elementSymbol)
         Vector3 wCenter = vfxBox.transform.TransformPoint(vfxBox.center);
         Vector3 wSize = AbsVec3(vfxBox.transform.TransformVector(vfxBox.size));
 
-		// Clamp the volume size to tool bounds if available (fixes prefabs where VFXVolume is accidentally huge)
-		Vector3 capSizeFromBounds = Vector3.zero;
-		Bounds tb;
-		if (TryGetRenderableBounds(toolGo.transform, out tb))
-		{
-			capSizeFromBounds = AbsVec3(tb.size);
-		}
+        // Clamp the volume size to tool bounds if available.
+        Vector3 capSizeFromBounds = Vector3.zero;
+        Bounds tb;
+        bool hasBounds = TryGetRenderableBounds(toolGo.transform, out tb);
+        if (hasBounds)
+        {
+            capSizeFromBounds = AbsVec3(tb.size);
+        }
 
-		if (capSizeFromBounds.x > 0f || capSizeFromBounds.y > 0f || capSizeFromBounds.z > 0f)
-		{
-			wSize.x = Mathf.Min(wSize.x, Mathf.Max(0.001f, capSizeFromBounds.x));
-			wSize.y = Mathf.Min(wSize.y, Mathf.Max(0.001f, capSizeFromBounds.y));
-			wSize.z = Mathf.Min(wSize.z, Mathf.Max(0.001f, capSizeFromBounds.z));
-		}
+        // FIX: Many prefabs ship with a tiny VFXVolume (e.g. 0.02m cube).
+        // If the volume is suspiciously small, fall back to tool bounds (more reliable).
+        bool vfxTiny = (wSize.x < 0.045f) || (wSize.y < 0.045f) || (wSize.z < 0.045f);
+        if (vfxTiny && (capSizeFromBounds.x > 0f || capSizeFromBounds.y > 0f || capSizeFromBounds.z > 0f))
+        {
+            wCenter = tb.center;
+            wSize = Vector3.Scale(capSizeFromBounds, effectBoundsScale);
+        }
+        else if (capSizeFromBounds.x > 0f || capSizeFromBounds.y > 0f || capSizeFromBounds.z > 0f)
+        {
+            // Clamp oversize volumes down to bounds.
+            wSize.x = Mathf.Min(wSize.x, Mathf.Max(0.001f, capSizeFromBounds.x));
+            wSize.y = Mathf.Min(wSize.y, Mathf.Max(0.001f, capSizeFromBounds.y));
+            wSize.z = Mathf.Min(wSize.z, Mathf.Max(0.001f, capSizeFromBounds.z));
+        }
 
-        // Absolute hard cap (safety): never allow a container volume bigger than typical lab glass, even if bounds are wrong.
+        // Absolute hard cap (safety): never allow a container volume bigger than typical lab glass.
         float hardMax = 0.45f;
-        wSize.x = Mathf.Min(wSize.x, hardMax);
-        wSize.y = Mathf.Min(wSize.y, hardMax);
-        wSize.z = Mathf.Min(wSize.z, hardMax);
-        // choose a point within the box by fill height
+        wSize.x = Mathf.Min(Mathf.Max(0.001f, wSize.x), hardMax);
+        wSize.y = Mathf.Min(Mathf.Max(0.001f, wSize.y), hardMax);
+        wSize.z = Mathf.Min(Mathf.Max(0.001f, wSize.z), hardMax);
+
+        // Choose a point within the box by fill height
         Vector3 wFill = wCenter;
         wFill.y = wCenter.y - (wSize.y * 0.5f) + (wSize.y * Mathf.Clamp01(effectFillHeight01));
         localPos = anchor.InverseTransformPoint(wFill);
@@ -3250,7 +3261,7 @@ private void AttachElementVisualClone(GameObject toolGo, string elementSymbol)
 
     if (hasBox)
     {
-        ConstrainParticlesToVfxVolume(visGo, vfxBox, capWorldSize);
+        ConstrainParticlesToVfxVolume(visGo, vfxBox, capWorldSize, toolB.center);
         ScaleDownVisualToFitVfxVolume(visGo, vfxBox, capWorldSize);
     }
     else if (capWorldSize.x > 0f || capWorldSize.y > 0f || capWorldSize.z > 0f)
@@ -3406,7 +3417,7 @@ private Material GetParticleMasterMaterial()
     return null;
 }
 
-private void ConstrainParticlesToVfxVolume(GameObject visGo, BoxCollider vfxBox, Vector3 capWorldSize)
+private void ConstrainParticlesToVfxVolume(GameObject visGo, BoxCollider vfxBox, Vector3 capWorldSize, Vector3 fallbackWorldCenter)
 {
     if (visGo == null || vfxBox == null) return;
 
@@ -3432,6 +3443,24 @@ private void ConstrainParticlesToVfxVolume(GameObject visGo, BoxCollider vfxBox,
     if (wSize.y < minDim) minDim = wSize.y;
     if (wSize.z < minDim) minDim = wSize.z;
     if (minDim < 0.001f) minDim = 0.001f;
+
+    // FIX (2026-01): Many tool prefabs ship with a tiny VFXVolume (e.g. 0.02m cube).
+    // In that case, particles become effectively invisible. If the volume is suspiciously small,
+    // fall back to the tool render bounds size passed in via capWorldSize.
+    bool vfxTooSmall = (wSize.x < 0.045f) || (wSize.y < 0.045f) || (wSize.z < 0.045f);
+    bool hasCap = (capWorldSize.x > 0f) || (capWorldSize.y > 0f) || (capWorldSize.z > 0f);
+    if (vfxTooSmall && hasCap)
+    {
+        wCenter = fallbackWorldCenter;
+        wSize = AbsVec3(capWorldSize);
+
+        // Recompute minDim with fallback size
+        minDim = wSize.x;
+        if (wSize.y < minDim) minDim = wSize.y;
+        if (wSize.z < minDim) minDim = wSize.z;
+        if (minDim < 0.001f) minDim = 0.001f;
+    }
+
 
     ParticleSystem[] ps = visGo.GetComponentsInChildren<ParticleSystem>(true);
     if (ps == null) return;
@@ -3545,6 +3574,24 @@ private void ConstrainParticlesToWorldBox(GameObject visGo, Vector3 worldCenter,
     if (wSize.y < minDim) minDim = wSize.y;
     if (wSize.z < minDim) minDim = wSize.z;
     if (minDim < 0.001f) minDim = 0.001f;
+
+    // FIX (2026-01): Many tool prefabs ship with a tiny VFXVolume (e.g. 0.02m cube).
+    // In that case, particles become effectively invisible. If the volume is suspiciously small,
+    // fall back to the tool render bounds size passed in via capWorldSize.
+    bool vfxTooSmall = (wSize.x < 0.045f) || (wSize.y < 0.045f) || (wSize.z < 0.045f);
+    bool hasCap = (capWorldSize.x > 0f) || (capWorldSize.y > 0f) || (capWorldSize.z > 0f);
+    if (vfxTooSmall && hasCap)
+    {
+        wCenter = fallbackWorldCenter;
+        wSize = AbsVec3(capWorldSize);
+
+        // Recompute minDim with fallback size
+        minDim = wSize.x;
+        if (wSize.y < minDim) minDim = wSize.y;
+        if (wSize.z < minDim) minDim = wSize.z;
+        if (minDim < 0.001f) minDim = 0.001f;
+    }
+
 
     ParticleSystem[] ps = visGo.GetComponentsInChildren<ParticleSystem>(true);
     if (ps == null) return;
