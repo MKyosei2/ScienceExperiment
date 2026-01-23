@@ -533,7 +533,7 @@ public class ChemVisualController : UdonSharpBehaviour
         ApplyRecipeToRenderers(targetRenderers, baseColor, opacity, metallic, smoothness, emission, noiseScale, dissolve);
 
         // Ensure particle start color follows the element (fix: particles staying constant color)
-        if (applyColorToParticles) ApplyColorToParticleSystems(baseColor, opacity);
+        ApplyColorToParticleSystems(baseColor, opacity);
     }
 
     private void ApplyColorToParticleSystems(Color baseColor, float opacity)
@@ -550,6 +550,25 @@ public class ChemVisualController : UdonSharpBehaviour
 
             var main = ps.main;
             main.startColor = c;
+
+            // Also override Color over Lifetime if present, so prefab gradients don't force a single color.
+            var col = ps.colorOverLifetime;
+            if (col.enabled)
+            {
+                col.color = new ParticleSystem.MinMaxGradient(c);
+            }
+
+            // Try to tint the renderer material too (in case shader ignores vertex/startColor)
+            ParticleSystemRenderer pr = ps.GetComponent<ParticleSystemRenderer>();
+            if (pr != null)
+            {
+                Material mat = pr.sharedMaterial;
+                if (mat != null)
+                {
+                    if (mat.HasProperty(propBaseColor)) mat.SetColor(propBaseColor, c);
+                    else if (mat.HasProperty(propColorFallback)) mat.SetColor(propColorFallback, c);
+                }
+            }
         }
     }
 
