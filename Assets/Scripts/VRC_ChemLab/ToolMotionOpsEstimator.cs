@@ -40,10 +40,20 @@ public class ToolMotionOpsEstimator : UdonSharpBehaviour
     private float _stir01;
     private float _shake01;
 
+    private Transform _lastTool;
+
     private void Update()
     {
         if (spawner == null) return;
-        if (!Networking.IsOwner(spawner.gameObject)) return;
+
+        // FIX (2026-01):
+        // The previous implementation required the local player to be the *network owner* of the spawner
+        // before motion ops were processed. In VRChat this often stays false (especially right after join),
+        // which means Pour/Stir/Shake never update in VR.
+        //
+        // Spawner.SetOps01() already calls EnsureCanControl() internally (and will claim ownership when needed),
+        // so we must NOT early-return here.
+        if (spawner.HasOperator() && !spawner.IsOperatorLocal()) return;
 
         Transform t = toolOverride;
         if (t == null)
@@ -53,6 +63,13 @@ public class ToolMotionOpsEstimator : UdonSharpBehaviour
 
         float dt = Time.deltaTime;
         if (dt <= 0f) return;
+
+        // If active tool changed, reset history so we don't spike values.
+        if (_lastTool != t)
+        {
+            _lastTool = t;
+            _hasLast = false;
+        }
 
         if (!_hasLast)
         {

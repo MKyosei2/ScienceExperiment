@@ -600,13 +600,29 @@ public class ChemVisualController : UdonSharpBehaviour
             else if (!string.IsNullOrEmpty(propGlossinessFallback) && m.HasProperty(propGlossinessFallback))
                 m.SetFloat(propGlossinessFallback, smoothness);
 
-            // emission
+            // emission (robust)
             if (!string.IsNullOrEmpty(propEmissionStrength) && m.HasProperty(propEmissionStrength))
                 m.SetFloat(propEmissionStrength, emission);
-            if (!string.IsNullOrEmpty(propEmissionColor) && m.HasProperty(propEmissionColor))
-                m.SetColor(propEmissionColor, Color.white * emission);
-                // Ensure emission is actually visible
+
+            // Many shaders use _EmissionColor regardless of custom prop names.
+            bool hasEmColor = (!string.IsNullOrEmpty(propEmissionColor) && m.HasProperty(propEmissionColor)) || m.HasProperty("_EmissionColor");
+            if (hasEmColor)
+            {
+                string emProp = (m.HasProperty(propEmissionColor) && !string.IsNullOrEmpty(propEmissionColor)) ? propEmissionColor : "_EmissionColor";
+                m.SetColor(emProp, Color.white * emission);
+            }
+
+            // Ensure emission is actually visible on both Built-in and URP shaders.
+            if (emission > 0.001f)
+            {
                 m.EnableKeyword("_EMISSION");
+                // Some pipelines require explicit realtime emissive flag
+                m.globalIlluminationFlags = MaterialGlobalIlluminationFlags.RealtimeEmissive;
+            }
+            else
+            {
+                m.DisableKeyword("_EMISSION");
+            }
 
             // noise / dissolve
             if (!string.IsNullOrEmpty(propNoiseScale) && m.HasProperty(propNoiseScale))

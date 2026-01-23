@@ -18,6 +18,9 @@ public class ResetExperimentButton : UdonSharpBehaviour
         // Auto-wire missing references (scene inspector links may be lost)
         if (spawner == null)
         {
+            // 0) Prefer nearest spawner in the same hierarchy
+            spawner = GetComponentInParent<ChemElementSpawner>();
+
             GameObject g = GameObject.Find("ChemElementSpawner");
             if (g != null) spawner = g.GetComponent<ChemElementSpawner>();
         }

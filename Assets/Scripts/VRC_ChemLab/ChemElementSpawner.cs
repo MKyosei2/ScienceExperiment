@@ -63,6 +63,10 @@ public class ChemElementSpawner : UdonSharpBehaviour
     [Tooltip("sampleVisual の表示スケール（アンカーのローカル）。")]
     public Vector3 elementEffectLocalScale = Vector3.one;
 
+    [Tooltip("器具内エフェクトを再生するまでの遅延秒数（親子付け/有効化の反映待ち）。0で即時。")]
+    public float elementEffectPlayDelaySeconds = 0.02f;
+
+
 
 
     [Header("Effect Fit (gravity & bounds)")]
@@ -143,6 +147,10 @@ public Material glassMasterMaterial;
 [Tooltip("Optional explicit WireframeFX material. If null, auto-detect from templates.")]
 public Material wireframeFxMaterial;
 
+[Header("Particle Material (Udon-safe)")]
+[Tooltip("Optional explicit particle material (must already exist in the project). Assign a ChemLab particle material here if your ParticleSystemRenderer has no material and particles are invisible. (UdonSharp cannot call Shader.Find at runtime.)")]
+public Material particleFallbackMaterial;
+
 // Runtime material instances (avoid modifying shared assets)
 private Material _runtimeElementGlassMaterial;
 private Material _runtimeFallbackVisibleGlassMaterial;
@@ -166,6 +174,10 @@ private int _runtimeSpawnSerial;
     private Transform _activeAnchorTr;
     private string _lastToolApplied = "";
     private int _tmpScanVisited = 0;
+
+    private GameObject _pendingEffectGo;
+    private bool _pendingEffectRestart;
+
 
     // =====================================================
     // Runtime spawn tracking (for reliable Reset)
@@ -2066,7 +2078,45 @@ _placedToolTopTr.position = _placedToolOrigPos;
     /// This is intentionally separate from ForceVisibleHierarchy so we can use it
     /// without touching layers.
     /// </summary>
-    private void PlayAllParticles(GameObject rootGo, bool restart)
+    
+
+    // -----------------------------------------
+    // Delayed particle play (Udon-safe)
+    // 親子付け・Active反映が1フレーム遅れるケースがあるため、遅延再生にする
+    // -----------------------------------------
+    private void ScheduleLatePlayEffect(GameObject effectRoot, bool restart)
+    {
+        if (effectRoot == null) return;
+        _pendingEffectGo = effectRoot;
+        _pendingEffectRestart = restart;
+
+        // If delay is zero, still delay by 1 frame to ensure hierarchy is settled.
+        if (elementEffectPlayDelaySeconds <= 0f)
+        {
+            SendCustomEventDelayedFrames(nameof(_LatePlayPendingEffect), 1);
+        }
+        else
+        {
+            SendCustomEventDelayedSeconds(nameof(_LatePlayPendingEffect), elementEffectPlayDelaySeconds);
+        }
+    }
+
+    public void _LatePlayPendingEffect()
+    {
+        if (_pendingEffectGo == null) return;
+
+        // Ensure hierarchy is active before playing
+        ForceActiveDescendants(_pendingEffectGo.transform, 8192);
+        EnableAllRenderers(_pendingEffectGo);
+        PlayAllParticles(_pendingEffectGo, _pendingEffectRestart);
+        if (forceVisibleOnSelect) ForceVisibleHierarchy(_pendingEffectGo.transform);
+
+        // Clear to avoid re-playing unexpectedly
+        _pendingEffectGo = null;
+        _pendingEffectRestart = false;
+    }
+
+private void PlayAllParticles(GameObject rootGo, bool restart)
     {
         if (rootGo == null) return;
 
@@ -3142,17 +3192,44 @@ private void AttachElementVisualClone(GameObject toolGo, string elementSymbol)
 
     // Scene-fixed template (ExperimentTable/VR_StartZone/ElementEffectAnchor/SampleVisual) must be muted,
     // otherwise it will keep emitting and "overflow" the whole world.
-    HideTemplateVisualIfInHierarchy(templateGo);
-
-    GameObject visGo = VRCInstantiate(templateGo);
-    if (visGo == null)
-    {
-        Debug.LogWarning("[ChemElementSpawner] VRCInstantiate failed for element visual.");
-        return;
-    }
+    GameObject visGo = null;
 
     Transform anchor = FindChildByNameRuntime(toolGo.transform, elementEffectAnchorName);
     if (anchor == null) anchor = toolGo.transform;
+
+    // If the tool already has an effect prefab under the anchor, reuse it (no instantiation).
+    // This allows you to place the VFX prefab as a child of the tool in Unity (no extra scripts needed).
+    GameObject existingEffect = null;
+    if (anchor != null)
+    {
+        ChemVisualController existingVc = anchor.GetComponentInChildren<ChemVisualController>(true);
+        if (existingVc != null) existingEffect = existingVc.gameObject;
+        else
+        {
+            ParticleSystem existingPs = anchor.GetComponentInChildren<ParticleSystem>(true);
+            if (existingPs != null) existingEffect = existingPs.gameObject;
+        }
+    }
+
+    // Use existing effect if present; otherwise instantiate the template.
+    if (existingEffect != null)
+    {
+        visGo = existingEffect;
+        if (!visGo.activeSelf) visGo.SetActive(true);
+    }
+    else
+    {
+        HideTemplateVisualIfInHierarchy(templateGo);
+
+        visGo = VRCInstantiate(templateGo);
+        if (visGo == null)
+        {
+            Debug.LogWarning("[ChemElementSpawner] VRCInstantiate failed for element visual.");
+            return;
+        }
+    }
+
+
 
     visGo.transform.SetParent(anchor, false);
     visGo.transform.localRotation = Quaternion.identity;
@@ -3272,7 +3349,7 @@ private void AttachElementVisualClone(GameObject toolGo, string elementSymbol)
     // Ensure visibility
     ForceActiveDescendants(visGo.transform, 8192);
     EnableAllRenderers(visGo);
-    PlayAllParticles(visGo, true);
+    ScheduleLatePlayEffect(visGo, true);
     if (forceVisibleOnSelect) ForceVisibleHierarchy(visGo.transform);
 
     // Apply element state/colors (works when the template has backing UdonBehaviour).
@@ -3294,7 +3371,7 @@ private void AttachElementVisualClone(GameObject toolGo, string elementSymbol)
         }
 
         EnableAllRenderers(visGo);
-        PlayAllParticles(visGo, false);
+        ScheduleLatePlayEffect(visGo, false);
         if (forceVisibleOnSelect) ForceVisibleHierarchy(visGo.transform);
     }
     else
@@ -3413,6 +3490,14 @@ private Material GetParticleMasterMaterial()
     // We intentionally avoid a scene-wide scan here.
     // If you need a master particle material, assign one in the inspector
     // or ensure SampleVisual has a ParticleSystemRenderer with a material.
+
+    // 2) Last resort: use an explicitly assigned fallback particle material.
+    // IMPORTANT: UdonSharp cannot call Shader.Find at runtime, so we must rely on an inspector reference.
+    if (particleFallbackMaterial != null)
+    {
+        _particleMasterMaterial = particleFallbackMaterial;
+        return _particleMasterMaterial;
+    }
 
     return null;
 }
@@ -3542,9 +3627,18 @@ private void ConstrainParticlesToVfxVolume(GameObject visGo, BoxCollider vfxBox,
         ParticleSystemRenderer pr = p.GetComponent<ParticleSystemRenderer>();
         if (pr != null)
         {
-            // Fix: if the particle renderer has no material assigned, it becomes invisible.
-            // Reuse an existing ChemLab particle material from the scene.
-            if (pr.sharedMaterial == null)
+            // Fix: particles can be invisible OR ignore clipping if they don't use the ChemLab particle shader.
+            // Always enforce a ChemLab/Particle* material when possible.
+            bool needMat = (pr.sharedMaterial == null);
+            if (!needMat)
+            {
+                Shader sh = (pr.sharedMaterial != null) ? pr.sharedMaterial.shader : null;
+                string sn = (sh != null) ? sh.name : "";
+                if (string.IsNullOrEmpty(sn) || sn.IndexOf("ChemLab/Particle") < 0) needMat = true;
+                else if (!pr.sharedMaterial.HasProperty("_UseClip")) needMat = true;
+            }
+
+            if (needMat)
             {
                 Material pm = GetParticleMasterMaterial();
                 if (pm != null) pr.sharedMaterial = pm;
@@ -3666,8 +3760,17 @@ private void ConstrainParticlesToWorldBox(GameObject visGo, Vector3 worldCenter,
         ParticleSystemRenderer pr = p.GetComponent<ParticleSystemRenderer>();
         if (pr != null)
         {
-            // Fix: if the particle renderer has no material assigned, it becomes invisible.
-            if (pr.sharedMaterial == null)
+            // Fix: enforce ChemLab particle shader so world-box clipping always works.
+            bool needMat = (pr.sharedMaterial == null);
+            if (!needMat)
+            {
+                Shader sh = (pr.sharedMaterial != null) ? pr.sharedMaterial.shader : null;
+                string sn = (sh != null) ? sh.name : "";
+                if (string.IsNullOrEmpty(sn) || sn.IndexOf("ChemLab/Particle") < 0) needMat = true;
+                else if (!pr.sharedMaterial.HasProperty("_UseClip")) needMat = true;
+            }
+
+            if (needMat)
             {
                 Material pm = GetParticleMasterMaterial();
                 if (pm != null) pr.sharedMaterial = pm;
