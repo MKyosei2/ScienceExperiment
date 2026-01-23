@@ -3253,20 +3253,20 @@ private void AttachElementVisualClone(GameObject toolGo, string elementSymbol)
     // Make sure particles are fully constrained inside the container.
     // NOTE: Some prefabs have an incorrectly sized VFXVolume. We therefore clamp the volume to the tool's render bounds.
     Bounds toolB;
-    Vector3 capWorldSize = Vector3.zero;
+    Vector3 worldSize = Vector3.zero;
     if (TryGetRenderableBounds(toolGo.transform, out toolB))
     {
-        capWorldSize = Vector3.Scale(toolB.size, effectBoundsScale);
+        worldSize = Vector3.Scale(toolB.size, effectBoundsScale);
     }
 
     if (hasBox)
     {
-        ConstrainParticlesToVfxVolume(visGo, vfxBox, capWorldSize, toolB.center);
-        ScaleDownVisualToFitVfxVolume(visGo, vfxBox, capWorldSize);
+        ConstrainParticlesToVfxVolume(visGo, vfxBox, worldSize, toolB.center);
+        ScaleDownVisualToFitVfxVolume(visGo, vfxBox, worldSize);
     }
-    else if (capWorldSize.x > 0f || capWorldSize.y > 0f || capWorldSize.z > 0f)
+    else if (worldSize.x > 0f || worldSize.y > 0f || worldSize.z > 0f)
     {
-        ConstrainParticlesToWorldBox(visGo, toolB.center, capWorldSize);
+        ConstrainParticlesToWorldBox(visGo, toolB.center, worldSize);
     }
 
     // Ensure visibility
@@ -3417,7 +3417,7 @@ private Material GetParticleMasterMaterial()
     return null;
 }
 
-private void ConstrainParticlesToVfxVolume(GameObject visGo, BoxCollider vfxBox, Vector3 capWorldSize, Vector3 fallbackWorldCenter)
+private void ConstrainParticlesToVfxVolume(GameObject visGo, BoxCollider vfxBox, Vector3 worldSize, Vector3 worldCenter)
 {
     if (visGo == null || vfxBox == null) return;
 
@@ -3426,11 +3426,11 @@ private void ConstrainParticlesToVfxVolume(GameObject visGo, BoxCollider vfxBox,
     Vector3 wSize = AbsVec3(vfxBox.transform.TransformVector(vfxBox.size));
 
     // Clamp the volume size to tool bounds if provided (fixes prefabs where VFXVolume is accidentally huge)
-    if (capWorldSize.x > 0f || capWorldSize.y > 0f || capWorldSize.z > 0f)
+    if (worldSize.x > 0f || worldSize.y > 0f || worldSize.z > 0f)
     {
-        wSize.x = Mathf.Min(wSize.x, Mathf.Max(0.001f, capWorldSize.x));
-        wSize.y = Mathf.Min(wSize.y, Mathf.Max(0.001f, capWorldSize.y));
-        wSize.z = Mathf.Min(wSize.z, Mathf.Max(0.001f, capWorldSize.z));
+        wSize.x = Mathf.Min(wSize.x, Mathf.Max(0.001f, worldSize.x));
+        wSize.y = Mathf.Min(wSize.y, Mathf.Max(0.001f, worldSize.y));
+        wSize.z = Mathf.Min(wSize.z, Mathf.Max(0.001f, worldSize.z));
     }
 
     // Absolute hard cap (safety): never allow a container volume bigger than typical lab glass, even if bounds are wrong.
@@ -3446,13 +3446,13 @@ private void ConstrainParticlesToVfxVolume(GameObject visGo, BoxCollider vfxBox,
 
     // FIX (2026-01): Many tool prefabs ship with a tiny VFXVolume (e.g. 0.02m cube).
     // In that case, particles become effectively invisible. If the volume is suspiciously small,
-    // fall back to the tool render bounds size passed in via capWorldSize.
+    // fall back to the tool render bounds size passed in via worldSize.
     bool vfxTooSmall = (wSize.x < 0.045f) || (wSize.y < 0.045f) || (wSize.z < 0.045f);
-    bool hasCap = (capWorldSize.x > 0f) || (capWorldSize.y > 0f) || (capWorldSize.z > 0f);
+    bool hasCap = (worldSize.x > 0f) || (worldSize.y > 0f) || (worldSize.z > 0f);
     if (vfxTooSmall && hasCap)
     {
-        wCenter = fallbackWorldCenter;
-        wSize = AbsVec3(capWorldSize);
+        wCenter = worldCenter;
+        wSize = AbsVec3(worldSize);
 
         // Recompute minDim with fallback size
         minDim = wSize.x;
@@ -3564,6 +3564,8 @@ private void ConstrainParticlesToWorldBox(GameObject visGo, Vector3 worldCenter,
 {
     if (visGo == null) return;
 
+    Vector3 wCenter = worldCenter;
+
     Vector3 wSize = AbsVec3(worldSize);
     float hardMax = 0.45f;
     wSize.x = Mathf.Min(Mathf.Max(0.001f, wSize.x), hardMax);
@@ -3577,13 +3579,13 @@ private void ConstrainParticlesToWorldBox(GameObject visGo, Vector3 worldCenter,
 
     // FIX (2026-01): Many tool prefabs ship with a tiny VFXVolume (e.g. 0.02m cube).
     // In that case, particles become effectively invisible. If the volume is suspiciously small,
-    // fall back to the tool render bounds size passed in via capWorldSize.
+    // fall back to the tool render bounds size passed in via worldSize.
     bool vfxTooSmall = (wSize.x < 0.045f) || (wSize.y < 0.045f) || (wSize.z < 0.045f);
-    bool hasCap = (capWorldSize.x > 0f) || (capWorldSize.y > 0f) || (capWorldSize.z > 0f);
+    bool hasCap = (worldSize.x > 0f) || (worldSize.y > 0f) || (worldSize.z > 0f);
     if (vfxTooSmall && hasCap)
     {
-        wCenter = fallbackWorldCenter;
-        wSize = AbsVec3(capWorldSize);
+        wCenter = worldCenter;
+        wSize = AbsVec3(worldSize);
 
         // Recompute minDim with fallback size
         minDim = wSize.x;
@@ -3681,7 +3683,7 @@ private void ConstrainParticlesToWorldBox(GameObject visGo, Vector3 worldCenter,
     }
 }
 
-private void ScaleDownVisualToFitVfxVolume(GameObject visGo, BoxCollider vfxBox, Vector3 capWorldSize)
+private void ScaleDownVisualToFitVfxVolume(GameObject visGo, BoxCollider vfxBox, Vector3 worldSize)
 {
     if (visGo == null || vfxBox == null) return;
 
@@ -3700,11 +3702,11 @@ private void ScaleDownVisualToFitVfxVolume(GameObject visGo, BoxCollider vfxBox,
     Vector3 wSize = AbsVec3(vfxBox.transform.TransformVector(vfxBox.size));
 
     // Clamp to tool bounds if provided
-    if (capWorldSize.x > 0f || capWorldSize.y > 0f || capWorldSize.z > 0f)
+    if (worldSize.x > 0f || worldSize.y > 0f || worldSize.z > 0f)
     {
-        wSize.x = Mathf.Min(wSize.x, Mathf.Max(0.001f, capWorldSize.x));
-        wSize.y = Mathf.Min(wSize.y, Mathf.Max(0.001f, capWorldSize.y));
-        wSize.z = Mathf.Min(wSize.z, Mathf.Max(0.001f, capWorldSize.z));
+        wSize.x = Mathf.Min(wSize.x, Mathf.Max(0.001f, worldSize.x));
+        wSize.y = Mathf.Min(wSize.y, Mathf.Max(0.001f, worldSize.y));
+        wSize.z = Mathf.Min(wSize.z, Mathf.Max(0.001f, worldSize.z));
     }
 
     // Absolute hard cap (safety)
