@@ -2,6 +2,9 @@ using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
 
+// UdonSharp はネスト型が未サポートのためトップレベルに定義
+public enum ToolOpsTiltAxis { Up = 0, Down = 1, Forward = 2, Back = 3, Right = 4, Left = 5 }
+
 /// <summary>
 /// ToolMotionOpsEstimator (B-plan)
 /// --------------------------------
@@ -22,6 +25,10 @@ public class ToolMotionOpsEstimator : UdonSharpBehaviour
     [Header("Tuning")]
     public float pourAngleMinDeg = 10f;
     public float pourAngleMaxDeg = 80f;
+
+    [Header("Pour Axis (重要)")]
+    [Tooltip("器具モデルの『上方向』がどの軸か。FBX/Prefabによって Up/Forward/Right が違うため、Pour推定に使う軸を選べます。")]
+    public ToolOpsTiltAxis pourTiltAxis = ToolOpsTiltAxis.Up;
 
     [Tooltip("Shakeの強さ推定に使う速度(m/s)のスケール。大きいほど振っても値が上がりにくい。")]
     public float shakeSpeedScale = 1.5f;
@@ -81,7 +88,7 @@ public class ToolMotionOpsEstimator : UdonSharpBehaviour
 
         // --- Pour: 傾き（ワールドUpとの角度） ---
         // 0..1: ほぼ水平=0 / かなり傾いた=1
-        float angle = Vector3.Angle(t.up, Vector3.up);
+        float angle = Vector3.Angle(GetPourAxisWorld(t), Vector3.up);
         float targetPour = Mathf.InverseLerp(pourAngleMinDeg, pourAngleMaxDeg, angle);
 
         // --- Shake: 速度（位置デルタ） ---
@@ -118,5 +125,18 @@ public class ToolMotionOpsEstimator : UdonSharpBehaviour
         _pour01 = 0f;
         _shake01 = 0f;
         _stir01 = 0f;
+    }
+
+    private Vector3 GetPourAxisWorld(Transform t)
+    {
+        switch (pourTiltAxis)
+        {
+            case ToolOpsTiltAxis.Down: return -t.up;
+            case ToolOpsTiltAxis.Forward: return t.forward;
+            case ToolOpsTiltAxis.Back: return -t.forward;
+            case ToolOpsTiltAxis.Right: return t.right;
+            case ToolOpsTiltAxis.Left: return -t.right;
+            default: return t.up;
+        }
     }
 }

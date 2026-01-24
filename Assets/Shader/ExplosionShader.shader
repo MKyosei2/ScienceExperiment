@@ -19,6 +19,9 @@ Shader "ChemLab/ExplosionShader"
             #pragma vertex vert
             #pragma fragment frag
 
+            // UnityObjectToClipPos is declared in UnityCG.cginc.
+            #include "UnityCG.cginc"
+
             float4 _Color;
             float _Size;
 

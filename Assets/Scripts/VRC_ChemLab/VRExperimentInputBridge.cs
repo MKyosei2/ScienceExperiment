@@ -1,5 +1,6 @@
 ﻿using UdonSharp;
 using UnityEngine;
+using VRC.SDKBase;
 
 [AddComponentMenu("VRC Lab/VR Input/VRExperimentInputBridge")]
 public class VRExperimentInputBridge : UdonSharpBehaviour
@@ -26,6 +27,19 @@ public class VRExperimentInputBridge : UdonSharpBehaviour
     private bool active;
     private float nextSendAt;
     private float nextResolveAt;
+
+    private void Start()
+    {
+        // Robust fallback:
+        // If ModeActivation/Router isn't present or notify arrays are not wired,
+        // OnModeVR/OnModePC may never be called.
+        // In that case, detect the current platform once and behave correctly.
+        var lp = Networking.LocalPlayer;
+        if (lp != null)
+        {
+            active = lp.IsUserInVR();
+        }
+    }
 
     public void OnModeVR() { active = true; }
     public void OnModePC()

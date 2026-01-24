@@ -18,6 +18,9 @@ Shader "VRC_ChemLab/WaveEffect"
             #pragma vertex vert
             #pragma fragment frag
 
+            // UnityObjectToClipPos is declared in UnityCG.cginc.
+            #include "UnityCG.cginc"
+
             float4 _Color;
             float _WaveStrength;
             float4 _Time;

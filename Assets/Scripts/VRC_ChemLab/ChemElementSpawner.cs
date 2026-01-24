@@ -567,6 +567,17 @@ private int _runtimeSpawnSerial;
 if (!EnsureCanControl()) return;
 
 _localInput = (symbolOrFormula == null) ? "" : symbolOrFormula.Trim();
+
+// Normalize element identifier:
+// UI buttons sometimes pass Japanese/English element names instead of symbols.
+// For visuals & DB lookup we must store the SYMBOL (e.g. "Na").
+// If it cannot be resolved, keep the original token.
+if (elementDb != null)
+{
+    string resolved = elementDb.ResolveSymbol(_localInput);
+    if (!string.IsNullOrEmpty(resolved)) _localInput = resolved;
+}
+
 _syncedInput = _localInput;
 
 _syncedVersion++;

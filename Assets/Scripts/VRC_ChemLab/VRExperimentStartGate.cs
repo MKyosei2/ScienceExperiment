@@ -1,5 +1,6 @@
 ﻿using UdonSharp;
 using UnityEngine;
+using VRC.SDKBase;
 
 [AddComponentMenu("VRC Lab/VR Input/VRExperimentStartGate")]
 public class VRExperimentStartGate : UdonSharpBehaviour
@@ -15,6 +16,18 @@ public class VRExperimentStartGate : UdonSharpBehaviour
     private bool inZone;
     private float enteredAt;
     private float nextAllowedAt;
+
+    private void Start()
+    {
+        // Robust fallback:
+        // If ModeActivation/Router isn't set up, mode events may never fire.
+        // Detect current platform once so VR-only start gating still works.
+        var lp = Networking.LocalPlayer;
+        if (lp != null)
+        {
+            active = lp.IsUserInVR();
+        }
+    }
 
     public void OnModeVR() { active = true; }
     public void OnModePC() { active = false; }

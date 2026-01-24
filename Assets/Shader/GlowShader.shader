@@ -19,6 +19,10 @@ Shader "ChemLab/GlowShader"
             #pragma fragment frag
             #pragma multi_compile_instancing
 
+            // UnityObjectToClipPos is declared in UnityCG.cginc.
+            // Without this include the shader fails to compile and the effect becomes invisible/pink.
+            #include "UnityCG.cginc"
+
             struct appdata
             {
                 float4 vertex : POSITION;

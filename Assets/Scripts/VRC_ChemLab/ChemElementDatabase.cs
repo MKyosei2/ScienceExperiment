@@ -142,6 +142,74 @@ public class ChemElementDatabase : UdonSharpBehaviour
         return IndexOf(symbol) >= 0;
     }
 
+    // -------------------------------------------------
+    // Symbol resolving helpers
+    // -------------------------------------------------
+    /// <summary>
+    /// Resolve an input token (symbol / Japanese name / English name) into a symbol.
+    /// Returns empty string if not found.
+    /// </summary>
+    public string ResolveSymbol(string token)
+    {
+        if (string.IsNullOrEmpty(token)) return "";
+        string t = token.Trim();
+
+        // Symbol direct
+        if (ContainsSymbol(t)) return t;
+
+        // Try case-insensitive for symbols (e.g. "na" -> "Na")
+        // We keep a simple scan because UdonSharp has no Dictionary.
+        if (Symbols != null)
+        {
+            string up = t.ToUpper();
+            for (int i = 0; i < Symbols.Length; i++)
+            {
+                string s = Symbols[i];
+                if (string.IsNullOrEmpty(s)) continue;
+                if (s.ToUpper() == up) return s;
+            }
+        }
+
+        // Name match (exact)
+        int idx = IndexOfName(t);
+        if (idx >= 0 && Symbols != null && idx < Symbols.Length) return Symbols[idx];
+
+        return "";
+    }
+
+    /// <summary>
+    /// Find an element index by Japanese/English name (exact match).
+    /// Returns -1 if not found.
+    /// </summary>
+    public int IndexOfName(string name)
+    {
+        if (string.IsNullOrEmpty(name)) return -1;
+        string t = name.Trim();
+
+        if (NamesJa != null)
+        {
+            for (int i = 0; i < NamesJa.Length; i++)
+            {
+                string n = NamesJa[i];
+                if (string.IsNullOrEmpty(n)) continue;
+                if (n == t) return i;
+            }
+        }
+
+        if (NamesEn != null)
+        {
+            string low = t.ToLower();
+            for (int i = 0; i < NamesEn.Length; i++)
+            {
+                string n = NamesEn[i];
+                if (string.IsNullOrEmpty(n)) continue;
+                if (n.ToLower() == low) return i;
+            }
+        }
+
+        return -1;
+    }
+
     public Color GetColor(string symbol)
     {
         int i = IndexOf(symbol);

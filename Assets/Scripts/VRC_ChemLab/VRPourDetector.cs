@@ -1,11 +1,18 @@
 ﻿using UdonSharp;
 using UnityEngine;
 
+// UdonSharp はネスト型が未サポートのためトップレベルに定義
+public enum ToolTiltAxis { Up = 0, Down = 1, Forward = 2, Back = 3, Right = 4, Left = 5 }
+
 [AddComponentMenu("VRC Lab/VR Input/VRPourDetector")]
 public class VRPourDetector : UdonSharpBehaviour
 {
     public Transform spout;
     public Transform target;
+
+    [Header("Tilt Axis (重要)")]
+    [Tooltip("器具モデルの『上方向』がどの軸か。FBX/Prefabによって Up/Forward/Right が違うため、Pour判定に使う軸を選べます。")]
+    public ToolTiltAxis tiltAxis = ToolTiltAxis.Up;
 
     [Header("Auto Resolve (optional)")]
     [Tooltip("spout/target が未設定でも動くように自動探索します。")]
@@ -30,6 +37,17 @@ public class VRPourDetector : UdonSharpBehaviour
         {
             GameObject t = GameObject.Find("PourTargetPoint");
             if (t != null) target = t.transform;
+
+            // Fallback: if the scene doesn't have PourTargetPoint,
+            // try to use the experiment container (ChemElementSpawner.containerTransform).
+            if (target == null)
+            {
+                ChemElementSpawner sp = GetComponentInParent<ChemElementSpawner>();
+                if (sp != null && sp.containerTransform != null)
+                {
+                    target = sp.containerTransform;
+                }
+            }
         }
 
         // spout: prefer children named like Spout/Mouth/Pour
@@ -53,13 +71,26 @@ public class VRPourDetector : UdonSharpBehaviour
             float d = Vector3.Distance(spout.position, target.position);
             if (d <= maxDistance)
             {
-                float angle = Vector3.Angle(transform.up, Vector3.up); // upright=0, upside-down=180
+                float angle = Vector3.Angle(GetTiltAxisWorld(transform), Vector3.up); // upright=0, upside-down=180
                 float t = Mathf.InverseLerp(startAngleDeg, fullAngleDeg, angle);
                 target01 = Mathf.Clamp01(t);
             }
         }
 
         pour01 = Mathf.Lerp(pour01, target01, 1f - Mathf.Exp(-smooth * dt));
+    }
+
+    private Vector3 GetTiltAxisWorld(Transform t)
+    {
+        switch (tiltAxis)
+        {
+            case ToolTiltAxis.Down: return -t.up;
+            case ToolTiltAxis.Forward: return t.forward;
+            case ToolTiltAxis.Back: return -t.forward;
+            case ToolTiltAxis.Right: return t.right;
+            case ToolTiltAxis.Left: return -t.right;
+            default: return t.up;
+        }
     }
 
     public float Get01() { return pour01; }

@@ -118,6 +118,9 @@ public class ChemVisualController : UdonSharpBehaviour
     // Particles under this visual (optional)
     private ParticleSystem[] _particleSystems;
 
+    // MaterialPropertyBlock for per-renderer tinting (prevents global color bleed via sharedMaterial)
+    private MaterialPropertyBlock _mpb;
+
     // temp buffers for formula parsing
     private const int MAX_ELEMS = 12;
     private string[] _tmpSyms;
@@ -169,6 +172,13 @@ public class ChemVisualController : UdonSharpBehaviour
 
         // Cache particle systems (optional)
         _particleSystems = GetComponentsInChildren<ParticleSystem>(true);
+
+        // Ensure particles stay inside the tool and follow the effect root:
+        // - Local simulation space so particles move with the beaker/flask
+        // - Hierarchy scaling so scaled tools don't explode the effect size
+        // - Clear & restart will be handled on ApplyElementBySymbol when color changes
+        ConfigureParticleSystemsForTool();
+
 
         // ProductToken auto find
         if (productTokenObj == null)
@@ -538,6 +548,7 @@ public class ChemVisualController : UdonSharpBehaviour
 
     private void ApplyColorToParticleSystems(Color baseColor, float opacity)
     {
+        if (!applyColorToParticles) return;
         if (_particleSystems == null || _particleSystems.Length == 0) return;
 
         Color c = baseColor;
@@ -551,23 +562,40 @@ public class ChemVisualController : UdonSharpBehaviour
             var main = ps.main;
             main.startColor = c;
 
-            // Also override Color over Lifetime if present, so prefab gradients don't force a single color.
+            // ColorOverLifetime/ColorBySpeed が有効だと main.startColor が上書きされるため、こちらも同色にします
             var col = ps.colorOverLifetime;
-            if (col.enabled)
-            {
-                col.color = new ParticleSystem.MinMaxGradient(c);
-            }
+            if (col.enabled) { col.color = new ParticleSystem.MinMaxGradient(c); }
+            var colSpeed = ps.colorBySpeed;
+            if (colSpeed.enabled) { colSpeed.color = new ParticleSystem.MinMaxGradient(c); }
+
+            // Force already-emitted particles to adopt the new color
+            // (otherwise the old colored particles remain and it looks 'unchanged').
+            ps.Stop(true);
+            ps.Clear(true);
+            ps.Play(true);
 
             // Try to tint the renderer material too (in case shader ignores vertex/startColor)
             ParticleSystemRenderer pr = ps.GetComponent<ParticleSystemRenderer>();
             if (pr != null)
             {
-                Material mat = pr.sharedMaterial;
-                if (mat != null)
-                {
-                    if (mat.HasProperty(propBaseColor)) mat.SetColor(propBaseColor, c);
-                    else if (mat.HasProperty(propColorFallback)) mat.SetColor(propColorFallback, c);
-                }
+                // IMPORTANT:
+                // Do NOT modify sharedMaterial here.
+                // Many particle prefabs share the same Material asset, and changing it will force
+                // *all* elements/instances to the same color.
+                // Use MaterialPropertyBlock for per-renderer override.
+                if (_mpb == null) _mpb = new MaterialPropertyBlock();
+                pr.GetPropertyBlock(_mpb);
+
+                // We cannot query HasProperty from MPB, but setting unused properties is safe.
+                if (!string.IsNullOrEmpty(propBaseColor)) _mpb.SetColor(propBaseColor, c);
+                if (!string.IsNullOrEmpty(propColorFallback)) _mpb.SetColor(propColorFallback, c);
+
+                // Extra common particle color properties (for materials not using _BaseColor/_Color)
+                _mpb.SetColor("_TintColor", c);
+                _mpb.SetColor("_EmissionColor", c);
+                _mpb.SetColor("_ParticleColor", c);
+
+                pr.SetPropertyBlock(_mpb);
             }
         }
     }
@@ -1058,4 +1086,42 @@ public class ChemVisualController : UdonSharpBehaviour
 
         return s;
     }
+
+
+    private void ConfigureParticleSystemsForTool()
+    {
+        if (_particleSystems == null) return;
+
+        for (int i = 0; i < _particleSystems.Length; i++)
+        {
+            ParticleSystem ps = _particleSystems[i];
+            if (ps == null) continue;
+
+            var main = ps.main;
+            main.simulationSpace = ParticleSystemSimulationSpace.Local;
+            main.scalingMode = ParticleSystemScalingMode.Hierarchy;
+
+            // World-space trails often cause "particles leaking outside" after moving the tool.
+            var trails = ps.trails;
+            if (trails.enabled)
+            {
+                trails.worldSpace = false;
+            }
+
+            // If the prefab has a huge shape scale, it will escape the glass.
+            // We don't hard-clamp here, but we gently normalize extremely large scales.
+            var shape = ps.shape;
+            if (shape.enabled)
+            {
+                Vector3 sc = shape.scale;
+                float max = Mathf.Max(sc.x, Mathf.Max(sc.y, sc.z));
+                if (max > 2.5f)
+                {
+                    float k = 2.5f / max;
+                    shape.scale = sc * k;
+                }
+            }
+        }
+    }
+
 }
