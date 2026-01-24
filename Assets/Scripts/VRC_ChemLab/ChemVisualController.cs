@@ -562,17 +562,18 @@ public class ChemVisualController : UdonSharpBehaviour
             var main = ps.main;
             main.startColor = c;
 
-            // ColorOverLifetime/ColorBySpeed が有効だと main.startColor が上書きされるため、こちらも同色にします
-            var col = ps.colorOverLifetime;
-            if (col.enabled) { col.color = new ParticleSystem.MinMaxGradient(c); }
-            var colSpeed = ps.colorBySpeed;
-            if (colSpeed.enabled) { colSpeed.color = new ParticleSystem.MinMaxGradient(c); }
-
             // Force already-emitted particles to adopt the new color
             // (otherwise the old colored particles remain and it looks 'unchanged').
             ps.Stop(true);
             ps.Clear(true);
             ps.Play(true);
+
+            // Also override Color over Lifetime if present, so prefab gradients don't force a single color.
+            var col = ps.colorOverLifetime;
+            if (col.enabled)
+            {
+                col.color = new ParticleSystem.MinMaxGradient(c);
+            }
 
             // Try to tint the renderer material too (in case shader ignores vertex/startColor)
             ParticleSystemRenderer pr = ps.GetComponent<ParticleSystemRenderer>();

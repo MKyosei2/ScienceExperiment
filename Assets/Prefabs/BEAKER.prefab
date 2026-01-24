@@ -101,9 +101,6 @@ GameObject:
   - component: {fileID: 8085243660472569160}
   - component: {fileID: 9124110283118516133}
   - component: {fileID: 2942654712082393217}
-  - component: {fileID: 2252835040330413040}
-  - component: {fileID: 3173527234007109905}
-  - component: {fileID: 1020138932969033010}
   m_Layer: 13
   m_Name: BEAKER
   m_TagString: Tool
@@ -357,88 +354,6 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 0}
   pickup: {fileID: 9124110283118516133}
---- !u!114 &2252835040330413040
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5544213426052059733}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b8c85c5a8f3eee64fb6ad355264c4095, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  serializationData:
-    SerializedFormat: 2
-    SerializedBytes: 
-    ReferencedUnityObjects: []
-    SerializedBytesString: 
-    Prefab: {fileID: 0}
-    PrefabModificationsReferencedUnityObjects: []
-    PrefabModifications: []
-    SerializationNodes: []
-  _udonSharpBackingUdonBehaviour: {fileID: 0}
-  spout: {fileID: 3188214956958352921}
-  target: {fileID: 0}
-  tiltAxis: 0
-  autoResolve: 1
-  startAngleDeg: 35
-  fullAngleDeg: 85
-  maxDistance: 0.18
-  smooth: 10
-  pour01: 0
---- !u!114 &3173527234007109905
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5544213426052059733}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f3d418c7e9afa62498a25175ee481841, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  serializationData:
-    SerializedFormat: 2
-    SerializedBytes: 
-    ReferencedUnityObjects: []
-    SerializedBytesString: 
-    Prefab: {fileID: 0}
-    PrefabModificationsReferencedUnityObjects: []
-    PrefabModifications: []
-    SerializationNodes: []
-  _udonSharpBackingUdonBehaviour: {fileID: 0}
-  speedFull01: 0.8
-  smooth: 12
-  stir01: 0
-  allowNameBasedLiquidDetection: 1
---- !u!114 &1020138932969033010
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5544213426052059733}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d21a4f4cccf1b04abed922a6d75329e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  serializationData:
-    SerializedFormat: 2
-    SerializedBytes: 
-    ReferencedUnityObjects: []
-    SerializedBytesString: 
-    Prefab: {fileID: 0}
-    PrefabModificationsReferencedUnityObjects: []
-    PrefabModifications: []
-    SerializationNodes: []
-  _udonSharpBackingUdonBehaviour: {fileID: 0}
-  accelFull01: 8
-  smooth: 10
-  shake01: 0
 --- !u!1 &6345898949915845074
 GameObject:
   m_ObjectHideFlags: 0

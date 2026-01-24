@@ -39,14 +39,11 @@ public class ChemReactionAnimator : UdonSharpBehaviour
     [Header("Glow (optional)")]
     public Renderer[] glowRenderers;
     public string emissionProperty = "_EmissionColor";
-    public string emissionStrengthProperty = "_EmissionStrength";
-    [Tooltip("Standard/URP Lit などの Emission 表示がOFFになっている場合にキーワードをONにします。")]
-    public bool enableEmissionKeyword = true;
     [Range(0f, 10f)] public float emissionMax = 2.0f;
 
     [Header("Heat (optional)")]
     public Renderer[] heatRenderers;
-    public string heatProperty = "_Glow"; // _HeatStrength は存在しないため _Glow を既定にします
+    public string heatProperty = "_HeatStrength";
     [Range(0f, 5f)] public float heatMax = 1.0f;
 
     [Header("Wave (optional)")]
@@ -231,20 +228,10 @@ public class ChemReactionAnimator : UdonSharpBehaviour
                 if (r == null) continue;
                 Material m = r.material;
                 if (m == null) continue;
-                // ChemLab shader は _EmissionColor と _EmissionStrength の両方を使うため、Strengthが0のままだと発光しません。
-                bool hasStrength = !string.IsNullOrEmpty(emissionStrengthProperty) && m.HasProperty(emissionStrengthProperty);
                 if (m.HasProperty(emissionProperty))
                 {
-                    // Strengthがある場合は色は白固定（強さはStrength側で制御）
-                    m.SetColor(emissionProperty, hasStrength ? Color.white : (Color.white * (_glow * emissionMax)));
+                    m.SetColor(emissionProperty, Color.white * (_glow * emissionMax));
                 }
-
-                if (hasStrength)
-                {
-                    m.SetFloat(emissionStrengthProperty, _glow * emissionMax);
-                }
-
-                if (enableEmissionKeyword) { m.EnableKeyword("_EMISSION"); }
             }
         }
 

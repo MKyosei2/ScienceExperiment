@@ -154,8 +154,6 @@ GameObject:
   - component: {fileID: 139136156}
   - component: {fileID: 139136158}
   - component: {fileID: 139136157}
-  - component: {fileID: 139136159}
-  - component: {fileID: 139136160}
   m_Layer: 0
   m_Name: ChemElementSpawner
   m_TagString: Untagged
@@ -235,10 +233,11 @@ MonoBehaviour:
   environment: {fileID: 376516164}
   showProductWhenComplete: 1
   sampleVisual: {fileID: 126484677}
-  reactionAnimator: {fileID: 139136159}
+  reactionAnimator: {fileID: 0}
   ai: {fileID: 1333534138}
   toolModelsRoot: {fileID: 0}
   runtimeToolSpawner: {fileID: 1812213036}
+  destroyRuntimeSpawnsOnReset: 1
   cloneSampleVisualIntoTool: 1
   elementEffectAnchorName: ElementEffectAnchor
   elementEffectAnchorFallback: {fileID: 4279747004191715785, guid: 9fc891b4972bab648b46aa051fa2c2a9,
@@ -248,7 +247,6 @@ MonoBehaviour:
   hideOtherToolsOnlyWhenVRProps: 0
   elementEffectLocalOffset: {x: 0, y: 0.08, z: 0}
   elementEffectLocalScale: {x: 0.18, y: 0.18, z: 0.18}
-  elementEffectPlayDelaySeconds: 0.02
   keepEffectLevelToGravity: 1
   continuouslyFitEffectToTool: 1
   effectFillHeight01: 0.33
@@ -272,7 +270,6 @@ MonoBehaviour:
   reactionVfxAnchorName: ReactionVFXAnchor
   glassMasterMaterial: {fileID: 0}
   wireframeFxMaterial: {fileID: 0}
-  particleFallbackMaterial: {fileID: 0}
   orchestrator: {fileID: 417112637}
   hintText: {fileID: 0}
   explainText: {fileID: 0}
@@ -290,77 +287,6 @@ MonoBehaviour:
   heatSource: {fileID: 1167089910}
   heatNearMeters: 0.2
   heatFarMeters: 0.8
---- !u!114 &139136159
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 139136155}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e5c63421085e16243b562d069b121820, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  serializationData:
-    SerializedFormat: 2
-    SerializedBytes: 
-    ReferencedUnityObjects: []
-    SerializedBytesString: 
-    Prefab: {fileID: 0}
-    PrefabModificationsReferencedUnityObjects: []
-    PrefabModifications: []
-    SerializationNodes: []
-  _udonSharpBackingUdonBehaviour: {fileID: 139136160}
-  foamParticles: {fileID: 0}
-  smokeParticles: {fileID: 0}
-  sparkParticles: {fileID: 0}
-  glintParticles: {fileID: 0}
-  precipitateParticles: {fileID: 0}
-  bubbleParticles: {fileID: 0}
-  fogParticles: {fileID: 0}
-  foamRateMax: 25
-  smokeRateMax: 20
-  sparkRateMax: 90
-  compoundRateMax: 18
-  glowRenderers: []
-  emissionProperty: _EmissionColor
-  emissionStrengthProperty: _EmissionStrength
-  enableEmissionKeyword: 1
-  emissionMax: 2
-  heatRenderers: []
-  heatProperty: _Glow
-  heatMax: 1
-  waveRenderers: []
-  waveProperty: _WaveStrength
-  waveMax: 1
-  autoResolveOnStart: 1
---- !u!114 &139136160
-MonoBehaviour:
-  m_ObjectHideFlags: 2
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 139136155}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45115577ef41a5b4ca741ed302693907, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  interactTextPlacement: {fileID: 0}
-  interactText: Use
-  interactTextGO: {fileID: 0}
-  proximity: 2
-  SynchronizePosition: 0
-  AllowCollisionOwnershipTransfer: 0
-  Reliable: 0
-  _syncMethod: 2
-  serializedProgramAsset: {fileID: 11400000, guid: 450446a39ab49d140a7fbe29ba0b921e,
-    type: 2}
-  programSource: {fileID: 11400000, guid: 6f43cd8e33561114c938f6f345efd6c8, type: 2}
-  serializedPublicVariablesBytesString: Ai8AAAAAATIAAABWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgAuAFUAZABvAG4AVgBhAHIAaQBhAGIAbABlAFQAYQBiAGwAZQAsACAAVgBSAEMALgBVAGQAbwBuAC4AQwBvAG0AbQBvAG4AAAAAAAYBAAAAAAAAACcBBAAAAHQAeQBwAGUAAWgAAABTAHkAcwB0AGUAbQAuAEMAbwBsAGwAZQBjAHQAaQBvAG4AcwAuAEcAZQBuAGUAcgBpAGMALgBMAGkAcwB0AGAAMQBbAFsAVgBSAEMALgBVAGQAbwBuAC4AQwBvAG0AbQBvAG4ALgBJAG4AdABlAHIAZgBhAGMAZQBzAC4ASQBVAGQAbwBuAFYAYQByAGkAYQBiAGwAZQAsACAAVgBSAEMALgBVAGQAbwBuAC4AQwBvAG0AbQBvAG4AXQBdACwAIABtAHMAYwBvAHIAbABpAGIAAQEJAAAAVgBhAHIAaQBhAGIAbABlAHMALwEAAAABaAAAAFMAeQBzAHQAZQBtAC4AQwBvAGwAbABlAGMAdABpAG8AbgBzAC4ARwBlAG4AZQByAGkAYwAuAEwAaQBzAHQAYAAxAFsAWwBWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgAuAEkAbgB0AGUAcgBmAGEAYwBlAHMALgBJAFUAZABvAG4AVgBhAHIAaQBhAGIAbABlACwAIABWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgBdAF0ALAAgAG0AcwBjAG8AcgBsAGkAYgABAAAABgEAAAAAAAAAAi8CAAAAAUkAAABWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgAuAFUAZABvAG4AVgBhAHIAaQBhAGIAbABlAGAAMQBbAFsAUwB5AHMAdABlAG0ALgBJAG4AdAAzADIALAAgAG0AcwBjAG8AcgBsAGkAYgBdAF0ALAAgAFYAUgBDAC4AVQBkAG8AbgAuAEMAbwBtAG0AbwBuAAIAAAAGAgAAAAAAAAAnAQQAAAB0AHkAcABlAAEXAAAAUwB5AHMAdABlAG0ALgBTAHQAcgBpAG4AZwAsACAAbQBzAGMAbwByAGwAaQBiACcBCgAAAFMAeQBtAGIAbwBsAE4AYQBtAGUAAR8AAABfAF8AXwBVAGQAbwBuAFMAaABhAHIAcABCAGUAaABhAHYAaQBvAHUAcgBWAGUAcgBzAGkAbwBuAF8AXwBfACcBBAAAAHQAeQBwAGUAARYAAABTAHkAcwB0AGUAbQAuAEkAbgB0ADMAMgAsACAAbQBzAGMAbwByAGwAaQBiABcBBQAAAFYAYQBsAHUAZQACAAAABwUHBQcF
-  publicVariablesUnityEngineObjects: []
-  publicVariablesSerializationDataFormat: 0
 --- !u!1 &161267112
 GameObject:
   m_ObjectHideFlags: 0
@@ -3402,6 +3328,7 @@ MonoBehaviour:
   forceLayerRecursively: 1
   forceRenderersEnabled: 1
   forceParticlesPlay: 1
+  skipSceneTemplateSampleVisual: 1
   refreshInterval: 1
 --- !u!1 &2038324834
 GameObject:
@@ -5465,6 +5392,14 @@ MonoBehaviour:
     ID: 242
     SerializedTypeNames:
     - VRC.Udon.UdonBehaviour
+  - gameObject: {fileID: 1048843264}
+    ID: 243
+    SerializedTypeNames:
+    - VRC.Udon.UdonBehaviour
+  - gameObject: {fileID: 139136155}
+    ID: 244
+    SerializedTypeNames:
+    - VRC.Udon.UdonBehaviour
   - gameObject: {fileID: 376516161}
     ID: 245
     SerializedTypeNames:
@@ -5528,6 +5463,11 @@ MonoBehaviour:
     - VRC.Udon.UdonBehaviour
   - gameObject: {fileID: 1044960241}
     ID: 262
+    SerializedTypeNames:
+    - VRC.Udon.UdonBehaviour
+    - VRC.Udon.UdonBehaviour
+  - gameObject: {fileID: 0}
+    ID: 263
     SerializedTypeNames:
     - VRC.Udon.UdonBehaviour
     - VRC.Udon.UdonBehaviour
@@ -5633,23 +5573,11 @@ MonoBehaviour:
     - VRC.Udon.UdonBehaviour
     - VRC.Udon.UdonBehaviour
     - VRC.Udon.UdonBehaviour
-  - gameObject: {fileID: 1048843264}
-    ID: 243
-    SerializedTypeNames:
-    - VRC.Udon.UdonBehaviour
-    - VRC.Udon.UdonBehaviour
   - gameObject: {fileID: 309057360}
     ID: 284
     SerializedTypeNames:
     - VRC.Udon.UdonBehaviour
-    - VRC.Udon.UdonBehaviour
     - VRC.SDK3.Components.VRCPickup
-    - VRC.Udon.UdonBehaviour
-  - gameObject: {fileID: 139136155}
-    ID: 244
-    SerializedTypeNames:
-    - VRC.Udon.UdonBehaviour
-    - VRC.Udon.UdonBehaviour
   portraitCameraPositionOffset: {x: 0, y: 0, z: 0}
   portraitCameraRotationOffset: {x: 0, y: 1, z: 0, w: -0.00000004371139}
   PlayerPersistence: []
@@ -6017,12 +5945,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8973216173378138530}
     m_Modifications:
-    - target: {fileID: 315980168549137763, guid: 9fc891b4972bab648b46aa051fa2c2a9,
-        type: 3}
-      propertyPath: serializationData.Prefab
-      value: 
-      objectReference: {fileID: 315980168549137763, guid: 9fc891b4972bab648b46aa051fa2c2a9,
-        type: 3}
     - target: {fileID: 699060529289358938, guid: 9fc891b4972bab648b46aa051fa2c2a9,
         type: 3}
       propertyPath: m_Name
@@ -6044,23 +5966,11 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 1475326030846225326, guid: 9fc891b4972bab648b46aa051fa2c2a9,
-        type: 3}
-      propertyPath: serializationData.Prefab
-      value: 
-      objectReference: {fileID: 1475326030846225326, guid: 9fc891b4972bab648b46aa051fa2c2a9,
-        type: 3}
     - target: {fileID: 1602077796684749918, guid: 9fc891b4972bab648b46aa051fa2c2a9,
         type: 3}
       propertyPath: serializationData.Prefab
       value: 
       objectReference: {fileID: 1602077796684749918, guid: 9fc891b4972bab648b46aa051fa2c2a9,
-        type: 3}
-    - target: {fileID: 1615038950287215454, guid: 9fc891b4972bab648b46aa051fa2c2a9,
-        type: 3}
-      propertyPath: serializationData.Prefab
-      value: 
-      objectReference: {fileID: 1615038950287215454, guid: 9fc891b4972bab648b46aa051fa2c2a9,
         type: 3}
     - target: {fileID: 1712280318968332697, guid: 9fc891b4972bab648b46aa051fa2c2a9,
         type: 3}
@@ -6164,11 +6074,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 5947709849876509656, guid: 9fc891b4972bab648b46aa051fa2c2a9,
         type: 3}
-    - target: {fileID: 6703808716803852213, guid: 9fc891b4972bab648b46aa051fa2c2a9,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 6858917995977934974, guid: 9fc891b4972bab648b46aa051fa2c2a9,
         type: 3}
       propertyPath: m_Enabled
