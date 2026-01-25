@@ -341,20 +341,44 @@ public class ChemElementDatabase : UdonSharpBehaviour
         }
 
         // Base colors
+        // -----------------------------------------------------------------
+        // IMPORTANT FIX:
+        // ElementVfxBaseColor is an *optional* override. In many scenes it exists
+        // but entries are left at default (0,0,0,0). When we blindly prefer it,
+        // every element ends up with the same "invisible black" color.
+        //
+        // For correct per-element visuals, we prefer DisplayColors unless the
+        // override has a meaningful alpha.
+        // -----------------------------------------------------------------
+        bool hasOverride = false;
+        Color overrideCol = Color.clear;
         if (ElementVfxBaseColor != null && i < ElementVfxBaseColor.Length)
-            baseColor = ElementVfxBaseColor[i];
+        {
+            overrideCol = ElementVfxBaseColor[i];
+            if (overrideCol.a > 0.01f) hasOverride = true;
+        }
+
+        if (hasOverride)
+            baseColor = overrideCol;
         else if (DisplayColors != null && i < DisplayColors.Length)
             baseColor = DisplayColors[i];
         else
             baseColor = Color.white;
 
+        // Color alpha for VFX is controlled by "opacity" parameter later.
+        // Keep the base color opaque so shaders/particles don't disappear.
+        if (baseColor.a <= 0.01f) baseColor.a = 1f;
+
         bool isMetal = (IsMetal != null && i < IsMetal.Length) ? IsMetal[i] : false;
         int hazard = (HazardFlags != null && i < HazardFlags.Length) ? HazardFlags[i] : 0;
 
-        if (ElementVfxAccentColor != null && i < ElementVfxAccentColor.Length)
+        // Accent color override (optional). Same rule: ignore unset (alpha=0) entries.
+        if (ElementVfxAccentColor != null && i < ElementVfxAccentColor.Length && ElementVfxAccentColor[i].a > 0.01f)
             accentColor = ElementVfxAccentColor[i];
         else
             accentColor = Color.Lerp(baseColor, isMetal ? Color.gray : Color.white, isMetal ? 0.15f : 0.35f);
+
+        if (accentColor.a <= 0.01f) accentColor.a = 1f;
 
         // Archetype / particle preset
         if (ElementVfxArchetype != null && i < ElementVfxArchetype.Length)

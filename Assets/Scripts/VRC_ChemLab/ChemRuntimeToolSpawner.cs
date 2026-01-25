@@ -36,6 +36,10 @@ public class ChemRuntimeToolSpawner : UdonSharpBehaviour
     [Tooltip("前回生成した複製を破棄してから新規生成します。")]
     public bool destroyPrevious = true;
 
+    [Tooltip("When spawning pickup tools, detach them to the world root. This prevents pickup interaction bugs caused by scaled parents.")]
+    public bool detachPickupToWorld = true;
+
+
     [Header("Runtime Safety")]
     [Tooltip("ONにすると、生成した複製からUI/ボタン用のスクリプトを無効化します。\n(生成物を触っただけで同じ場所に複製される現象の対策)")]
     public bool disableSpawnInteractionsOnClones = true;
@@ -68,6 +72,9 @@ public class ChemRuntimeToolSpawner : UdonSharpBehaviour
                 if (go != null)
                 {
                     EnsureCloneVisible(go.transform);
+
+        // Detach pickup tools to world root (fix grab issues)
+        DetachPickupToWorld(go.transform);
                     if (disableSpawnInteractionsOnClones) DisableRuntimeSpawnInteractions(go);
                     if (!go.activeSelf) go.SetActive(true);
                     return go;
@@ -81,6 +88,9 @@ public class ChemRuntimeToolSpawner : UdonSharpBehaviour
         GameObject clone = VRCInstantiate(templateTr.gameObject);
         if (clone == null) return null;
         EnsureCloneVisible(clone.transform);
+
+        // Detach pickup tools to world root (fix grab issues)
+        DetachPickupToWorld(clone.transform);
         if (disableSpawnInteractionsOnClones) DisableRuntimeSpawnInteractions(clone);
         if (!clone.activeSelf) clone.SetActive(true);
         return clone;
@@ -625,4 +635,17 @@ public class ChemRuntimeToolSpawner : UdonSharpBehaviour
             }
         }
     }
+
+    private void DetachPickupToWorld(Transform tr)
+    {
+        if (!detachPickupToWorld) return;
+        if (tr == null) return;
+        VRC_Pickup p = tr.GetComponentInChildren<VRC_Pickup>(true);
+        if (p == null) return;
+
+        // Keep world transform, but detach from scaled/animated parents.
+        tr.SetParent(null, true);
+    }
+
+
 }

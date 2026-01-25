@@ -326,6 +326,13 @@ public class ChemVisualController : UdonSharpBehaviour
     public void ApplyElementBySymbol(ChemElementDatabase db, string symbolOrFormula, float temperatureC)
     {
         EnsureInitialized();
+
+        // If this visual was spawned/cloned and configured before Start() ran,
+        // it may still be muted (template state). Ensure runtime visuals are unmuted now.
+        if (!IsSceneTemplateSampleVisual())
+        {
+            UnmuteForRuntime();
+        }
         if (db == null) return;
 
         string input = symbolOrFormula == null ? "" : symbolOrFormula.Trim();
