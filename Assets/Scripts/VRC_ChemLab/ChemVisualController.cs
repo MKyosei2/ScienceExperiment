@@ -378,28 +378,33 @@ public class ChemVisualController : UdonSharpBehaviour
         if (isElement)
         {
             recipeSource = "element";
-            baseColor = db.GetColor(sym);
+
+            // MP/BPなどは保持（状態判定に使う）
             mp = db.GetMP(sym);
             bp = db.GetBP(sym);
             hazard = db.GetHazard(sym);
 
-            // safety: if not defined
             if (float.IsNaN(mp) || float.IsInfinity(mp)) mp = 25f;
             if (float.IsNaN(bp) || float.IsInfinity(bp)) bp = 100f;
 
-            float metal01 = db.GetIsMetal(sym) ? 1f : 0f;
-            archetype = db.GetIsMetal(sym) ? ARCH_METAL : ARCH_CRYSTAL;
-            particlePreset = db.GetIsMetal(sym) ? PT_GLINT : PT_NONE;
-
-            opacity = 0.98f;
-            metallic = metal01;
-            smoothness = db.GetIsMetal(sym) ? 0.65f : 0.40f;
-            emission = (hazard & ChemElementDatabase.HAZ_RADIOACTIVE) != 0 ? 0.20f : 0.03f;
-            noiseScale = 0.25f;
-            fogDensity = 0.60f;
-            bubbleRate = 0f;
-            viscosity = 1f;
-            density = 1f;
+            // ★ここが重要：元素でもVFXレシピをDBから取得して Gas/霧 を許可する
+            Color accent;
+            db.TryGetElementVfxRecipe(
+                sym,
+                out baseColor,
+                out accent,
+                out archetype,
+                out particlePreset,
+                out opacity,
+                out metallic,
+                out smoothness,
+                out emission,
+                out noiseScale,
+                out fogDensity,
+                out bubbleRate,
+                out viscosity,
+                out density
+            );
 
             inference = db.GetNameJa(sym);
         }
