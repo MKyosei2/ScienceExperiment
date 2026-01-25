@@ -595,6 +595,33 @@ public class ChemRuntimeToolSpawner : UdonSharpBehaviour
             {
                 if (cs[i] == null) continue;
                 cs[i].enabled = true;
+                cs[i].isTrigger = false;
+            }
+        }
+
+        // Ensure pickup components are enabled (templates sometimes ship disabled)
+        VRC_Pickup[] pickups = root.GetComponentsInChildren<VRC_Pickup>(true);
+        if (pickups != null)
+        {
+            for (int i = 0; i < pickups.Length; i++)
+            {
+                VRC_Pickup p = pickups[i];
+                if (p == null) continue;
+                p.enabled = true;
+                p.pickupable = true;
+            }
+        }
+
+        // Ensure rigidbodies are not accidentally disabled
+        Rigidbody[] rbs = root.GetComponentsInChildren<Rigidbody>(true);
+        if (rbs != null)
+        {
+            for (int i = 0; i < rbs.Length; i++)
+            {
+                Rigidbody rb = rbs[i];
+                if (rb == null) continue;
+                rb.detectCollisions = true;
+                rb.useGravity = true;
             }
         }
     }

@@ -142,6 +142,11 @@ public class ChemVisualController : UdonSharpBehaviour
         {
             MuteAsSceneTemplate();
         }
+        else
+        {
+            // Runtime clones MUST be visible (template is muted to avoid overflow).
+            UnmuteForRuntime();
+        }
     }
 
     /// <summary>
@@ -320,6 +325,7 @@ public class ChemVisualController : UdonSharpBehaviour
     /// </summary>
     public void ApplyElementBySymbol(ChemElementDatabase db, string symbolOrFormula, float temperatureC)
     {
+        EnsureInitialized();
         if (db == null) return;
 
         string input = symbolOrFormula == null ? "" : symbolOrFormula.Trim();
@@ -1068,6 +1074,9 @@ public class ChemVisualController : UdonSharpBehaviour
         }
     }
 
+    
+
+
     private string ExtractSymbol(ChemElementDatabase db, string input)
     {
         if (string.IsNullOrEmpty(input)) return "";
@@ -1124,5 +1133,59 @@ public class ChemVisualController : UdonSharpBehaviour
             }
         }
     }
+
+    /// <summary>
+    /// Runtime-cloned visuals must always be visible and playing.
+    /// Scene template visuals (SampleVisual) are muted to avoid overflow, but clones should be unmuted.
+    /// </summary>
+    private void UnmuteForRuntime()
+    {
+        EnsureInitialized();
+
+        // Re-enable all renderers that this visual manages.
+        // Use explicitly assigned targets first, otherwise auto-collect from children.
+        Renderer[] rs = targetRenderers;
+        if (rs == null || rs.Length == 0)
+        {
+            rs = GetComponentsInChildren<Renderer>(true);
+        }
+
+        if (rs != null)
+        {
+            for (int i = 0; i < rs.Length; i++)
+            {
+                Renderer r = rs[i];
+                if (r != null) r.enabled = true;
+            }
+        }
+
+        // Also ensure product token renderers are visible if present
+        if (productTokenRenderers != null)
+        {
+            for (int i = 0; i < productTokenRenderers.Length; i++)
+            {
+                Renderer r = productTokenRenderers[i];
+                if (r != null) r.enabled = true;
+            }
+        }
+
+        // Re-enable and play particle systems
+        if (_particleSystems != null)
+        {
+            for (int i = 0; i < _particleSystems.Length; i++)
+            {
+                ParticleSystem ps = _particleSystems[i];
+                if (ps == null) continue;
+
+                ps.gameObject.SetActive(true);
+
+                var em = ps.emission;
+                em.enabled = true;
+
+                if (!ps.isPlaying) ps.Play(true);
+            }
+        }
+    }
+
 
 }

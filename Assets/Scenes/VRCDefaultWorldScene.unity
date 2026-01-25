@@ -4578,8 +4578,8 @@ MonoBehaviour:
   useAssignedLayers: 0
   DynamicPrefabs: []
   DynamicMaterials:
-  - {fileID: 2100000, guid: 20659d5074e186445a0951ea7267ec1a, type: 2}
   - {fileID: 2100000, guid: eca5968cffb0a3643a9f3f6750077a7c, type: 2}
+  - {fileID: 2100000, guid: 20659d5074e186445a0951ea7267ec1a, type: 2}
   - {fileID: 2100000, guid: 5391538d839d6c141b69fe0133c347a1, type: 2}
   - {fileID: 2100000, guid: ad8572d586a7d2b459adc91e56dcd3e4, type: 2}
   - {fileID: 2100000, guid: c489db6b1a6781e448478964fe87b129, type: 2}
@@ -4705,6 +4705,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 1853c487d0e6ca54eaf5abe71e5f3cd9, type: 2}
   - {fileID: 2100000, guid: 3e8c03716eb7fd24b90026a30581802a, type: 2}
   - {fileID: 2100000, guid: 2a70b4a92e97aa44eb9349dad1cd6d8c, type: 2}
+  - {fileID: 2100000, guid: ef1b16eba255f7240a8cc2a34093ebc7, type: 2}
   LightMapsNear: []
   LightMapsFar: []
   LightMode: 0
@@ -5394,10 +5395,6 @@ MonoBehaviour:
     ID: 242
     SerializedTypeNames:
     - VRC.Udon.UdonBehaviour
-  - gameObject: {fileID: 1048843264}
-    ID: 243
-    SerializedTypeNames:
-    - VRC.Udon.UdonBehaviour
   - gameObject: {fileID: 139136155}
     ID: 244
     SerializedTypeNames:
@@ -5465,11 +5462,6 @@ MonoBehaviour:
     - VRC.Udon.UdonBehaviour
   - gameObject: {fileID: 1044960241}
     ID: 262
-    SerializedTypeNames:
-    - VRC.Udon.UdonBehaviour
-    - VRC.Udon.UdonBehaviour
-  - gameObject: {fileID: 0}
-    ID: 263
     SerializedTypeNames:
     - VRC.Udon.UdonBehaviour
     - VRC.Udon.UdonBehaviour
@@ -5575,11 +5567,18 @@ MonoBehaviour:
     - VRC.Udon.UdonBehaviour
     - VRC.Udon.UdonBehaviour
     - VRC.Udon.UdonBehaviour
+  - gameObject: {fileID: 1048843264}
+    ID: 243
+    SerializedTypeNames:
+    - VRC.Udon.UdonBehaviour
+    - VRC.Udon.UdonBehaviour
   - gameObject: {fileID: 309057360}
     ID: 284
     SerializedTypeNames:
     - VRC.Udon.UdonBehaviour
+    - VRC.Udon.UdonBehaviour
     - VRC.SDK3.Components.VRCPickup
+    - VRC.Udon.UdonBehaviour
   portraitCameraPositionOffset: {x: 0, y: 0, z: 0}
   portraitCameraRotationOffset: {x: 0, y: 1, z: 0, w: -0.00000004371139}
   PlayerPersistence: []
@@ -5991,6 +5990,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2907397626886010504, guid: 9fc891b4972bab648b46aa051fa2c2a9,
         type: 3}
+    - target: {fileID: 3373446722029158344, guid: 9fc891b4972bab648b46aa051fa2c2a9,
+        type: 3}
+      propertyPath: playOnAwake
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3527969973881024744, guid: 9fc891b4972bab648b46aa051fa2c2a9,
         type: 3}
       propertyPath: serializationData.Prefab
@@ -6093,6 +6097,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 7734464484133249105, guid: 9fc891b4972bab648b46aa051fa2c2a9,
         type: 3}
+    - target: {fileID: 7788789186384984287, guid: 9fc891b4972bab648b46aa051fa2c2a9,
+        type: 3}
+      propertyPath: playOnAwake
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8726955280751870691, guid: 9fc891b4972bab648b46aa051fa2c2a9,
         type: 3}
       propertyPath: serializationData.Prefab
@@ -27972,8 +27981,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1, y: 0.06, z: 1}
+  m_Center: {x: 0, y: 0.47, z: 0}
 --- !u!114 &7664488427733385990
 MonoBehaviour:
   m_ObjectHideFlags: 0

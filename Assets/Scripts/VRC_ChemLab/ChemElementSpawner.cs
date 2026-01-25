@@ -256,7 +256,11 @@ private int _runtimeSpawnSerial;
     // ToolMotionOpsEstimator helper
     public Transform GetActiveToolTransform()
     {
-        return _activeToolTr != null ? _activeToolTr : (containerTransform != null ? containerTransform : transform);
+        // Prefer the actually spawned/placed tool top for motion estimators (tilt/shake/pour).
+        if (_placedToolTopTr != null) return _placedToolTopTr;
+        if (_activeToolTopTr != null) return _activeToolTopTr;
+        if (_activeToolTr != null) return _activeToolTr;
+        return containerTransform != null ? containerTransform : transform;
     }
 
     void Start()
@@ -805,6 +809,8 @@ SpawnToolInstance(_localTool, true);
     private void Update()
     {
         float dt = Time.deltaTime;
+
+        ChemVisualController vis = GetActiveVisualController();
         if (dt <= 0f) dt = 0.016f;
 
         // 温度モデル＆見た目温度補間（60fps）
@@ -835,9 +841,9 @@ SpawnToolInstance(_localTool, true);
         // フェーズ遷移を検出してローカル演出へ通知（主にcomplete）
         if (_syncedPhase != _lastAppliedPhase)
         {
-            if (sampleVisual != null && _syncedPhase == 2)
+            if (vis != null && _syncedPhase == 2)
             {
-                sampleVisual.NotifyReactionComplete(_syncedProductFormula, _syncedReactionTag);
+                vis.NotifyReactionComplete(_syncedProductFormula, _syncedReactionTag);
             }
             _lastAppliedPhase = _syncedPhase;
         }
@@ -983,12 +989,21 @@ SpawnToolInstance(_localTool, true);
         return string.IsNullOrEmpty(_syncedInput) ? "" : _syncedInput;
     }
 
-    private void ApplyVisualContinuous()
+    
+    private ChemVisualController GetActiveVisualController()
     {
-        if (sampleVisual == null || elementDb == null) return;
+        // When cloneSampleVisualIntoTool is enabled, the visible visual is the runtime clone.
+        if (_runtimeSampleVisual != null) return _runtimeSampleVisual;
+        return sampleVisual;
+    }
+
+private void ApplyVisualContinuous()
+    {
+        ChemVisualController vis = GetActiveVisualController();
+        if (vis == null || elementDb == null) return;
 
         string sym = GetDisplayFormula();
-        sampleVisual.ApplyElementBySymbol(elementDb, sym, _visualTempC);
+        vis.ApplyElementBySymbol(elementDb, sym, _visualTempC);
     }
 
     // =====================================================
@@ -1200,17 +1215,18 @@ SpawnToolInstance(_localTool, true);
 
     private void ApplyVisualFromState(bool force)
     {
-        if (sampleVisual == null || elementDb == null) return;
+        ChemVisualController vis = GetActiveVisualController();
+        if (vis == null || elementDb == null) return;
 
         string sym = GetDisplayFormula();
-        sampleVisual.ApplyElementBySymbol(elementDb, sym, _visualTempC);
+        vis.ApplyElementBySymbol(elementDb, sym, _visualTempC);
 
         // 完了フェーズ通知（ローカル演出）
         if (_syncedPhase != _lastAppliedPhase)
         {
-            if (sampleVisual != null && _syncedPhase == 2)
+            if (vis != null && _syncedPhase == 2)
             {
-                sampleVisual.NotifyReactionComplete(_syncedProductFormula, _syncedReactionTag);
+                vis.NotifyReactionComplete(_syncedProductFormula, _syncedReactionTag);
             }
             _lastAppliedPhase = _syncedPhase;
         }
@@ -1328,9 +1344,55 @@ SpawnToolInstance(_localTool, true);
 
         _activeToolTr = spawned;
         _activeToolTopTr = spawned;
+        LiftToolAboveTable(spawned);
     }
 
-    // =====================================================
+    
+    private void LiftToolAboveTable(Transform toolTr)
+    {
+        if (toolTr == null) return;
+        if (experimentTableRoot == null) return;
+
+        // Find the largest collider under the experiment table (likely the tabletop)
+        Collider[] tableCols = experimentTableRoot.GetComponentsInChildren<Collider>(true);
+        if (tableCols == null || tableCols.Length == 0) return;
+
+        Collider tableCol = null;
+        float bestVol = -1f;
+        for (int i = 0; i < tableCols.Length; i++)
+        {
+            Collider c = tableCols[i];
+            if (c == null || !c.enabled) continue;
+            Bounds b = c.bounds;
+            float v = b.size.x * b.size.y * b.size.z;
+            if (v > bestVol)
+            {
+                bestVol = v;
+                tableCol = c;
+            }
+        }
+        if (tableCol == null) return;
+
+        // Determine tool bounds
+        Bounds tb;
+        if (!TryGetRenderableBounds(toolTr, out tb))
+        {
+            Collider[] toolCols = toolTr.GetComponentsInChildren<Collider>(true);
+            if (toolCols == null || toolCols.Length == 0) return;
+            tb = toolCols[0].bounds;
+        }
+
+        float tableTopY = tableCol.bounds.max.y;
+        float toolMinY = tb.min.y;
+
+        if (toolMinY < tableTopY + 0.005f)
+        {
+            float dy = (tableTopY + 0.01f) - toolMinY;
+            toolTr.position += new Vector3(0f, dy, 0f);
+        }
+    }
+
+// =====================================================
     // Tool Clone Helpers (Presentation-stable)
     // =====================================================
 
@@ -3656,7 +3718,8 @@ private void ConstrainParticlesToVfxVolume(GameObject visGo, BoxCollider vfxBox,
             }
 
             if (_particleMpb == null) _particleMpb = new MaterialPropertyBlock();
-            _particleMpb.Clear();
+            pr.GetPropertyBlock(_particleMpb); // [ChemLabFix] Preserve MPB (keep element color)
+            
             _particleMpb.SetFloat("_UseClip", 1f);
             _particleMpb.SetVector("_ClipCenter", new Vector4(wCenter.x, wCenter.y, wCenter.z, 0f));
             _particleMpb.SetVector("_ClipExtents", new Vector4(wSize.x * 0.5f, wSize.y * 0.5f, wSize.z * 0.5f, 0f));
@@ -3788,7 +3851,8 @@ private void ConstrainParticlesToWorldBox(GameObject visGo, Vector3 worldCenter,
             }
 
             if (_particleMpb == null) _particleMpb = new MaterialPropertyBlock();
-            _particleMpb.Clear();
+            pr.GetPropertyBlock(_particleMpb); // [ChemLabFix] Preserve MPB (keep element color)
+            
             _particleMpb.SetFloat("_UseClip", 1f);
             _particleMpb.SetVector("_ClipCenter", new Vector4(worldCenter.x, worldCenter.y, worldCenter.z, 0f));
             _particleMpb.SetVector("_ClipExtents", new Vector4(wSize.x * 0.5f, wSize.y * 0.5f, wSize.z * 0.5f, 0f));
