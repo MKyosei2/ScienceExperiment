@@ -148,6 +148,8 @@ public class ChemRuntimeToolSpawner : UdonSharpBehaviour
 
         // Ensure clone is visible
         EnableAllRenderers(go.transform);
+            EnableAllColliders(go.transform);
+            EnableAllPickups(go.transform);
 
         if (disableSpawnInteractionsOnClones) DisableRuntimeSpawnInteractions(go);
 
@@ -265,6 +267,38 @@ public class ChemRuntimeToolSpawner : UdonSharpBehaviour
         {
             if (rs[i] == null) continue;
             rs[i].enabled = false;
+        }
+    }
+
+    
+    private void EnableAllColliders(Transform root)
+    {
+        if (root == null) return;
+        Collider[] cols = root.GetComponentsInChildren<Collider>(true);
+        if (cols == null) return;
+        for (int i = 0; i < cols.Length; i++)
+        {
+            Collider c = cols[i];
+            if (c == null) continue;
+            c.enabled = true;
+        }
+    }
+
+    private void EnableAllPickups(Transform root)
+    {
+        if (root == null) return;
+
+        // SDK3
+        VRCPickup[] p3 = root.GetComponentsInChildren<VRCPickup>(true);
+        if (p3 != null)
+        {
+            for (int i = 0; i < p3.Length; i++)
+            {
+                VRCPickup p = p3[i];
+                if (p == null) continue;
+                p.enabled = true;
+                p.pickupable = true;
+            }
         }
     }
 

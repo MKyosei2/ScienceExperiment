@@ -1,11 +1,16 @@
-﻿using UdonSharp;
+using UdonSharp;
 using UnityEngine;
 using TMPro;
 
 /// <summary>
 /// ChemStatusDisplay
-/// - UI表示は非同期（各クライアントで更新）
-/// - 実験の真実（phase/temp etc）は ChemElementSpawner の同期値から取得
+/// - UI表示は各クライアントで更新（非同期）
+/// - 実験の同期値（phase/temp etc）は ChemElementSpawner の同期値から取得
+///
+/// NOTE:
+/// TextMeshPro の linkedTextComponent / parentLinkedComponent が自己参照していると
+/// TMP内部で StackOverflowException になります（毎秒エラー→フリーズ）。
+/// これはシーン/Prefab側の設定不整合なので、同梱の Editor ツールで修正してください。
 /// </summary>
 public class ChemStatusDisplay : UdonSharpBehaviour
 {
@@ -22,7 +27,18 @@ public class ChemStatusDisplay : UdonSharpBehaviour
     [Tooltip("自動更新の間隔（秒）。0以下で無効")]
     public float refreshInterval = 0.25f;
 
+    [Header("Safety / Performance")]
+    [Tooltip("Logs表示の最大文字数（重くなるの防止）。0以下で無制限")]
+    public int maxLogChars = 3000;
+
+    [Tooltip("UI操作中（テキスト選択中など）は更新を止める")]
+    public bool pauseRefreshWhileInteracting = true;
+
     private float _nextRefresh;
+    private bool _isInteracting;
+
+    // UIの無駄な再代入を避ける（GC/負荷対策）
+    private string _lastUiText;
 
     private void Start()
     {
@@ -37,12 +53,18 @@ public class ChemStatusDisplay : UdonSharpBehaviour
     private void Update()
     {
         if (!autoRefresh) return;
+        if (pauseRefreshWhileInteracting && _isInteracting) return;
         if (refreshInterval <= 0f) return;
         if (Time.time < _nextRefresh) return;
+
         _nextRefresh = Time.time + refreshInterval;
         if (visual == null && spawner != null) visual = spawner.sampleVisual;
         RefreshUI();
     }
+
+    // UI側のイベントから呼べるように公開
+    public void UI_BeginInteract() { _isInteracting = true; }
+    public void UI_EndInteract() { _isInteracting = false; }
 
     public void RefreshUI()
     {
@@ -53,6 +75,12 @@ public class ChemStatusDisplay : UdonSharpBehaviour
         string product = spawner != null ? spawner.GetProductFormula() : "";
         string t = spawner != null ? spawner.GetLastEquipment() : "";
         string logs = spawner != null ? spawner.GetHistoryLog() : "";
+
+        if (maxLogChars > 0 && !string.IsNullOrEmpty(logs) && logs.Length > maxLogChars)
+        {
+            // 末尾を優先して表示
+            logs = "...\n" + logs.Substring(logs.Length - maxLogChars);
+        }
 
         int phase = spawner != null ? spawner.GetPhase() : 0;
         float prog = spawner != null ? spawner.GetProgress01() : 0f;
@@ -86,7 +114,7 @@ public class ChemStatusDisplay : UdonSharpBehaviour
 
         string phaseLabel = (phase == 0) ? "Idle" : (phase == 1) ? "Running" : (phase == 2) ? "Complete" : phase.ToString();
 
-        
+        // Mission info (optional)
         string missionTitle = orchestrator != null ? orchestrator.GetMissionTitle() : "";
         string missionGoal = orchestrator != null ? orchestrator.GetMissionGoal() : "";
         string reqTool = orchestrator != null ? orchestrator.GetMissionRequiredToolId() : "";
@@ -103,7 +131,7 @@ public class ChemStatusDisplay : UdonSharpBehaviour
         string lastGrade = orchestrator != null ? orchestrator.GetLastGradeText() : "";
         string missionPhase = orchestrator != null ? orchestrator.GetMissionPhaseText() : "";
 
-statusText.text =
+        string ui =
             "--- Mission ---\n" +
             "Index: " + missionIndex + "\n" +
             "Title: " + missionTitle + "\n" +
@@ -138,8 +166,21 @@ statusText.text =
             "TempReached: " + tMinReached.ToString("0.0") + ".." + tMaxReached.ToString("0.0") + " °C\n" +
             "Humidity: " + hum.ToString("0.0") + " %\n" +
             "Pressure: " + pres.ToString("0.0") + " kPa\n\n" +
+            "--- Visual (local) ---\n" +
+            "RecipeSource: " + recipeSource + "\n" +
+            "RecipeType: " + recipeType + "\n" +
+            "Archetype: " + arch + "\n" +
+            "ParticlePreset: " + preset + "\n" +
+            "Note: " + infer + "\n\n" +
             "--- Logs ---\n" +
             logs;
+
+        // same text? no need to reassign (prevents TMP rebuild spam)
+        if (_lastUiText != ui)
+        {
+            _lastUiText = ui;
+            statusText.text = ui;
+        }
     }
 
     private string ArchetypeToLabel(int a)
@@ -161,5 +202,4 @@ statusText.text =
         if (p == ChemVisualController.PT_FOG) return "Fog";
         return p.ToString();
     }
-
 }

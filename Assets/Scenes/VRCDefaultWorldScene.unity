@@ -237,7 +237,6 @@ MonoBehaviour:
   ai: {fileID: 1333534138}
   toolModelsRoot: {fileID: 0}
   runtimeToolSpawner: {fileID: 1812213036}
-  destroyRuntimeSpawnsOnReset: 1
   cloneSampleVisualIntoTool: 1
   elementEffectAnchorName: ElementEffectAnchor
   elementEffectAnchorFallback: {fileID: 4279747004191715785, guid: 9fc891b4972bab648b46aa051fa2c2a9,
@@ -247,6 +246,7 @@ MonoBehaviour:
   hideOtherToolsOnlyWhenVRProps: 0
   elementEffectLocalOffset: {x: 0, y: 0.08, z: 0}
   elementEffectLocalScale: {x: 0.18, y: 0.18, z: 0.18}
+  elementEffectPlayDelaySeconds: 0.02
   keepEffectLevelToGravity: 1
   continuouslyFitEffectToTool: 1
   effectFillHeight01: 0.33
@@ -270,6 +270,7 @@ MonoBehaviour:
   reactionVfxAnchorName: ReactionVFXAnchor
   glassMasterMaterial: {fileID: 0}
   wireframeFxMaterial: {fileID: 0}
+  particleFallbackMaterial: {fileID: 0}
   orchestrator: {fileID: 417112637}
   hintText: {fileID: 0}
   explainText: {fileID: 0}
@@ -477,8 +478,8 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_linkedTextComponent: {fileID: 186059922}
-  parentLinkedComponent: {fileID: 186059922}
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
@@ -563,6 +564,8 @@ MonoBehaviour:
   visual: {fileID: 126484677}
   autoRefresh: 1
   refreshInterval: 0.25
+  maxLogChars: 1400
+  pauseRefreshWhileInteracting: 1
 --- !u!1 &208152287
 GameObject:
   m_ObjectHideFlags: 0
@@ -3328,7 +3331,6 @@ MonoBehaviour:
   forceLayerRecursively: 1
   forceRenderersEnabled: 1
   forceParticlesPlay: 1
-  skipSceneTemplateSampleVisual: 1
   refreshInterval: 1
 --- !u!1 &2038324834
 GameObject:
@@ -4185,8 +4187,8 @@ MonoBehaviour:
   m_enableWordWrapping: 0
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_linkedTextComponent: {fileID: 202622199120072016}
-  parentLinkedComponent: {fileID: 202622199120072016}
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
   m_enableExtraPadding: 1
   checkPaddingRequired: 0
@@ -11612,8 +11614,8 @@ MonoBehaviour:
   m_enableWordWrapping: 0
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_linkedTextComponent: {fileID: 2453532382044054555}
-  parentLinkedComponent: {fileID: 2453532382044054555}
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
   m_enableExtraPadding: 1
   checkPaddingRequired: 0
@@ -12445,8 +12447,8 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_linkedTextComponent: {fileID: 2798903232955179984}
-  parentLinkedComponent: {fileID: 2798903232955179984}
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
@@ -17541,8 +17543,8 @@ MonoBehaviour:
   m_enableWordWrapping: 0
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_linkedTextComponent: {fileID: 4329912691242251102}
-  parentLinkedComponent: {fileID: 4329912691242251102}
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
   m_enableExtraPadding: 1
   checkPaddingRequired: 0
@@ -20037,8 +20039,8 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_linkedTextComponent: {fileID: 5137153864981211979}
-  parentLinkedComponent: {fileID: 5137153864981211979}
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
@@ -20281,8 +20283,8 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_linkedTextComponent: {fileID: 5186345883615146267}
-  parentLinkedComponent: {fileID: 5186345883615146267}
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
@@ -23115,8 +23117,8 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_linkedTextComponent: {fileID: 6124020685344760417}
-  parentLinkedComponent: {fileID: 6124020685344760417}
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
@@ -25837,8 +25839,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 500
-  m_fontSizeBase: 500
+  m_fontSize: 250
+  m_fontSizeBase: 250
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -25856,8 +25858,8 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_linkedTextComponent: {fileID: 6929858645353877843}
-  parentLinkedComponent: {fileID: 6929858645353877843}
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
@@ -28248,8 +28250,8 @@ MonoBehaviour:
   m_enableWordWrapping: 0
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_linkedTextComponent: {fileID: 7728522931012475368}
-  parentLinkedComponent: {fileID: 7728522931012475368}
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
   m_enableExtraPadding: 1
   checkPaddingRequired: 0
@@ -30145,8 +30147,8 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_linkedTextComponent: {fileID: 8352343323209717967}
-  parentLinkedComponent: {fileID: 8352343323209717967}
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
@@ -30799,8 +30801,8 @@ MonoBehaviour:
   m_enableWordWrapping: 0
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_linkedTextComponent: {fileID: 8551355543650894838}
-  parentLinkedComponent: {fileID: 8551355543650894838}
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
   m_enableExtraPadding: 1
   checkPaddingRequired: 0
@@ -30951,6 +30953,8 @@ MonoBehaviour:
   visual: {fileID: 126484677}
   autoRefresh: 1
   refreshInterval: 0.25
+  maxLogChars: 1400
+  pauseRefreshWhileInteracting: 1
 --- !u!1 &8569463728358201104
 GameObject:
   m_ObjectHideFlags: 0
@@ -32057,8 +32061,8 @@ MonoBehaviour:
   m_enableWordWrapping: 0
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_linkedTextComponent: {fileID: 8901919498316442410}
-  parentLinkedComponent: {fileID: 8901919498316442410}
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
   m_enableExtraPadding: 1
   checkPaddingRequired: 0
@@ -32243,8 +32247,8 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_linkedTextComponent: {fileID: 8916909103614762598}
-  parentLinkedComponent: {fileID: 8916909103614762598}
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
   m_enableExtraPadding: 0
   checkPaddingRequired: 0

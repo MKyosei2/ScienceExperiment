@@ -59,6 +59,7 @@ public class ChemReactionAnimator : UdonSharpBehaviour
 
     private bool _initialized;
     private Material _localParticleMasterMaterial;
+    private MaterialPropertyBlock _mpb;
 
     private void Start()
     {
@@ -91,13 +92,15 @@ public class ChemReactionAnimator : UdonSharpBehaviour
 
         // ---- renderers ----
         if (glowRenderers == null || glowRenderers.Length == 0)
-            glowRenderers = FindRenderersWithProperty(emissionProperty);
+            glowRenderers = FindRenderersWithAnyProperty(emissionProperty, "_EmissionColor");
 
         if (heatRenderers == null || heatRenderers.Length == 0)
-            heatRenderers = FindRenderersWithProperty(heatProperty);
+            heatRenderers = FindRenderersWithAnyProperty(heatProperty, "_HeatStrength", "_EmissionStrength");
 
         if (waveRenderers == null || waveRenderers.Length == 0)
-            waveRenderers = FindRenderersWithProperty(waveProperty);
+            waveRenderers = FindRenderersWithAnyProperty(waveProperty, "_WaveStrength");
+
+        EnsureMpb();
     }
 
     // ---- public setters ----
@@ -188,6 +191,11 @@ public class ChemReactionAnimator : UdonSharpBehaviour
         ApplyCompoundParticles(preset, c, intensity);
     }
 
+    private void EnsureMpb()
+    {
+        if (_mpb == null) _mpb = new MaterialPropertyBlock();
+    }
+
     private void ApplyBaseParticleColor(Color c)
     {
         // Keep it simple: match the element/compound color.
@@ -196,21 +204,34 @@ public class ChemReactionAnimator : UdonSharpBehaviour
         ApplyParticleColor(sparkParticles, c);
     }
 
-    private void ApplyParticleColor(ParticleSystem ps, Color c)
+private void ApplyParticleColor(ParticleSystem ps, Color c)
+{
+    if (ps == null) return;
+
+    var main = ps.main;
+    main.startColor = c;
+
+    ParticleSystemRenderer r = ps.GetComponent<ParticleSystemRenderer>();
+    if (r == null) return;
+
+    // Prefer MaterialPropertyBlock (no material instancing / keeps colors per renderer)
+    EnsureMpb();
+    if (_mpb != null)
     {
-        if (ps == null) return;
-
-        var main = ps.main;
-        main.startColor = c;
-
-        ParticleSystemRenderer r = ps.GetComponent<ParticleSystemRenderer>();
-        if (r == null) return;
-        Material m = r.material;
-        if (m == null) return;
-
-        if (m.HasProperty("_BaseColor")) m.SetColor("_BaseColor", c);
-        if (m.HasProperty("_Color")) m.SetColor("_Color", c);
+        _mpb.Clear();
+        _mpb.SetColor("_Color", c);
+        _mpb.SetColor("_BaseColor", c);
+        r.SetPropertyBlock(_mpb);
+        return;
     }
+
+    // Fallback: material instance
+    Material m = r.material;
+    if (m == null) return;
+    if (m.HasProperty("_BaseColor")) m.SetColor("_BaseColor", c);
+    if (m.HasProperty("_Color")) m.SetColor("_Color", c);
+}
+
 
     private void Apply()
     {
@@ -277,27 +298,13 @@ public class ChemReactionAnimator : UdonSharpBehaviour
         }
     }
 
-    private void ApplyColoredParticle(ParticleSystem ps, Color c, float level01)
-    {
-        if (ps == null) return;
-        var main = ps.main;
-        main.startColor = c;
+private void ApplyColoredParticle(ParticleSystem ps, Color c, float level01)
+{
+    ApplyParticleColor(ps, c);
+    ApplyParticle(ps, level01, compoundRateMax);
+}
 
-        ParticleSystemRenderer r = ps.GetComponent<ParticleSystemRenderer>();
-        if (r != null)
-        {
-            Material m = r.material;
-            if (m != null)
-            {
-                if (m.HasProperty("_BaseColor")) m.SetColor("_BaseColor", c);
-                if (m.HasProperty("_Color")) m.SetColor("_Color", c);
-            }
-        }
-
-        ApplyParticle(ps, level01, compoundRateMax);
-    }
-
-    private void ApplyParticle(ParticleSystem ps, float level01, float rateMax)
+private void ApplyParticle(ParticleSystem ps, float level01, float rateMax)
     {
         if (ps == null) return;
 
@@ -415,6 +422,88 @@ public class ChemReactionAnimator : UdonSharpBehaviour
         }
         return outRs;
     }
+
+private Renderer[] FindRenderersWithAnyProperty(string propA, string propB)
+{
+    // Returns renderers that have either propA OR propB
+    if (string.IsNullOrEmpty(propA) && string.IsNullOrEmpty(propB)) return null;
+
+    Renderer[] rs = GetComponentsInChildren<Renderer>(true);
+    if (rs == null) return null;
+
+    int count = 0;
+    for (int i = 0; i < rs.Length; i++)
+    {
+        Renderer r = rs[i];
+        if (r == null) continue;
+        Material m = r.sharedMaterial;
+        if (m == null) continue;
+        if ((!string.IsNullOrEmpty(propA) && m.HasProperty(propA)) || (!string.IsNullOrEmpty(propB) && m.HasProperty(propB)))
+            count++;
+    }
+
+    if (count == 0) return null;
+
+    Renderer[] outRs = new Renderer[count];
+    int j = 0;
+    for (int i = 0; i < rs.Length; i++)
+    {
+        Renderer r = rs[i];
+        if (r == null) continue;
+        Material m = r.sharedMaterial;
+        if (m == null) continue;
+        if ((!string.IsNullOrEmpty(propA) && m.HasProperty(propA)) || (!string.IsNullOrEmpty(propB) && m.HasProperty(propB)))
+        {
+            outRs[j] = r;
+            j++;
+            if (j >= count) break;
+        }
+    }
+    return outRs;
+}
+
+private Renderer[] FindRenderersWithAnyProperty(string propA, string propB, string propC)
+{
+    if (string.IsNullOrEmpty(propA) && string.IsNullOrEmpty(propB) && string.IsNullOrEmpty(propC)) return null;
+
+    Renderer[] rs = GetComponentsInChildren<Renderer>(true);
+    if (rs == null) return null;
+
+    int count = 0;
+    for (int i = 0; i < rs.Length; i++)
+    {
+        Renderer r = rs[i];
+        if (r == null) continue;
+        Material m = r.sharedMaterial;
+        if (m == null) continue;
+        bool ok = (!string.IsNullOrEmpty(propA) && m.HasProperty(propA))
+               || (!string.IsNullOrEmpty(propB) && m.HasProperty(propB))
+               || (!string.IsNullOrEmpty(propC) && m.HasProperty(propC));
+        if (ok) count++;
+    }
+
+    if (count == 0) return null;
+
+    Renderer[] outRs = new Renderer[count];
+    int j = 0;
+    for (int i = 0; i < rs.Length; i++)
+    {
+        Renderer r = rs[i];
+        if (r == null) continue;
+        Material m = r.sharedMaterial;
+        if (m == null) continue;
+        bool ok = (!string.IsNullOrEmpty(propA) && m.HasProperty(propA))
+               || (!string.IsNullOrEmpty(propB) && m.HasProperty(propB))
+               || (!string.IsNullOrEmpty(propC) && m.HasProperty(propC));
+        if (ok)
+        {
+            outRs[j] = r;
+            j++;
+            if (j >= count) break;
+        }
+    }
+    return outRs;
+}
 
     private void EnsureParticleMaterial(ParticleSystem ps)
     {
