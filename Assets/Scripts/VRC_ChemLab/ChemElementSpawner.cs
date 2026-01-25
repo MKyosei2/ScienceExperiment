@@ -113,6 +113,10 @@ public class ChemElementSpawner : UdonSharpBehaviour
     [Tooltip("If true, every button press spawns a NEW instance (tools/elements do NOT replace previous ones).")]
     public bool spawnNewInstancePerPress = true;
 
+    [Range(0.5f, 3.0f)]
+    [Tooltip("器具ボタン(SelectEquipment)で生成した実験器具だけを大きくする倍率。元素ボタンの容器には影響しません。")]
+    public float toolButtonSpawnScale = 1.35f;
+
     [Tooltip("Container tool used when an element button is pressed (ex: CONICAL_FLASK).")]
     public string elementContainerToolId = "CONICAL_FLASK";
 
@@ -400,7 +404,8 @@ public class ChemElementSpawner : UdonSharpBehaviour
         _visualTempC = _syncedTempC;
         _tempInitialized = true;
 
-        if (sampleVisual != null) sampleVisual.NotifyExperimentReset();
+        ChemVisualController _v = GetActiveVisualController();
+        if (_v != null) _v.NotifyExperimentReset();
 
         ApplyVisualFromState(true);
         WriteUI();
@@ -549,7 +554,8 @@ public class ChemElementSpawner : UdonSharpBehaviour
 
         AppendHistory("ReleaseOperator");
         StopLocalSession();
-        if (sampleVisual != null) sampleVisual.NotifyExperimentReset();
+        ChemVisualController _v = GetActiveVisualController();
+        if (_v != null) _v.NotifyExperimentReset();
         ApplyVisualFromState(true);
         WriteUI();
 
@@ -596,8 +602,8 @@ public class ChemElementSpawner : UdonSharpBehaviour
         SpawnElementContainerInstance(_localInput);
 
         // Keep UI/state updates for experiment controls
-        if (sampleVisual != null)
-            sampleVisual.NotifyElementSelected(_localInput);
+        ChemVisualController _vSel = GetActiveVisualController();
+        if (_vSel != null) _vSel.NotifyElementSelected(_localInput);
 
         ApplyVisualFromState(true);
         WriteUI();
@@ -782,7 +788,8 @@ public class ChemElementSpawner : UdonSharpBehaviour
         AppendHistory("StartExperiment: input=" + _syncedInput + " tool=" + _syncedTool + " tag=" + _syncedReactionTag);
 
         // ローカル：セッション開始（視覚/説明生成）
-        if (sampleVisual != null) sampleVisual.NotifyExperimentReset();
+        ChemVisualController _v = GetActiveVisualController();
+        if (_v != null) _v.NotifyExperimentReset();
         StartLocalSessionFromSynced();
 
         ApplyVisualFromState(true);
@@ -833,7 +840,8 @@ public class ChemElementSpawner : UdonSharpBehaviour
         AppendHistory("ResetExperiment");
         StopLocalSession();
         RestorePlacedToolLocal(false);
-        if (sampleVisual != null) sampleVisual.NotifyExperimentReset();
+        ChemVisualController _v = GetActiveVisualController();
+        if (_v != null) _v.NotifyExperimentReset();
         ApplyVisualFromState(true);
         WriteUI();
     }
@@ -951,7 +959,7 @@ public class ChemElementSpawner : UdonSharpBehaviour
         // 演出適用（ローカル）
         if (reactionAnimator != null && ai != null)
         {
-            reactionAnimator.ApplyPreset(_syncedReactionTag, ai, _syncedProgress01, sampleVisual);
+            reactionAnimator.ApplyPreset(_syncedReactionTag, ai, _syncedProgress01, GetActiveVisualController());
         }
     }
 
@@ -2089,9 +2097,43 @@ public class ChemElementSpawner : UdonSharpBehaviour
     {
         if (tr == null) return false;
 
+        // -------------------------------------------------
+        // IMPORTANT:
+        // Generated lab tools live on layer 13 in this project,
+        // and many of them have VRC_Pickup + Rigidbody.
+        //
+        // If we treat layer 13 as "UI", we will disable the tool's colliders,
+        // making it impossible to grab (bug #3).
+        //
+        // Therefore:
+        //  - Any object that is (or contains) a pickup tool is NEVER treated as UI.
+        //  - Layer 13 is treated as UI only when it actually looks like UI.
+        // -------------------------------------------------
+        if (tr.GetComponentInChildren<VRC_Pickup>(true) != null) return false;
+        // Udon: CompareTag is not exposed; treat any pickup as a tool
+        if (tr.GetComponent<VRC_Pickup>() != null) return false;
+
         int layer = tr.gameObject.layer;
-        // Typical UI layer is 5; project-specific UI layer might be 13
-        if (layer == 5 || layer == 13) return true;
+
+        // Unity default UI layer
+        if (layer == 5) return true;
+
+        // Project-specific: layer 13 *might* be UI, but not always.
+        // Only treat it as UI when it has a RectTransform/Canvas or a UI-ish name.
+        if (layer == 13)
+        {
+            if (tr.GetComponent<RectTransform>() != null) return true;
+            if (tr.GetComponent<Canvas>() != null) return true;
+
+            string n0 = tr.name;
+            if (n0 == null) n0 = "";
+            string ln0 = n0.ToLower();
+            if (ln0.IndexOf("button") >= 0) return true;
+            if (ln0.IndexOf("selector") >= 0) return true;
+            if (ln0.IndexOf("panel") >= 0) return true;
+            if (ln0.IndexOf("canvas") >= 0) return true;
+            if (ln0 == "ui") return true;
+        }
 
         // RectTransform present => UI
         RectTransform rt = tr.GetComponent<RectTransform>();
@@ -2110,10 +2152,15 @@ public class ChemElementSpawner : UdonSharpBehaviour
         int g = 12;
         while (p != null && g-- > 0)
         {
+            // Any pickup parent chain => NOT UI
+            if (p.GetComponentInChildren<VRC_Pickup>(true) != null) return false;
+            // Udon: CompareTag is not exposed; treat any pickup as a tool
+            if (p.GetComponent<VRC_Pickup>() != null) return false;
+
             string pn = p.name;
             if (pn == null) pn = "";
             string pl = pn.ToLower();
-            if (pl == "ui" || pl.IndexOf("selector") >= 0) return true;
+            if (pl == "ui" || pl.IndexOf("selector") >= 0 || pl.IndexOf("canvas") >= 0 || pl.IndexOf("panel") >= 0) return true;
             p = p.parent;
         }
         return false;
@@ -3112,10 +3159,12 @@ public class ChemElementSpawner : UdonSharpBehaviour
     {
         if (toolGo == null) return;
 
-        // IMPORTANT (Udon-safe):
-        // - Do NOT create new Material()
-        // - Do NOT mutate shared materials globally
-        // We instead use Renderer.materials to get per-renderer instances, then tweak properties.
+        // Shader effect fix (#1):
+        // The beakers/flasks use GlassMaster by default (no wireframe).
+        // In "tool preview" mode we must actually swap the glass material to WireframeFX,
+        // otherwise the shader effect never appears.
+        Material wireMat = GetWireMaterialRuntime();
+        Material glassMat = GetElementGlassMaterialRuntime();
 
         Renderer[] rs = toolGo.GetComponentsInChildren<Renderer>(true);
         if (rs == null) return;
@@ -3136,36 +3185,59 @@ public class ChemElementSpawner : UdonSharpBehaviour
                 Material m = ms[j];
                 if (m == null) continue;
 
-                if (elementMode)
-                {
-                    // Element mode: transparent glass, no wireframe
-                    if (m.HasProperty("_WireEnable")) m.SetFloat("_WireEnable", 0f);
-                    if (m.HasProperty("_WireOpacity")) m.SetFloat("_WireOpacity", 0f);
-                    if (m.HasProperty("_WireThickness")) m.SetFloat("_WireThickness", 0f);
-                    if (m.HasProperty("_WireWidth")) m.SetFloat("_WireWidth", 0f);
-                    if (m.HasProperty("_WireWidthPx")) m.SetFloat("_WireWidthPx", 0f);
-                    if (m.HasProperty("_ShowBase")) m.SetFloat("_ShowBase", 1f);
+                string shName = (m.shader != null) ? m.shader.name : "";
+                bool isWire = shName.IndexOf("WireframeFX") >= 0;
+                bool isGlass = shName.IndexOf("GlassMaster") >= 0 || shName.IndexOf("Glass") >= 0 || m.HasProperty("_Opacity") || m.HasProperty("_GlassAlpha");
 
-                    MakeGlassVisible(m);
-                    if (m.HasProperty("_Opacity"))
+                // Swap materials when appropriate
+                if (!elementMode)
+                {
+                    // Tool mode => show wireframe if possible
+                    if (wireMat != null && isGlass)
                     {
-                        float o = m.GetFloat("_Opacity");
-                        if (o < 0.08f) m.SetFloat("_Opacity", 0.08f);
+                        ms[j] = wireMat;
+                        m = ms[j];
+                    }
+
+                    // Ensure it is visible enough
+                    if (m != null)
+                    {
+                        if (m.HasProperty("_WireOpacity")) m.SetFloat("_WireOpacity", 1f);
+                        if (m.HasProperty("_GlassAlpha"))
+                        {
+                            float a = m.GetFloat("_GlassAlpha");
+                            if (a < 0.08f) m.SetFloat("_GlassAlpha", 0.08f);
+                        }
+                        MakeGlassVisible(m);
                     }
                 }
                 else
                 {
-                    // Tool mode: keep wireframe if the shader supports it
-                    if (m.HasProperty("_WireEnable")) m.SetFloat("_WireEnable", 1f);
-                    if (m.HasProperty("_WireOpacity"))
+                    // Element mode => transparent glass (no wireframe)
+                    if (glassMat != null && isWire)
                     {
-                        float o = m.GetFloat("_WireOpacity");
-                        if (o <= 0f) m.SetFloat("_WireOpacity", 1f);
+                        ms[j] = glassMat;
+                        m = ms[j];
                     }
-                    if (m.HasProperty("_WireThickness"))
+
+                    if (m != null)
                     {
-                        float t = m.GetFloat("_WireThickness");
-                        if (t <= 0f) m.SetFloat("_WireThickness", 1f);
+                        // Turn off any wire-related params if they exist
+                        if (m.HasProperty("_WireEnable")) m.SetFloat("_WireEnable", 0f);
+                        if (m.HasProperty("_WireOpacity")) m.SetFloat("_WireOpacity", 0f);
+
+                        MakeGlassVisible(m);
+
+                        if (m.HasProperty("_Opacity"))
+                        {
+                            float o = m.GetFloat("_Opacity");
+                            if (o < 0.08f) m.SetFloat("_Opacity", 0.08f);
+                        }
+                        if (m.HasProperty("_GlassAlpha"))
+                        {
+                            float a = m.GetFloat("_GlassAlpha");
+                            if (a < 0.08f) m.SetFloat("_GlassAlpha", 0.08f);
+                        }
                     }
                 }
             }
@@ -4028,12 +4100,57 @@ public class ChemElementSpawner : UdonSharpBehaviour
             go.transform.localScale = local;
         }
 
+        // Tool button press: make the spawned tool larger (requested behavior)
+        if (toolButtonMode && toolButtonSpawnScale > 0.01f && toolButtonSpawnScale != 1f)
+        {
+            Vector3 s = go.transform.localScale;
+            go.transform.localScale = new Vector3(s.x * toolButtonSpawnScale, s.y * toolButtonSpawnScale, s.z * toolButtonSpawnScale);
+        }
+
         if (!go.activeSelf) go.SetActive(true);
 
         // Force all descendants active (templates sometimes keep render children disabled).
         ForceActiveDescendants(go.transform, 4096);
 
         if (forceVisibleOnSelect) ForceVisibleHierarchy(go.transform);
+
+        // Make sure the spawned tool can be grabbed (#3):
+        // - Ensure colliders/pickups/rigidbodies are enabled
+        Collider[] _cols = go.GetComponentsInChildren<Collider>(true);
+        if (_cols != null)
+        {
+            for (int ci = 0; ci < _cols.Length; ci++)
+            {
+                if (_cols[ci] == null) continue;
+                _cols[ci].enabled = true;
+            }
+        }
+        VRC_Pickup[] _picks = go.GetComponentsInChildren<VRC_Pickup>(true);
+        if (_picks != null)
+        {
+            for (int pi = 0; pi < _picks.Length; pi++)
+            {
+                if (_picks[pi] == null) continue;
+                _picks[pi].enabled = true;
+                _picks[pi].pickupable = true;
+            }
+        }
+        Rigidbody[] _rbs = go.GetComponentsInChildren<Rigidbody>(true);
+        if (_rbs != null)
+        {
+            for (int ri = 0; ri < _rbs.Length; ri++)
+            {
+                if (_rbs[ri] == null) continue;
+                _rbs[ri].detectCollisions = true;
+                _rbs[ri].useGravity = true;
+            }
+        }
+
+        // Detach pickup tools from scaled parents (VRChat grab bug)
+        if (go.GetComponentInChildren<VRC_Pickup>(true) != null)
+        {
+            go.transform.SetParent(null, true);
+        }
 
         // tool button => wireframe mode; element mode handled elsewhere
         ApplyToolMaterialMode(go, false);
