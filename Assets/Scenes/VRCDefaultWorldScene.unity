@@ -2369,7 +2369,7 @@ ParticleSystem:
           m_PostInfinity: 2
           m_RotationOrder: 4
       cycleCount: 1
-      repeatInterval: 0.0001
+      repeatInterval: 0.01
       probability: 1
   SizeModule:
     enabled: 0
@@ -6330,11 +6330,11 @@ MonoBehaviour:
   useAssignedLayers: 0
   DynamicPrefabs: []
   DynamicMaterials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
   - {fileID: 2100000, guid: 7a0ca50cd2d0cce48bf1ebec59b06ce3, type: 2}
   - {fileID: 2100000, guid: 630379fd492554b45bdfeb2b05a2e851, type: 2}
   - {fileID: 2100000, guid: e8c7fe3318f3b294c98f6e2bc1bca5f4, type: 2}
   - {fileID: 2100000, guid: a93c9230e44f0574f931338c852ed76f, type: 2}
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
   - {fileID: 2100000, guid: ef1b16eba255f7240a8cc2a34093ebc7, type: 2}
   LightMapsNear: []
   LightMapsFar: []
@@ -6389,54 +6389,27 @@ MonoBehaviour:
   RenderReflectionIntensity: 0
   RenderSkybox: {fileID: 0}
   NetworkIDs:
-  - gameObject: {fileID: 7501594612245934344}
-    ID: 201
-    SerializedTypeNames:
-    - VRC.Udon.UdonBehaviour
-  - gameObject: {fileID: 4479298282439756303}
-    ID: 202
-    SerializedTypeNames:
-    - VRC.Udon.UdonBehaviour
-  - gameObject: {fileID: 5640334946582231697}
-    ID: 203
-    SerializedTypeNames:
-    - VRC.Udon.UdonBehaviour
-  - gameObject: {fileID: 7943811898549394049}
-    ID: 204
-    SerializedTypeNames:
-    - VRC.Udon.UdonBehaviour
-  - gameObject: {fileID: 621087333368941458}
-    ID: 205
-    SerializedTypeNames:
-    - VRC.Udon.UdonBehaviour
-  - gameObject: {fileID: 4847488755608515485}
-    ID: 206
-    SerializedTypeNames:
-    - VRC.Udon.UdonBehaviour
-  - gameObject: {fileID: 5067083913503385377}
-    ID: 207
-    SerializedTypeNames:
-    - VRC.Udon.UdonBehaviour
-  - gameObject: {fileID: 1965279244}
-    ID: 312
-    SerializedTypeNames:
-    - VRC.Udon.UdonBehaviour
   - gameObject: {fileID: 5544213427532938311}
-    ID: 304
+    ID: 10
     SerializedTypeNames:
     - VRC.Udon.UdonBehaviour
     - VRC.SDK3.Components.VRCPickup
     - VRC.Udon.UdonBehaviour
     - VRC.SDK3.Components.VRCObjectSync
+    - VRC.Udon.UdonBehaviour
+  - gameObject: {fileID: 1965279244}
+    ID: 11
+    SerializedTypeNames:
+    - VRC.Udon.UdonBehaviour
   - gameObject: {fileID: 1525848759134857709}
-    ID: 305
+    ID: 12
     SerializedTypeNames:
     - VRC.Udon.UdonBehaviour
     - VRC.SDK3.Components.VRCPickup
     - VRC.Udon.UdonBehaviour
     - VRC.SDK3.Components.VRCObjectSync
   - gameObject: {fileID: 3028839146529626758}
-    ID: 307
+    ID: 13
     SerializedTypeNames:
     - VRC.Udon.UdonBehaviour
     - VRC.SDK3.Components.VRCPickup
