@@ -3,110 +3,60 @@ using UnityEngine;
 
 public class HClExplosionReaction : UdonSharpBehaviour
 {
-    [Header("Detection (flask root object names)")]
-    public string flaskHName = "CONICAL_FLASK_H";
-    public string flaskClName = "CONICAL_FLASK_Cl";
+    public GameObject flaskH;
+    public GameObject flaskCl;
 
-    [Header("Explosion Light")]
     public Light explosionLight;
-    public float peakIntensity = 8f;
-    public float duration = 0.25f;
+    public float flashSeconds = 0.15f;
 
-    [Header("Optional Effects")]
-    public AudioSource sfx;              // 任意
-    public ParticleSystem burstVfx;      // 任意
+    private bool hasH;
+    private bool hasCl;
+    private bool reacted;
 
-    private bool _hasH;
-    private bool _hasCl;
-    private bool _fired;
-
-    private float _t;
-
-    private void Start()
+    private void OnTriggerEnter(Collider other)
     {
-        if (explosionLight != null)
+        if (reacted || other == null) return;
+
+        var go = other.gameObject;
+
+        if (flaskH != null && (go == flaskH || other.transform.IsChildOf(flaskH.transform)))
+            hasH = true;
+
+        if (flaskCl != null && (go == flaskCl || other.transform.IsChildOf(flaskCl.transform)))
+            hasCl = true;
+
+        if (hasH && hasCl)
         {
-            explosionLight.enabled = false;
-            explosionLight.intensity = 0f;
+            React();
         }
     }
 
-    // ★UdonSharpでは override しない（これがコンパイルエラーの原因）
-    public void OnTriggerEnter(Collider other)
+    private void OnTriggerExit(Collider other)
     {
-        if (_fired) return;
-        if (other == null) return;
+        if (reacted || other == null) return;
 
-        string rootName = GetRootName(other.transform);
+        var go = other.gameObject;
 
-        if (rootName == flaskHName) _hasH = true;
-        if (rootName == flaskClName) _hasCl = true;
+        if (flaskH != null && (go == flaskH || other.transform.IsChildOf(flaskH.transform)))
+            hasH = false;
 
-        if (_hasH && _hasCl)
-        {
-            FireExplosion();
-        }
+        if (flaskCl != null && (go == flaskCl || other.transform.IsChildOf(flaskCl.transform)))
+            hasCl = false;
     }
 
-    private void FireExplosion()
+    private void React()
     {
-        _fired = true;
-
-        if (burstVfx != null) burstVfx.Play();
-        if (sfx != null) sfx.Play();
-
-        _t = 0f;
+        reacted = true;
 
         if (explosionLight != null)
         {
             explosionLight.enabled = true;
-            explosionLight.intensity = peakIntensity;
+            SendCustomEventDelayedSeconds(nameof(EndFlash), flashSeconds);
         }
-
-        // 毎フレーム更新（UdonのUpdateより安全に制御したいのでイベントループ）
-        SendCustomEventDelayedFrames(nameof(FlashUpdate), 1);
     }
 
-    public void FlashUpdate()
+    public void EndFlash()
     {
-        if (explosionLight == null) return;
-
-        _t += Time.deltaTime;
-
-        // 減衰（指数）
-        float safeDuration = Mathf.Max(0.01f, duration);
-        float k = 10f / safeDuration;
-        float intensity = peakIntensity * Mathf.Exp(-k * _t);
-
-        explosionLight.intensity = intensity;
-
-        if (_t >= safeDuration || intensity <= 0.05f)
-        {
-            explosionLight.intensity = 0f;
-            explosionLight.enabled = false;
-            return;
-        }
-
-        SendCustomEventDelayedFrames(nameof(FlashUpdate), 1);
-    }
-
-    private string GetRootName(Transform t)
-    {
-        if (t == null) return "";
-
-        Transform cur = t;
-        Transform last = t;
-
-        while (cur != null)
-        {
-            last = cur;
-
-            if (cur.name == flaskHName || cur.name == flaskClName)
-                return cur.name;
-
-            cur = cur.parent;
-        }
-
-        return last != null ? last.name : "";
+        if (explosionLight != null) explosionLight.enabled = false;
     }
 }
