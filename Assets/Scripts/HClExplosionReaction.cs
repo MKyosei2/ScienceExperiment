@@ -3,24 +3,24 @@ using UnityEngine;
 
 public class HClExplosionReaction : UdonSharpBehaviour
 {
-    [Header("Scene References (0128Test配下のものを入れる)")]
-    public GameObject flaskH;          // CONICAL_FLASK_H
-    public GameObject flaskCl;         // CONICAL_FLASK_Cl
-    public Transform beakerPourTarget; // BEAKER_EMPTY/PourTarget
+    [Header("Scene References")]
+    public GameObject flaskH;              // CONICAL_FLASK_H
+    public GameObject flaskCl;             // CONICAL_FLASK_Cl
+    public Transform beakerPourTarget;     // BEAKER_EMPTY/PourTarget (未設定なら自動検索)
 
-    [Header("Optional (自動探索もする)")]
-    public Transform spoutH;           // CONICAL_FLASK_H/Spout_H
-    public Transform spoutCl;          // CONICAL_FLASK_Cl/Spout_Cl
+    [Header("Spout References (未設定なら自動検索)")]
+    public Transform spoutH;               // CONICAL_FLASK_H/Spout_H
+    public Transform spoutCl;              // CONICAL_FLASK_Cl/Spout_Cl
 
-    [Header("Liquid Visual (子に Liquid を置く)")]
-    public Transform liquidFlaskH;     // CONICAL_FLASK_H/Liquid
-    public Transform liquidFlaskCl;    // CONICAL_FLASK_Cl/Liquid
-    public Transform liquidBeaker;     // BEAKER_EMPTY/Liquid
+    [Header("Liquid Visual (未設定なら自動検索)")]
+    public Transform liquidFlaskH;         // CONICAL_FLASK_H/Liquid
+    public Transform liquidFlaskCl;        // CONICAL_FLASK_Cl/Liquid
+    public Transform liquidBeaker;         // BEAKER_EMPTY/Liquid
 
-    [Header("Extra Renderers to Tint (白い部分を染める)")]
-    public Renderer[] tintRenderersFlaskH;   // CONICAL_FLASK_Hの白い部分
-    public Renderer[] tintRenderersFlaskCl;  // CONICAL_FLASK_Clの白い部分
-    public Renderer[] tintRenderersBeaker;   // BEAKER_EMPTYの白い部分
+    [Header("Tint Renderers (白い部分を染める)")]
+    public Renderer[] tintRenderersFlaskH;
+    public Renderer[] tintRenderersFlaskCl;
+    public Renderer[] tintRenderersBeaker;
 
     [Header("Liquid Amount")]
     public float flaskStartFill = 0.75f;
@@ -28,10 +28,21 @@ public class HClExplosionReaction : UdonSharpBehaviour
     public float pourRatePerSec = 0.45f;
     public float beakerMaxFill = 0.95f;
 
-    [Header("Pour 判定")]
+    [Header("Pour 判定（基本）")]
     public float pourStartAngleDeg = 28f;
-    public float pourRadius = 0.18f;
-    public float minReactFillEach = 0.08f;
+    public float pourRadius = 0.25f;           // XZ半径（近さ）
+    public float minReactFillEach = 0.08f;     // H/Cl それぞれがこの量以上で反応
+
+    // =========================
+    // ✅ 遠距離誤判定を絶対に潰すための追加条件
+    // =========================
+    [Header("Pour 判定（誤判定防止）")]
+    public float maxPourDistance3D = 0.65f;    // 3D距離の絶対上限
+    public float maxVerticalDelta = 0.35f;     // 高さ差が大きすぎたら注げない
+    public float minSpoutAboveTarget = 0.03f;  // 注ぎ口がターゲットより上である必要
+    [Range(-1f, 1f)] public float minDownDot = 0.20f; // 注ぎ口が下向きの必要度
+    public float pourRadiusHardCap = 0.6f;     // 半径の安全上限（事故防止）
+    public bool debugPourCheck = false;
 
     [Header("Mix Color")]
     public Color colorH = new Color(0.10f, 0.80f, 1.00f, 1.0f);   // H=青
@@ -39,36 +50,34 @@ public class HClExplosionReaction : UdonSharpBehaviour
     public Color reactedColor = new Color(1.00f, 0.60f, 0.60f, 1.0f);
     [Range(0f, 1f)] public float liquidAlpha = 0.85f;
 
-    // ============================
-    // Fluid Slosh（軽量）
-    // ============================
+    // =========================
+    // ✅ Fluid Slosh（軽量）
+    // =========================
     [Header("Fluid Slosh (軽量流体)")]
     public bool enableFluidSlosh = true;
-    [Range(0f, 2f)] public float sloshStrength = 0.9f;
-    [Range(0.1f, 20f)] public float sloshDamping = 7.0f;
-    [Range(0.1f, 30f)] public float sloshSpring = 12.0f;
-    [Range(0f, 40f)] public float maxSurfaceTiltDeg = 18f;
 
-    // ============================
-    // 注ぎ口の細い水流 Particle
-    // ============================
+    [Range(0f, 2f)] public float sloshStrength = 1.15f;
+    [Range(0.1f, 30f)] public float sloshSpring = 16.0f;
+    [Range(0.1f, 30f)] public float sloshDamping = 6.5f;
+    [Range(0f, 45f)] public float maxSurfaceTiltDeg = 28f;
+
+    // VRで「回転しない移動」でも揺れるようにする（効かない対策）
+    public bool sloshUseTranslation = true;
+    [Range(0f, 2f)] public float translationToTilt = 0.35f;
+
+    // =========================
+    // FX
+    // =========================
     [Header("Pour Stream FX")]
-    public ParticleSystem pourStreamH;   // Spout_H/StreamParticles
-    public ParticleSystem pourStreamCl;  // Spout_Cl/StreamParticles
+    public ParticleSystem pourStreamH;
+    public ParticleSystem pourStreamCl;
     public float streamRateMax = 140f;
 
-    // ============================
-    // ビーカー渦（かき混ぜ）
-    // ============================
     [Header("Beaker Swirl FX")]
-    public ParticleSystem beakerSwirlParticles; // BEAKER_EMPTY/SwirlParticles
-    public float swirlRotateSpeed = 65f;
+    public ParticleSystem beakerSwirlParticles;
     public float swirlBuildSpeed = 2.0f;
     public float swirlDecaySpeed = 1.0f;
 
-    // ============================
-    // 波シェーダー制御（任意）
-    // ============================
     [Header("Liquid Shader Waves (任意)")]
     public bool enableWaveShader = true;
     public float waveAmpIdle = 0.025f;
@@ -84,15 +93,6 @@ public class HClExplosionReaction : UdonSharpBehaviour
     [Header("Reaction Strength")]
     [Range(0f, 3f)] public float maxStrengthMultiplier = 2.2f;
     [Range(0f, 1f)] public float ratioBonus = 0.6f;
-
-    // ============================
-    // ✅ 目視デバッグ（動いてるか確認）
-    // ============================
-    [Header("DEBUG Visual Check (色で状態を確認)")]
-    public bool debugVisualize = true;
-    public Renderer debugBeakerRenderer;
-    public Renderer debugFlaskHRenderer;
-    public Renderer debugFlaskClRenderer;
 
     [Header("Debug")]
     public bool debugLog = false;
@@ -114,7 +114,14 @@ public class HClExplosionReaction : UdonSharpBehaviour
     private Vector3 baseScaleFlaskH, baseScaleFlaskCl, baseScaleBeaker;
     private Vector3 basePosFlaskH, basePosFlaskCl, basePosBeaker;
 
+    // ✅ base rotation（Sloshを上乗せ）
+    private Quaternion baseRotFlaskH = Quaternion.identity;
+    private Quaternion baseRotFlaskCl = Quaternion.identity;
+    private Quaternion baseRotBeaker = Quaternion.identity;
+
+    // Slosh state
     private Quaternion lastRotH, lastRotCl, lastRotB;
+    private Vector3 lastPosH, lastPosCl, lastPosB;
     private Vector2 surfTiltH, surfVelH;
     private Vector2 surfTiltCl, surfVelCl;
     private Vector2 surfTiltB, surfVelB;
@@ -123,7 +130,7 @@ public class HClExplosionReaction : UdonSharpBehaviour
 
     private void Start()
     {
-        AutoResolve_UdonSafe();
+        AutoResolveAll_NoGeneric();
 
         fillFlaskH = Mathf.Clamp01(flaskStartFill);
         fillFlaskCl = Mathf.Clamp01(flaskStartFill);
@@ -135,20 +142,44 @@ public class HClExplosionReaction : UdonSharpBehaviour
         reacted = false;
 
         CacheRenderersAndTransforms();
+
+        // base rotation保存（Liquid未解決だとSloshが無効化される）
+        if (liquidFlaskH != null) baseRotFlaskH = liquidFlaskH.localRotation;
+        if (liquidFlaskCl != null) baseRotFlaskCl = liquidFlaskCl.localRotation;
+        if (liquidBeaker != null) baseRotBeaker = liquidBeaker.localRotation;
+
         ApplyAllLiquidVisuals(0f, false, false);
 
         if (explosionLight != null) explosionLight.enabled = false;
-        if (explosionParticles != null) explosionParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        if (explosionParticles != null) explosionParticles.Stop(true);
+        if (pourStreamH != null) pourStreamH.Stop(true);
+        if (pourStreamCl != null) pourStreamCl.Stop(true);
+        if (beakerSwirlParticles != null) beakerSwirlParticles.Stop(true);
 
-        if (pourStreamH != null) pourStreamH.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-        if (pourStreamCl != null) pourStreamCl.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-        if (beakerSwirlParticles != null) beakerSwirlParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-
-        if (flaskH != null) lastRotH = flaskH.transform.rotation;
-        if (flaskCl != null) lastRotCl = flaskCl.transform.rotation;
+        // Slosh 初期値
+        if (flaskH != null)
+        {
+            lastRotH = flaskH.transform.rotation;
+            lastPosH = flaskH.transform.position;
+        }
+        if (flaskCl != null)
+        {
+            lastRotCl = flaskCl.transform.rotation;
+            lastPosCl = flaskCl.transform.position;
+        }
         lastRotB = transform.rotation;
+        lastPosB = transform.position;
 
-        ApplyDebugVisual(false, false);
+        if (debugLog)
+        {
+            Debug.Log("[HClReaction] Start resolved:"
+                + " pourTarget=" + (beakerPourTarget != null)
+                + " spoutH=" + (spoutH != null)
+                + " spoutCl=" + (spoutCl != null)
+                + " liquidH=" + (liquidFlaskH != null)
+                + " liquidCl=" + (liquidFlaskCl != null)
+                + " liquidB=" + (liquidBeaker != null));
+        }
     }
 
     private void Update()
@@ -156,8 +187,12 @@ public class HClExplosionReaction : UdonSharpBehaviour
         float dt = Time.deltaTime;
         if (dt <= 0f) return;
 
-        bool pouringH = (!reacted && flaskH != null && fillFlaskH > 0.0001f && IsPouringIntoBeaker(flaskH.transform, spoutH));
-        bool pouringCl = (!reacted && flaskCl != null && fillFlaskCl > 0.0001f && IsPouringIntoBeaker(flaskCl.transform, spoutCl));
+        // ✅ 参照が不正なら絶対に注がない（遠距離誤判定の最大原因）
+        bool canPourH = (!reacted && flaskH != null && spoutH != null && beakerPourTarget != null && fillFlaskH > 0.0001f);
+        bool canPourCl = (!reacted && flaskCl != null && spoutCl != null && beakerPourTarget != null && fillFlaskCl > 0.0001f);
+
+        bool pouringH = canPourH && IsPouringIntoBeaker(flaskH.transform, spoutH);
+        bool pouringCl = canPourCl && IsPouringIntoBeaker(flaskCl.transform, spoutCl);
 
         float pouredH = 0f;
         float pouredCl = 0f;
@@ -167,21 +202,13 @@ public class HClExplosionReaction : UdonSharpBehaviour
             if (pouringH)
             {
                 pouredH = Pour(dt, ref fillFlaskH);
-                if (pouredH > 0f)
-                {
-                    fillBeakerH += pouredH;
-                    fillBeakerTotal += pouredH;
-                }
+                if (pouredH > 0f) { fillBeakerH += pouredH; fillBeakerTotal += pouredH; }
             }
 
             if (pouringCl)
             {
                 pouredCl = Pour(dt, ref fillFlaskCl);
-                if (pouredCl > 0f)
-                {
-                    fillBeakerCl += pouredCl;
-                    fillBeakerTotal += pouredCl;
-                }
+                if (pouredCl > 0f) { fillBeakerCl += pouredCl; fillBeakerTotal += pouredCl; }
             }
 
             fillBeakerTotal = Mathf.Clamp01(fillBeakerTotal);
@@ -197,10 +224,10 @@ public class HClExplosionReaction : UdonSharpBehaviour
         }
 
         // 水流FX
-        UpdatePourStream(pourStreamH, pouringH, pouredH);
-        UpdatePourStream(pourStreamCl, pouringCl, pouredCl);
+        UpdatePourStream(pourStreamH, pouringH, pouredH, dt);
+        UpdatePourStream(pourStreamCl, pouringCl, pouredCl, dt);
 
-        // 渦（注いでる間増える／止まると減衰）
+        // 渦
         bool pouringAny = (pouringH || pouringCl);
         float targetSwirl = pouringAny ? 1f : 0f;
         float change = (targetSwirl > swirlPower ? swirlBuildSpeed : swirlDecaySpeed) * dt;
@@ -209,9 +236,6 @@ public class HClExplosionReaction : UdonSharpBehaviour
 
         // 見た目更新
         ApplyAllLiquidVisuals(swirlPower, pouringH, pouringCl);
-
-        // ✅ 目視デバッグ
-        if (debugVisualize) ApplyDebugVisual(pouringH, pouringCl);
     }
 
     private float Pour(float dt, ref float fillFlask)
@@ -230,32 +254,91 @@ public class HClExplosionReaction : UdonSharpBehaviour
         return poured;
     }
 
+    // =========================================================
+    // ✅ 遠距離でも入る判定を完全に潰すロジック（参照ズレも排除）
+    // =========================================================
     private bool IsPouringIntoBeaker(Transform flaskRoot, Transform spout)
     {
         if (flaskRoot == null || spout == null || beakerPourTarget == null) return false;
 
+        // spoutがflaskRoot配下じゃない参照ズレは即失敗（IsChildOfは避け、手動で親を辿る）
+        if (!IsDescendantOf(spout, flaskRoot)) return false;
+
+        // 角度条件
         float angle = Vector3.Angle(flaskRoot.up, Vector3.up);
         if (angle < pourStartAngleDeg) return false;
 
-        float dist = Vector3.Distance(spout.position, beakerPourTarget.position);
-        if (dist > pourRadius) return false;
+        // 半径安全化
+        float r = pourRadius;
+        if (r > pourRadiusHardCap) r = pourRadiusHardCap;
+        if (r < 0.001f) return false;
+
+        Vector3 sp = spout.position;
+        Vector3 tp = beakerPourTarget.position;
+
+        // ✅ 3D距離の絶対上限（これで「ものすごく離れてるのに注げる」が理屈上消える）
+        float dist3D = Vector3.Distance(sp, tp);
+        if (dist3D > maxPourDistance3D) return false;
+
+        // ✅ 高さ差も制限
+        float dy = Mathf.Abs(sp.y - tp.y);
+        if (dy > maxVerticalDelta) return false;
+
+        // ✅ 注ぎ口がターゲットより上
+        if (sp.y < tp.y + minSpoutAboveTarget) return false;
+
+        // ✅ 下向き判定（forward と up の “より下向き” を採用してモデル差を吸収）
+        float downDotF = Vector3.Dot(spout.forward, Vector3.down);
+        float downDotU = Vector3.Dot(spout.up, Vector3.down);
+        float downDot = (downDotF > downDotU) ? downDotF : downDotU;
+        if (downDot < minDownDot) return false;
+
+        // ✅ XZ半径（水平距離）
+        Vector3 sp2 = sp; sp2.y = 0f;
+        Vector3 tp2 = tp; tp2.y = 0f;
+        float distXZ = Vector3.Distance(sp2, tp2);
+        if (distXZ > r) return false;
+
+        if (debugPourCheck)
+        {
+            Debug.Log("[PourCheck] angle=" + angle
+                + " dist3D=" + dist3D
+                + " distXZ=" + distXZ
+                + " dy=" + dy
+                + " r=" + r
+                + " downDot=" + downDot);
+        }
 
         return true;
     }
 
-    private void UpdatePourStream(ParticleSystem ps, bool pouring, float poured)
+    private bool IsDescendantOf(Transform child, Transform supposedParent)
+    {
+        if (child == null || supposedParent == null) return false;
+
+        Transform t = child;
+        int guard = 0;
+        while (t != null && guard < 128)
+        {
+            if (t == supposedParent) return true;
+            t = t.parent;
+            guard++;
+        }
+        return false;
+    }
+
+    private void UpdatePourStream(ParticleSystem ps, bool pouring, float poured, float dt)
     {
         if (ps == null) return;
 
         if (!pouring)
         {
-            if (ps.isPlaying) ps.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+            if (ps.isPlaying) ps.Stop(true);
             return;
         }
 
         if (!ps.isPlaying) ps.Play(true);
 
-        float dt = Time.deltaTime;
         float rate01 = 0f;
         if (dt > 0f) rate01 = (poured / dt) / Mathf.Max(0.0001f, pourRatePerSec);
         rate01 = Mathf.Clamp01(rate01);
@@ -266,25 +349,18 @@ public class HClExplosionReaction : UdonSharpBehaviour
 
     private void UpdateBeakerSwirl(float power01)
     {
-        if (beakerSwirlParticles != null)
-        {
-            if (power01 > 0.05f)
-            {
-                if (!beakerSwirlParticles.isPlaying) beakerSwirlParticles.Play(true);
-                var emission = beakerSwirlParticles.emission;
-                emission.rateOverTime = Mathf.Lerp(0f, 80f, power01);
-            }
-            else
-            {
-                if (beakerSwirlParticles.isPlaying)
-                    beakerSwirlParticles.Stop(true, ParticleSystemStopBehavior.StopEmitting);
-            }
-        }
+        if (beakerSwirlParticles == null) return;
 
-        if (liquidBeaker != null && power01 > 0.01f)
+        if (power01 > 0.05f)
         {
-            float y = swirlRotateSpeed * power01 * Time.deltaTime;
-            liquidBeaker.Rotate(0f, y, 0f, Space.Self);
+            if (!beakerSwirlParticles.isPlaying) beakerSwirlParticles.Play(true);
+            var emission = beakerSwirlParticles.emission;
+            emission.rateOverTime = Mathf.Lerp(0f, 80f, power01);
+        }
+        else
+        {
+            if (beakerSwirlParticles.isPlaying)
+                beakerSwirlParticles.Stop(true);
         }
     }
 
@@ -313,11 +389,9 @@ public class HClExplosionReaction : UdonSharpBehaviour
         }
 
         swirlPower = 0f;
-        if (beakerSwirlParticles != null)
-            beakerSwirlParticles.Stop(true, ParticleSystemStopBehavior.StopEmitting);
-
-        if (pourStreamH != null) pourStreamH.Stop(true, ParticleSystemStopBehavior.StopEmitting);
-        if (pourStreamCl != null) pourStreamCl.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+        if (beakerSwirlParticles != null) beakerSwirlParticles.Stop(true);
+        if (pourStreamH != null) pourStreamH.Stop(true);
+        if (pourStreamCl != null) pourStreamCl.Stop(true);
     }
 
     private float ComputeReactionStrength()
@@ -328,8 +402,8 @@ public class HClExplosionReaction : UdonSharpBehaviour
         float ratioScore = 0.0f;
         if (sum > 0.0001f)
         {
-            float r = fillBeakerH / sum;
-            float dist = Mathf.Abs(r - 0.5f) * 2f;
+            float rr = fillBeakerH / sum;
+            float dist = Mathf.Abs(rr - 0.5f) * 2f;
             ratioScore = 1f - Mathf.Clamp01(dist);
         }
 
@@ -359,12 +433,9 @@ public class HClExplosionReaction : UdonSharpBehaviour
             main.startSpeed = 1.4f * strength;
             main.maxParticles = Mathf.Clamp((int)(80 * strength), 40, 260);
 
+            // Udonで怪しいBurst設定はやめて、Prefab側でBurst設定する前提
             var emission = explosionParticles.emission;
             emission.rateOverTime = 0f;
-            short burstCount = (short)Mathf.Clamp((int)(45 * strength), 20, 180);
-            emission.SetBursts(new ParticleSystem.Burst[] {
-                new ParticleSystem.Burst(0f, burstCount)
-            });
         }
     }
 
@@ -374,7 +445,7 @@ public class HClExplosionReaction : UdonSharpBehaviour
     }
 
     // ============================
-    // ✅ Visual update (fill/color/wave/slosh + tint)
+    // Visual update
     // ============================
     private void CacheRenderersAndTransforms()
     {
@@ -420,14 +491,18 @@ public class HClExplosionReaction : UdonSharpBehaviour
             SetWaveParams(rBeaker, amp, waveSpeed);
         }
 
+        // ✅ Fluid Slosh（回転＋移動で必ず揺れる）
         if (enableFluidSlosh)
         {
-            ApplySloshForContainer(flaskH != null ? flaskH.transform : null, liquidFlaskH, fillFlaskH, ref lastRotH, ref surfTiltH, ref surfVelH);
-            ApplySloshForContainer(flaskCl != null ? flaskCl.transform : null, liquidFlaskCl, fillFlaskCl, ref lastRotCl, ref surfTiltCl, ref surfVelCl);
-            ApplySloshForContainer(transform, liquidBeaker, fillBeakerTotal, ref lastRotB, ref surfTiltB, ref surfVelB);
+            ApplySlosh(flaskH != null ? flaskH.transform : null, liquidFlaskH, fillFlaskH,
+                ref lastRotH, ref lastPosH, ref surfTiltH, ref surfVelH, baseRotFlaskH);
+            ApplySlosh(flaskCl != null ? flaskCl.transform : null, liquidFlaskCl, fillFlaskCl,
+                ref lastRotCl, ref lastPosCl, ref surfTiltCl, ref surfVelCl, baseRotFlaskCl);
+            ApplySlosh(transform, liquidBeaker, fillBeakerTotal,
+                ref lastRotB, ref lastPosB, ref surfTiltB, ref surfVelB, baseRotBeaker);
         }
 
-        // ✅ 白い部分を確実に色付け
+        // 白い部分を色付け（任意）
         Color hTint = colorH; hTint.a = 1f;
         Color clTint = colorCl; clTint.a = 1f;
         ApplyTintRenderers(tintRenderersFlaskH, hTint);
@@ -465,19 +540,23 @@ public class HClExplosionReaction : UdonSharpBehaviour
         liquid.gameObject.SetActive(f > 0.01f);
     }
 
-    private void ApplySloshForContainer(
+    private void ApplySlosh(
         Transform container, Transform liquid, float fill01,
-        ref Quaternion lastRot, ref Vector2 surfTilt, ref Vector2 surfVel)
+        ref Quaternion lastRot, ref Vector3 lastPos,
+        ref Vector2 surfTilt, ref Vector2 surfVel,
+        Quaternion baseRot)
     {
         if (container == null || liquid == null) return;
-        if (fill01 < 0.02f) return;
+
+        // 少量でも動かす（「機能してない」を避ける）
+        if (fill01 < 0.003f) return;
 
         float dt = Time.deltaTime;
         if (dt <= 0f) return;
 
-        Quaternion cur = container.rotation;
-        Quaternion dq = cur * Quaternion.Inverse(lastRot);
-
+        // 回転由来
+        Quaternion curRot = container.rotation;
+        Quaternion dq = curRot * Quaternion.Inverse(lastRot);
         dq.ToAngleAxis(out float angDeg, out Vector3 axis);
         if (angDeg > 180f) angDeg -= 360f;
 
@@ -485,10 +564,22 @@ public class HClExplosionReaction : UdonSharpBehaviour
         if (Mathf.Abs(angDeg) > 0.0001f)
             angVel = axis.normalized * (angDeg * Mathf.Deg2Rad / dt);
 
-        lastRot = cur;
+        lastRot = curRot;
 
         Vector2 targetTilt = new Vector2(-angVel.z, angVel.x) * sloshStrength;
 
+        // 移動由来（VRで持って動かすとこれが効く）
+        if (sloshUseTranslation)
+        {
+            Vector3 curPos = container.position;
+            Vector3 vel = (curPos - lastPos) / dt;
+            lastPos = curPos;
+
+            targetTilt.x += -vel.x * translationToTilt;
+            targetTilt.y += -vel.z * translationToTilt;
+        }
+
+        // ばね
         surfVel += (targetTilt - surfTilt) * sloshSpring * dt;
         surfVel -= surfVel * sloshDamping * dt;
         surfTilt += surfVel * dt;
@@ -498,7 +589,9 @@ public class HClExplosionReaction : UdonSharpBehaviour
         surfTilt.y = Mathf.Clamp(surfTilt.y, -maxRad, maxRad);
 
         Quaternion tiltRot = Quaternion.Euler(surfTilt.y * Mathf.Rad2Deg, 0f, surfTilt.x * Mathf.Rad2Deg);
-        liquid.localRotation = tiltRot;
+
+        // 初期回転に上乗せ
+        liquid.localRotation = baseRot * tiltRot;
     }
 
     private void ApplyFlaskColors()
@@ -508,7 +601,6 @@ public class HClExplosionReaction : UdonSharpBehaviour
             Color c = colorH; c.a = liquidAlpha;
             ForceSetRendererColor(rFlaskH, c);
         }
-
         if (rFlaskCl != null)
         {
             Color c = colorCl; c.a = liquidAlpha;
@@ -537,7 +629,6 @@ public class HClExplosionReaction : UdonSharpBehaviour
         float t = Mathf.Clamp01(fillBeakerCl / sum);
         Color mix = Color.Lerp(colorH, colorCl, t);
         mix.a = liquidAlpha;
-
         ForceSetRendererColor(rBeaker, mix);
     }
 
@@ -548,7 +639,6 @@ public class HClExplosionReaction : UdonSharpBehaviour
         ForceSetRendererColor(rBeaker, rc);
     }
 
-    // ✅ 強い色適用（Unlit/Transparentでも通す）
     private void ForceSetRendererColor(Renderer r, Color c)
     {
         if (r == null) return;
@@ -561,18 +651,15 @@ public class HClExplosionReaction : UdonSharpBehaviour
             Material m = mats[i];
             if (m == null) continue;
 
+            // HasPropertyを使わず、全部書く（無いプロパティは無視される）
             m.color = c;
+            m.SetColor("_Color", c);
+            m.SetColor("_BaseColor", c);
+            m.SetColor("_MainColor", c);
+            m.SetColor("_TintColor", c);
 
-            if (m.HasProperty("_Color")) m.SetColor("_Color", c);
-            if (m.HasProperty("_BaseColor")) m.SetColor("_BaseColor", c);
-            if (m.HasProperty("_MainColor")) m.SetColor("_MainColor", c);
-            if (m.HasProperty("_TintColor")) m.SetColor("_TintColor", c);
-
-            if (m.HasProperty("_EmissionColor"))
-            {
-                Color ec = new Color(c.r * 0.15f, c.g * 0.15f, c.b * 0.15f, 1f);
-                m.SetColor("_EmissionColor", ec);
-            }
+            Color ec = new Color(c.r * 0.15f, c.g * 0.15f, c.b * 0.15f, 1f);
+            m.SetColor("_EmissionColor", ec);
         }
     }
 
@@ -593,84 +680,142 @@ public class HClExplosionReaction : UdonSharpBehaviour
         Material m = r.material;
         if (m == null) return;
 
-        if (m.HasProperty("_WaveAmp")) m.SetFloat("_WaveAmp", amp);
-        if (m.HasProperty("_WaveSpeed")) m.SetFloat("_WaveSpeed", spd);
-        if (m.HasProperty("_Swirl")) m.SetFloat("_Swirl", swirlPower);
-        if (m.HasProperty("_TimeOffset")) m.SetFloat("_TimeOffset", Time.time);
+        m.SetFloat("_WaveAmp", amp);
+        m.SetFloat("_WaveSpeed", spd);
+        m.SetFloat("_Swirl", swirlPower);
+        m.SetFloat("_TimeOffset", Time.time);
     }
 
-    // ============================
-    // ✅ 目視デバッグ（どこで止まってるか）
-    // ============================
-    private void ApplyDebugVisual(bool pouringH, bool pouringCl)
+    // =========================================================
+    // ✅ 自動解決（ジェネリック禁止版）
+    // =========================================================
+    private void AutoResolveAll_NoGeneric()
     {
-        Color idle = new Color(0.45f, 0.45f, 0.45f, 1f);
-        Color pouring = new Color(0.2f, 1.0f, 0.2f, 1f);
-        Color ready = new Color(1.0f, 0.6f, 0.1f, 1f);
-        Color done = new Color(1.0f, 0.1f, 0.1f, 1f);
-
-        bool readyToReact = (fillBeakerH >= minReactFillEach && fillBeakerCl >= minReactFillEach);
-
-        if (debugBeakerRenderer != null)
+        // PourTarget
+        if (beakerPourTarget == null)
         {
-            if (reacted) ForceSetRendererColor(debugBeakerRenderer, done);
-            else if (readyToReact) ForceSetRendererColor(debugBeakerRenderer, ready);
-            else if (pouringH || pouringCl) ForceSetRendererColor(debugBeakerRenderer, pouring);
-            else ForceSetRendererColor(debugBeakerRenderer, idle);
+            beakerPourTarget = FindTransformByExactName(transform, "PourTarget");
         }
 
-        if (debugFlaskHRenderer != null)
+        // Liquid (Beaker)
+        if (liquidBeaker == null)
         {
-            Color c = pouringH ? pouring : idle;
-            c *= Mathf.Lerp(0.3f, 1.2f, Mathf.Clamp01(fillFlaskH));
-            c.a = 1f;
-            ForceSetRendererColor(debugFlaskHRenderer, c);
+            liquidBeaker = FindTransformByExactName(transform, "Liquid");
         }
 
-        if (debugFlaskClRenderer != null)
+        // Flask H
+        if (flaskH != null)
         {
-            Color c = pouringCl ? pouring : idle;
-            c *= Mathf.Lerp(0.3f, 1.2f, Mathf.Clamp01(fillFlaskCl));
-            c.a = 1f;
-            ForceSetRendererColor(debugFlaskClRenderer, c);
+            if (spoutH == null) spoutH = FindTransformByExactName(flaskH.transform, "Spout_H");
+            if (spoutH == null) spoutH = FindTransformNameContains(flaskH.transform, "spout");
+
+            if (liquidFlaskH == null) liquidFlaskH = FindTransformByExactName(flaskH.transform, "Liquid");
+
+            if (pourStreamH == null && spoutH != null) pourStreamH = FindParticleSystemByNameContains(spoutH, "stream");
+            if (pourStreamH == null) pourStreamH = FindParticleSystemByNameContains(flaskH.transform, "stream");
+
+            if (tintRenderersFlaskH == null || tintRenderersFlaskH.Length == 0)
+                tintRenderersFlaskH = CollectTintTargetsRuntime_UdonSafe(flaskH.transform);
         }
-    }
 
-    // ============================
-    // ✅ Udon安全：Tint対象の自動収集（List禁止）
-    // ============================
-    private void AutoResolve_UdonSafe()
-    {
-        if (beakerPourTarget == null) beakerPourTarget = transform;
+        // Flask Cl
+        if (flaskCl != null)
+        {
+            if (spoutCl == null) spoutCl = FindTransformByExactName(flaskCl.transform, "Spout_Cl");
+            if (spoutCl == null) spoutCl = FindTransformNameContains(flaskCl.transform, "spout");
 
-        if (spoutH == null && flaskH != null) spoutH = flaskH.transform;
-        if (spoutCl == null && flaskCl != null) spoutCl = flaskCl.transform;
+            if (liquidFlaskCl == null) liquidFlaskCl = FindTransformByExactName(flaskCl.transform, "Liquid");
 
-        if (flaskH != null && (tintRenderersFlaskH == null || tintRenderersFlaskH.Length == 0))
-            tintRenderersFlaskH = CollectTintTargetsRuntime_UdonSafe(flaskH.transform);
+            if (pourStreamCl == null && spoutCl != null) pourStreamCl = FindParticleSystemByNameContains(spoutCl, "stream");
+            if (pourStreamCl == null) pourStreamCl = FindParticleSystemByNameContains(flaskCl.transform, "stream");
 
-        if (flaskCl != null && (tintRenderersFlaskCl == null || tintRenderersFlaskCl.Length == 0))
-            tintRenderersFlaskCl = CollectTintTargetsRuntime_UdonSafe(flaskCl.transform);
+            if (tintRenderersFlaskCl == null || tintRenderersFlaskCl.Length == 0)
+                tintRenderersFlaskCl = CollectTintTargetsRuntime_UdonSafe(flaskCl.transform);
+        }
+
+        // Optional FX
+        if (beakerSwirlParticles == null) beakerSwirlParticles = FindParticleSystemByNameContains(transform, "swirl");
+        if (explosionLight == null) explosionLight = FindLightByNameContains(transform, "light");
+        if (explosionParticles == null) explosionParticles = FindParticleSystemByNameContains(transform, "explosion");
+        if (explosionAudio == null) explosionAudio = FindAudioByNameContains(transform, "audio");
 
         if (tintRenderersBeaker == null || tintRenderersBeaker.Length == 0)
             tintRenderersBeaker = CollectTintTargetsRuntime_UdonSafe(transform);
-
-        // Debug renderer自動セット（入ってなければ何か拾う）
-        if (debugBeakerRenderer == null)
-        {
-            Renderer rr = GetComponentInChildren<Renderer>(true);
-            debugBeakerRenderer = rr;
-        }
-        if (debugFlaskHRenderer == null && flaskH != null)
-        {
-            debugFlaskHRenderer = flaskH.GetComponentInChildren<Renderer>(true);
-        }
-        if (debugFlaskClRenderer == null && flaskCl != null)
-        {
-            debugFlaskClRenderer = flaskCl.GetComponentInChildren<Renderer>(true);
-        }
     }
 
+    private Transform FindTransformByExactName(Transform root, string exact)
+    {
+        if (root == null) return null;
+        Transform[] all = root.GetComponentsInChildren<Transform>(true);
+        for (int i = 0; i < all.Length; i++)
+        {
+            Transform t = all[i];
+            if (t != null && t.name == exact) return t;
+        }
+        return null;
+    }
+
+    private Transform FindTransformNameContains(Transform root, string lowerContains)
+    {
+        if (root == null) return null;
+        Transform[] all = root.GetComponentsInChildren<Transform>(true);
+        for (int i = 0; i < all.Length; i++)
+        {
+            Transform t = all[i];
+            if (t == null) continue;
+            string n = t.name;
+            if (string.IsNullOrEmpty(n)) continue;
+            if (n.ToLower().Contains(lowerContains)) return t;
+        }
+        return null;
+    }
+
+    private ParticleSystem FindParticleSystemByNameContains(Transform root, string lowerContains)
+    {
+        if (root == null) return null;
+        ParticleSystem[] all = root.GetComponentsInChildren<ParticleSystem>(true);
+        for (int i = 0; i < all.Length; i++)
+        {
+            ParticleSystem ps = all[i];
+            if (ps == null) continue;
+            string n = ps.gameObject.name;
+            if (string.IsNullOrEmpty(n)) continue;
+            if (n.ToLower().Contains(lowerContains)) return ps;
+        }
+        return null;
+    }
+
+    private Light FindLightByNameContains(Transform root, string lowerContains)
+    {
+        if (root == null) return null;
+        Light[] all = root.GetComponentsInChildren<Light>(true);
+        for (int i = 0; i < all.Length; i++)
+        {
+            Light l = all[i];
+            if (l == null) continue;
+            string n = l.gameObject.name;
+            if (string.IsNullOrEmpty(n)) continue;
+            if (n.ToLower().Contains(lowerContains)) return l;
+        }
+        return null;
+    }
+
+    private AudioSource FindAudioByNameContains(Transform root, string lowerContains)
+    {
+        if (root == null) return null;
+        AudioSource[] all = root.GetComponentsInChildren<AudioSource>(true);
+        for (int i = 0; i < all.Length; i++)
+        {
+            AudioSource a = all[i];
+            if (a == null) continue;
+            string n = a.gameObject.name;
+            if (string.IsNullOrEmpty(n)) continue;
+            if (n.ToLower().Contains(lowerContains)) return a;
+        }
+        return null;
+    }
+
+    // ✅ List禁止（Udon対応）なので2パスで配列生成
     private Renderer[] CollectTintTargetsRuntime_UdonSafe(Transform root)
     {
         if (root == null) return new Renderer[0];
@@ -691,8 +836,8 @@ public class HClExplosionReaction : UdonSharpBehaviour
             if (n.Contains("liquid")) continue;
             if (n.Contains("label")) continue;
             if (n.Contains("spout")) continue;
-            if (n.Contains("streamparticles")) continue;
-            if (n.Contains("swirlparticles")) continue;
+            if (n.Contains("stream")) continue;
+            if (n.Contains("swirl")) continue;
             if (n.Contains("explosion")) continue;
 
             count++;
@@ -715,8 +860,8 @@ public class HClExplosionReaction : UdonSharpBehaviour
             if (n.Contains("liquid")) continue;
             if (n.Contains("label")) continue;
             if (n.Contains("spout")) continue;
-            if (n.Contains("streamparticles")) continue;
-            if (n.Contains("swirlparticles")) continue;
+            if (n.Contains("stream")) continue;
+            if (n.Contains("swirl")) continue;
             if (n.Contains("explosion")) continue;
 
             result[w] = r;
@@ -726,4 +871,12 @@ public class HClExplosionReaction : UdonSharpBehaviour
 
         return result;
     }
+
+    // Getter（任意）
+    public float GetFillFlaskH() { return fillFlaskH; }
+    public float GetFillFlaskCl() { return fillFlaskCl; }
+    public float GetFillBeakerTotal() { return fillBeakerTotal; }
+    public float GetFillBeakerH() { return fillBeakerH; }
+    public float GetFillBeakerCl() { return fillBeakerCl; }
+    public bool GetReacted() { return reacted; }
 }
