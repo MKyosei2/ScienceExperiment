@@ -125,6 +125,59 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &96584418
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 96584419}
+  - component: {fileID: 96584420}
+  m_Layer: 0
+  m_Name: PourSpoutAssist
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &96584419
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 96584418}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.008655503, y: 0.009700002, z: 0.0050650127}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6175649605063394963}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &96584420
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 96584418}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.085
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!21 &186144641
 Material:
   serializedVersion: 8
@@ -550,7 +603,7 @@ Transform:
   m_GameObject: {fileID: 631807118}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.2, z: 0.08}
+  m_LocalPosition: {x: 0, y: 0.0096, z: 0.0004}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -10242,7 +10295,7 @@ Transform:
   m_GameObject: {fileID: 728273955}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.2, z: 0.08}
+  m_LocalPosition: {x: 0, y: 0.0064, z: -0.0003}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -10489,7 +10542,7 @@ Transform:
   m_GameObject: {fileID: 820547892}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.23, z: 0.11}
+  m_LocalPosition: {x: 0, y: 0.23, z: -0.038}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -10586,7 +10639,7 @@ Transform:
   m_GameObject: {fileID: 837300580}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.23, z: 0.11}
+  m_LocalPosition: {x: 0, y: 0.23, z: -0.0342}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -16168,22 +16221,31 @@ MonoBehaviour:
   pourRatePerSec: 0.45
   beakerMaxFill: 0.95
   pourStartAngleDeg: 35
-  pourRadius: 0.14
+  pourRadius: 0.42
   minReactFillEach: 0.08
+  maxPourDistance3D: 0.9
+  maxVerticalDelta: 0.55
+  minSpoutAboveTarget: 0.03
+  minDownDot: 0.12
+  pourRadiusHardCap: 0.6
+  debugPourCheck: 0
+  useColliderPourCheck: 1
+  colliderBoundsInflate: 0.01
   colorH: {r: 0.55, g: 0.85, b: 1, a: 1}
   colorCl: {r: 0.35, g: 1, b: 0.35, a: 1}
   reactedColor: {r: 0.9, g: 0.9, b: 0.95, a: 1}
   liquidAlpha: 0.55
   enableFluidSlosh: 1
   sloshStrength: 0.8
-  sloshDamping: 6
   sloshSpring: 10
+  sloshDamping: 6
   maxSurfaceTiltDeg: 18
+  sloshUseTranslation: 1
+  translationToTilt: 0.35
   pourStreamH: {fileID: 0}
   pourStreamCl: {fileID: 0}
   streamRateMax: 120
   beakerSwirlParticles: {fileID: 0}
-  swirlRotateSpeed: 55
   swirlBuildSpeed: 1.8
   swirlDecaySpeed: 0.9
   enableWaveShader: 1
@@ -16191,15 +16253,13 @@ MonoBehaviour:
   waveAmpPouring: 0.08
   waveSpeed: 1.2
   explosionLight: {fileID: 0}
-  flashSeconds: 0.15
+  flashSeconds: 0.4
+  flashOffDelay: 0.06
+  flashOnAgainDelay: 0.08
   explosionParticles: {fileID: 0}
   explosionAudio: {fileID: 0}
   maxStrengthMultiplier: 2.2
   ratioBonus: 0.6
-  debugVisualize: 1
-  debugBeakerRenderer: {fileID: 0}
-  debugFlaskHRenderer: {fileID: 0}
-  debugFlaskClRenderer: {fileID: 0}
   debugLog: 0
 --- !u!65 &1965279247
 BoxCollider:
@@ -21302,6 +21362,59 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2014136770}
   m_Mesh: {fileID: -5076798556035486163, guid: 97d09c839cf1a774f8a75ce6f8663c07, type: 3}
+--- !u!1 &2031252329
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2031252330}
+  - component: {fileID: 2031252331}
+  m_Layer: 0
+  m_Name: PourReceiver
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2031252330
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2031252329}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.0000000027976832, y: 0.33019483, z: 0.04271403}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 525557808722870231}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &2031252331
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2031252329}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.085
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &2043241359
 GameObject:
   m_ObjectHideFlags: 0
@@ -21333,6 +21446,59 @@ Transform:
   m_Children: []
   m_Father: {fileID: 6175649605063394963}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2096500622
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2096500623}
+  - component: {fileID: 2096500624}
+  m_Layer: 0
+  m_Name: PourReceiver
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2096500623
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2096500622}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.33019483, z: 0.04271403}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4066564089153703100}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &2096500624
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2096500622}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.085
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!4 &23089905973966147
 Transform:
   m_ObjectHideFlags: 0
@@ -21557,6 +21723,7 @@ Transform:
   - {fileID: 631807119}
   - {fileID: 437724635}
   - {fileID: 820547893}
+  - {fileID: 2031252330}
   m_Father: {fileID: 767215446}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &548752614948464834
@@ -22155,6 +22322,7 @@ Transform:
   - {fileID: 728273956}
   - {fileID: 1593539615}
   - {fileID: 837300581}
+  - {fileID: 2096500623}
   m_Father: {fileID: 767215446}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &4124763229221343754
@@ -22650,7 +22818,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.020000003, y: 0.02, z: 0.022551473}
+  m_Size: {x: 0.14, y: 0.16, z: 0.14}
   m_Center: {x: 0.0000000013969839, y: 0, z: 0.0012757317}
 --- !u!4 &6175649605063394963
 Transform:
@@ -22674,6 +22842,7 @@ Transform:
   - {fileID: 756150387}
   - {fileID: 1974917893}
   - {fileID: 640636762}
+  - {fileID: 96584419}
   m_Father: {fileID: 767215446}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &6297866422378346536
@@ -23033,7 +23202,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.018595327, y: 0.026955526, z: 0.018595327}
+  m_Size: {x: 0.12, y: 0.18, z: 0.12}
   m_Center: {x: 0, y: 0.0000000027976832, z: -0.0000000013988416}
 --- !u!23 &7786365136167300388
 MeshRenderer:
@@ -23442,7 +23611,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.018595327, y: 0.026955526, z: 0.018595327}
+  m_Size: {x: 0.12, y: 0.18, z: 0.12}
   m_Center: {x: 0, y: 0.0000000027976832, z: 0}
 --- !u!33 &8979396609679099069
 MeshFilter:
@@ -23661,22 +23830,31 @@ MonoBehaviour:
   pourRatePerSec: 0.45
   beakerMaxFill: 0.95
   pourStartAngleDeg: 28
-  pourRadius: 0.8
+  pourRadius: 0.42
   minReactFillEach: 0.08
+  maxPourDistance3D: 0.9
+  maxVerticalDelta: 0.55
+  minSpoutAboveTarget: 0.03
+  minDownDot: 0.12
+  pourRadiusHardCap: 0.6
+  debugPourCheck: 0
+  useColliderPourCheck: 1
+  colliderBoundsInflate: 0.01
   colorH: {r: 0.55, g: 0.85, b: 1, a: 1}
   colorCl: {r: 0.35, g: 1, b: 0.35, a: 1}
   reactedColor: {r: 0.9, g: 0.9, b: 0.95, a: 1}
   liquidAlpha: 0.85
   enableFluidSlosh: 1
   sloshStrength: 0.9
-  sloshDamping: 7
   sloshSpring: 12
+  sloshDamping: 7
   maxSurfaceTiltDeg: 18
+  sloshUseTranslation: 1
+  translationToTilt: 0.35
   pourStreamH: {fileID: 640598362}
   pourStreamCl: {fileID: 841847441}
   streamRateMax: 140
   beakerSwirlParticles: {fileID: 640636764}
-  swirlRotateSpeed: 65
   swirlBuildSpeed: 2
   swirlDecaySpeed: 1
   enableWaveShader: 1
@@ -23684,15 +23862,13 @@ MonoBehaviour:
   waveAmpPouring: 0.075
   waveSpeed: 1.2
   explosionLight: {fileID: 409260259}
-  flashSeconds: 0.15
+  flashSeconds: 0.4
+  flashOffDelay: 0.06
+  flashOnAgainDelay: 0.08
   explosionParticles: {fileID: 2000853929}
   explosionAudio: {fileID: 756150388}
   maxStrengthMultiplier: 2.2
   ratioBonus: 0.6
-  debugVisualize: 1
-  debugBeakerRenderer: {fileID: 0}
-  debugFlaskHRenderer: {fileID: 0}
-  debugFlaskClRenderer: {fileID: 0}
   debugLog: 0
 --- !u!4 &9184598700642753206
 Transform:

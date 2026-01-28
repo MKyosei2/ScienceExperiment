@@ -30,26 +30,19 @@ public class HClExplosionReaction : UdonSharpBehaviour
 
     [Header("Pour 判定（基本）")]
     public float pourStartAngleDeg = 28f;
-    public float pourRadius = 0.25f;           // 旧ロジック用（フォールバック）
+    public float pourRadius = 0.25f;           // XZ半径（近さ）
     public float minReactFillEach = 0.08f;     // H/Cl それぞれがこの量以上で反応
 
     // =========================
     // ✅ 遠距離誤判定を絶対に潰すための追加条件
     // =========================
     [Header("Pour 判定（誤判定防止）")]
-    public float maxPourDistance3D = 0.65f;    // 3D距離の絶対上限（Colliderでも安全策として使う）
+    public float maxPourDistance3D = 0.65f;    // 3D距離の絶対上限
     public float maxVerticalDelta = 0.35f;     // 高さ差が大きすぎたら注げない
     public float minSpoutAboveTarget = 0.03f;  // 注ぎ口がターゲットより上である必要
     [Range(-1f, 1f)] public float minDownDot = 0.20f; // 注ぎ口が下向きの必要度
-    public float pourRadiusHardCap = 0.6f;     // 旧ロジック用（フォールバック）
+    public float pourRadiusHardCap = 0.6f;     // 半径の安全上限（事故防止）
     public bool debugPourCheck = false;
-
-    // =========================
-    // ✅ NEW: Colliderで当たり判定（BoxColliderで注げる範囲を決める）
-    // =========================
-    [Header("Pour 判定（Collider）")]
-    public bool useColliderPourCheck = true;   // true推奨：BoxCollider判定
-    public float colliderBoundsInflate = 0.01f; // 当たりをほんの少し太らせる（0.0～0.02くらい）
 
     [Header("Mix Color")]
     public Color colorH = new Color(0.10f, 0.80f, 1.00f, 1.0f);   // H=青
@@ -91,15 +84,9 @@ public class HClExplosionReaction : UdonSharpBehaviour
     public float waveAmpPouring = 0.075f;
     public float waveSpeed = 1.2f;
 
-    // =========================
-    // ✅ Reaction FX（派手化）
-    // =========================
     [Header("Reaction FX")]
     public Light explosionLight;
-    public float flashSeconds = 0.40f; // 0.15 -> 0.40
-    public float flashOffDelay = 0.06f;
-    public float flashOnAgainDelay = 0.08f;
-
+    public float flashSeconds = 0.15f;
     public ParticleSystem explosionParticles;
     public AudioSource explosionAudio;
 
@@ -141,11 +128,6 @@ public class HClExplosionReaction : UdonSharpBehaviour
 
     private float swirlPower; // 0..1
 
-    // ✅ Collider cache
-    private Collider colPourTarget;
-    private Collider colSpoutH;
-    private Collider colSpoutCl;
-
     private void Start()
     {
         AutoResolveAll_NoGeneric();
@@ -160,7 +142,6 @@ public class HClExplosionReaction : UdonSharpBehaviour
         reacted = false;
 
         CacheRenderersAndTransforms();
-        CachePourColliders();
 
         // base rotation保存（Liquid未解決だとSloshが無効化される）
         if (liquidFlaskH != null) baseRotFlaskH = liquidFlaskH.localRotation;
@@ -197,28 +178,7 @@ public class HClExplosionReaction : UdonSharpBehaviour
                 + " spoutCl=" + (spoutCl != null)
                 + " liquidH=" + (liquidFlaskH != null)
                 + " liquidCl=" + (liquidFlaskCl != null)
-                + " liquidB=" + (liquidBeaker != null)
-                + " colTarget=" + (colPourTarget != null)
-                + " colSpoutH=" + (colSpoutH != null)
-                + " colSpoutCl=" + (colSpoutCl != null));
-        }
-    }
-
-    private void CachePourColliders()
-    {
-        colPourTarget = null;
-        colSpoutH = null;
-        colSpoutCl = null;
-
-        if (beakerPourTarget != null) colPourTarget = beakerPourTarget.GetComponent<Collider>();
-        if (spoutH != null) colSpoutH = spoutH.GetComponent<Collider>();
-        if (spoutCl != null) colSpoutCl = spoutCl.GetComponent<Collider>();
-
-        if (useColliderPourCheck && debugLog)
-        {
-            if (colPourTarget == null) Debug.LogWarning("[HClReaction] PourTarget has no Collider. (Add BoxCollider to PourTarget)");
-            if (colSpoutH == null) Debug.LogWarning("[HClReaction] Spout_H has no Collider. (Add BoxCollider to Spout_H)");
-            if (colSpoutCl == null) Debug.LogWarning("[HClReaction] Spout_Cl has no Collider. (Add BoxCollider to Spout_Cl)");
+                + " liquidB=" + (liquidBeaker != null));
         }
     }
 
@@ -231,18 +191,8 @@ public class HClExplosionReaction : UdonSharpBehaviour
         bool canPourH = (!reacted && flaskH != null && spoutH != null && beakerPourTarget != null && fillFlaskH > 0.0001f);
         bool canPourCl = (!reacted && flaskCl != null && spoutCl != null && beakerPourTarget != null && fillFlaskCl > 0.0001f);
 
-        bool pouringH = false;
-        bool pouringCl = false;
-
-        if (canPourH)
-        {
-            pouringH = IsPouringIntoBeaker(flaskH.transform, spoutH, colSpoutH);
-        }
-
-        if (canPourCl)
-        {
-            pouringCl = IsPouringIntoBeaker(flaskCl.transform, spoutCl, colSpoutCl);
-        }
+        bool pouringH = canPourH && IsPouringIntoBeaker(flaskH.transform, spoutH);
+        bool pouringCl = canPourCl && IsPouringIntoBeaker(flaskCl.transform, spoutCl);
 
         float pouredH = 0f;
         float pouredCl = 0f;
@@ -305,78 +255,19 @@ public class HClExplosionReaction : UdonSharpBehaviour
     }
 
     // =========================================================
-    // ✅ NEW: BoxCollider/Colliderで当たり判定（基本はここ）
-    //  - PourTarget と Spout_* に BoxCollider を付けてサイズで当たりを調整
-    //  - 角度/上下/下向き/距離は安全策として残す
+    // ✅ 遠距離でも入る判定を完全に潰すロジック（参照ズレも排除）
     // =========================================================
-    private bool IsPouringIntoBeaker(Transform flaskRoot, Transform spout, Collider spoutCol)
+    private bool IsPouringIntoBeaker(Transform flaskRoot, Transform spout)
     {
         if (flaskRoot == null || spout == null || beakerPourTarget == null) return false;
 
-        // spoutがflaskRoot配下じゃない参照ズレは即失敗
+        // spoutがflaskRoot配下じゃない参照ズレは即失敗（IsChildOfは避け、手動で親を辿る）
         if (!IsDescendantOf(spout, flaskRoot)) return false;
 
         // 角度条件
         float angle = Vector3.Angle(flaskRoot.up, Vector3.up);
         if (angle < pourStartAngleDeg) return false;
 
-        // 下向き判定（forward と up の “より下向き” を採用してモデル差を吸収）
-        float downDotF = Vector3.Dot(spout.forward, Vector3.down);
-        float downDotU = Vector3.Dot(spout.up, Vector3.down);
-        float downDot = (downDotF > downDotU) ? downDotF : downDotU;
-        if (downDot < minDownDot) return false;
-
-        // ✅ Collider判定を使う
-        if (useColliderPourCheck && colPourTarget != null && spoutCol != null)
-        {
-            Bounds sb = spoutCol.bounds;
-            Bounds tb = colPourTarget.bounds;
-
-            // 当たりを少しだけ太らせる
-            float inf = Mathf.Max(0f, colliderBoundsInflate);
-            if (inf > 0f)
-            {
-                sb.Expand(inf * 2f);
-                tb.Expand(inf * 2f);
-            }
-
-            // 安全策：距離/高さ条件も軽くチェック
-            Vector3 spC = sb.center;
-            Vector3 tpC = tb.center;
-
-            float dist3D = Vector3.Distance(spC, tpC);
-            if (dist3D > maxPourDistance3D) return false;
-
-            float dy = Mathf.Abs(spC.y - tpC.y);
-            if (dy > maxVerticalDelta) return false;
-
-            // 注ぎ口がターゲットより上（中心比較。Boxの位置次第で微調整してOK）
-            if (spC.y < tpC.y + minSpoutAboveTarget) return false;
-
-            bool hit = sb.Intersects(tb);
-
-            if (debugPourCheck)
-            {
-                Debug.Log("[PourCheck(Collider)] angle=" + angle
-                    + " dist3D=" + dist3D
-                    + " dy=" + dy
-                    + " downDot=" + downDot
-                    + " hit=" + hit
-                    + " inf=" + inf);
-            }
-
-            return hit;
-        }
-
-        // ✅ フォールバック（Colliderが無い場合だけ旧ロジック）
-        return IsPouringIntoBeaker_FallbackDistance(flaskRoot, spout, angle, downDot);
-    }
-
-    // =========================================================
-    // 旧ロジック（フォールバック用）: Transform距離判定
-    // =========================================================
-    private bool IsPouringIntoBeaker_FallbackDistance(Transform flaskRoot, Transform spout, float angle, float downDot)
-    {
         // 半径安全化
         float r = pourRadius;
         if (r > pourRadiusHardCap) r = pourRadiusHardCap;
@@ -385,14 +276,24 @@ public class HClExplosionReaction : UdonSharpBehaviour
         Vector3 sp = spout.position;
         Vector3 tp = beakerPourTarget.position;
 
+        // ✅ 3D距離の絶対上限（これで「ものすごく離れてるのに注げる」が理屈上消える）
         float dist3D = Vector3.Distance(sp, tp);
         if (dist3D > maxPourDistance3D) return false;
 
+        // ✅ 高さ差も制限
         float dy = Mathf.Abs(sp.y - tp.y);
         if (dy > maxVerticalDelta) return false;
 
+        // ✅ 注ぎ口がターゲットより上
         if (sp.y < tp.y + minSpoutAboveTarget) return false;
 
+        // ✅ 下向き判定（forward と up の “より下向き” を採用してモデル差を吸収）
+        float downDotF = Vector3.Dot(spout.forward, Vector3.down);
+        float downDotU = Vector3.Dot(spout.up, Vector3.down);
+        float downDot = (downDotF > downDotU) ? downDotF : downDotU;
+        if (downDot < minDownDot) return false;
+
+        // ✅ XZ半径（水平距離）
         Vector3 sp2 = sp; sp2.y = 0f;
         Vector3 tp2 = tp; tp2.y = 0f;
         float distXZ = Vector3.Distance(sp2, tp2);
@@ -400,7 +301,7 @@ public class HClExplosionReaction : UdonSharpBehaviour
 
         if (debugPourCheck)
         {
-            Debug.Log("[PourCheck(Fallback)] angle=" + angle
+            Debug.Log("[PourCheck] angle=" + angle
                 + " dist3D=" + dist3D
                 + " distXZ=" + distXZ
                 + " dy=" + dy
@@ -481,37 +382,16 @@ public class HClExplosionReaction : UdonSharpBehaviour
         if (explosionParticles != null) explosionParticles.Play(true);
         if (explosionAudio != null) explosionAudio.Play();
 
-        // ✅ 2段フラッシュ開始（ON→OFF→ON→OFF）
         if (explosionLight != null)
         {
             explosionLight.enabled = true;
-            SendCustomEventDelayedSeconds(nameof(FlashOff), flashOffDelay);
+            SendCustomEventDelayedSeconds(nameof(EndFlash), flashSeconds);
         }
 
         swirlPower = 0f;
         if (beakerSwirlParticles != null) beakerSwirlParticles.Stop(true);
         if (pourStreamH != null) pourStreamH.Stop(true);
         if (pourStreamCl != null) pourStreamCl.Stop(true);
-    }
-
-    // ✅ 2段フラッシュ（Udon用：publicメソッド）
-    public void FlashOff()
-    {
-        if (explosionLight == null) return;
-        explosionLight.enabled = false;
-        SendCustomEventDelayedSeconds(nameof(FlashOnAgain), flashOnAgainDelay);
-    }
-
-    public void FlashOnAgain()
-    {
-        if (explosionLight == null) return;
-        explosionLight.enabled = true;
-        SendCustomEventDelayedSeconds(nameof(EndFlash), flashSeconds);
-    }
-
-    public void EndFlash()
-    {
-        if (explosionLight != null) explosionLight.enabled = false;
     }
 
     private float ComputeReactionStrength()
@@ -534,32 +414,34 @@ public class HClExplosionReaction : UdonSharpBehaviour
 
     private void ApplyStrengthToFX(float strength)
     {
-        // ✅ 派手化：ライト強化
         if (explosionLight != null)
         {
-            explosionLight.intensity = 12.0f * strength;
-            explosionLight.range = 4.0f + 3.0f * strength;
+            explosionLight.intensity = 3.0f * strength;
+            explosionLight.range = 2.0f + 1.0f * strength;
         }
 
-        // ✅ 派手化：音量少し上げ
         if (explosionAudio != null)
         {
-            explosionAudio.volume = Mathf.Clamp01(0.65f + 0.35f * strength);
+            explosionAudio.volume = Mathf.Clamp01(0.5f + 0.3f * strength);
             explosionAudio.pitch = Mathf.Clamp(0.95f + 0.08f * strength, 0.9f, 1.25f);
         }
 
-        // ✅ 派手化：粒子強化（BurstはPrefab側推奨は維持）
         if (explosionParticles != null)
         {
             var main = explosionParticles.main;
-            main.startSize = 0.32f * strength;
-            main.startSpeed = 3.2f * strength;
-            main.maxParticles = Mathf.Clamp((int)(220 * strength), 120, 600);
+            main.startSize = 0.12f * strength;
+            main.startSpeed = 1.4f * strength;
+            main.maxParticles = Mathf.Clamp((int)(80 * strength), 40, 260);
 
             // Udonで怪しいBurst設定はやめて、Prefab側でBurst設定する前提
             var emission = explosionParticles.emission;
             emission.rateOverTime = 0f;
         }
+    }
+
+    public void EndFlash()
+    {
+        if (explosionLight != null) explosionLight.enabled = false;
     }
 
     // ============================
