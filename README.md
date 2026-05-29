@@ -1,20 +1,68 @@
 # ScienceExperiment
 
-## 企画書
+This README is the main documentation for this repository. It combines a project proposal and wiki-like pages in one file.
 
-ScienceExperiment は、実験・検証・観察の内容を整理し、将来的に再現しやすい知識資産へ育てるためのプロジェクトです。
+## Contents
 
-## 理想像
+- [Project Plan](#project-plan)
+- [Ideal Vision](#ideal-vision)
+- [Structure](#structure)
+- [Usage](#usage)
+- [Notes](#notes)
+- [Rules](#rules)
+- [Roadmap](#roadmap)
+- [Log](#log)
 
-- 実験の目的が一目で分かる
-- 手順・条件・結果が整理されている
-- 再現性のある記録が残る
-- 学習や発表に使いやすい
+## Project Plan
 
-## 目指す状態
+This project is planned as a clear and organized workspace that can grow over time.
 
-このリポジトリは、科学実験や検証の流れを体系化し、継続的に改善できる状態を目指します。
+## Ideal Vision
 
-## Wiki
+- Clear purpose
+- Organized files
+- Easy maintenance
+- Easy future expansion
 
-詳細な使い方、仕様、作業メモ、運用ルールは GitHub Wiki にまとめます。
+## Structure
+
+```text
+ScienceExperiment/
+- README.md
+- src/
+- docs/
+- assets/
+- tests/
+```
+
+## Usage
+
+Usage steps will be added here.
+
+## Notes
+
+- Main features: TBD
+- Inputs: TBD
+- Outputs: TBD
+- Requirements: TBD
+
+## Rules
+
+- Keep changes understandable
+- Avoid unnecessary files
+- Record why changes were made
+- Keep this README updated
+
+## Roadmap
+
+- [ ] Clarify the purpose
+- [ ] Organize the structure
+- [ ] Add usage steps
+- [ ] Add notes
+- [ ] Add examples
+
+## Log
+
+| Date | Note |
+|---|---|
+| TBD | README converted into a wiki-like document |
